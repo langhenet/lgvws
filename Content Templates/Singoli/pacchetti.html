@@ -1,0 +1,133 @@
+<!-- TITOLO del post -->
+<h1>[wpv-post-title]</h1>
+<!-- EXCERPT del post -->
+<p>[wpv-post-excerpt format='noautop']</p>
+<!-- PREZZI -->
+<h3>[types field='lgp-price' format='FIELD_VALUE'][/types]€ <del>[types field='lgp-sale-price' format='FIELD_VALUE'][/types]€</del></h3>
+<!-- VALIDITA' -->
+<h3>Validity:
+<!-- check condizionale per data inizio -->
+  [wpv-conditional debug="false" if="( NOT(empty($(wpcf-lgp-stdate))) )"]
+    [wpml-string context="VacationPackages"]From:[/wpml-string] [types field='lgp-stdate' style='text' format='F j, Y'][/types]
+  [/wpv-conditional]
+<!-- check condizionale per data fine -->
+  [wpv-conditional debug="false" if="( NOT(empty($(wpcf-lgp-endate))) )"]
+    [wpml-string context="VacationPackages"]To:[/wpml-string]  [types field='lgp-endate' style='text' format='F j, Y'][/types]
+  [/wpv-conditional]
+<!-- check condizionale per data fine e inizio - se vuote output dei due anni-->
+  [wpv-conditional debug="false" if="( empty($(wpcf-lgp-stdate))) AND empty($(wpcf-lgp-endate))) )"]
+  for two years after buying -rivedere frase + WPML STRING
+  [/wpv-conditional]
+</h3>
+<!-- BODY del post -->
+[wpv-post-body view_template='None' suppress_filters='true']
+
+<!-- PERNOTTAMENTO -->
+<!-- Titolo pernottamento -->
+<h2>[wpml-string context="VacationPackages"]Overnight Stay[/wpml-string]</h2>
+<!-- Check immagine del pernottamento: negativo -->
+[wpv-conditional debug="false" if="( $(wpcf-lgp-stay-img) = '' )"]
+  <h3>NON c'è immagine pernottamento -> output standard http://</h3>
+[/wpv-conditional]
+<!-- Check immagine del pernottamento: positivo -->
+[wpv-conditional debug="false" if="( $(wpcf-lgp-stay-img) != '' )"]
+  <h3>C'E' immagine pernottamento [types field="lgp-stay-img" url="true" index="0"][/types] </h3>
+[/wpv-conditional]
+
+<!-- Testo pernottamento -->
+[types field='lgp-stay'][/types]
+
+<!-- Check condizionale per business: positivo / output immagine del business -->
+[wpv-conditional debug="false" if="( NOT(empty($(_wpcf_belongs_lgbusiness_id))) AND ( $(_wpcf_belongs_lgbusiness_id) > '0') )"]
+c'è un business!
+[wpv-post-featured-image id="$lgbusiness" output="url"]
+[/wpv-conditional]
+
+<!-- Check condizionale per business: negativo / output delle gallerie -->
+[wpv-conditional debug="false" if="( empty($(_wpcf_belongs_lgbusiness_id)) OR ( $(_wpcf_belongs_lgbusiness_id) = '0') )"]
+NON c'è un business!
+
+  <!-- Check condizionale gallery personalizzata -->
+  [wpv-conditional debug="false" if="( $(wpcf-lgp-stay-gallery) = '1' )"]
+    ma c'è una gallery personalizzata!
+    [wpv-for-each field="wpcf-lgp-stay-img"]
+    <p>[types field="lgp-stay-img" url="true"][/types]</p>
+    [/wpv-for-each]
+
+  [/wpv-conditional]
+
+  <!-- Check condizionale gallery B&B Agriturismo -->
+  [wpv-conditional debug="false" if="( $(wpcf-lgp-stay-gallery) = '2' )"]
+    ma c'è una gallery B&B Agriturismo!
+  [/wpv-conditional]
+
+  <!-- Check condizionale gallery Relais -->
+  [wpv-conditional debug="false" if="( $(wpcf-lgp-stay-gallery) = '3' )"]
+    ma c'è una gallery Relais!
+  [/wpv-conditional]
+
+  <!-- Check condizionale gallery Appartamento -->
+  [wpv-conditional debug="false" if="( $(wpcf-lgp-stay-gallery) = '4' )"]
+    ma c'è una gallery Appartamento!
+  [/wpv-conditional]
+
+[/wpv-conditional]
+
+
+<!-- FOOD -->
+<!-- Titolo pernottamento -->
+<h2>[wpml-string context="VacationPackages"]Food Experiences[/wpml-string]</h2>
+
+<!-- Check condizionale immagine cibo / negativo -->
+[wpv-conditional debug="false" if="( $(wpcf-lgp-eat-img) = '' )"]
+  <h3>NON c'è immagine cibo -> output standard http://</h3>
+[/wpv-conditional]
+<!-- Check condizionale immagine cibo / positivo -->
+[wpv-conditional debug="false" if="( $(wpcf-lgp-eat-img) != '' )"]
+  <h3>C'E' immagine cibo [types field="lgp-eat-img" url="true" index="0"][/types] </h3>
+[/wpv-conditional]
+
+[types field='lgp-eat'][/types]
+
+<!-- Check condizionale tipo di galleria - standard -->
+[wpv-conditional debug="false" if="( $(wpcf-lgp-eat-gallery) = '1' )"]
+  gallery standard
+[/wpv-conditional]
+
+<!-- Check condizionale tipo di galleria - personalizzata -->
+[wpv-conditional debug="false" if="( $(wpcf-lgp-eat-gallery) = '2' )"]
+  gallery personalizzata
+[/wpv-conditional]
+
+<!-- ATTIVITA' -->
+<h2>[wpml-string context="VacationPackages"]Activities[/wpml-string]</h2>
+
+[wpv-for-each field="wpcf-lgp-cellars"]
+  <h4 class="">[wpv-post-title output='sanitize' id='[types field="lgp-cellars"][/types]']</h4>
+
+  [wpv-post-taxonomy type='lgactivity-type' format='name' id='[types field="lgp-cellars"][/types]']<br/>
+
+  [wpv-conditional debug="false" if="( '[wpv-post-taxonomy type='lgactivity-type' format='slug' id='[types field="lgp-cellars"][/types]']' eq 'cultura' )"]
+    <p>cultura</p>
+  [/wpv-conditional]
+
+  [wpv-conditional debug="false" if="( '[wpv-post-taxonomy type='lgactivity-type' format='slug' id='[types field="lgp-cellars"][/types]']' eq 'escursioni' )"]
+    <p>escursioni</p>
+  [/wpv-conditional]
+
+  [wpv-conditional debug="false" if="( '[wpv-post-taxonomy type='lgactivity-type' format='slug' id='[types field="lgp-cellars"][/types]']' eq 'shopping' )"]
+    <p>shopping</p>
+  [/wpv-conditional]
+
+  [wpv-conditional debug="false" if="( '[wpv-post-taxonomy type='lgactivity-type' format='slug' id='[types field="lgp-cellars"][/types]']' eq 'spa-welness' )"]
+    <p>spa-welness</p>
+  [/wpv-conditional]
+
+  [wpv-conditional debug="false" if="( '[wpv-post-taxonomy type='lgactivity-type' format='slug' id='[types field="lgp-cellars"][/types]']' eq 'azienda' )"]
+    <p>azienda</p>
+  [/wpv-conditional]
+
+  [wpv-conditional debug="false" if="( '[wpv-post-taxonomy type='lgactivity-type' format='slug' id='[types field="lgp-cellars"][/types]']' eq 'cantina' )"]
+    <p>cantina</p>
+  [/wpv-conditional]
+[/wpv-for-each]
