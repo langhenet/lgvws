@@ -5,6 +5,13 @@
 <!-- PREZZI -->
 <h3>[types field='lgp-price' format='FIELD_VALUE'][/types]€ <del>[types field='lgp-sale-price' format='FIELD_VALUE'][/types]€</del></h3>
 
+[wpv-conditional debug="false" if="( $(wpcf-lgp-people) != 1 )"]
+  For [types field='lgp-people' format='FIELD_VALUE'][/types] persons + aggiungere stringa WPML
+[/wpv-conditional]
+[wpv-conditional debug="false" if="( $(wpcf-lgp-people) = 1 )"]
+  Per persona + aggiungere stringa wpml
+[/wpv-conditional]
+
 <!-- VALIDITA' -->
 <h3>Validity:
 <!-- check condizionale per data inizio -->
@@ -23,6 +30,8 @@
 
 <!-- BODY del post -->
 [wpv-post-body view_template='None' suppress_filters='true']
+
+[gravityform id="1" title="false" description="false" ajax="true" field_values="prezzo=[types field="lgp-price" format="FIELD_VALUE"][/types]"]
 
 <!-- PERNOTTAMENTO -->
 <!-- Titolo pernottamento -->
@@ -101,38 +110,44 @@ NON c'è un business!
 
 <!-- Check condizionale tipo di galleria - personalizzata -->
 [wpv-conditional debug="false" if="( $(wpcf-lgp-eat-gallery) = '2' )"]
-  gallery personalizzata
+  <div class="avia-gallery avia-gallery-1 deactivate_avia_lazyload avia_animate_when_visible avia_start_animation">
+    <div class="avia-gallery-thumb popup-gallery">
+      [wpv-for-each field="wpcf-lgp-eat-img"]
+      <a href="[types field="lgp-eat-img" url="true"][/types]" data-rel="gallery-1" class="" itemprop="contentURL"><img src="[types field="lgp-eat-img" url="true" size="portfolio"][/types]" width="814" height="462" class="avia_start_animation"></a>
+      [/wpv-for-each]
+    </div>
+</div>
 [/wpv-conditional]
 
 <!-- ATTIVITA' -->
 <h2>[wpml-string context="VacationPackages"]Activities[/wpml-string]</h2>
 
-[wpv-for-each field="wpcf-lgp-cellars"]
-  <h4 class="">[wpv-post-title output='sanitize' id='[types field="lgp-cellars"][/types]']</h4>
+[wpv-for-each field="wpcf-lgp-activities"]
+  <h4 class="">[wpv-post-title output='sanitize' id='[types field="lgp-activities"][/types]']</h4>
 
-  [wpv-post-taxonomy type='lgactivity-type' format='name' id='[types field="lgp-cellars"][/types]']<br/>
+  [wpv-post-taxonomy type='lgactivity-type' format='name' id='[types field="lgp-activities"][/types]']<br/>
 
-  [wpv-conditional debug="false" if="( '[wpv-post-taxonomy type='lgactivity-type' format='slug' id='[types field="lgp-cellars"][/types]']' eq 'cultura' )"]
+  [wpv-conditional debug="false" if="( '[wpv-post-taxonomy type='lgactivity-type' format='slug' id='[types field="lgp-activities"][/types]']' eq 'cultura' )"]
     <p>cultura</p>
   [/wpv-conditional]
 
-  [wpv-conditional debug="false" if="( '[wpv-post-taxonomy type='lgactivity-type' format='slug' id='[types field="lgp-cellars"][/types]']' eq 'escursioni' )"]
+  [wpv-conditional debug="false" if="( '[wpv-post-taxonomy type='lgactivity-type' format='slug' id='[types field="lgp-activities"][/types]']' eq 'escursioni' )"]
     <p>escursioni</p>
   [/wpv-conditional]
 
-  [wpv-conditional debug="false" if="( '[wpv-post-taxonomy type='lgactivity-type' format='slug' id='[types field="lgp-cellars"][/types]']' eq 'shopping' )"]
+  [wpv-conditional debug="false" if="( '[wpv-post-taxonomy type='lgactivity-type' format='slug' id='[types field="lgp-activities"][/types]']' eq 'shopping' )"]
     <p>shopping</p>
   [/wpv-conditional]
 
-  [wpv-conditional debug="false" if="( '[wpv-post-taxonomy type='lgactivity-type' format='slug' id='[types field="lgp-cellars"][/types]']' eq 'spa-welness' )"]
+  [wpv-conditional debug="false" if="( '[wpv-post-taxonomy type='lgactivity-type' format='slug' id='[types field="lgp-activities"][/types]']' eq 'spa-welness' )"]
     <p>spa-welness</p>
   [/wpv-conditional]
 
-  [wpv-conditional debug="false" if="( '[wpv-post-taxonomy type='lgactivity-type' format='slug' id='[types field="lgp-cellars"][/types]']' eq 'azienda' )"]
+  [wpv-conditional debug="false" if="( '[wpv-post-taxonomy type='lgactivity-type' format='slug' id='[types field="lgp-activities"][/types]']' eq 'azienda' )"]
     <p>azienda</p>
   [/wpv-conditional]
 
-  [wpv-conditional debug="false" if="( '[wpv-post-taxonomy type='lgactivity-type' format='slug' id='[types field="lgp-cellars"][/types]']' eq 'cantina' )"]
+  [wpv-conditional debug="false" if="( '[wpv-post-taxonomy type='lgactivity-type' format='slug' id='[types field="lgp-activities"][/types]']' eq 'cantina' )"]
     <p>cantina</p>
   [/wpv-conditional]
 [/wpv-for-each]
