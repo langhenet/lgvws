@@ -15,20 +15,20 @@
 					</div>
         </div>
       </div>
-      <div class="b-overlay">
+      <div class="b-overlay lg-detail-bar">
 				<div class="container">
 					<div class="template-page content-no-pad av-content-full alpha units">
-						<div class="flex_column av_one_third flex_column_div first lg-left">
+						<div class="flex_column av_one_third flex_column_div first lg-detail-col lg-left">
               <!-- PREZZI -->
-							<p itemprop="offers" itemscope itemtype="http://schema.org/Offer"><span class="lg-icon av_font_icon av-icon-style-border lg-piena av-no-color avia-icon-pos-left" style=""><span class="av-icon-char lg-big lg-cal" aria-hidden="true" data-av_iconfont="entypo-fontello"></span></span>
+							<p class="lg-ph3" itemprop="offers" itemscope itemtype="http://schema.org/Offer"><span class="lg-icon av_font_icon av-icon-style-border lg-piena av-no-color avia-icon-pos-left lg-ph3" style=""><span class="av-icon-char lg-big lg-tag" aria-hidden="true" data-av_iconfont="entypo-fontello"></span></span>
               <span itemprop="price">[types field='lgp-price' format='FIELD_VALUE'][/types]€
                   [wpv-conditional debug="false" if="( NOT(empty($(wpcf-lgp-sale-price))) )"]<del>[types field='lgp-sale-price' format='FIELD_VALUE'][/types]€</del>
                 [/wpv-conditional]</span></p>
 						</div>
-						<div class="flex_column av_one_third flex_column_div lg-center">
+						<div class="flex_column av_one_third flex_column_div lg-detail-col lg-center">
                 <!-- NUMERO DI PERSONE -->
                 <p style="text-align:center" class="lg-icon av_font_icon av-icon-style-border lg-piena av-no-color" style="">
-                  <span class="av-icon-char lg-big lg-marker" aria-hidden="true" data-av_iconfont="entypo-fontello"></span>
+                  <span class="av-icon-char lg-big lg-people" aria-hidden="true" data-av_iconfont="entypo-fontello"></span>
                 </p>
                 <p>
                 [wpv-conditional debug="false" if="( $(wpcf-lgp-people) != 1 )"]
@@ -39,10 +39,10 @@
                 [/wpv-conditional]
 							</p>
 						</div>
-            <div class="flex_column av_one_third flex_column_div lg-right">
+            <div class="flex_column av_one_third flex_column_div lg-detail-col lg-right">
                 <!-- VALIDITA' -->
 							<p>
-                <span class="lg-icon av_font_icon av-icon-style-border lg-piena av-no-color avia-icon-pos-right" style=""><span class="av-icon-char lg-big lg-marker" aria-hidden="true" data-av_iconfont="entypo-fontello"></span></span>
+                <span class="lg-icon av_font_icon av-icon-style-border lg-piena av-no-color avia-icon-pos-right" style=""><span class="av-icon-char lg-big lg-cal" aria-hidden="true" data-av_iconfont="entypo-fontello"></span></span>
                 Validity:<br/>
                 <!-- check condizionale per data inizio -->
                   [wpv-conditional debug="false" if="( NOT(empty($(wpcf-lgp-stdate))) )"]
@@ -289,9 +289,11 @@
               </div> -->
             </div>
             <div class="wine_color washed lg-box-sub-header lg-arrow-down">
-              <h3>[types field="lgp-price"][/types]€                 [wpv-conditional debug="false" if="( NOT(empty($(wpcf-lgp-sale-price))) )"]
-                  [wpml-string context="VacationPackages"]instead of[/wpml-string] <del>[types field='lgp-sale-price' format='FIELD_VALUE'][/types]€</del>
+              <h3>
+                [wpv-conditional debug="false" if="( NOT(empty($(wpcf-lgp-sale-price))) )"]
+                  <del>[types field='lgp-sale-price' format='FIELD_VALUE'][/types]€</del>
                 [/wpv-conditional]
+                [types field="lgp-price"][/types]€
                 [wpml-string context="VacationPackages"]for[/wpml-string]
                 [types field="lgp-people"][/types]
                 [wpv-conditional debug="false" if="( $(wpcf-lgp-people) >= 2 )"]
