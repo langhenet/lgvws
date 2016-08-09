@@ -21,12 +21,14 @@
 						<div class="flex_column av_one_third flex_column_div first lg-left">
               <!-- PREZZI -->
 							<p itemprop="offers" itemscope itemtype="http://schema.org/Offer"><span class="lg-icon av_font_icon av-icon-style-border lg-piena av-no-color avia-icon-pos-left" style=""><span class="av-icon-char lg-big lg-cal" aria-hidden="true" data-av_iconfont="entypo-fontello"></span></span>
-              <span itemprop="price">[types field='lgp-price' format='FIELD_VALUE'][/types]€ <del>[types field='lgp-sale-price' format='FIELD_VALUE'][/types]€</del></span></p>
+              <span itemprop="price">[types field='lgp-price' format='FIELD_VALUE'][/types]€
+                  [wpv-conditional debug="false" if="( NOT(empty($(wpcf-lgp-sale-price))) )"]<del>[types field='lgp-sale-price' format='FIELD_VALUE'][/types]€</del>
+                [/wpv-conditional]</span></p>
 						</div>
 						<div class="flex_column av_one_third flex_column_div lg-center">
                 <!-- NUMERO DI PERSONE -->
                 <p style="text-align:center" class="lg-icon av_font_icon av-icon-style-border lg-piena av-no-color" style="">
-                  <span class="av-icon-char lg-big lg-marker" aria-hidden="true" data-av_iconfont="entypo-fontello"></span></span>
+                  <span class="av-icon-char lg-big lg-marker" aria-hidden="true" data-av_iconfont="entypo-fontello"></span>
                 </p>
                 <p>
                 [wpv-conditional debug="false" if="( $(wpcf-lgp-people) != 1 )"]
@@ -180,7 +182,8 @@
         [/wpv-conditional]
         <div class="flex_column av_one_half flex_column_div first">
           <h3>[wpv-post-title id="[types field='lgp-eat'][/types]"]</h3>
-          [wpv-post-body view_template="None" suppress_filters="true" id="[types field='lgp-eat'][/types]"]        </div>
+          [wpv-post-body view_template="None" suppress_filters="true" id="[types field='lgp-eat'][/types]"]
+        </div>
         <div class="flex_column av_one_half flex_column_div">
           <!-- Check condizionale tipo di galleria - standard -->
           [wpv-conditional debug="false" if="( $(wpcf-lgp-eat-gallery) = '1' )"]
@@ -267,26 +270,50 @@
     </div>
   </div>
 </div>
-<div id="activities" class="avia-section alternate_color avia-section-large avia-no-shadow avia-bg-style-scroll el_before_av_section  container_wrap fullsize">
+<div id="book" class="avia-section alternate_color avia-section-large avia-no-shadow avia-bg-style-scroll el_before_av_section  container_wrap fullsize">
   <div class="container">
     <div class="template-page content av-content-full alpha units">
       <div class="entry-content-wrapper clearfix">
         <div class="flex_column av_one_half flex_column_div first">
-        [gravityform id="2" title="false" description="false" ajax="true" field_values="prezzo=[types field="lgp-price" format="FIELD_VALUE"][/types]&nome=[wpv-post-title output='sanitize']"]
+          [gravityform id="2" title="false" description="false" ajax="true" field_values="prezzo=[types field="lgp-price" format="FIELD_VALUE"][/types]&nome=[wpv-post-title output='sanitize']"]
         </div>
         <div class="flex_column av_one_half flex_column_div">
-          <h3>[wpv-post-title]</h3>
-          <p>[types field="lgp-price"][/types]</p>
-          <p>[types field="lgp-people"][/types]</p>
-          <h3>[wpml-string context="VacationPackages"]The Packages Includes[/wpml-string]</h3>
-          <ul>
-            <li>[types field="lgp-stay-nights"][/types] [wpml-string context="VacationPackages"]Nights at[/wpml-string] [wpv-post-title id="[types field='lgp-stay'][/types]"]</li>
-            <li>[wpv-post-title id="[types field='lgp-eat'][/types]"]</li>
-            <!-- Loop attività -->
-            [wpv-for-each field="wpcf-lgp-activities"]
-              <li>[wpv-post-title output='sanitize' id='[types field="lgp-activities"][/types]']</li>
-            [/wpv-for-each]
-          </ul>
+          <div class="lg-box with-header with-sub-header">
+            <div class="wine_color lg-box-header lg-arrow-down">
+              <h3>[wpv-post-title]</h3>
+          <!--    <div class="av-extra-border-element border-extra-arrow-down">
+                <div class="av-extra-border-outer">
+                  <div class="av-extra-border-inner">
+                  </div>
+                </div>
+              </div> -->
+            </div>
+            <div class="wine_color washed lg-box-sub-header lg-arrow-down">
+              <h3>[types field="lgp-price"][/types]€                 [wpv-conditional debug="false" if="( NOT(empty($(wpcf-lgp-sale-price))) )"]
+                  [wpml-string context="VacationPackages"]instead of[/wpml-string] <del>[types field='lgp-sale-price' format='FIELD_VALUE'][/types]€</del>
+                [/wpv-conditional]
+                [wpml-string context="VacationPackages"]for[/wpml-string]
+                [types field="lgp-people"][/types]
+                [wpv-conditional debug="false" if="( $(wpcf-lgp-people) >= 2 )"]
+                  [wpml-string context="VacationPackages"]persons[/wpml-string]
+                [/wpv-conditional]
+                [wpv-conditional debug="false" if="( $(wpcf-lgp-people) = 1 )"]
+                  [wpml-string context="VacationPackages"]person[/wpml-string]
+                [/wpv-conditional]
+                </h3>
+            </div>
+            <div class="main_color lg-box-content">
+              <h3>[wpml-string context="VacationPackages"]The Package Includes[/wpml-string]</h3>
+              <ul>
+                <li>[types field="lgp-stay-nights"][/types] [wpml-string context="VacationPackages"]Nights at[/wpml-string] [wpv-post-title id="[types field='lgp-stay'][/types]"]</li>
+                <li>[wpv-post-title id="[types field='lgp-eat'][/types]"]</li>
+                <!-- Loop attività -->
+                [wpv-for-each field="wpcf-lgp-activities"]
+                  <li>[wpv-post-title output='sanitize' id='[types field="lgp-activities"][/types]']</li>
+                [/wpv-for-each]
+              </ul>
+            </div>
+          </div>
         </div>
       </div>
     </div>
