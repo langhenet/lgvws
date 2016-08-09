@@ -10,53 +10,66 @@
 						<h1 itemprop="name" class="title">[wpv-post-title]</h1>
             <!-- EXCERPT del post -->
             <p class="lg-excerpt">[wpv-post-excerpt format='noautop']</p>
+            <p style="text-align: center;" class="lg-ph2">[wpml-string context="VacationPackages"]Only[/wpml-string]                 [wpv-conditional debug="false" if="( NOT(empty($(wpcf-lgp-sale-price))) )"]<del>[types field='lgp-sale-price' format='FIELD_VALUE'][/types]€</del> [types field='lgp-price' format='FIELD_VALUE'][/types]€
+              [/wpv-conditional]
+              [wpv-conditional debug="false" if="( $(wpcf-lgp-people) != 1 )"]
+                [wpml-string context="VacationPackages"]for[/wpml-string] [types field='lgp-people' format='FIELD_VALUE'][/types] [wpml-string context="VacationPackages"]people[/wpml-string]
+              [/wpv-conditional]
+              [wpv-conditional debug="false" if="( $(wpcf-lgp-people) = 1 )"]
+                [wpml-string context="VacationPackages"]per person[/wpml-string]
+              [/wpv-conditional]</p>
           </div>
           <div class="flex_column av_one_sixth flex_column_div first">
 					</div>
         </div>
       </div>
-      <div class="b-overlay lg-detail-bar">
-				<div class="container">
-					<div class="template-page content-no-pad av-content-full alpha units">
-						<div class="flex_column av_one_half flex_column_div first lg-detail-col lg-package-details lg-left">
-              <!-- PREZZI -->
-							<p class="lg-icon-container"><span class="lg-icon av_font_icon av-icon-style-border lg-piena av-no-color" style=""><span class="av-icon-char lg-big lg-tag" aria-hidden="true" data-av_iconfont="entypo-fontello"></span></span>
-              </p>
-              <p class="lg-details-container" itemprop="offers" itemscope itemtype="http://schema.org/Offer">
-                [wpml-string context="VacationPackages"]Price:[/wpml-string] [types field='lgp-price' format='FIELD_VALUE'][/types]€
-                  [wpv-conditional debug="false" if="( NOT(empty($(wpcf-lgp-sale-price))) )"]<del>[types field='lgp-sale-price' format='FIELD_VALUE'][/types]€</del>
-                [/wpv-conditional]</span>
-                [wpv-conditional debug="false" if="( $(wpcf-lgp-people) != 1 )"]
-                  For [types field='lgp-people' format='FIELD_VALUE'][/types] persons + aggiungere stringa WPML
+    </div>
+  </div>
+</div>
+<div class="avia-section main_color avia-section-small avia-no-shadow avia-bg-style-scroll el_before_av_section  container_wrap fullsize">
+  <div class="container">
+    <div class="template-page content av-content-full alpha units">
+      <div class="post-entry post-entry-type-lgbusiness post-entry-">
+        <div class="entry-content-wrapper clearfix">
+          <div class="flex_column av_one_half flex_column_div first lg-detail-col lg-package-details lg-left">
+            <!-- PREZZI -->
+            <p class="lg-icon-container"><span class="lg-icon av_font_icon av-icon-style-border lg-piena av-no-color" style=""><span class="av-icon-char lg-big lg-tag" aria-hidden="true" data-av_iconfont="entypo-fontello"></span></span>
+            </p>
+            <p class="lg-details-container" itemprop="offers" itemscope itemtype="http://schema.org/Offer">
+              [wpml-string context="VacationPackages"]Price:[/wpml-string] [types field='lgp-price' format='FIELD_VALUE'][/types]€
+                [wpv-conditional debug="false" if="( NOT(empty($(wpcf-lgp-sale-price))) )"]<del>[types field='lgp-sale-price' format='FIELD_VALUE'][/types]€</del>
+              [/wpv-conditional]</span>
+              [wpv-conditional debug="false" if="( $(wpcf-lgp-people) != 1 )"]
+                For [types field='lgp-people' format='FIELD_VALUE'][/types] people + aggiungere stringa WPML
+              [/wpv-conditional]
+              [wpv-conditional debug="false" if="( $(wpcf-lgp-people) = 1 )"]
+                Per persona + aggiungere stringa wpml
+              [/wpv-conditional]</span>
+            </p>
+          </div>
+          <div class="flex_column av_one_half flex_column_div lg-detail-col lg-package-details lg-right">
+              <!-- VALIDITA' -->
+            <p class="lg-details-container" >
+              <!-- check condizionale per data inizio -->
+                [wpv-conditional debug="false" if="( NOT(empty($(wpcf-lgp-stdate))) )"]
+                  [wpml-string context="VacationPackages"]Valid from:[/wpml-string] [types field='lgp-stdate' style='text' format='F j, Y'][/types]
                 [/wpv-conditional]
-                [wpv-conditional debug="false" if="( $(wpcf-lgp-people) = 1 )"]
-                  Per persona + aggiungere stringa wpml
-                [/wpv-conditional]</span>
+              <!-- check condizionale per data fine -->
+                [wpv-conditional debug="false" if="( NOT(empty($(wpcf-lgp-endate))) )"]
+                  [wpml-string context="VacationPackages"]Until:[/wpml-string]  [types field='lgp-endate' style='text' format='F j, Y'][/types]
+                [/wpv-conditional]
+              <!-- check condizionale per data fine e inizio - se vuote output dei due anni-->
+                [wpv-conditional debug="false" if="( empty($(wpcf-lgp-stdate))) AND empty($(wpcf-lgp-endate))) )"]
+                for two years after buying -rivedere frase + WPML STRING
+                [/wpv-conditional]
               </p>
-						</div>
-            <div class="flex_column av_one_half flex_column_div lg-detail-col lg-package-details lg-right">
-                <!-- VALIDITA' -->
-              <p class="lg-details-container" >
-                <!-- check condizionale per data inizio -->
-                  [wpv-conditional debug="false" if="( NOT(empty($(wpcf-lgp-stdate))) )"]
-                    [wpml-string context="VacationPackages"]Valid from:[/wpml-string] [types field='lgp-stdate' style='text' format='F j, Y'][/types]
-                  [/wpv-conditional]
-                <!-- check condizionale per data fine -->
-                  [wpv-conditional debug="false" if="( NOT(empty($(wpcf-lgp-endate))) )"]
-                    [wpml-string context="VacationPackages"]Until:[/wpml-string]  [types field='lgp-endate' style='text' format='F j, Y'][/types]
-                  [/wpv-conditional]
-                <!-- check condizionale per data fine e inizio - se vuote output dei due anni-->
-                  [wpv-conditional debug="false" if="( empty($(wpcf-lgp-stdate))) AND empty($(wpcf-lgp-endate))) )"]
-                  for two years after buying -rivedere frase + WPML STRING
-                  [/wpv-conditional]
-                </p>
-                <p class="lg-icon-container">
-                  <span class="lg-icon av_font_icon av-icon-style-border lg-piena av-no-color" style=""><span class="av-icon-char lg-big lg-cal" aria-hidden="true" data-av_iconfont="entypo-fontello"></span></span>
-                </p>
-						</div>
-					</div>
-				</div>
-			</div>
+              <p class="lg-icon-container">
+                <span class="lg-icon av_font_icon av-icon-style-border lg-piena av-no-color" style=""><span class="av-icon-char lg-big lg-cal" aria-hidden="true" data-av_iconfont="entypo-fontello"></span></span>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -293,7 +306,7 @@
                 [wpml-string context="VacationPackages"]for[/wpml-string]
                 [types field="lgp-people"][/types]
                 [wpv-conditional debug="false" if="( $(wpcf-lgp-people) >= 2 )"]
-                  [wpml-string context="VacationPackages"]persons[/wpml-string]
+                  [wpml-string context="VacationPackages"]people[/wpml-string]
                 [/wpv-conditional]
                 [wpv-conditional debug="false" if="( $(wpcf-lgp-people) = 1 )"]
                   [wpml-string context="VacationPackages"]person[/wpml-string]
