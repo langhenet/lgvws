@@ -116,17 +116,14 @@
           [wpv-conditional debug="false" if="( empty($(_wpcf_belongs_lgbusiness_id)) OR ( $(_wpcf_belongs_lgbusiness_id) = '0') )"]
           NON c'è un business!
 
-            <!-- Check condizionale gallery personalizzata -->
-          <!--  [wpv-conditional debug="false" if="( $(wpcf-lgp-stay-gallery) = '1' )"] -->
-              <div class="avia-gallery avia-gallery-1 deactivate_avia_lazyload avia_animate_when_visible avia_start_animation">
-                <div class="avia-gallery-thumb gallery-columns-2 popup-gallery">
-                  [types field='lgp-stay'][/types]
-                  [wpv-for-each field="wpcf-lg-images" id="[types field='lgp-stay'][/types]"]
-                  ciao
-                  <a href="[types field="lg-images" url="true"  id="[types field='lgp-stay'][/types]"][/types]" data-rel="gallery-1" class="" itemprop="contentURL"><img src="[types field="lg-images" url="true" size="portfolio" id="[types field='lgp-stay'][/types]"][/types]" width="814" height="462" class="avia_start_animation"></a>
-                  [/wpv-for-each]
-                </div>
+          [wpv-conditional debug="false" if="( $(wpcf-lgp-stay-gallery) = '1' )"]
+            <div class="avia-gallery avia-gallery-1 deactivate_avia_lazyload avia_animate_when_visible avia_start_animation">
+              <div class="avia-gallery-thumb gallery-columns-2 popup-gallery">
+                [wpv-for-each field="wpcf-lgp-stay-img"]
+                <a href="[types field="lgp-stay-img" url="true"][/types]" data-rel="gallery-1" class="" itemprop="contentURL"><img src="[types field="lgp-stay-img" url="true" size="portfolio"][/types]" width="814" height="462" class="avia_start_animation"></a>
+                [/wpv-for-each]
               </div>
+            </div>
               OPPURE
               <div id="eat-gallery" class="gallery galleryid-347 gallery-columns-2 gallery-size-gallery">
                 [wpv-for-each field="wpcf-lgp-stay-img"]
