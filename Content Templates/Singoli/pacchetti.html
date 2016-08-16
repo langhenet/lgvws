@@ -124,62 +124,54 @@
       <div class="entry-content-wrapper clearfix">
   <!-- Titolo pernottamento -->
         <h2 class="title">[wpml-string context="VacationPackages"]Overnight Stay[/wpml-string]</h2>
-        <!-- Check immagine del pernottamento: negativo
-        [wpv-conditional debug="false" if="( $(wpcf-lgp-stay-img) = '' )"]
-          <h3>NON c'è immagine pernottamento -> output standard http://</h3>
-        [/wpv-conditional]
-        <!-- Check immagine del pernottamento: positivo
-        [wpv-conditional debug="false" if="( $(wpcf-lgp-stay-img) != '' )"]
-          <h3>C'E' immagine pernottamento [types field="lgp-stay-img" url="true" index="0"][/types] </h3>
-        [/wpv-conditional]
 
         <!-- Testo pernottamento -->
-        <div class="flex_column av_one_half flex_column_div first">
-          <h3>[types field="lgp-stay-nights"][/types] [wpml-string context="VacationPackages"]Nights at[/wpml-string] [wpv-post-title id="[types field='lgp-stay'][/types]"]</h3>
-          [wpv-post-body view_template="None" suppress_filters="true" id="[types field='lgp-stay'][/types]"]
-        </div>
-        <div class="flex_column av_one_half flex_column_div">
-          <!-- Check condizionale per business: positivo / output immagine del business -->
-          [wpv-conditional debug="false" if="( NOT(empty($(_wpcf_belongs_lgbusiness_id))) AND ( $(_wpcf_belongs_lgbusiness_id) > '0') )"]
-          c'è un business!
-          [wpv-post-featured-image id="$lgbusiness" output="url"]
-          [/wpv-conditional]
+        <div class="flex_column_table av-equal-height-column-flextable">
+          <div class="flex_column av_one_half flex_column av_one_half  flex_column_table_cell av-equal-height-column av-align-middle flex_column_div first">
+            <h3>[types field="lgp-stay-nights"][/types] [wpml-string context="VacationPackages"]Nights at[/wpml-string] [wpv-post-title id="[types field='lgp-stay'][/types]"]</h3>
+            [wpv-post-body view_template="None" suppress_filters="true" id="[types field='lgp-stay'][/types]"]
+          </div>
+          <div class="av-flex-placeholder"></div>
+          <div class="flex_column av_one_half flex_column av_one_half  flex_column_table_cell av-equal-height-column av-align-middle flex_column_div">
+            <!-- Check condizionale per business: positivo / output immagine del business -->
+            [wpv-conditional debug="false" if="( NOT(empty($(_wpcf_belongs_lgbusiness_id))) AND ( $(_wpcf_belongs_lgbusiness_id) > '0') )"]
+            [wpv-post-featured-image id="$lgbusiness" output="url"]
+            [/wpv-conditional]
 
-          <!-- Check condizionale per business: negativo / output delle gallerie -->
-          [wpv-conditional debug="false" if="( empty($(_wpcf_belongs_lgbusiness_id)) OR ( $(_wpcf_belongs_lgbusiness_id) = '0') )"]
-          NON c'è un business!
-
-            <!-- Check condizionale gallery Personalizzata -->
-            [wpv-conditional debug="false" if="( $(wpcf-lgp-stay-gallery) = '1' )"]
-                <div class="avia-gallery avia-gallery-1 deactivate_avia_lazyload avia_animate_when_visible avia_start_animation">
-                  <div class="avia-gallery-thumb gallery-columns-2 popup-gallery">
-                    <a href="[types field="lg-images" index="0" url="true" id="[types field="lgp-stay"][/types]"][/types]" data-rel="gallery-1" class="" itemprop="contentURL"><img src="[types field="lg-images" index="0" url="true" size="portfolio" id="[types field="lgp-stay"][/types]"][/types]" width="814" height="462" class="avia_start_animation">
-                    </a>
-                    <a href="[types field="lg-images" index="1" url="true" id="[types field="lgp-stay"][/types]"][/types]" data-rel="gallery-1" class="" itemprop="contentURL"><img src="[types field="lg-images" index="1" url="true" size="portfolio" id="[types field="lgp-stay"][/types]"][/types]" width="814" height="462" class="avia_start_animation">
-                    </a>
-                    <a href="[types field="lg-images" index="2" url="true" id="[types field="lgp-stay"][/types]"][/types]" data-rel="gallery-1" class="" itemprop="contentURL"><img src="[types field="lg-images" index="2" url="true" size="portfolio" id="[types field="lgp-stay"][/types]"][/types]" width="814" height="462" class="avia_start_animation">
-                    </a>
-                    <a href="[types field="lg-images" index="3" url="true" id="[types field="lgp-stay"][/types]"][/types]" data-rel="gallery-1" class="" itemprop="contentURL"><img src="[types field="lg-images" index="3" url="true" size="portfolio" id="[types field="lgp-stay"][/types]"][/types]" width="814" height="462" class="avia_start_animation">
-                    </a>
+            <!-- Check condizionale per business: negativo / output delle gallerie -->
+            [wpv-conditional debug="false" if="( empty($(_wpcf_belongs_lgbusiness_id)) OR ( $(_wpcf_belongs_lgbusiness_id) = '0') )"]
+              <!-- Check condizionale gallery Personalizzata -->
+              [wpv-conditional debug="false" if="( $(wpcf-lgp-stay-gallery) = '1' )"]
+                  <div class="avia-gallery avia-gallery-1 deactivate_avia_lazyload avia_animate_when_visible avia_start_animation">
+                    <div class="avia-gallery-thumb gallery-columns-2 popup-gallery">
+                      <a href="[types field="lg-images" index="0" url="true" id="[types field="lgp-stay"][/types]"][/types]" data-rel="gallery-1" class="" itemprop="contentURL"><img src="[types field="lg-images" index="0" url="true" size="portfolio" id="[types field="lgp-stay"][/types]"][/types]" width="814" height="462" class="avia_start_animation">
+                      </a>
+                      <a href="[types field="lg-images" index="1" url="true" id="[types field="lgp-stay"][/types]"][/types]" data-rel="gallery-1" class="" itemprop="contentURL"><img src="[types field="lg-images" index="1" url="true" size="portfolio" id="[types field="lgp-stay"][/types]"][/types]" width="814" height="462" class="avia_start_animation">
+                      </a>
+                      <a href="[types field="lg-images" index="2" url="true" id="[types field="lgp-stay"][/types]"][/types]" data-rel="gallery-1" class="" itemprop="contentURL"><img src="[types field="lg-images" index="2" url="true" size="portfolio" id="[types field="lgp-stay"][/types]"][/types]" width="814" height="462" class="avia_start_animation">
+                      </a>
+                      <a href="[types field="lg-images" index="3" url="true" id="[types field="lgp-stay"][/types]"][/types]" data-rel="gallery-1" class="" itemprop="contentURL"><img src="[types field="lg-images" index="3" url="true" size="portfolio" id="[types field="lgp-stay"][/types]"][/types]" width="814" height="462" class="avia_start_animation">
+                      </a>
+                    </div>
                   </div>
-                </div>
-            [/wpv-conditional]
-            <!-- Check condizionale gallery B&B Agriturismo -->
-            [wpv-conditional debug="false" if="( $(wpcf-lgp-stay-gallery) = '2' )"]
-                ma c'è una gallery B&B Agriturismo!
-            [/wpv-conditional]
+              [/wpv-conditional]
+              <!-- Check condizionale gallery B&B Agriturismo -->
+              [wpv-conditional debug="false" if="( $(wpcf-lgp-stay-gallery) = '2' )"]
+                  ma c'è una gallery B&B Agriturismo!
+              [/wpv-conditional]
 
-              <!-- Check condizionale gallery Relais -->
-            [wpv-conditional debug="false" if="( $(wpcf-lgp-stay-gallery) = '3' )"]
-                ma c'è una gallery Relais!
-            [/wpv-conditional]
+                <!-- Check condizionale gallery Relais -->
+              [wpv-conditional debug="false" if="( $(wpcf-lgp-stay-gallery) = '3' )"]
+                  ma c'è una gallery Relais!
+              [/wpv-conditional]
 
-              <!-- Check condizionale gallery Appartamento -->
-            [wpv-conditional debug="false" if="( $(wpcf-lgp-stay-gallery) = '4' )"]
-                ma c'è una gallery Appartamento!
-            [/wpv-conditional]
+                <!-- Check condizionale gallery Appartamento -->
+              [wpv-conditional debug="false" if="( $(wpcf-lgp-stay-gallery) = '4' )"]
+                  ma c'è una gallery Appartamento!
+              [/wpv-conditional]
 
-          [/wpv-conditional]
+            [/wpv-conditional]
+          </div>
         </div>
       </div>
     </div>
@@ -194,40 +186,51 @@
         <!-- Titolo pernottamento -->
         <h2 class="title">[wpml-string context="VacationPackages"]Food Experiences[/wpml-string]</h2>
 
-        <!-- Check condizionale immagine cibo / negativo -->
+        <!-- Check condizionale immagine cibo / negativo
         [wpv-conditional debug="false" if="( $(wpcf-lgp-eat-img) = '' )"]
           <h3>NON c'è immagine cibo -> output standard http://</h3>
-        [/wpv-conditional]
-        <!-- Check condizionale immagine cibo / positivo -->
+        [/wpv-conditional] -->
+        <!-- Check condizionale immagine cibo / positivo
         [wpv-conditional debug="false" if="( $(wpcf-lgp-eat-img) != '' )"]
           <h3>C'E' immagine cibo [types field="lgp-eat-img" url="true" index="0"][/types] </h3>
-        [/wpv-conditional]
-        <div class="flex_column av_one_half flex_column_div first">
-          <h3>[wpv-post-title id="[types field='lgp-eat'][/types]"]</h3>
-          [wpv-post-body view_template="None" suppress_filters="true" id="[types field='lgp-eat'][/types]"]
-        </div>
-        <div class="flex_column av_one_half flex_column_div">
-          <!-- Check condizionale tipo di galleria - standard -->
-          [wpv-conditional debug="false" if="( $(wpcf-lgp-eat-gallery) = '1' )"]
-            gallery standard
-          [/wpv-conditional]
+        [/wpv-conditional] -->
 
-          <!-- Check condizionale tipo di galleria - personalizzata -->
-          [wpv-conditional debug="false" if="( $(wpcf-lgp-eat-gallery) = '2' )"]
-            <div class="avia-gallery avia-gallery-1 deactivate_avia_lazyload avia_animate_when_visible avia_start_animation">
-              <div class="avia-gallery-thumb gallery-columns-2 popup-gallery">
-                <a href="[types field="lg-images" index="0" url="true" id="[types field="lgp-eat"][/types]"][/types]" data-rel="gallery-1" class="" itemprop="contentURL"><img src="[types field="lg-images" index="0" url="true" size="portfolio" id="[types field="lgp-eat"][/types]"][/types]" width="814" height="462" class="avia_start_animation">
-                </a>
-                <a href="[types field="lg-images" index="1" url="true" id="[types field="lgp-eat"][/types]"][/types]" data-rel="gallery-1" class="" itemprop="contentURL"><img src="[types field="lg-images" index="1" url="true" size="portfolio" id="[types field="lgp-eat"][/types]"][/types]" width="814" height="462" class="avia_start_animation">
-                </a>
-                <a href="[types field="lg-images" index="2" url="true" id="[types field="lgp-eat"][/types]"][/types]" data-rel="gallery-1" class="" itemprop="contentURL"><img src="[types field="lg-images" index="2" url="true" size="portfolio" id="[types field="lgp-eat"][/types]"][/types]" width="814" height="462" class="avia_start_animation">
-                </a>
-                <a href="[types field="lg-images" index="3" url="true" id="[types field="lgp-eat"][/types]"][/types]" data-rel="gallery-1" class="" itemprop="contentURL"><img src="[types field="lg-images" index="3" url="true" size="portfolio" id="[types field="lgp-eat"][/types]"][/types]" width="814" height="462" class="avia_start_animation">
-                </a>
+        <div class="flex_column_table av-equal-height-column-flextable">
+          <div class="flex_column av_one_half flex_column av_one_half  flex_column_table_cell av-equal-height-column av-align-middle flex_column_div first">
+            <h3>[wpv-post-title id="[types field='lgp-eat'][/types]"]</h3>
+            [wpv-post-body view_template="None" suppress_filters="true" id="[types field='lgp-eat'][/types]"]
+          </div>
+          <div class="av-flex-placeholder"></div>
+          <div class="flex_column av_one_half flex_column av_one_half  flex_column_table_cell av-equal-height-column av-align-middle flex_column_div">
+            <!-- Check condizionale tipo di galleria - standard -->
+            [wpv-conditional debug="false" if="( $(wpcf-lgp-eat-gallery) = '1' )"]
+              gallery standard
+            [/wpv-conditional]
+
+            <!-- Check condizionale tipo di galleria - personalizzata -->
+            [wpv-conditional debug="false" if="( $(wpcf-lgp-eat-gallery) = '2' )"]
+              <div class="avia-gallery avia-gallery-1 deactivate_avia_lazyload avia_animate_when_visible avia_start_animation">
+                <div class="avia-gallery-thumb gallery-columns-2 popup-gallery">
+                  <a href="[types field="lg-images" index="0" url="true" id="[types field="lgp-eat"][/types]"][/types]" data-rel="gallery-1" class="" itemprop="contentURL">
+                    [types field="lg-images" index="0" resize="crop" height="350" width="500" id="[types field="lgp-eat"][/types]"][/types]
+                    <!--<img src="[types field="lg-images" index="0" url="true" size="portfolio" id="[types field="lgp-eat"][/types]"][/types]" width="814" height="462" class="avia_start_animation"> -->
+                  </a>
+                  <a href="[types field="lg-images" index="1" url="true" id="[types field="lgp-eat"][/types]"][/types]" data-rel="gallery-1" class="" itemprop="contentURL">
+                    [types field="lg-images" index="1" resize="crop" height="350" width="500" id="[types field="lgp-eat"][/types]"][/types]
+                    <!-- <img src="[types field="lg-images" index="1" url="true" size="portfolio" id="[types field="lgp-eat"][/types]"][/types]" width="814" height="462" class="avia_start_animation"> -->
+                  </a>
+                  <a href="[types field="lg-images" index="2" url="true" id="[types field="lgp-eat"][/types]"][/types]" data-rel="gallery-1" class="" itemprop="contentURL">
+                    [types field="lg-images" index="2" resize="crop" height="350" width="500" id="[types field="lgp-eat"][/types]"][/types]
+                    <!-- <img src="[types field="lg-images" index="2" url="true" size="portfolio" id="[types field="lgp-eat"][/types]"][/types]" width="814" height="462" class="avia_start_animation"> -->
+                  </a>
+                  <a href="[types field="lg-images" index="3" url="true" id="[types field="lgp-eat"][/types]"][/types]" data-rel="gallery-1" class="" itemprop="contentURL">
+                    [types field="lg-images" index="3" resize="crop" height="350" width="500" id="[types field="lgp-eat"][/types]"][/types]
+                    <!-- <img src="[types field="lg-images" index="3" url="true" size="portfolio" id="[types field="lgp-eat"][/types]"][/types]" width="814" height="462" class="avia_start_animation"> -->
+                  </a>
+                </div>
               </div>
-            </div>
-          [/wpv-conditional]
-        </div>
+            [/wpv-conditional]
+          </div>
       </div>
     </div>
   </div>
@@ -260,8 +263,7 @@
               <!-- <div class="iconlist-timeline">
               </div> -->
             </li>
-            <!--  [wpv-post-taxonomy type='lgactivity-type' format='name' id='[types field="lgp-activities"][/types]']<br/>
-
+            <!-- 
               [wpv-conditional debug="false" if="( '[wpv-post-taxonomy type='lgactivity-type' format='slug' id='[types field="lgp-activities"][/types]']' eq 'cultura' )"]
                 <p>cultura</p>
               [/wpv-conditional]
