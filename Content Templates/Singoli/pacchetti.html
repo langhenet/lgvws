@@ -1,4 +1,4 @@
-  <div id="lg-pacakge-intro" class="avia-section header_color avia-section-large avia-no-shadow avia-bg-style-scroll el_before_av_section  container_wrap fullsize lg-full-header" style="background-image:url('[wpv-post-featured-image size="full" raw="true"]'); background-attachment: scroll; background-position: top left; background-repeat: no-repeat; background-size: cover;" itemscope="itemscope" itemtype="http://schema.org/Product">
+  <div id="lg-pacakge-intro" class="avia-section header_color avia-section-large avia-no-shadow avia-bg-style-scroll avia-builder-el-0  el_before_av_submenu avia-builder-el-first submenu-not-first container_wrap fullsize lg-full-header" style="background-image:url('[wpv-post-featured-image size="full" raw="true"]'); background-attachment: scroll; background-position: top left; background-repeat: no-repeat; background-size: cover;" itemscope="itemscope" itemtype="http://schema.org/Product">
   <div class="av-section-color-overlay-wrap">
 		<div class="b-overlay">
 			<a href="#next-section" title="" class="scroll-down-link lg-darrow" aria-hidden="true" data-av_iconfont="entypo-fontello"></a>
@@ -28,8 +28,48 @@
     </div>
   </div>
 </div>
+<div id="sub-nav" class="lg-submenu av-submenu-container main_color avia-builder-el-1  el_after_av_section el_before_av_section submenu-not-first container_wrap fullsize">
+  <div class="container av-menu-mobile-disabled ">
+    <ul id="av-custom-submenu-1" class="av-subnav-menu av-submenu-pos-center">
+      <li class="menu-item menu-item-top-level  menu-item-top-level-1">
+        <a href="#description">
+          <span class="avia-bullet"></span>
+          <span class="avia-menu-text">[wpml-string context="VacationPackages"]Description[/wpml-string]</span>
+        </a>
+      </li>
+      [wpv-conditional if="( NOT(empty($(wpcf-lgp-stay))) )"]
+        <li class="menu-item menu-item-top-level  menu-item-top-level-2">
+          <a href="#sleep">
+            <span class="avia-bullet"></span>
+            <span class="avia-menu-text">[wpml-string context="VacationPackages" ]Overnight Stay[/wpml-string]</span>
+          </a>
+        </li>
+      [/wpv-conditional]
+      [wpv-conditional if="( NOT(empty($(wpcf-lgp-eat))) )"]
+        <li class="menu-item menu-item-top-level  menu-item-top-level-2">
+          <a href="#eat">
+            <span class="avia-bullet"></span>
+            <span class="avia-menu-text">[wpml-string context="VacationPackages" ]Food Experiences[/wpml-string]</span>
+          </a>
+        </li>
+      [/wpv-conditional]
+      <li class="menu-item menu-item-top-level  menu-item-top-level-2">
+        <a href="#activities">
+          <span class="avia-bullet"></span>
+          <span class="avia-menu-text">[wpml-string context="VacationPackages" ]Activities[/wpml-string]</span>
+        </a>
+      </li>
+      <li class="menu-item menu-item-top-level lg-button menu-item-top-level-2">
+        <a href="#book">
+          <span class="avia-bullet"></span>
+          <span class="avia-menu-text">[wpml-string context="VacationPackages" ]Buy Now[/wpml-string]</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+</div>
 <!-- BODY PRINCIPALE -->
-<div id="description" class="avia-section main_color avia-section-huge avia-no-shadow avia-bg-style-scroll el_before_av_section  container_wrap fullsize">
+<div id="description" class="avia-section main_color avia-section-huge avia-no-shadow avia-bg-style-scroll avia-builder-el-2 lg-after-sub-menu container_wrap fullsize">
 	<div class="av-section-color-overlay-wrap">
 		<div class="container">
 			<div class="template-page content av-content-full alpha units">
@@ -47,7 +87,7 @@
                       [/wpv-conditional]</span></a>
                 </div>
                 <p class="lg-validity">
-                  <small><strong>Valitidty:</strong>
+                  <small><strong>Validity:</strong>
                   [wpv-conditional debug="false" if="( NOT(empty($(wpcf-lgp-stdate))) )"]
                     [wpml-string context="VacationPackages"]from[/wpml-string] [types field='lgp-stdate' style='text' format='j F Y'][/types]
                   [/wpv-conditional]
@@ -64,13 +104,15 @@
                         [wpml-string context="VacationPackages"]valid for two years after purchase[/wpml-string]
                   [/wpv-conditional]</small>
                 </p>
-                <p class="lg-restrictions">
-                  <small>[wpv-conditional debug="false" if="( NOT(empty($(wpcf-lgp-restrictions))) )"]
-                    <strong>[wpml-string context="VacationPackages"]Restrictions[/wpml-string]:</strong>
-                    [types field="lgp-restrictions"][/types]
-                    [/wpv-conditional]
-                  </small>
-                </p>
+                [wpv-conditional debug="false" if="( NOT(empty($(wpcf-lgp-restrictions))) )"]
+                  <p class="lg-restrictions">
+                    <small>
+                      <strong>[wpml-string context="VacationPackages"]Restrictions[/wpml-string]:</strong>
+                      [types field="lgp-restrictions"][/types]
+
+                    </small>
+                  </p>
+                [/wpv-conditional]
               </div>
               <div class="av-flex-placeholder"></div>
               <div class="flex_column av_one_half flex_column av_one_half  flex_column_table_cell av-equal-height-column av-align-middle flex_column_div">
@@ -105,7 +147,7 @@
                       <li>[wpv-post-title output="sanitize" id="[types field='lgp-activities' index='2' ][/types]"]</li>
                     </ul>
                     [wpv-conditional if="( '[types field='lgp-activities' index='3' ][/types]' > '0' )"]
-                      <p style="text-align:center"><a href="#activities">[wpml-string context="VatationsPackages"]View all the activities included[/wpml-string] &raquo;</a></p>
+                      <p style="text-align:center"><a href="#activities">[wpml-string context="VatationsPackages"]View all the included activities[/wpml-string] &raquo;</a></p>
                     [/wpv-conditional]
                   </div>
                 </div>
@@ -231,6 +273,7 @@
               </div>
             [/wpv-conditional]
           </div>
+        </div>
       </div>
     </div>
   </div>
@@ -243,8 +286,8 @@
       <div class="entry-content-wrapper clearfix">
         <h2 class="title">[wpml-string context="VacationPackages"]Activities[/wpml-string]</h2>
 
-        <div class="avia-icon-list-container  avia-builder-el-1  avia-builder-el-no-sibling ">
-          <ul class="avia-icon-list lg-thirds avia-icon-list-left av-iconlist-big avia_animate_when_almost_visible avia_start_animation">
+        <div class="avia-icon-list-container avia-builder-el-1  avia-builder-el-no-sibling ">
+          <ul class="avia-icon-list lg-thirds lg-activities-grid avia-icon-list-left av-iconlist-big avia_animate_when_almost_visible avia_start_animation">
             [wpv-for-each field="wpcf-lgp-activities"]
             <li class="avia_start_animation av_one_third">
               <div class="iconlist_icon avia-font-entypo-fontello">
@@ -298,16 +341,18 @@
   <div class="container">
     <div class="template-page content av-content-full alpha units">
       <div class="entry-content-wrapper clearfix">
-        <div class="flex_column av_one_half flex_column_div first">
-          [gravityform id="2" title="false" description="false" ajax="true" field_values="prezzo=[types field="lgp-price" format="FIELD_VALUE"][/types]&nome=[wpv-post-title output='sanitize']"]
+        <h2 class="title">[wpml-string context="VacationPackages"]Buy the Package[/wpml-string]</h2>
+        <div class="flex_column av_three_fifth flex_column_div first">
+          [wpml-string context="VacationPackages"][gravityform id="2" title="false" description="false" ajax="true" field_values="prezzo=[types field="lgp-price" format="FIELD_VALUE"][/types]&nome=[wpv-post-title output='sanitize']"][/wpml-string]
         </div>
-        <div class="flex_column av_one_half flex_column_div">
+        <div class="flex_column av_two_fifth flex_column_div">
           <div class="lg-box with-header with-sub-header">
             <div class="wine_color lg-box-header lg-arrow-down">
               <h3>[wpv-post-title]</h3>
             </div>
             <div class="wine_color washed lg-box-sub-header lg-arrow-down">
               <h3>
+                [wpml-string context="VacationPackages"]Only[/wpml-string]
                 [wpv-conditional debug="false" if="( NOT(empty($(wpcf-lgp-sale-price))) )"]
                   <del>[types field='lgp-sale-price' format='FIELD_VALUE'][/types]€</del>
                 [/wpv-conditional]
@@ -333,16 +378,27 @@
                 [/wpv-for-each]
               </ul>
               <p><strong>Valitidty:</strong>
-              [wpv-conditional debug="false" if="( NOT(empty($(wpcf-lgp-stdate))) )"]
-                [wpml-string context="VacationPackages"]from[/wpml-string] [types field='lgp-stdate' style='text' format='j F Y'][/types]
-              [/wpv-conditional]
-                  <!-- check condizionale per data fine -->
-              [wpv-conditional debug="false" if="( NOT(empty($(wpcf-lgp-endate))) )"]
-                [wpml-string context="VacationPackages"]until[/wpml-string]  [types field='lgp-endate' style='text' format='j F Y'][/types]
-              [/wpv-conditional]
-                  <!-- check condizionale per data fine e inizio - se vuote output dei due anni-->
-              [wpv-conditional debug="false" if="( empty($(wpcf-lgp-stdate))) AND empty($(wpcf-lgp-endate))) )"]
-                    [wpml-string context="VacationPackages"]valid for two years after purchase[/wpml-string]</p>
+                [wpv-conditional debug="false" if="( NOT(empty($(wpcf-lgp-stdate))) )"]
+                  [wpml-string context="VacationPackages"]from[/wpml-string] [types field='lgp-stdate' style='text' format='j F Y'][/types]
+                [/wpv-conditional]
+                    <!-- check condizionale per data fine -->
+                [wpv-conditional debug="false" if="( NOT(empty($(wpcf-lgp-endate))) )"]
+                  [wpml-string context="VacationPackages"]until[/wpml-string]  [types field='lgp-endate' style='text' format='j F Y'][/types]
+                [/wpv-conditional]
+                <!-- check condizionale per solo data inizio completa -->
+                [wpv-conditional debug="false" if="( NOT(empty($(wpcf-lgp-stdate))) AND empty($(wpcf-lgp-endate)) )"]
+                  [wpml-string context="VacationPackages"]and for two years after purchase[/wpml-string]
+                [/wpv-conditional]
+                    <!-- check condizionale per data fine e inizio - se vuote output dei due anni-->
+                [wpv-conditional debug="false" if="( empty($(wpcf-lgp-stdate)) AND empty($(wpcf-lgp-endate)) )"]
+                      [wpml-string context="VacationPackages"]valid for two years after purchase[/wpml-string]
+                [/wpv-conditional]
+              </p>
+              [wpv-conditional debug="false" if="( NOT(empty($(wpcf-lgp-restrictions))) )"]
+                <p>
+                  <strong>[wpml-string context="VacationPackages"]Restrictions[/wpml-string]:</strong>
+                  [types field="lgp-restrictions"][/types]
+                </p>
               [/wpv-conditional]
             </div>
           </div>
