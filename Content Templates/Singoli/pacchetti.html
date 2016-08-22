@@ -118,7 +118,7 @@
               <div class="flex_column av_one_half flex_column av_one_half  flex_column_table_cell av-equal-height-column av-align-middle flex_column_div">
                 [wpv-conditional if="( NOT(empty($(wpcf-lgp-stay))) )"]
                   <div class="lg-box with-header lg-no-content">
-                    <div class="sleep_color washed lg-box-header">
+                    <div class="sleep_color lg--bg washed lg-box-header">
                       <h3>
                         <a href="#sleep">[types field="lgp-stay-nights"][/types] [wpml-string context="VacationPackages"]Nights at[/wpml-string] [wpv-post-title id="[types field='lgp-stay'][/types]"] &raquo;</a>
                       </h3>
@@ -127,7 +127,7 @@
                 [/wpv-conditional]
                 [wpv-conditional if="( NOT(empty($(wpcf-lgp-eat))) )"]
                   <div class="lg-box with-header lg-no-content">
-                    <div class="eat_color washed lg-box-header">
+                    <div class="eat_color lg--bg washed lg-box-header">
                       <h3>
                         <a href="#eat">[wpv-post-title id="[types field='lgp-eat'][/types]"] &raquo;</a>
                       </h3>
@@ -135,7 +135,7 @@
                   </div>
                 [/wpv-conditional]
                 <div class="lg-box with-header" style="background:#f3f3f3;">
-                  <div class="wine_color washed lg-box-header lg-arrow-down">
+                  <div class="wine_color lg--bg washed lg-box-header lg-arrow-down">
                     <h3>Activities</h3>
                   </div>
                   <div class="lg-box-content">
@@ -160,13 +160,13 @@
   </div>
 </div>
 <!-- PERNOTTAMENTO -->
-<div id="sleep" class="avia-section sleep_color avia-section-small avia-no-shadow avia-bg-style-scroll el_before_av_section  container_wrap fullsize">
+<div id="sleep" class="avia-section sleep_color lg--bg avia-section-no-padding avia-no-shadow avia-bg-style-scroll el_before_av_section  container_wrap fullsize">
   <div class="container">
     <div class="template-page content av-content-full alpha units">
       <div class="entry-content-wrapper clearfix">
   <!-- Titolo pernottamento -->
-        <h2 style="text-align: left;margin-bottom:0;" class="title">[wpml-string context="VacationPackages"]Overnight Stay[/wpml-string]</h2>
-        <h3 style="text-transform:uppercase;margin-top:0;font-weight:600;">[types field="lgp-stay-nights"][/types] [wpml-string context="VacationPackages"]Nights at[/wpml-string] [wpv-post-title id="[types field='lgp-stay'][/types]"]</h3>
+        <h2 class="lg-package__section-title">[wpml-string context="VacationPackages"]Overnight Stay[/wpml-string]</h2>
+        <h3 class="lg-package__section-subtitle">[types field="lgp-stay-nights"][/types] [wpml-string context="VacationPackages"]Nights at[/wpml-string] [wpv-post-title id="[types field='lgp-stay'][/types]"]</h3>
       </div>
     </div>
   </div>
@@ -230,12 +230,13 @@
   </div>
 </div>
 <!-- FOOD -->
-<div id="eat" class="avia-section eat_color avia-section-small avia-no-shadow avia-bg-style-scroll el_before_av_section container_wrap fullsize">
+<div id="eat" class="avia-section eat_color lg--bg avia-section-no-padding avia-no-shadow avia-bg-style-scroll el_before_av_section container_wrap fullsize">
   <div class="container">
     <div class="template-page content av-content-full alpha units">
       <div class="entry-content-wrapper clearfix">
         <!-- Titolo pernottamento -->
-        <h2 style="text-align:left;" class="title">[wpml-string context="VacationPackages"]Food Experiences[/wpml-string]</h2>
+        <h2 style="text-align:left;" class="lg-package__section-title">[wpml-string context="VacationPackages"]Food Experiences[/wpml-string]</h2>
+        <h3 class="lg-package__section-subtitle">[wpv-post-title id="[types field='lgp-eat'][/types]"]</h3>
 
         <!-- Check condizionale immagine cibo / negativo
         [wpv-conditional debug="false" if="( $(wpcf-lgp-eat-img) = '' )"]
@@ -256,7 +257,6 @@
 				<div class="entry-content-wrapper clearfix">
           <div class="flex_column_table av-equal-height-column-flextable">
             <div class="flex_column av_one_half flex_column av_one_half  flex_column_table_cell av-equal-height-column av-align-middle flex_column_div first">
-              <h3>[wpv-post-title id="[types field='lgp-eat'][/types]"]</h3>
               [wpv-post-body view_template="None" suppress_filters="true" id="[types field='lgp-eat'][/types]"]
             </div>
             <div class="av-flex-placeholder"></div>
@@ -298,11 +298,11 @@
 </div>
 
 <!-- ATTIVITA' -->
-<div id="activities" class="avia-section wine_color avia-section-small avia-no-shadow avia-bg-style-scroll el_before_av_section  container_wrap fullsize">
+<div id="activities" class="avia-section lg--bg wine_color avia-section-no-padding avia-no-shadow avia-bg-style-scroll el_before_av_section  container_wrap fullsize">
   <div class="container">
     <div class="template-page content av-content-full alpha units">
       <div class="entry-content-wrapper clearfix">
-        <h2 style="text-align:left;" class="title">[wpml-string context="VacationPackages"]Activities[/wpml-string]</h2>
+        <h2 class="lg-package__section-title">[wpml-string context="VacationPackages"]Activities[/wpml-string]</h2>
       </div>
     </div>
   </div>
