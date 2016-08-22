@@ -64,6 +64,8 @@ body .column-top-margin {
   padding: 2.25em;
 }
 
+
+
 /*cisti allineamnto in centro immagini
 body .aligncenter, .entry-content-wrapper {
 margin:0 auto;
@@ -828,19 +830,19 @@ color:#111;
  TRAVEL color
  ***************************/
 .travel_color {
-  background-color: #9bc685;
+  background-color: #4CAF50;
 }
 
 .travel_color.lg-arrow-down::after {
-  border-top-color: #9bc685;
+  border-top-color: #4CAF50;
 }
 
 .travel_color.washed {
-  background-color: #b2d3a0;
+  background-color: #81C784;
 }
 
 .travel_color.washed.lg-arrow-down::after {
-  border-top-color: #b2d3a0;
+  border-top-color: #81C784;
 }
 
 .travel_color p,
@@ -859,7 +861,7 @@ color:#111;
 }
 
 .travel_color span.iconlist-char {
-  color: #8BC34A;
+  color: #4CAF50;
 }
 
   /*=============================================*/
@@ -3683,12 +3685,22 @@ margin-top:0px;
 }*/
 
 .lg-box-header,
-.lg-box-sub-header,
-.lg-box-content {
+.lg-box-sub-header {
   overflow: hidden;
-  padding-left: 28px;
-  padding-right: 28px;
+  padding-left: 1.4em;
+  padding-right: 1.4em;
   position: static;
+  width: 100%;
+}
+
+.lg-box-sub-header {
+  padding-top: 0.75em;
+  padding-bottom: 0.75em;
+}
+
+.lg-box-content {
+  padding-left: 1.4em;
+  padding-right: 1.4em;
   width: 100%;
 }
 
@@ -3698,7 +3710,17 @@ margin-top:0px;
   font-weight: 600;
 }
 
+.lg-box-header h4 {
+  text-transform: uppercase;
+  text-align: center;
+  font-weight: 600;
+}
+
 .lg-box-sub-header h3 {
+  text-align: center;
+}
+
+.lg-box-sub-header h4 {
   text-align: center;
 }
 
@@ -3790,6 +3812,49 @@ opacity:1;
     width: 48.5%;
 }
 
+.gform_wrapper .top_label li.gfield.gf_left_third.lg-gf-2-3 {
+  width: 63.8%;
+}
+
+.gform_wrapper .top_label li.gfield.gf_middle_third.lg-gf-2-3 {
+  width: 63.8%;
+}
+
+#top .gform_wrapper .top_label li.gfield.gf_left_third.lg-gf-2-3 input[type="text"] {
+  width: 63.8%;
+}
+
+#top .gform_wrapper ul li.gfield.lg-hidden {
+  margin-bottom: 0;
+}
+
+#top .gform_wrapper .top_label .gfield.lg-hidden label.gfield_label,
+body .lg-hidden div.ginput_container {
+  display: none!important;
+}
+
+li.gfield.lg-inline-total {
+  margin-top: 1.9em;
+}
+
+li.gfield.lg-inline-total .ginput_total::before {
+  color: #333;
+}
+html:lang(it) li.gfield.lg-inline-total .ginput_total::before {
+    content: "Totale: ";
+}
+
+html:lang(en) li.gfield.lg-inline-total .ginput_total::before {
+    content: "Total: ";
+}
+
+.gform_wrapper .top_label li.gfield.gf_right_third.lg-gf-2-3 {
+  width: 63.8%;
+}
+
+.lg-no-label label {
+  display: none !Important;
+}
 
 
 /****IMPOSTAZIONI GRAVITY IN SEZIONI FW***/
@@ -4222,7 +4287,7 @@ line-height: 1.5em;
 }
 
 #top .main_color .av-subnav-menu > li.lg-button > a span {
- background-color: #9bc685;
+ background-color: /*#9bc685*/ #4CAF50;
  padding: 0.75em 1em;
  color: #fff;
 }

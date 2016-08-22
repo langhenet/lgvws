@@ -370,15 +370,15 @@
       <div class="entry-content-wrapper clearfix">
         <h2 class="title">[wpml-string context="VacationPackages"]Buy the Package[/wpml-string]</h2>
         <div class="flex_column av_three_fifth flex_column_div first">
-          [wpml-string context="VacationPackages"][gravityform id="2" title="false" description="false" ajax="true" field_values="prezzo=[types field="lgp-price" format="FIELD_VALUE"][/types]&nome=[wpv-post-title output='sanitize']"][/wpml-string]
+          [wpml-string context="VacationPackages"][gravityform id="2" title="false" description="false" ajax="true" field_values="prezzo=[types field="lgp-price" format="FIELD_VALUE"][/types]"][/wpml-string]
         </div>
         <div class="flex_column av_two_fifth flex_column_div">
           <div class="lg-box with-header with-sub-header">
             <div class="wine_color lg-box-header lg-arrow-down">
-              <h3>[wpv-post-title]</h3>
+              <h4>[wpv-post-title]</h4>
             </div>
             <div class="wine_color washed lg-box-sub-header lg-arrow-down">
-              <h3>
+              <h4>
                 [wpml-string context="VacationPackages"]Only[/wpml-string]
                 [wpv-conditional debug="false" if="( NOT(empty($(wpcf-lgp-sale-price))) )"]
                   <del>[types field='lgp-sale-price' format='FIELD_VALUE'][/types]€</del>
@@ -392,10 +392,9 @@
                 [wpv-conditional debug="false" if="( $(wpcf-lgp-people) = 1 )"]
                   [wpml-string context="VacationPackages"]person[/wpml-string]
                 [/wpv-conditional]
-                </h3>
+              </h4>
             </div>
             <div class="lg-box-content">
-              <h3>[wpml-string context="VacationPackages"]The Package Includes[/wpml-string]</h3>
               <ul>
                 <li>[types field="lgp-stay-nights"][/types] [wpml-string context="VacationPackages"]Nights at[/wpml-string] [wpv-post-title id="[types field='lgp-stay'][/types]"]</li>
                 <li>[wpv-post-title id="[types field='lgp-eat'][/types]"]</li>
@@ -426,6 +425,7 @@
                   <strong>[wpml-string context="VacationPackages"]Restrictions[/wpml-string]:</strong>
                   [types field="lgp-restrictions"][/types]
                 </p>
+                <p>[wpml-string context="VacationPackages"]NOTE: the package does not include transfer, extras and everything that's not explicitly stated[/wpml-string]
               [/wpv-conditional]
             </div>
           </div>
