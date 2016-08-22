@@ -1014,11 +1014,11 @@ body div span.avia_button_background {
 
 #top .avia-button.avia-color-theme-color, div .main_color .button, div .socket_color .button, div .header_color .button, div .alternate_color .button,  #top .cart_dropdown .dropdown_widget .buttons .button.checkout, #top .avia_cart_buttons a.button.add_to_cart_button, .main_color input[type='submit'] {
   color: #fff;
-  background: #008000;
-  border-top-color:#008000;
+  background: #4CAF50;
+  border-top-color:#4CAF50;
   border-bottom-color:#096B09;
-  border-left-color: #008000;
-  border-right-color: #008000;
+  border-left-color: #4CAF50;
+  border-right-color: #4CAF50;
 }
 
 /**
@@ -1026,11 +1026,11 @@ body div span.avia_button_background {
   */
 #top .avia-button.avia-color-theme-color:hover, div .main_color .button:hover, div .socket_color .button:hover, div .header_color .button:hover, div .alternate_color .button:hover,  #top .cart_dropdown .dropdown_widget .buttons .button.checkout:hover, #top .avia_cart_buttons /*a.button.add_to_cart_button:hover*/ {
   color: #fff;
-  background: #008000;
-  border-top-color:#008000;
+  background: #4CAF50;
+  border-top-color:#4CAF50;
   border-bottom-color:#096B09;
-  border-left-color: #008000;
-  border-right-color: #008000;
+  border-left-color: #4CAF50;
+  border-right-color: #4CAF50;
   opacity:0.9;
 }
 
@@ -1876,7 +1876,7 @@ font-size: 0.8em;
 }
 
 #top .main_color .price, .main_color .stock, #top #wrap_all .main_color ins {
-  color: #008000;
+  color: #4CAF50;
 }
 
 #top.single-product .summary .price span.amount {
@@ -2529,7 +2529,7 @@ display:none;
 }
 
 #top div .products .product .inner_product_header ins span.amount {
-  color: /*#ce484f*/ #008000;
+  color: /*#ce484f*/ #4CAF50;
 }
 
 #top div .products .product .avia_cart_buttons {
@@ -4510,24 +4510,24 @@ form#affwp-generate-ref-url {
 
 /* Bottoni vari*/
 .action-color-text {
-  color: #008000;
-  border-color: #008000;
+  color: #4CAF50;
+  border-color: #4CAF50;
 }
 
 .btn-primary /*,
 .slider-handle*/ {
-  background-color: #008000;
+  background-color: #4CAF50;
 }
 
 /*NAV CHECKOUT */
 .checkout_navigation disabled.btn.btn-primary {
-  background-color: #008000;
-  border-color: #008000;
+  background-color: #4CAF50;
+  border-color: #4CAF50;
 }
 
 /* freccettina nav checkout */
 .btn-breadcrumb .btn.btn-primary:not(:last-child):after {
-  border-left: 10px solid #008000!important;
+  border-left: 10px solid #4CAF50!important;
 }
 
 /* Elementi checkout */
