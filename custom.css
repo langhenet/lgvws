@@ -795,6 +795,10 @@ color:#111;
   background-color: #ba5b90;
 }
 
+.wine_color.lg--bg {
+  background-image: url(../images/activities.png);
+}
+
 .wine_color.lg-arrow-down::after {
   border-top-color: #ba5b90;
 }
