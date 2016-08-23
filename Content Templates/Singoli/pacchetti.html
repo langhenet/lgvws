@@ -261,70 +261,71 @@
   </div>
 </div>
 <!-- FOOD -->
-<div id="eat" class="avia-section eat_color lg--bg avia-section-no-padding avia-no-shadow avia-bg-style-scroll el_before_av_section container_wrap fullsize">
-  <div class="container">
-    <div class="template-page content av-content-full alpha units">
-      <div class="entry-content-wrapper clearfix">
-        <!-- Titolo pernottamento -->
-        <h2 style="text-align:left;" class="lg-package__section-title">[wpml-string context="VacationPackages"]Food Experiences[/wpml-string]</h2>
-        <h3 class="lg-package__section-subtitle">[wpv-post-title id="[types field='lgp-eat'][/types]"]</h3>
+[wpv-conditional if="( NOT(empty($(wpcf-lgp-eat))) )"]
+  <div id="eat" class="avia-section eat_color lg--bg avia-section-no-padding avia-no-shadow avia-bg-style-scroll el_before_av_section container_wrap fullsize">
+    <div class="container">
+      <div class="template-page content av-content-full alpha units">
+        <div class="entry-content-wrapper clearfix">
+          <!-- Titolo pernottamento -->
+          <h2 style="text-align:left;" class="lg-package__section-title">[wpml-string context="VacationPackages"]Food Experiences[/wpml-string]</h2>
+          <h3 class="lg-package__section-subtitle">[wpv-post-title id="[types field='lgp-eat'][/types]"]</h3>
+        </div>
       </div>
     </div>
   </div>
-</div>
-<div class="avia-section main_color avia-section-huge avia-no-shadow avia-bg-style-scroll container_wrap fullsize">
-	<div class="container">
-		<div class="template-page content av-content-full alpha units">
-			<div class="post-entry post-entry-">
-				<div class="entry-content-wrapper clearfix">
-          <div class="flex_column_table av-equal-height-column-flextable">
-            <div class="flex_column av_one_half flex_column av_one_half  flex_column_table_cell av-equal-height-column av-align-middle flex_column_div first">
-              [wpv-post-body view_template="None" suppress_filters="true" id="[types field='lgp-eat'][/types]"]
-            </div>
-            <div class="av-flex-placeholder"></div>
-            <div class="flex_column av_one_half flex_column av_one_half  flex_column_table_cell av-equal-height-column av-align-middle flex_column_div">
-              <!-- Check condizionale tipo di galleria - standard -->
-              [wpv-conditional debug="false" if="( $(wpcf-lgp-eat-gallery) = '1' )"]
-                <div class="avia-gallery avia-gallery-1 deactivate_avia_lazyload avia_animate_when_visible avia_start_animation">
-                  <div class="avia-gallery-thumb gallery-columns-2 popup-gallery">
-                    <a href="http://langhe.net/wp-content/uploads/2016/08/pacchetto-mangiare1.jpg" data-rel="gallery-1" class="" itemprop="contentURL"><img src="http://langhe.net/wp-content/uploads/2016/08/pacchetto-mangiare1-814x462.jpg" width="814" height="462" class="avia_start_animation">
-                    </a>
-                    <a href="http://langhe.net/wp-content/uploads/2016/08/pacchetto-mangiare4.jpg" data-rel="gallery-4" class="" itemprop="contentURL"><img src="http://langhe.net/wp-content/uploads/2016/08/pacchetto-mangiare4-814x462.jpg" width="814" height="462" class="avia_start_animation">
-                    </a>
-                    <a href="http://langhe.net/wp-content/uploads/2016/08/pacchetto-mangiare3.jpg" data-rel="gallery-3" class="" itemprop="contentURL"><img src="http://langhe.net/wp-content/uploads/2016/08/pacchetto-mangiare3-814x462.jpg" width="814" height="462" class="avia_start_animation">
-                    </a>
-                    <a href="http://langhe.net/wp-content/uploads/2016/08/pacchetto-mangiare2.jpg" data-rel="gallery-2" class="" itemprop="contentURL"><img src="http://langhe.net/wp-content/uploads/2016/08/pacchetto-mangiare2-814x462.jpg" width="814" height="462" class="avia_start_animation">
-                    </a>
+  <div class="avia-section main_color avia-section-huge avia-no-shadow avia-bg-style-scroll container_wrap fullsize">
+  	<div class="container">
+  		<div class="template-page content av-content-full alpha units">
+  			<div class="post-entry post-entry-">
+  				<div class="entry-content-wrapper clearfix">
+            <div class="flex_column_table av-equal-height-column-flextable">
+              <div class="flex_column av_one_half flex_column av_one_half  flex_column_table_cell av-equal-height-column av-align-middle flex_column_div first">
+                [wpv-post-body view_template="None" suppress_filters="true" id="[types field='lgp-eat'][/types]"]
+              </div>
+              <div class="av-flex-placeholder"></div>
+              <div class="flex_column av_one_half flex_column av_one_half  flex_column_table_cell av-equal-height-column av-align-middle flex_column_div">
+                <!-- Check condizionale tipo di galleria - standard -->
+                [wpv-conditional debug="false" if="( $(wpcf-lgp-eat-gallery) = '1' )"]
+                  <div class="avia-gallery avia-gallery-1 deactivate_avia_lazyload avia_animate_when_visible avia_start_animation">
+                    <div class="avia-gallery-thumb gallery-columns-2 popup-gallery">
+                      <a href="http://langhe.net/wp-content/uploads/2016/08/pacchetto-mangiare1.jpg" data-rel="gallery-1" class="" itemprop="contentURL"><img src="http://langhe.net/wp-content/uploads/2016/08/pacchetto-mangiare1-814x462.jpg" width="814" height="462" class="avia_start_animation">
+                      </a>
+                      <a href="http://langhe.net/wp-content/uploads/2016/08/pacchetto-mangiare4.jpg" data-rel="gallery-4" class="" itemprop="contentURL"><img src="http://langhe.net/wp-content/uploads/2016/08/pacchetto-mangiare4-814x462.jpg" width="814" height="462" class="avia_start_animation">
+                      </a>
+                      <a href="http://langhe.net/wp-content/uploads/2016/08/pacchetto-mangiare3.jpg" data-rel="gallery-3" class="" itemprop="contentURL"><img src="http://langhe.net/wp-content/uploads/2016/08/pacchetto-mangiare3-814x462.jpg" width="814" height="462" class="avia_start_animation">
+                      </a>
+                      <a href="http://langhe.net/wp-content/uploads/2016/08/pacchetto-mangiare2.jpg" data-rel="gallery-2" class="" itemprop="contentURL"><img src="http://langhe.net/wp-content/uploads/2016/08/pacchetto-mangiare2-814x462.jpg" width="814" height="462" class="avia_start_animation">
+                      </a>
+                    </div>
                   </div>
-                </div>
-              [/wpv-conditional]
-              <!-- Check condizionale tipo di galleria - personalizzata -->
-              [wpv-conditional debug="false" if="( $(wpcf-lgp-eat-gallery) = '2' )"]
-                <div class="avia-gallery avia-gallery-1 deactivate_avia_lazyload avia_animate_when_visible avia_start_animation">
-                  <div class="avia-gallery-thumb gallery-columns-2 popup-gallery">
-                    <a href="[types field="lg-images" index="0" url="true" id="[types field="lgp-eat"][/types]"][/types]" data-rel="gallery-1" class="" itemprop="contentURL">
-                      <img src="[types field="lg-images" index="0" url="true" size="portfolio" id="[types field="lgp-eat"][/types]"][/types]" width="814" height="462" class="avia_start_animation">
-                    </a>
-                    <a href="[types field="lg-images" index="1" url="true" id="[types field="lgp-eat"][/types]"][/types]" data-rel="gallery-1" class="" itemprop="contentURL">
-                      <img src="[types field="lg-images" index="1" url="true" size="portfolio" id="[types field="lgp-eat"][/types]"][/types]" width="814" height="462" class="avia_start_animation">
-                    </a>
-                    <a href="[types field="lg-images" index="2" url="true" id="[types field="lgp-eat"][/types]"][/types]" data-rel="gallery-1" class="" itemprop="contentURL">
-                      <img src="[types field="lg-images" index="2" url="true" size="portfolio" id="[types field="lgp-eat"][/types]"][/types]" width="814" height="462" class="avia_start_animation">
-                    </a>
-                    <a href="[types field="lg-images" index="3" url="true" id="[types field="lgp-eat"][/types]"][/types]" data-rel="gallery-1" class="" itemprop="contentURL">
-                      <img src="[types field="lg-images" index="3" url="true" size="portfolio" id="[types field="lgp-eat"][/types]"][/types]" width="814" height="462" class="avia_start_animation">
-                    </a>
+                [/wpv-conditional]
+                <!-- Check condizionale tipo di galleria - personalizzata -->
+                [wpv-conditional debug="false" if="( $(wpcf-lgp-eat-gallery) = '2' )"]
+                  <div class="avia-gallery avia-gallery-1 deactivate_avia_lazyload avia_animate_when_visible avia_start_animation">
+                    <div class="avia-gallery-thumb gallery-columns-2 popup-gallery">
+                      <a href="[types field="lg-images" index="0" url="true" id="[types field="lgp-eat"][/types]"][/types]" data-rel="gallery-1" class="" itemprop="contentURL">
+                        <img src="[types field="lg-images" index="0" url="true" size="portfolio" id="[types field="lgp-eat"][/types]"][/types]" width="814" height="462" class="avia_start_animation">
+                      </a>
+                      <a href="[types field="lg-images" index="1" url="true" id="[types field="lgp-eat"][/types]"][/types]" data-rel="gallery-1" class="" itemprop="contentURL">
+                        <img src="[types field="lg-images" index="1" url="true" size="portfolio" id="[types field="lgp-eat"][/types]"][/types]" width="814" height="462" class="avia_start_animation">
+                      </a>
+                      <a href="[types field="lg-images" index="2" url="true" id="[types field="lgp-eat"][/types]"][/types]" data-rel="gallery-1" class="" itemprop="contentURL">
+                        <img src="[types field="lg-images" index="2" url="true" size="portfolio" id="[types field="lgp-eat"][/types]"][/types]" width="814" height="462" class="avia_start_animation">
+                      </a>
+                      <a href="[types field="lg-images" index="3" url="true" id="[types field="lgp-eat"][/types]"][/types]" data-rel="gallery-1" class="" itemprop="contentURL">
+                        <img src="[types field="lg-images" index="3" url="true" size="portfolio" id="[types field="lgp-eat"][/types]"][/types]" width="814" height="462" class="avia_start_animation">
+                      </a>
+                    </div>
                   </div>
-                </div>
-              [/wpv-conditional]
+                [/wpv-conditional]
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
   </div>
-</div>
-
+[/wpv-conditional]
 <!-- ATTIVITA' -->
 <div id="activities" class="avia-section lg--bg wine_color avia-section-no-padding avia-no-shadow avia-bg-style-scroll el_before_av_section  container_wrap fullsize">
   <div class="container">
@@ -335,7 +336,7 @@
     </div>
   </div>
 </div>
-<div class="avia-section main_color avia-section-huge avia-no-shadow avia-bg-style-scroll container_wrap fullsize">
+<div class="avia-section main_color wine_accent avia-section-huge avia-no-shadow avia-bg-style-scroll container_wrap fullsize">
 	<div class="container">
 		<div class="template-page content av-content-full alpha units">
 			<div class="post-entry post-entry-">
@@ -343,47 +344,21 @@
           <div class="avia-icon-list-container avia-builder-el-1  avia-builder-el-no-sibling ">
             <ul class="avia-icon-list lg-thirds lg-activities-grid avia-icon-list-left av-iconlist-big avia_animate_when_almost_visible avia_start_animation">
               [wpv-for-each field="wpcf-lgp-activities"]
-              <li class="avia_start_animation av_one_third">
-                <div class="iconlist_icon avia-font-entypo-fontello">
-                  <span class="iconlist-char" aria-hidden="true" data-av_icon="" data-av_iconfont="entypo-fontello"></span>
-                </div>
-                <article class="article-icon-entry">
-                  <div class="iconlist_content_wrap">
-                    <header class="entry-content-header">
-                      <h4 class="iconlist_title" itemprop="headline">[wpv-post-title output='sanitize' id='[types field="lgp-activities"][/types]']</h4>
-                    </header>
-                    <div class="iconlist_content " itemprop="text">
-                      <p>[wpv-post-body view_template="None" suppress_filters="true" id='[types field="lgp-activities"][/types]']</p>
-                    </div>
+                <li class="avia_start_animation av_one_third">
+                  <div class="iconlist_icon avia-font-entypo-fontello">
+                    <span class="iconlist-char lg-icon--[wpv-post-taxonomy type='lgactivity-type' format='slug' id='[types field="lgp-activities"][/types]']" aria-hidden="true" data-av_iconfont="entypo-fontello"></span>
                   </div>
-                </article>
-                <!-- <div class="iconlist-timeline">
-                </div> -->
-              </li>
-              <!--
-                [wpv-conditional debug="false" if="( '[wpv-post-taxonomy type='lgactivity-type' format='slug' id='[types field="lgp-activities"][/types]']' eq 'cultura' )"]
-                  <p>cultura</p>
-                [/wpv-conditional]
-
-                [wpv-conditional debug="false" if="( '[wpv-post-taxonomy type='lgactivity-type' format='slug' id='[types field="lgp-activities"][/types]']' eq 'escursioni' )"]
-                  <p>escursioni</p>
-                [/wpv-conditional]
-
-                [wpv-conditional debug="false" if="( '[wpv-post-taxonomy type='lgactivity-type' format='slug' id='[types field="lgp-activities"][/types]']' eq 'shopping' )"]
-                  <p>shopping</p>
-                [/wpv-conditional]
-
-                [wpv-conditional debug="false" if="( '[wpv-post-taxonomy type='lgactivity-type' format='slug' id='[types field="lgp-activities"][/types]']' eq 'spa-welness' )"]
-                  <p>spa-welness</p>
-                [/wpv-conditional]
-
-                [wpv-conditional debug="false" if="( '[wpv-post-taxonomy type='lgactivity-type' format='slug' id='[types field="lgp-activities"][/types]']' eq 'azienda' )"]
-                  <p>azienda</p>
-                [/wpv-conditional]
-
-                [wpv-conditional debug="false" if="( '[wpv-post-taxonomy type='lgactivity-type' format='slug' id='[types field="lgp-activities"][/types]']' eq 'cantina' )"]
-                  <p>cantina</p>
-                [/wpv-conditional]-->
+                  <article class="article-icon-entry">
+                    <div class="iconlist_content_wrap">
+                      <header class="entry-content-header">
+                        <h4 class="iconlist_title" itemprop="headline">[wpv-post-title output='sanitize' id='[types field="lgp-activities"][/types]']</h4>
+                      </header>
+                      <div class="iconlist_content " itemprop="text">
+                        <p>[wpv-post-body view_template="None" suppress_filters="true" id='[types field="lgp-activities"][/types]']</p>
+                      </div>
+                    </div>
+                  </article>
+                </li>
               [/wpv-for-each]
             </ul>
           </div>
