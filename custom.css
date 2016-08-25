@@ -4297,10 +4297,14 @@ line-height: 1.5em;
 
 #top .lg-submenu.av-submenu-container.lg-sticky {
   position: fixed;
-  top: 4.5em;
+  top: 3em;
   z-index: 301;
 /*  transition: all 0.5s;*/
 }
+#top.logged-in .lg-submenu.av-submenu-container.lg-sticky {
+  top: 4.5em;
+}
+
 .lg-after-sub-menu.lg-sticky {
   padding-top: 4.5em;
 /*  transition: all 0.5s;*/

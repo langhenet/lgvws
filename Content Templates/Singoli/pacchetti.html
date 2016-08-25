@@ -167,7 +167,12 @@
         <div class="entry-content-wrapper clearfix">
     <!-- Titolo pernottamento -->
           <h2 class="lg-package__section-title">[wpml-string context="VacationPackages"]Overnight Stay[/wpml-string]</h2>
-          <h3 class="lg-package__section-subtitle">[types field="lgp-stay-nights"][/types] [wpml-string context="VacationPackages"]Nights at[/wpml-string] [wpv-post-title id="[types field='lgp-stay'][/types]"]</h3>
+          <h3 class="lg-package__section-subtitle">
+            [types field="lgp-stay-nights"][/types] [wpml-string context="VacationPackages"]Nights in[/wpml-string] [wpv-post-title id="[types field='lgp-stay'][/types]"]
+            [wpv-conditional if="$(wpcf-lgp-breakfast) eq '1'"]
+              - [wpml-string context="VacationPackages"]breakfasts included[/wpml-string]
+            [/wpv-conditional]
+          </h3>
         </div>
       </div>
     </div>
@@ -401,8 +406,12 @@
             </div>
             <div class="lg-box-content">
               <ul>
-                <li>[types field="lgp-stay-nights"][/types] [wpml-string context="VacationPackages"]Nights at[/wpml-string] [wpv-post-title id="[types field='lgp-stay'][/types]"]</li>
-                <li>[wpv-post-title id="[types field='lgp-eat'][/types]"]</li>
+                [wpv-conditional if="( NOT(empty($(wpcf-lgp-stay))) )"]
+                  <li>[types field="lgp-stay-nights"][/types] [wpml-string context="VacationPackages"]Nights at[/wpml-string] [wpv-post-title id="[types field='lgp-stay'][/types]"]     </li>
+                [/wpv-conditional]
+                [wpv-conditional if="( NOT(empty($(wpcf-lgp-eat))) )"]
+                  <li>[wpv-post-title id="[types field='lgp-eat'][/types]"]</li>
+                [/wpv-conditional]
                 <!-- Loop attività -->
                 [wpv-for-each field="wpcf-lgp-activities"]
                   <li>[wpv-post-title output='sanitize' id='[types field="lgp-activities"][/types]']</li>
@@ -412,16 +421,16 @@
                 [wpv-conditional debug="false" if="( NOT(empty($(wpcf-lgp-stdate))) )"]
                   [wpml-string context="VacationPackages"]from[/wpml-string] [types field='lgp-stdate' style='text' format='j F Y'][/types]
                 [/wpv-conditional]
-                    <!-- check condizionale per data fine -->
                 [wpv-conditional debug="false" if="( NOT(empty($(wpcf-lgp-endate))) )"]
+              <!-- check condizionale per data fine -->
                   [wpml-string context="VacationPackages"]until[/wpml-string]  [types field='lgp-endate' style='text' format='j F Y'][/types]
                 [/wpv-conditional]
-                <!-- check condizionale per solo data inizio completa -->
                 [wpv-conditional debug="false" if="( NOT(empty($(wpcf-lgp-stdate))) AND empty($(wpcf-lgp-endate)) )"]
+                <!-- check condizionale per solo data inizio completa -->
                   [wpml-string context="VacationPackages"]and for two years after purchase[/wpml-string]
                 [/wpv-conditional]
-                    <!-- check condizionale per data fine e inizio - se vuote output dei due anni-->
                 [wpv-conditional debug="false" if="( empty($(wpcf-lgp-stdate)) AND empty($(wpcf-lgp-endate)) )"]
+                <!-- check condizionale per data fine e inizio - se vuote output dei due anni-->
                       [wpml-string context="VacationPackages"]valid for two years after purchase[/wpml-string]
                 [/wpv-conditional]
               </p>
