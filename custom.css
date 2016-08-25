@@ -545,8 +545,8 @@ content:"\e808";
 .lg-icon--shopping::before,
 .lg-icon--outdoor::before,
 .lg-icon--culture::before,
-.lg-icon--company-visit::before,
-.lg-icon--cellar-visits::before,
+.lg-icon--firm::before,
+.lg-icon--winery::before,
 .lg-icon--spa-wellness-en::before,
 .lg-icon--shopping-en::before {
 content:"\e808";
@@ -745,7 +745,7 @@ color:#111;
 }
 
 .sleep_color.lg--bg {
-  background-image: url(../images/stay.png);
+  background-image: url(../images/lgbackgrounds/stay.png);
 }
 
 .sleep_color p,
@@ -781,7 +781,7 @@ color:#111;
 }
 
 .eat_color.lg--bg {
-  background-image: url(../images/eat.png);
+  background-image: url(../images/lgbackgrounds/eat.png);
 }
 
 .eat_color p,
@@ -824,7 +824,7 @@ color:#111;
 }
 
 .wine_color.lg--bg {
-  background-image: url(../images/activities.png);
+  background-image: url(../images/lgbackgrounds/activities.png);
 }
 
 .wine_color.lg-arrow-down::after {
