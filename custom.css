@@ -215,6 +215,10 @@ font-size:0.8em;
   border-bottom:1px dashed #666;
 }
 
+a:hover, a:focus, a:visited {
+  text-decoration: none;
+}
+
 .main_color p a.alignright,
 .main_color p a.alignnone,
 .main_color p a.alignleft,
@@ -463,6 +467,10 @@ line-height: 1.5em;
    display:inline-block;
 }
 
+html body [data-av_iconfont='fontello']::before {
+  font-family: 'fontello'
+}
+
 .lg-icon.av-icon-style-border .av-icon-char {
 line-height:1em;
 width:1em;
@@ -559,6 +567,10 @@ content:"\e873";
 
 .av-icon-char.lg-people:before {
 content:"\e80b";
+}
+
+.lg-icon-euro::before {
+content:"\f153";
 }
 
 /** freccoa giù ***/
@@ -867,6 +879,7 @@ color:#111;
 
 .travel_color p,
 .travel_color a,
+.travel_color a:hover,
 .travel_color h1,
 .travel_color h2,
 .travel_color h3,
@@ -1797,7 +1810,7 @@ margin-bottom:0px;
 }
 
 /******************************************************************************
-*                         PACCHETTI
+*                         PACCHETTI - ELEMENTO SINGOLO
 ******************************************************************************/
 .template-page .entry-content-wrapper .lg-package__section-title {
   font-size: 4.100000000em;
@@ -1833,6 +1846,17 @@ margin-bottom:0px;
 
 .single-lgvacation-package #book .template-page h2.title {
   margin-bottom: 1.097560976em;
+}
+
+/******************************************************************************/
+/***                PACCHETTI - LISTATI
+/******************************************************************************/
+.vacation-package__grid-element--people {
+  float: left;
+}
+
+.vacation-package__grid-element--price {
+  float: right;
 }
 
 /*****************PRODOTTO SINGOLO
@@ -2375,15 +2399,22 @@ line-height:1.25em;
 background:#fff;
 }
 
+.post-nature {
+  font-size: 0.75em;
+  line-height: 2em;
+  padding: 0 14px;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
 .header_color.post-nature {
-background:#ce484f;
-font-size:0.8em;
-color:#fff;
-height:30px;
-padding:0 14px;
-text-transform: uppercase;
-font-weight: 600;
-/*border-top:2px solid #fff;*/
+  background:#ce484f;
+  font-size:0.8em;
+  color:#fff;
+  height:30px;
+  padding:0 14px;
+  text-transform: uppercase;
+  font-weight: 600;
 }
 
 .header_color.post-nature a {

@@ -1,0 +1,24 @@
+<div class="header_color post-nature">
+	<a href="[wpv-post-url]">[wpv-if town="_wpcf_belongs_lgtown_id" evaluate="!empty($town)"][wpv-post-title id="$lgtown"][/wpv-if][wpv-if town="lgb-city" evaluate="!empty($town)"][wpv-post-field name="lgb-city"][/wpv-if]</a>
+</div>
+<div class="av-section-color-overlay-wrap">
+    <a href="[wpv-post-url]" data-rel="slide-1" class="slide-image" title="[wpv-post-title]"><img width="495" height="400" src="[wpv-post-featured-image size="magazine" raw="true"]" class="attachment-portfolio wp-post-image" alt="[wpv-post-title]"></a>
+    <div class="b-overlay lg-img-overlay">
+         [wpv-if evaluate="'[types field="lge-stdate" style="text" format="j-F-Y"][/types]' != '[types field="lge-endate" style="text" format="j-F-Y"][/types]'"]<span class="lg-event-date"><span class="lg-icon av_font_icon av-icon-style- av-no-color" style=""><span class="av-icon-char lg-cal" aria-hidden="true" data-av_iconfont="entypo-fontello"></span></span> [types field="lge-stdate" style="text" format="j M"][/types] - [types field="lge-endate" style="text" format="j M Y"][/types] </span>  <span class="lg-event-time"><span class="lg-icon av_font_icon av-icon-style- av-no-color" style=""><span class="av-icon-char lg-clock" aria-hidden="true" data-av_iconfont="entypo-fontello"></span></span> [types field="lge-stdate" style="text" format="H:i"][/types]</span>[/wpv-if]
+         [wpv-if evaluate="'[types field="lge-stdate" style="text" format="j-F-Y"][/types]' = '[types field="lge-endate" style="text" format="j-F-Y"][/types]'"]<span class="lg-event-date"><span class="lg-icon av_font_icon av-icon-style- av-no-color" style=""><span class="av-icon-char lg-cal" aria-hidden="true" data-av_iconfont="entypo-fontello"></span></span> [types field="lge-stdate" style="text" format="j F Y"][/types]</span>  <span class="lg-event-time"><span class="lg-icon av_font_icon av-icon-style- av-no-color" style=""><span class="av-icon-char lg-clock" aria-hidden="true" data-av_iconfont="entypo-fontello"></span></span> [types field="lge-stdate" style="text" format="H:i"][/types]</span>[/wpv-if]
+	</div>
+</div>
+<div class="slide-content">
+	<header class="entry-content-header">
+		<h3 class="slide-entry-title entry-title" itemprop="name">
+			<a href="[wpv-post-url]" title="[wpv-post-title]" itemprop="url">[wpv-post-title]</a>
+		</h3>
+		[wpv-post-excerpt]
+		<meta itemprop="startDate" content="[types field="lge-stdate" style="text" format="Y-m-d"][/types]T[types field="lge-stdate" style="text" format="H:i"][/types]">
+		<meta itemprop="endDate" content="[types field="lge-endate" style="text" format="Y-m-d"][/types]T[types field="lge-endate" style="text" format="H:i"][/types]">
+        <div itemprop="location" itemscope itemtype="http://schema.org/Place">
+			<meta itemprop="name" content="[wpv-if town="_wpcf_belongs_lgtown_id" evaluate="!empty($town)"][wpv-post-title id="$lgtown"][/wpv-if][wpv-if town="lgb-city" evaluate="!empty($town)"][wpv-post-field name="lgb-city"][/wpv-if] - [types field="lge-location"][/types]">
+			<meta itemprop="address" content="[types field="lg-geo-address"][/types]">
+		</div>
+	</header>
+</div>
