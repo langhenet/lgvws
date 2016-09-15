@@ -1184,9 +1184,9 @@ font-family: 'Open Sans';
 /*****************HEADER
 ===========================================*/
 
-.header_color div {
+/*.header_color div {
   border:none;
-}
+}*/
 
 .social_header #header_main .container {
   height: 120px;
@@ -2248,6 +2248,10 @@ div.product div.images div.thumbnails {
 /*****************LISTATI A LISTA
 ===========================================*/
 
+.related_posts {
+  border-top: 0;
+}
+
 #top .fullsize .related_posts {
     padding: 0;
     margin-top: 1.5em;
@@ -2263,8 +2267,14 @@ div.product div.images div.thumbnails {
 }
 
 #top .av-related-style-full .related_column {
-  margin-top: 2px;
-  margin-left: 2px;
+  margin-top: 0;
+  margin-left: 0;
+  margin-right: 3em;
+}
+
+
+#top .av-related-style-full .related_column:nth-child(even) {
+  margin-right: 0;
 }
 
 #top .av-related-style-full .related_column_full {
@@ -2275,7 +2285,7 @@ div.product div.images div.thumbnails {
   padding-right: 0;
 }
 
-@media (max-width: 989px) {
+@media (max-width: 767px) {
 
   .lg-list-wrapper {
     display:block;
@@ -2283,6 +2293,7 @@ div.product div.images div.thumbnails {
 
   #top .av-related-style-full .related_column {
     width: 100%;
+    margin-right: 0;
   }
 
 }
@@ -2293,7 +2304,6 @@ div.product div.images div.thumbnails {
 .socket_color .related_posts.av-related-style-full a,
 .main_color .related_posts.av-related-style-full a {
   background: transparent;
-  background-color: rgba(255,255,255,0.45);
 }
 
 .header_color .related_posts.av-related-style-full a:hover,
@@ -2301,13 +2311,17 @@ div.product div.images div.thumbnails {
 .socket_color .related_posts.av-related-style-full a:hover,
 .main_color .related_posts.av-related-style-full a:hover {
   background: transparent;
-  background-color: rgba(255,255,255,0.55);
+  background-color: rgba(255,255,255,0.15);
+}
+
+#top .header_color .av-related-style-full .av-related-title {
+  color: #fff;
 }
 
 .related_posts.av-related-style-full a,
 .related_posts.av-related-style-full a:hover {
   border: 0;
-  padding: 15px 28px;
+  padding: 1.5em 1.5em 0 1.5em;
   height: 100%;
   margin: 0;
 }
@@ -2319,15 +2333,34 @@ div.product div.images div.thumbnails {
 .lg-title-container {
   display: table-cell;
   vertical-align: middle;
+  border-bottom: 1px solid;
+  padding-bottom: 1.5em;
+  margin-left: 0.75em;
 }
 
 #top .av-related-style-full .av-related-title {
   display: block;
-  font-size: 0.8em;
+  padding: 0 0.75em 0 0;
 }
 
 .av-related-title {
   font-weight: bold;
+}
+
+.lg-list--subtitle {
+  font-size: 0.75em;
+  text-decoration: none;
+  vertical-align: middle;
+/*  line-height: 1.2em;*/
+  display: block;
+}
+
+.lg-list--subtitle .lg-icon {
+  margin-right: 0.25em;
+}
+
+.header_color .lg-list--subtitle {
+  color: #fff;
 }
 
 .av-related-title.lg-event-info,
@@ -4002,7 +4035,7 @@ display:none !important;
 body .gform_wrapper img.ui-datepicker-trigger {
   display: block !important;
    margin-top: -31px;
-  left: 50%;
+  left: 90%;
   position: relative;
 }
 
@@ -4146,8 +4179,19 @@ margin-bottom:1.5em;
 margin:15px 0 15px 0!important;
 }
 
-#top .gform_wrapper .gfield_checkbox li label, #top .gform_wrapper .gfield_radio li label {
-margin: -5px 0 0 28px !important;
+#top .gform_wrapper .gfield_checkbox li label {
+margin: 0px 0 0 0px !important;
+}
+
+#top .gform_wrapper .gfield_radio li label {
+margin: 2px 0 0 0px !important;
+}
+
+.gform_wrapper li.gfield.gf_list_3col ul.gfield_checkbox li label {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: ellipsis;
+  vertical-align: top;
 }
 
 
