@@ -2264,12 +2264,26 @@ div.product div.images div.thumbnails {
 .lg-list-wrapper {
   display: flex;
 /*  align-items: center;*/
+  flex-direction: row;
+  align-items: stretch;
 }
 
 #top .av-related-style-full .related_column {
   margin-top: 0;
   margin-left: 0;
   margin-right: 3em;
+}
+
+
+#top .av-related-style-full .related_column::after {
+  content: "";
+  position: relative;
+  height: 0;
+  width: 81%;
+  border-bottom: 1px solid #fff;
+  display: block;
+  float: right;
+  right: 0;
 }
 
 
@@ -2321,26 +2335,54 @@ div.product div.images div.thumbnails {
 .related_posts.av-related-style-full a,
 .related_posts.av-related-style-full a:hover {
   border: 0;
-  padding: 1.5em 1.5em 0 1.5em;
+  padding: 1.5em 1.5em;
   height: 100%;
   margin: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  border-radius: 0;
 }
 
+
 #top .av-related-style-full .related_image_wrap {
-  vertical-align:middle;
+  vertical-align:top;
+  display: flex;
+  flex-shrink: 0;
 }
 
 .lg-title-container {
-  display: table-cell;
-  vertical-align: middle;
-  border-bottom: 1px solid;
-  padding-bottom: 1.5em;
+  display: flex;;
+  flex-flow: column;
+  padding-bottom: 0;
   margin-left: 0.75em;
+  width: 0;
+  flex-grow: 1;
+  flex-shrink: 1;
 }
 
 #top .av-related-style-full .av-related-title {
   display: block;
-  padding: 0 0.75em 0 0;
+  padding: 0;
+  overflow: hidden;
+  height: 1.5em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  line-height: 1.5em;
+}
+
+@media (max-width: 989px) {
+  #top .av-related-style-full .av-related-title {
+    height: 3em;
+    white-space: normal;
+  }
+}
+
+@media (max-width: 767px) {
+  #top .av-related-style-full .av-related-title {
+    height: 1.5em;
+    white-space: nowrap;
+  }
 }
 
 .av-related-title {
