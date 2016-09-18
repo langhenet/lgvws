@@ -2309,7 +2309,6 @@ div.product div.images div.thumbnails {
     width: 100%;
     margin-right: 0;
   }
-
 }
 
 
@@ -2325,17 +2324,19 @@ div.product div.images div.thumbnails {
 .socket_color .related_posts.av-related-style-full a:hover,
 .main_color .related_posts.av-related-style-full a:hover {
   background: transparent;
-  background-color: rgba(255,255,255,0.15);
 }
 
-#top .header_color .av-related-style-full .av-related-title {
+.header_color .related_posts.av-related-style-full a,
+.header_color .related_posts.av-related-style-full a:hover,
+#top .header_color .av-related-style-full .av-related-title,
+#top .header_color .av-related-style-full .av-related-title:hover {
   color: #fff;
 }
 
 .related_posts.av-related-style-full a,
 .related_posts.av-related-style-full a:hover {
   border: 0;
-  padding: 1.5em 1.5em;
+  padding: 1.5em 0em;
   height: 100%;
   margin: 0;
   display: flex;
