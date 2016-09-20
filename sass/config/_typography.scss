@@ -1,0 +1,173 @@
+//*==========================================================================*//
+//*                                                                          *//
+//*                   VARIABILI PER    TIPOGRAFIA
+//*                          DIMENSIONI & FACE
+//*                                                                          *//
+//*==========================================================================*//
+
+///
+// BASE DEL BODY
+///
+  $base: 16;
+  $font-size: 1.1875em; //TODO
+  $line-height: 2em; //TODO
+
+
+///
+// p and other standard elements
+///
+  $margin-top: 0em; //TODO
+  $margin-bottom: 2em; //TODO
+
+
+///
+// Families
+///
+  $font-family: 'PT Serif', serif; //TODO
+  $font-family-heading: 'Oswald', sans-serif; //TODO
+  $font-family-special: $font-family; //TODO
+  $font-family-button: $font-family-heading;
+
+
+///
+// WEIGHTS per Families
+///
+$weights: (
+  ff: (
+    family: $font-family,
+    u-thin: 400,
+    thin: 400,
+    light: 400,
+    normal: 400,
+    bold: 700,
+    bolder: 700,
+  ),
+
+  ffh: (
+    family: $font-family-heading,
+    u-thin: 300,
+    thin: 300,
+    light: 300,
+    normal: 400,
+    bold: 400,
+    bolder: 400,
+  ),
+
+  ffs: (
+    family: $font-family-special,
+    u-thin: 300,
+    thin: 300,
+    light: 300,
+    normal: 400,
+    bold: 400,
+    bolder: 400,
+  ),
+);
+
+////
+// Dimensioni & caratteristiche dei font principali
+////
+  $fonts: (
+    p: (
+      fs: 1em,
+      lh: $line-height,
+      mt: $margin-top,
+      mb: $margin-bottom,
+      fm: family(ff, family),
+      wt: family(ff, normal),
+    ),
+
+    h1: (
+      fs: 6.052631578947368em,
+      lh: 1.3217391304347827em,
+      mt: 0.3304347826086957em,
+      mb: 0em,
+      fm: family(ffh, family),
+      wt: family(ffh, thin),
+    ),
+
+    h2: (
+      fs: 3.3157894736842106em,
+      lh: 1.2063492063492063em,
+      mt: 0.6031746031746031em,
+      mb: 0.6031746031746031em,
+      fm: family(ffh, family),
+      wt: family(ffh, thin),
+    ),
+
+    h3: (
+      fs: 1.8421052631578947em,
+      lh: 1.628571428571em,
+      mt: 1.0857142857142856em,
+      mb: 1.0857142857142856em,
+      fm: family(ffh, family),
+      wt: family(ffh, normal),
+    ),
+
+    h4: (
+      fs: 1em,
+      lh: 2em,
+      mt: 2em,
+      mb: 0em,
+      fm: family(ffh, family),
+      wt: family(ffh, normal),
+    ),
+
+    h5: (
+      fs: 1em,
+      lh: 2em,
+      mt: 2em,
+      mb: 0em,
+      fm: family(ffh, family),
+      wt: family(ffh, light),
+    ),
+
+    small: (
+      fs: 0.6842105263158em,
+      lh: 1.461538461538em,
+      mt: 0.730769230769em,
+      mb: 0.730769230769em,
+      fm: family(ffh, family),
+      wt: family(ffh, light),
+    ),
+
+    blockquote: (
+      fs: 1.263157894736842em,
+      lh: 1.583333333333333em,
+      mt: 1.583333333333333em,
+      mb: 1.583333333333333em,
+      fm: family(ffh, family),
+      wt: family(ffh, light),
+  ),
+);
+
+
+////
+// DETTAGLI
+////
+  $sup-top: -0.5em; //TODO
+  $sub-bottom: -0.25em; //TODO
+  $hr-spacing: 1px; //TODO
+
+
+
+//****************************************************************************//
+//                                      FORMS
+//****************************************************************************//
+
+$forms: (
+  field: (
+    fm: family(ff, family),
+    wt: family(ff, normal),
+  ),
+
+  label: (
+    fm: family(ff, family),
+    wt: family(ff, normal),
+  ),
+
+  desc: (
+    fm: family(ff, family),
+    wt: family(ff, normal),
+  ),
+);
