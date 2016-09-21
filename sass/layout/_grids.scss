@@ -16,7 +16,6 @@
   flex-direction: column;
   flex: 0 0 31.625%;
   width: 0;
-  padding-top: $line-height / 2;
 }
 
 .grid-item__image-container {
@@ -34,18 +33,21 @@
 .grid-item__description-container {
   padding: 0 $line-height 0 $line-height;
   width: 100%;
+
 }
 
 .grid-item__meta-container {
-  padding: 0 $line-height;
+  padding: ($line-height / 2) $line-height;
+  width: 100%;
 }
 
 .grid-item__meta {
   font-size: font(small, fs);
   line-height: font(small, lh);
-  margin-bottom: font(small, lh) / 2;
+  margin-bottom: 0;
   text-align: left;
   text-transform: uppercase;
+  font-weight: bold;
 }
 
 .grid-item__title {
