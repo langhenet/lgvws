@@ -17,6 +17,8 @@
   flex: 0 0 31.625%;
   width: 0;
   padding-top: $line-height / 2;
+  border-bottom: 2px solid #e28b65 !important;
+box-shadow: 2px 1px 6px rgba(50,50,50,0.2);
 }
 
 .grid-item__image-container {
