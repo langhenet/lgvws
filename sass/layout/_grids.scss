@@ -28,12 +28,16 @@
 }
 
 .grid-item__title-container {
-  padding: ($line-height / 2) $line-height $line-height $line-height;
+  padding: $line-height $line-height ($line-height / 2) $line-height;
   width: 100%;
 }
 .grid-item__description-container {
-  padding: $line-height $line-height 0 $line-height;
+  padding: 0 $line-height 0 $line-height;
   width: 100%;
+}
+
+.grid-item__meta-container {
+  padding: 0 $line-height;
 }
 
 .grid-item__meta {
@@ -50,11 +54,6 @@
   margin-top: 0;
   margin-bottom: 0;
   text-align: left;
-  height: font(small-h3, lh);
-  text-overflow: ellipsis;
-  overflow: hidden;
-  white-space: nowrap;
-  min-width: 0;
 }
 
 .grid-item__description {
