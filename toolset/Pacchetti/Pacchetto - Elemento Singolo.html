@@ -8,8 +8,10 @@
 					</div>
 					<div class="flex_column av_four_sixth  flex_column_div">
 						<h1 itemprop="name" class="title">[wpv-post-title]</h1>
-            <p style="text-align: center;" class="lg-ph2">[wpml-string context="VacationPackages"]Only[/wpml-string]                 [wpv-conditional debug="false" if="( NOT(empty($(wpcf-lgp-sale-price))) )"]<del>[types field='lgp-sale-price' format='FIELD_VALUE'][/types]€</del> <strong>[types field='lgp-price' format='FIELD_VALUE'][/types]€</strong>
+            <p style="text-align: center;" class="lg-ph2">[wpml-string context="VacationPackages"]Only[/wpml-string]   [wpv-conditional debug="false" if="( NOT(empty($(wpcf-lgp-sale-price))) )"]<del>[types field='lgp-sale-price' format='FIELD_VALUE'][/types]€</del> <strong>[types field='lgp-price' format='FIELD_VALUE'][/types]€</strong>
               [/wpv-conditional]
+              [wpv-conditional debug="false" if="( empty($(wpcf-lgp-sale-price)) )"]<strong>[types field='lgp-price' format='FIELD_VALUE'][/types]€</strong>
+               [/wpv-conditional]
               [wpv-conditional debug="false" if="( $(wpcf-lgp-people) != 1 )"]
                 [wpml-string context="VacationPackages"]for[/wpml-string] [types field='lgp-people' format='FIELD_VALUE'][/types] [wpml-string context="VacationPackages"]people[/wpml-string]
               [/wpv-conditional]
@@ -28,7 +30,7 @@
     </div>
   </div>
 </div>
-<div id="sub-nav" class="lg-submenu av-submenu-container main_color avia-builder-el-1  el_after_av_section el_before_av_section submenu-not-first container_wrap fullsize">
+<div id="sub-nav" class="lg-submenu av-submenu-container alternate_color avia-builder-el-1  el_after_av_section el_before_av_section submenu-not-first container_wrap fullsize">
   <div class="container av-menu-mobile-disabled ">
     <ul id="av-custom-submenu-1" class="av-subnav-menu av-submenu-pos-center">
       <li class="menu-item menu-item-top-level  menu-item-top-level-1">
@@ -81,10 +83,12 @@
                 [wpv-post-body view_template='None' suppress_filters='true']
                 <div class="avia-button-wrap avia-button-center">
                     <a href="#book" class="avia-button avia-icon_select-yes-left-icon avia-color-theme-color avia-size-medium avia-position-center "><span class="lg-cal avia_button_icon avia_button_icon_left " aria-hidden="true" data-av_iconfont="entypo-fontello"></span><span class="avia_iconbox_title">
-                      [wpml-string context="VacationPackages"]Buy the Package[/wpml-string]<br/>
-                      [wpml-string context="VacationPackages"]at[/wpml-string]
+                      [wpml-string context="VacationPackages"]Buy the Package at[/wpml-string]
                       [wpv-conditional debug="false" if="( NOT(empty($(wpcf-lgp-sale-price))) )"]<del>[types field='lgp-sale-price' format='FIELD_VALUE'][/types]€</del> [types field='lgp-price' format='FIELD_VALUE'][/types]€
-                      [/wpv-conditional]</span></a>
+                      [/wpv-conditional]
+                      [wpv-conditional debug="false" if="( empty($(wpcf-lgp-sale-price)) )"][types field='lgp-price' format='FIELD_VALUE'][/types]€
+                      [/wpv-conditional]</span>
+                    </a>
                 </div>
                 <p class="lg-validity">
                   <small><strong>Validity:</strong>
@@ -120,7 +124,7 @@
                   <div class="lg-box with-header lg-no-content">
                     <div class="sleep_color lg--bg washed lg-box-header">
                       <h3>
-                        <a href="#sleep">[types field="lgp-stay-nights"][/types] [wpml-string context="VacationPackages"]Nights at[/wpml-string] [wpv-post-title id="[types field='lgp-stay'][/types]"] &raquo;</a>
+                        <a href="#sleep">[types field="lgp-stay-nights"][/types] [wpml-string context="VacationPackages"]Nights[/wpml-string] [wpv-post-title id="[types field='lgp-stay'][/types]"] &raquo;</a>
                       </h3>
                     </div>
                   </div>
@@ -168,7 +172,7 @@
     <!-- Titolo pernottamento -->
           <h2 class="lg-package__section-title">[wpml-string context="VacationPackages"]Overnight Stay[/wpml-string]</h2>
           <h3 class="lg-package__section-subtitle">
-            [types field="lgp-stay-nights"][/types] [wpml-string context="VacationPackages"]Nights in[/wpml-string] [wpv-post-title id="[types field='lgp-stay'][/types]"]
+            [types field="lgp-stay-nights"][/types] [wpml-string context="VacationPackages"]Nights[/wpml-string] [wpv-post-title id="[types field='lgp-stay'][/types]"]
             [wpv-conditional if="$(wpcf-lgp-breakfast) eq '1'"]
               - [wpml-string context="VacationPackages"]breakfasts included[/wpml-string]
             [/wpv-conditional]
@@ -361,7 +365,7 @@
                         <h4 class="iconlist_title" itemprop="headline">[wpv-post-title output='sanitize' id='[types field="lgp-activities"][/types]']</h4>
                       </header>
                       <div class="iconlist_content " itemprop="text">
-                        <p>[wpv-post-body view_template="None" suppress_filters="true" id='[types field="lgp-activities"][/types]']</p>
+                        [wpv-post-body view_template="None" suppress_filters="true" id='[types field="lgp-activities"][/types]']
                       </div>
                     </div>
                   </article>
@@ -408,7 +412,7 @@
             <div class="lg-box-content">
               <ul>
                 [wpv-conditional if="( NOT(empty($(wpcf-lgp-stay))) )"]
-                  <li>[types field="lgp-stay-nights"][/types] [wpml-string context="VacationPackages"]Nights at[/wpml-string] [wpv-post-title id="[types field='lgp-stay'][/types]"]     </li>
+                  <li>[types field="lgp-stay-nights"][/types] [wpml-string context="VacationPackages"]Nights[/wpml-string] [wpv-post-title id="[types field='lgp-stay'][/types]"]     </li>
                 [/wpv-conditional]
                 [wpv-conditional if="( NOT(empty($(wpcf-lgp-eat))) )"]
                   <li>[wpv-post-title id="[types field='lgp-eat'][/types]"]</li>
@@ -418,7 +422,7 @@
                   <li>[wpv-post-title output='sanitize' id='[types field="lgp-activities"][/types]']</li>
                 [/wpv-for-each]
               </ul>
-              <p><strong>Valitidty:</strong>
+              <p><strong>Validity:</strong>
                 [wpv-conditional debug="false" if="( NOT(empty($(wpcf-lgp-stdate))) )"]
                   [wpml-string context="VacationPackages"]from[/wpml-string] [types field='lgp-stdate' style='text' format='j F Y'][/types]
                 [/wpv-conditional]

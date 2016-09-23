@@ -2,26 +2,37 @@
   display: flex;
   flex-wrap: wrap;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: stretch;
+  margin-top: $line-height;
+}
+
+.grid-item {
+  flex-grow: 0;
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column;
+  border-radius: 0.2em;
+  overflow:hidden;
+  box-shadow: 2px 1px 6px rgba(50,50,50,0.2);
 }
 
 .grid-item--third {
   flex-basis: 31.625%;
-  flex-grow: 0;
-  //width: 31.1%;
-  margin-bottom: $line-height * 2;
-  display: flex;
-  align-items: flex-start;
-  flex-direction: column;
+  margin-bottom: $line-height;
   flex: 0 0 31.625%;
   width: 0;
-  border-bottom: 2px solid #e28b65 !important;
-  box-shadow: 2px 1px 6px rgba(50,50,50,0.2);
+  border-bottom: 4px solid;
+  margin-right: 2.5625%;
+
+  &:nth-child(3n+3) {
+    margin-right:0;
+  }
 }
 
 .grid-item__image-container {
   display: block;
+  position: relative;
 }
 
 .grid-item__image {
@@ -35,12 +46,15 @@
 .grid-item__description-container {
   padding: 0 $line-height 0 $line-height;
   width: 100%;
-
 }
 
 .grid-item__meta-container {
-  padding: ($line-height / 2) $line-height;
+  padding: $line-height * 1.5 $line-height $line-height $line-height;
   width: 100%;
+  position: absolute;
+  bottom:0;
+  background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 60%, rgba(0,0,0,0.3) 70%, rgba(0,0,0,0.0) 100%);
+  color: #fff;
 }
 
 .grid-item__meta {
@@ -49,7 +63,8 @@
   margin-bottom: 0;
   text-align: left;
   text-transform: uppercase;
-  font-weight: bold;
+ //font-weight: bold;
+  letter-spacing: 0;
 }
 
 .grid-item__title {
@@ -69,7 +84,7 @@
 
 .grid-item__footer {
   text-align: left;
-  padding: $line-height $line-height $line-height $line-height;
+  padding: $line-height $line-height bspad(4, p) $line-height;
   align-self: flex-end;
   width: 100%;
   margin-top: auto;
@@ -95,9 +110,12 @@
   line-height: font(small, lh);
   margin-bottom: 0;
   text-transform: uppercase;
-  color: #e28b65 !important;
   font-weight: bold;
+  display: block;
 }
+
+
+
 
 //***************************************************************************//
 //                              COLORI
@@ -107,6 +125,20 @@
   background: white;
 }
 
-.alternate_color .grid-item__title-container {
-  background: white;
+.main_color .grid-item--third {
+  background: #f3f3f3;
+}
+
+
+.grid-item.eat_accent {
+//  border-bottom: 2px solid #e28b65;
+  border-color: #e28b65;
+}
+
+.eat_accent .grid-item__read-more {
+  color: #e28b65;
+
+  &:hover {
+    color: darken(#e28b65, 10%);
+  }
 }

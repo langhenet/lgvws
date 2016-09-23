@@ -1,0 +1,44 @@
+////
+// Icon Lists
+///
+
+.lg-activities-grid h4.iconlist_title {
+  font-size: font(small, fs);
+  line-height: font(small, lh);
+}
+
+.lg-activities-grid .iconlist_content {
+  font-size: font(small, fs);
+  line-height: font(small, lh);
+  margin-bottom: font(small, lh) * 2;
+
+  p {
+    margin-bottom: 0;
+  }
+}
+
+
+//****************************************************************************************************************//
+//*           GRIGLIA PRINCIPALE
+//***************************************************************************************************************//
+.main_color .grid-item--third.vacation-package {
+//  background: mix(#c3dbe1, white, 20%);
+}
+
+
+.grid-item.sleep_accent {
+  border-color: #69a4b5;
+}
+
+.sleep_accent .grid-item__read-more {
+  color: #69a4b5;
+
+  &:hover {
+    color: darken(#69a4b5, 10%);
+  }
+}
+
+.grid-item__additional-info.grid-item__price {
+  font-size: font(p, fs);
+  line-height: font(p, lh);
+}
