@@ -747,7 +747,7 @@ color:#ce484f;
 /***MAIN COLOR**/
 .main_color strong,
 .main_color b {
-  color: #888;
+  color: #989898;
 }
 
 /*****LOGO - HEADER AREA****/
@@ -792,6 +792,10 @@ color:#fff;
 
 .alternate_color h3, .alternate_color h4 {
   color:#666;
+}
+
+.alternate_color strong {
+  color:#989898;
 }
 
 /*****SOCKET AREA****/
@@ -2246,7 +2250,7 @@ div.product div.images div.thumbnails {
   content: "";
   position: relative;
   height: 0;
-  width: 87%;
+  width: 83.5%;
   border-bottom: 1px solid #fff;
   display: block;
   float: right;
@@ -2336,7 +2340,7 @@ div.product div.images div.thumbnails {
 .related_posts.av-related-style-full a,
 .related_posts.av-related-style-full a:hover {
   border: 0;
-  padding: 1.5em 0em;
+  padding: 0.75em 0em;
   height: 100%;
   margin: 0;
   display: flex;
@@ -2356,7 +2360,7 @@ div.product div.images div.thumbnails {
   display: flex;;
   flex-flow: column;
   padding-bottom: 0;
-  margin-left: 0.75em;
+  margin-left: 1.5em;
   width: 0;
   flex-grow: 1;
   flex-shrink: 1;
@@ -4385,6 +4389,12 @@ line-height: 1.5em;
 }
 
 #top .main_color .av-subnav-menu > li.lg-button > a span {
+ background-color: /*#9bc685*/ #4CAF50;
+ padding: 0.75em 1em;
+ color: #fff;
+}
+
+#top .alternate_color .av-subnav-menu > li.lg-button > a span {
  background-color: /*#9bc685*/ #4CAF50;
  padding: 0.75em 1em;
  color: #fff;

@@ -5,6 +5,10 @@
   justify-content: flex-start;
   align-items: stretch;
   margin-top: $line-height;
+
+  @include respond-to(step-3) {
+    justify-content: space-around;
+  }
 }
 
 .grid-item {
@@ -27,6 +31,30 @@
 
   &:nth-child(3n+3) {
     margin-right:0;
+  }
+}
+
+
+@include respond-to(step-1) {
+  .grid-item--third {
+    flex-basis: 48%;
+
+    &:nth-child(even) {
+      margin-right:0;
+    }
+    &:nth-child(3n+3) {
+      margin-right:2.5625%;
+    }
+  }
+}
+
+@include respond-to(step-4) {
+  .grid-item--third {
+    flex-basis: 100%;
+    
+    &:nth-child(3n+3) {
+      margin-right:0;
+    }
   }
 }
 

@@ -1,4 +1,4 @@
-  <div id="lg-pacakge-intro" class="avia-section header_color avia-section-large avia-no-shadow avia-bg-style-scroll avia-builder-el-0  el_before_av_submenu avia-builder-el-first submenu-not-first container_wrap fullsize lg-full-header" style="background-image:url('[wpv-post-featured-image size="full" raw="true"]'); background-attachment: scroll; background-position: top left; background-repeat: no-repeat; background-size: cover;" itemscope="itemscope" itemtype="http://schema.org/Product">
+<div id="lg-pacakge-intro" class="avia-section header_color avia-section-large avia-no-shadow avia-bg-style-scroll avia-builder-el-0  el_before_av_submenu avia-builder-el-first submenu-not-first container_wrap fullsize lg-full-header" style="background-image:url('[wpv-post-featured-image size="full" raw="true"]'); background-attachment: scroll; background-position: top left; background-repeat: no-repeat; background-size: cover;" itemscope="itemscope" itemtype="http://schema.org/Product">
   <div class="av-section-color-overlay-wrap">
 		<div class="b-overlay">
 			<a href="#next-section" title="" class="scroll-down-link lg-darrow" aria-hidden="true" data-av_iconfont="entypo-fontello"></a>
@@ -151,7 +151,7 @@
                       <li>[wpv-post-title output="sanitize" id="[types field='lgp-activities' index='2' ][/types]"]</li>
                     </ul>
                     [wpv-conditional if="( '[types field='lgp-activities' index='3' ][/types]' > '0' )"]
-                      <p style="text-align:center"><a href="#activities">[wpml-string context="VatationsPackages"]View all the included activities[/wpml-string] &raquo;</a></p>
+                      <p style="text-align:center"><a href="#activities">[wpml-string context="VacationPackages"]View all the included activities[/wpml-string] &raquo;</a></p>
                     [/wpv-conditional]
                   </div>
                 </div>
@@ -384,8 +384,13 @@
       <div class="entry-content-wrapper clearfix">
         <h2 class="title">[wpml-string context="VacationPackages"]Buy the Package[/wpml-string]</h2>
         <div class="flex_column av_three_fifth flex_column_div first">
-        <!-- local Test  [wpml-string context="VacationPackages"][gravityform id="2" title="false" description="false" ajax="true" field_values="prezzo=[types field="lgp-price" format="FIELD_VALUE"][/types]"][/wpml-string] -->
-        [wpml-string context="VacationPackages"][gravityform id="59" title="false" description="false" ajax="true" field_values="prezzo=[types field="lgp-price" format="FIELD_VALUE"][/types]"][/wpml-string]
+          [wpv-conditional debug="false" if="('[get_wpml_language_code_value]' eq 'it')"]
+            <!-- modulo di test[gravityform id="2" title="false" description="false" ajax="true" field_values="prezzo=[types field="lgp-price" format="FIELD_VALUE"][/types]&nome=[wpv-post-title]"] -->
+            [gravityform id="59" title="false" description="false" ajax="true" field_values="prezzo=[types field="lgp-price" format="FIELD_VALUE"][/types]&nome=[wpv-post-title]"]
+          [/wpv-conditional]
+          [wpv-conditional if="( '[get_wpml_language_code_value]' eq 'en' )"]
+            <p>BAUBAU</p>
+          [/wpv-conditional]
         </div>
         <div class="flex_column av_two_fifth flex_column_div">
           <div class="lg-box with-header with-sub-header">
