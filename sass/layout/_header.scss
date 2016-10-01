@@ -1,0 +1,13 @@
+.main-nav {
+  background-color: main-colors(header, bg);
+}
+.nav-bar {
+  display: flex;
+  list-style: none;
+  padding: $line-height 0;
+  margin-bottom: 0;
+  li {
+    padding: 0 $line-height;
+    color: main-colors(header, body);
+  }
+}

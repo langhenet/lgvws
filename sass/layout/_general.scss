@@ -1,0 +1,10 @@
+.site-wrapper {
+  position: relative;
+  overflow: hidden;
+}
+
+.inner {
+  padding: ($line-height * 2) ($line-height * 1.66666666 );
+  max-width: $website-width + 100px;
+  margin: 0 auto;
+}

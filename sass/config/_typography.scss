@@ -23,8 +23,8 @@
 ///
 // Families
 ///
-  $font-family: 'Open Sans', sans; //TODO
-  $font-family-heading: $font-family; //TODO
+  $font-family: 'Rufina', serif; //TODO
+  $font-family-heading: 'Open Sans', sans-serif; //TODO
   $font-family-special: $font-family; //TODO
   $font-family-button: $font-family;
 
@@ -39,8 +39,8 @@ $weights: (
     thin: 400,
     light: 400,
     normal: 400,
-    bold: 700,
-    bolder: 700,
+    bold: 600,
+    bolder: 600,
   ),
 
   ffh: (
@@ -49,8 +49,8 @@ $weights: (
     thin: 300,
     light: 300,
     normal: 400,
-    bold: 400,
-    bolder: 400,
+    bold: 700,
+    bolder: 900,
   ),
 
   ffs: (
@@ -83,7 +83,7 @@ $weights: (
       mt: 1.09756098em,
       mb: 0.36585366em,
       fm: family(ffh, family),
-      wt: family(ffh, thin),
+      wt: family(ffh, norma),
     ),
 
     h2: (
@@ -92,7 +92,7 @@ $weights: (
       mt: 1.17647059em,
       mb: 0.58823529em,
       fm: family(ffh, family),
-      wt: family(ffh, thin),
+      wt: family(ffh, bold),
     ),
 
     h3: (
@@ -101,7 +101,7 @@ $weights: (
       mt: 0.9375em,
       mb: 0.9375em,
       fm: family(ffh, family),
-      wt: family(ffh, normal),
+      wt: family(ffh, bold),
     ),
 
     h4: (

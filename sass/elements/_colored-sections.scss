@@ -1,161 +1,29 @@
-/**********************
- SLEEP color
- ***************************/
-.color--sleep {
-  background-color: #69a4b5;
+@each $palette, $sections in $colors {
+  .color-#{$palette} {
+    background-color: palette($palette, bg);
 
+    * {
+      color: palette($palette, body);
+    }
+
+    &.washed {
+      background-color: mix(palette($palette, bg), $bianco, 80%);
+    }
+  }
+}
+
+@each $palette, $sections in $colors {
+  .color-#{$palette}--light {
+    background-color: mix(palette($palette, bg), $bianco, 40%);
+  }
 }
 
 .color-sleep.lg--bg {
   background-image: url(../images/lgbackgrounds/stay.png);
 }
-
-.color-sleep p,
-.color-sleep a,
-.color-sleep h1,
-.color-sleep h2,
-.color-sleep h3,
-.color-sleep h4,
-.color-sleep h5 {
-  color: #fff;
-}
-
-.color--sleep--light {
-  background-color: #c3dbe1 /* rgba(255,255,255, 0.6) */;
-}
-
-.color-sleep--light p,
-.color-sleep--light a,
-.color-sleep--light h1,
-.color-sleep--light h2,
-.color-sleep--light h3,
-.color-sleep--light h4,
-.color-sleep--light h5 {
-  color: #333;
-}
-
-/**********************
-  EAT color
-***************************/
-
-.color--food {
-  background-color: #e28b65;
-}
-
 .color--food.lg--bg {
   background-image: url(../images/lgbackgrounds/eat.png);
 }
-
-.color--food p,
-.color--food a,
-.color--food h1,
-.color--food h2,
-.color--food h3,
-.color--food h4,
-.color--food h5 {
-  color: #fff;
-}
-
-.color--food--light {
-  background-color: #f3d1c1 /* rgba(255,255,255, 0.6) */;
-}
-
-.color--food--light p,
-.color--food--light a,
-.color--food--light h1,
-.color--food--light h2,
-.color--food--light h3,
-.color--food--light h4,
-.color--food--light h5 {
-  color: #333;
-}
-
-
-/*.color--food.lg-arrow-right::after {
-  border-top-color: #e28b65;
-  border-bottom-color: #e28b65;
-  border-right-color: #e28b65;
-  border-left-color: #e28b65;
-}*/
-
-/**********************
- WINE color
- ***************************/
-
-.color--wine {
-  background-color: #ba5b90;
-}
-
 .color--wine.lg--bg {
   background-image: url(../images/lgbackgrounds/activities.png);
-}
-
-.color--wine.lg-arrow-down::after {
-  border-top-color: #ba5b90;
-}
-
-.color--wine.washed {
-  background-color: #c87ca6;
-}
-
-.color--wine.washed.lg-arrow-down::after {
-  border-top-color: #c87ca6;
-}
-
-.color--wine p,
-.color--wine a,
-.color--wine h1,
-.color--wine h2,
-.color--wine h3,
-.color--wine h4,
-.color--wine h5 {
-  color: #fff;
-}
-
-
-.color--wine .avia-icon-list .iconlist_icon {
-  background: #fff;
-}
-
-.color--wine span.iconlist-char {
-  color: #ba5b90;
-}
-
-/**********************
- TRAVEL color
- ***************************/
-.color--travel {
-  background-color: #4CAF50;
-}
-
-.color--travel.lg-arrow-down::after {
-  border-top-color: #4CAF50;
-}
-
-.color--travel.washed {
-  background-color: #81C784;
-}
-
-.color--travel.washed.lg-arrow-down::after {
-  border-top-color: #81C784;
-}
-
-.color--travel p,
-.color--travel a,
-.color--travel a:hover,
-.color--travel h1,
-.color--travel h2,
-.color--travel h3,
-.color--travel h4,
-.color--travel h5 {
-  color: #fff;
-}
-
-
-.color--travel .avia-icon-list .iconlist_icon {
-  background: #fff;
-}
-
-.color--travel span.iconlist-char {
-  color: #4CAF50;
 }

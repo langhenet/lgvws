@@ -5,6 +5,7 @@
 //
 //****************************************************************************//
 
+
 //****************************************************************************//
 //                            Mixin per la tipgrafia
 //****************************************************************************//
@@ -23,16 +24,28 @@
 body {
   font-size: $font-size;
   line-height: $line-height;
+  font-family: $font-family;
 }
 
+h1 {
+  @include size(h1);
+  color: mix($nero, $bianco, 90%);
+}
+h2 {
+  @include size(h2);
+  color: mix($nero, $bianco, 90%);
+}
 h3 {
   @include size(h3);
+  color: mix($nero, $bianco, 90%);
 }
 
 p {
   @include size(p);
+  color: $nero;
 }
 
-ul {
+ul, ol {
   @include size(p);
+  @include margin(p);
 }
