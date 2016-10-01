@@ -6,12 +6,14 @@
 @import 'config/typography';
 @import 'config/colors';
 @import 'config/layout';
+
 @import 'helpers/mixins';
 
-@import 'custom';
-
+@import 'base/typography';
+@import 'base/resets';
 
 @import 'layout/grids';
+@import 'layout/flex-cells';
 
 @import 'elements/buttons';
 @import 'elements/icons';

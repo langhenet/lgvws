@@ -1,0 +1,24 @@
+.site-wrapper {
+  position: relative;
+  overflow: hidden;
+}
+.flex-row {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+@function col-width($col: 3, $gut: 2.5641%) {
+  @return (100% - (($col - 1) * $gut )) / $col;
+}
+
+.flex-cell {
+}
+
+.flex-cell--fourth {
+    flex-basis: col-width(4, 0);
+}
+
+.flex-cell__content {
+  padding: $line-height;
+}

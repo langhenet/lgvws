@@ -17,14 +17,15 @@ gulp.task('browser-sync', function() {
     //watch files
     var files = [
     './style.css',
-    './*.php'
+    '**/*.php',
+    '**/*.html'
     ];
 
     //initialize browsersync
     browserSync.init(files, {
     //browsersync with a php server
-    proxy: config.proxy,
-    notify: false
+    proxy: "http://play.dev",
+    notify: true
     });
 });
 
@@ -37,9 +38,8 @@ gulp.task('sass', function () {
         .pipe(rename('unmin-style.css')) //rinomina il file
         .pipe(gulp.dest('./'))
         .pipe(sourceMaps.init())
-        //.pipe(postcss([ autoprefixer({ browsers: ['last 10 versions'] }) ]))
         .pipe(minifyCSS({keepSpecialComments:1},{processImport: false}))
-        .pipe(rename('custom.css')) //rinomina il file minifcato
+        .pipe(rename('style.css')) //rinomina il file minifcato
         .pipe(sourceMaps.write())
         .pipe(gulp.dest('./'))
         .pipe(reload({stream:true}));
@@ -49,4 +49,6 @@ gulp.task('sass', function () {
 // Default task to be run with `gulp`
 gulp.task('default', ['sass', 'browser-sync'], function () {
     gulp.watch("sass/**/*.scss", ['sass']);
+    gulp.watch("**/*.scss", ['sass']);
+    gulp.watch("**/*.php", ['sass']);
 });

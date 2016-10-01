@@ -16,11 +16,9 @@
 // Dimensioni e margini caratteri
 ///
 
-@mixin size($size: p) {
+@mixin font-size($size: p) {
   font-size: font($size, fs);
   line-height: font($size, lh);
-  margin-top: font($size, mt);
-  margin-bottom: font($size, mb);
 
   @if $size == h1 {
     @include respond-to(step-2) {font-size: font(h1, fs) * 0.75;} //TODO
@@ -38,21 +36,16 @@
   }
 }
 
-@mixin body-size {
-  font-size: $font-size;
-  line-height: $line-height;
-}
-
-@mixin body-margin {
-  margin-top: $margin-top;
-  margin-bottom: $margin-bottom;
+@mixin margin($size: p) {
+  margin-top: font($size, mt);
+  margin-bottom: font($size, mb);
 }
 
 
 ///
 // Decorazioni caratteri (family e boldness)
 ///
-@mixin deco($size: p, $palette: main) {
+@mixin deco($size: p) {
   font-family: font($size, fm);
   font-weight: font($size, wt);
 }

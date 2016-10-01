@@ -1,36 +1,36 @@
 /**********************
  SLEEP color
  ***************************/
-.sleep_color {
+.color--sleep {
   background-color: #69a4b5;
 
 }
 
-.sleep_color.lg--bg {
+.color-sleep.lg--bg {
   background-image: url(../images/lgbackgrounds/stay.png);
 }
 
-.sleep_color p,
-.sleep_color a,
-.sleep_color h1,
-.sleep_color h2,
-.sleep_color h3,
-.sleep_color h4,
-.sleep_color h5 {
+.color-sleep p,
+.color-sleep a,
+.color-sleep h1,
+.color-sleep h2,
+.color-sleep h3,
+.color-sleep h4,
+.color-sleep h5 {
   color: #fff;
 }
 
-.sleep_colo--light {
+.color--sleep--light {
   background-color: #c3dbe1 /* rgba(255,255,255, 0.6) */;
 }
 
-.sleep_color--light p,
-.sleep_color--light a,
-.sleep_color--light h1,
-.sleep_color--light h2,
-.sleep_color--light h3,
-.sleep_color--light h4,
-.sleep_color--light h5 {
+.color-sleep--light p,
+.color-sleep--light a,
+.color-sleep--light h1,
+.color-sleep--light h2,
+.color-sleep--light h3,
+.color-sleep--light h4,
+.color-sleep--light h5 {
   color: #333;
 }
 
@@ -38,40 +38,40 @@
   EAT color
 ***************************/
 
-.eat_color {
+.color--food {
   background-color: #e28b65;
 }
 
-.eat_color.lg--bg {
+.color--food.lg--bg {
   background-image: url(../images/lgbackgrounds/eat.png);
 }
 
-.eat_color p,
-.eat_color a,
-.eat_color h1,
-.eat_color h2,
-.eat_color h3,
-.eat_color h4,
-.eat_color h5 {
+.color--food p,
+.color--food a,
+.color--food h1,
+.color--food h2,
+.color--food h3,
+.color--food h4,
+.color--food h5 {
   color: #fff;
 }
 
-.eat_color--light {
+.color--food--light {
   background-color: #f3d1c1 /* rgba(255,255,255, 0.6) */;
 }
 
-.eat_color--light p,
-.eat_color--light a,
-.eat_color--light h1,
-.eat_color--light h2,
-.eat_color--light h3,
-.eat_color--light h4,
-.eat_color--light h5 {
+.color--food--light p,
+.color--food--light a,
+.color--food--light h1,
+.color--food--light h2,
+.color--food--light h3,
+.color--food--light h4,
+.color--food--light h5 {
   color: #333;
 }
 
 
-/*.eat_color.lg-arrow-right::after {
+/*.color--food.lg-arrow-right::after {
   border-top-color: #e28b65;
   border-bottom-color: #e28b65;
   border-right-color: #e28b65;
@@ -82,80 +82,80 @@
  WINE color
  ***************************/
 
-.wine_color {
+.color--wine {
   background-color: #ba5b90;
 }
 
-.wine_color.lg--bg {
+.color--wine.lg--bg {
   background-image: url(../images/lgbackgrounds/activities.png);
 }
 
-.wine_color.lg-arrow-down::after {
+.color--wine.lg-arrow-down::after {
   border-top-color: #ba5b90;
 }
 
-.wine_color.washed {
+.color--wine.washed {
   background-color: #c87ca6;
 }
 
-.wine_color.washed.lg-arrow-down::after {
+.color--wine.washed.lg-arrow-down::after {
   border-top-color: #c87ca6;
 }
 
-.wine_color p,
-.wine_color a,
-.wine_color h1,
-.wine_color h2,
-.wine_color h3,
-.wine_color h4,
-.wine_color h5 {
+.color--wine p,
+.color--wine a,
+.color--wine h1,
+.color--wine h2,
+.color--wine h3,
+.color--wine h4,
+.color--wine h5 {
   color: #fff;
 }
 
 
-.wine_color .avia-icon-list .iconlist_icon {
+.color--wine .avia-icon-list .iconlist_icon {
   background: #fff;
 }
 
-.wine_color span.iconlist-char {
+.color--wine span.iconlist-char {
   color: #ba5b90;
 }
 
 /**********************
  TRAVEL color
  ***************************/
-.travel_color {
+.color--travel {
   background-color: #4CAF50;
 }
 
-.travel_color.lg-arrow-down::after {
+.color--travel.lg-arrow-down::after {
   border-top-color: #4CAF50;
 }
 
-.travel_color.washed {
+.color--travel.washed {
   background-color: #81C784;
 }
 
-.travel_color.washed.lg-arrow-down::after {
+.color--travel.washed.lg-arrow-down::after {
   border-top-color: #81C784;
 }
 
-.travel_color p,
-.travel_color a,
-.travel_color a:hover,
-.travel_color h1,
-.travel_color h2,
-.travel_color h3,
-.travel_color h4,
-.travel_color h5 {
+.color--travel p,
+.color--travel a,
+.color--travel a:hover,
+.color--travel h1,
+.color--travel h2,
+.color--travel h3,
+.color--travel h4,
+.color--travel h5 {
   color: #fff;
 }
 
 
-.travel_color .avia-icon-list .iconlist_icon {
+.color--travel .avia-icon-list .iconlist_icon {
   background: #fff;
 }
 
-.travel_color span.iconlist-char {
+.color--travel span.iconlist-char {
   color: #4CAF50;
 }
