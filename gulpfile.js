@@ -25,7 +25,8 @@ gulp.task('browser-sync', function() {
     browserSync.init(files, {
     //browsersync with a php server
     proxy: "http://play.dev",
-    notify: true
+    notify: true,
+    online: true
     });
 });
 
@@ -49,6 +50,6 @@ gulp.task('sass', function () {
 // Default task to be run with `gulp`
 gulp.task('default', ['sass', 'browser-sync'], function () {
     gulp.watch("sass/**/*.scss", ['sass']);
-    gulp.watch("**/*.scss", ['sass']);
-    gulp.watch("**/*.php", ['sass']);
+//    gulp.watch("**/*.scss", ['sass']);
+//    gulp.watch("**/*.php", ['sass']);
 });

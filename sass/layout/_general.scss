@@ -3,64 +3,52 @@
   overflow: hidden;
 }
 
-/*.lg-section {
-  display:flex;
-  justify-content: center;
-}*/
 
 .inner {
-  padding: ($line-height * 2) $line-height;
+  padding: ($line-height * 2) ($line-height * 2);
   max-width: $website-width;
   margin: 0 auto;
-  display: flex;
-  flex-wrap: wrap;
-  flex-direction: row;
-  justify-content: space-between;
   z-index: 1;
   position: relative;
+  box-sizing: border-box;
+  padding-top: $gutter;
+  padding-bottom: $gutter;
 }
 
 .inner.folio {
-  margin-top: -($line-height * 3);
+  margin-top: -($line-height * 3); //VOGLIO FARE PIU RIENTRO - **COME** - posso fare un folio-xl con più margine, e dare una classe speciale agli inner che li precedono per aumentare il padding. OPPURE - meglio ancora - faccio la classe speciale che può solo esssere usata DOPO agli HUGE, e faccio un padding specifico per la sezione intro //TODO
   padding-top: $line-height * 2;
   background: $bianco;
   box-shadow: 1px 1px 10px rgba(0,0,0, 0.3);
 }
 
-.inner {
-  padding-top: $line-height * 2;
-  padding-bottom: $line-height * 2;
-}
 
-.padding--none .inner {
+.inner.padding--none {
   padding-top: 0;
   padding-bottom: 0;
 }
 
-.padding--small .inner {
-  padding-top: $line-height * 1;
-  padding-bottom: $line-height * 1;
+.inner.padding--small {
+  padding-top: $gutter-small;
+  padding-bottom: $gutter-small;
 }
 
-.padding--large .inner {
-  padding-top: $line-height * 4;
-  padding-bottom: $line-height * 4;
+.inner.padding--large {
+  padding-top: $gutter-large;
+  padding-bottom: $gutter-large;
 }
 
-.padding--huge .inner {
-  padding-top: $line-height * 4;
-  padding-bottom: $line-height * 4;
+.inner.padding--huge {
+  padding-top: $gutter-huge;
+  padding-bottom: $gutter-huge;
 }
 
-.overlay--dark {
-  position: relative;
-  z-index: -1;
 
-  .inner {
-  }
-
-  &::before {
-    @include color-overlay;
-    z-index: -1;
-  }
+.inner__row {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  justify-content: space-between;
+  box-sizing: border-box;
+  margin: 0 (-$line-height * 2);
 }

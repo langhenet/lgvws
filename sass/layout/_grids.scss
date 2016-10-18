@@ -5,8 +5,11 @@
   justify-content: flex-start;
   align-items: stretch;
   margin-top: $line-height;
+  box-sizing: border-box;
+  margin-right: -3em;
+  margin-left: -3em;
 
-  @include respond-to(step-3) {
+  @include breakpoint-max(md) {
     justify-content: space-around;
   }
 }
@@ -18,13 +21,13 @@
   flex-direction: column;
   border-radius: 0.2em;
   overflow:hidden;
+  box-sizing: border-box;
   box-shadow: 2px 1px 6px rgba(50,50,50,0.2);
 }
 
 .grid-item--third {
   flex-basis: 31.625%;
   margin-bottom: $line-height;
-  flex: 0 0 31.625%;
   width: 0;
   border-bottom: 4px solid;
   margin-right: 2.5625%;
@@ -35,7 +38,7 @@
 }
 
 
-@include respond-to(step-1) {
+@include breakpoint-max(xl) {
   .grid-item--third {
     flex-basis: 48%;
 
@@ -48,10 +51,10 @@
   }
 }
 
-@include respond-to(step-4) {
+@include breakpoint-max(xs) {
   .grid-item--third {
     flex-basis: 100%;
-    
+
     &:nth-child(3n+3) {
       margin-right:0;
     }
@@ -61,19 +64,28 @@
 .grid-item__image-container {
   display: block;
   position: relative;
+  box-sizing: border-box;
+  width: 100%;
 }
 
 .grid-item__image {
   display: block;
+  /* width: auto; */
+  height: auto;
+  /* flex-basis: 100%; */
+  /* flex-grow: 0; */
+  width: 100%;
 }
 
 .grid-item__title-container {
   padding: $line-height $line-height ($line-height / 2) $line-height;
   width: 100%;
+  box-sizing: border-box;
 }
 .grid-item__description-container {
   padding: 0 $line-height 0 $line-height;
   width: 100%;
+  box-sizing: border-box;
 }
 
 .grid-item__meta-container {
@@ -83,6 +95,7 @@
   bottom:0;
   background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 60%, rgba(0,0,0,0.3) 70%, rgba(0,0,0,0.0) 100%);
   color: #fff;
+  box-sizing: border-box;
 }
 
 .grid-item__meta {
@@ -119,6 +132,7 @@
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  box-sizing: border-box;
 }
 
 .grid-item__additional-info-container {

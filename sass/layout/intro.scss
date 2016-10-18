@@ -5,6 +5,11 @@
   padding-top: $line-height * 4;
   padding-bottom: $line-height * 4;
   background: main-colors(header, bg);
+  position: relative;
+}
+
+.intro--overlay::before {
+  @include color-overlay;
 }
 
 .title {

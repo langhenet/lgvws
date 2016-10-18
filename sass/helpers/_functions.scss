@@ -137,3 +137,10 @@
 @function main-colors($palette, $element: 'body') {
     @return map-get(map-get($layout-colors, $palette), $element);
 }
+
+//****************************************************************************//
+//*                   PX to EM
+//****************************************************************************//
+@function em($value: $base * 1px) {
+  @return ($value / 1px) / ($font-size * $base / 1em) * 1em
+}

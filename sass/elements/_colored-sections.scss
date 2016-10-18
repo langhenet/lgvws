@@ -14,7 +14,7 @@
 
 @each $palette, $sections in $colors {
   .color-#{$palette}--light {
-    background-color: mix(palette($palette, bg), $bianco, 40%);
+    background-color: mix(palette($palette, bg), $bianco, 10%);
   }
 }
 
@@ -26,4 +26,12 @@
 }
 .color--wine.lg--bg {
   background-image: url(../images/lgbackgrounds/activities.png);
+}
+
+.overlay--dark {
+  position: relative;
+
+  &::before {
+    @include color-overlay;
+  }
 }

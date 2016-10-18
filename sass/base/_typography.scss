@@ -31,15 +31,15 @@ body {
 
 h1 {
   @include size(h1);
-  color: mix($nero, $bianco, 90%);
+  color: palette(main, heading);
 }
 h2 {
   @include size(h2);
-  color: mix($nero, $bianco, 90%);
+  color: palette(main, heading);
 }
 h3 {
   @include size(h3);
-  color: mix($nero, $bianco, 90%);
+  color: palette(main, heading);
 }
 
 p {
