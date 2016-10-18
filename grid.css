@@ -43,7 +43,7 @@ html.responsive { min-width: 0px; }
 }
 .row {
   position: relative;
-  margin-bottom: 20px;
+  margin-bottom: 30px;
   clear: both;
 }
 
@@ -225,8 +225,8 @@ div .av_one_half {
   width: 48.718%;
 }
 div .av_three_fifth {
-   margin-left: 2.565%;
-   width: 58.974%;
+  margin-left: 2.565%;
+  width: 58.974%;
 }
 div .av_two_third {
   margin-left: 2.5625%;
@@ -244,12 +244,6 @@ div .av_one_sixth {
   width:14.53%;
   margin-left: 2.565%;
 }
-
-div .av_four_sixth {
-  width: 65.812%;
-  margin-left: 2.565%;
-}
-
 div .av_one_seventh {
   margin-left: 6%;
   width: 9.142857142857142%;
@@ -265,6 +259,10 @@ div .av_one_nineth {
 div .av_one_tenth {
   margin-left: 6%;
   width: 4.6%;
+}
+div .av_four_sixth {
+  width: 65.812%;
+  margin-left: 2.565%;
 }
 /* Columns for better content separation (no margin)
 ================================================== */
