@@ -23,7 +23,7 @@
 ///
 // Families
 ///
-  $font-family: 'Rufina', serif; //TODO
+  $font-family: Georgia, serif; //TODO
   $font-family-heading: 'Open Sans', sans-serif; //TODO
   $font-family-special: $font-family; //TODO
   $font-family-button: $font-family;
@@ -141,10 +141,10 @@ $weights: (
     ),
 
     blockquote: (
-      fs: 1.263157894736842em,
-      lh: 1.583333333333333em,
-      mt: 1.583333333333333em,
-      mb: 1.583333333333333em,
+      fs: 1.600000000em,
+      lh: 1.875000000em,
+      mt: 0.9375em,
+      mb: 0.9375em,
       fm: family(ffh, family),
       wt: family(ffh, light),
   ),

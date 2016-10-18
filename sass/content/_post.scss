@@ -1,0 +1,19 @@
+.meta__container {
+  margin-top: -$line-height;
+  margin-bottom: $line-height * 2;
+  padding: 0 $line-height bspad(2, p) $line-height;
+  border-bottom: 2px solid mix($nero, white, 20%);
+  flex-basis: 100%;
+  span {
+    font-weight: family(ffh, bold);
+  }
+  p {
+    font-family: family(ffh, family);
+    text-transform: uppercase;
+  }
+}
+
+.content_box {
+  display: block;
+  width: 100%;
+}

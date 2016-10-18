@@ -25,6 +25,8 @@ body {
   font-size: $font-size;
   line-height: $line-height;
   font-family: $font-family;
+  text-rendering: optimizeLegibility;
+  text-rendering: geometricPrecision;
 }
 
 h1 {
@@ -45,7 +47,38 @@ p {
   color: $nero;
 }
 
+p, h1, h2, h3, h4, h5, ol, ul, blockquote {
+  &:first-child {
+    margin-top: 0;
+  }
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
 ul, ol {
   @include size(p);
   @include margin(p);
+}
+
+blockquote {
+  @include size(blockquote);
+  @include deco(blockquote);
+  width: 45%;
+  margin-right: 5%;
+  padding: $line-height 0 $line-height $line-height;
+  border-top: 2px solid;
+  border-bottom: 2px solid;
+  position: relative;
+
+  &::before {
+    content: "\201C";
+    font-size: 10em;
+    display: inline;
+    position: absolute;
+    top: 25%;
+    left: 0;
+    opacity: 0.2;
+  }
 }
