@@ -12,7 +12,7 @@
   <div class="lg-section color-alternate--light">
     <div class="inner folio--xl padding--none">
       <div class="inner__row">
-        <div class="flex-column flex-column--max full-height padded color-sleep washed">
+        <div class="flex-column flex-column--max full-height padding--medium color-sleep washed">
           <div class="flex-column__content">
             <h2 style="text-align: center;">This could be a searchbox!</h2>
             <h3 style="text-align: center;">With lots of space for fields</h3>

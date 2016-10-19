@@ -13,20 +13,25 @@
     <div class="inner folio--xl">
       <div class="inner__row">
         <div class="flex-column flex-column--2-3">
-          <div class="inner__row">
-            <div class="flex-column flex-column--1-2 height--full-top padded color-alternate--light">
+          <div class="inner__row has-border--bottom">
+            <div class="flex-column flex-column--2-8 gutter--small height--full-top padding--medium">
+              <div class="flex-column__content image_box">
+                <img src="https://randomuser.me/api/portraits/men/81.jpg" style="height:60px; border-radius:100%;" />
+              </div>
+            </div>
+            <div class="flex-column flex-column--3-8 gutter--small height--full-top padding--medium">
               <div class="flex-column__content content_box">
                 <p class="meta"><strong>Autore</strong><br/>Enrico Cassinelli</p>
               </div>
             </div>
-            <div class="flex-column flex-column--1-2 height--full-top padded color-alternate--light">
+            <div class="flex-column flex-column--3-8 gutter--small height--full-top padding--medium">
               <div class="flex-column__content content_box">
-                <p class="meta" style="text-align:right;"><strong>Pubblicato il</strong><br/>12 Ottobre 2017</p>
+                <p class="meta"><strong>Pubblicato il</strong><br/>12 Ottobre 2017</p>
               </div>
             </div>
           </div>
           <div class="inner__row">
-            <div class="flex-column flex-column--full padded">
+            <div class="flex-column flex-column--full padding--medium">
               <div class="flex-column__content content_box first-paragraph--big">
                 <p>Siete giunti nelle Langhe per partecipare alla&nbsp;<a href="http://langhe.net/fiera-tartufo-bianco-alba/"><strong>Fiera del Tartufo Bianco di Alba</strong></a> e vi ritrovate con qualche <strong>giorno libero per visitare i dintorni</strong>?</p>
                 <p>Ecco i nostri <strong>suggerimenti per scoprire il territorio,</strong>&nbsp;assaggiando i prodotti tipici direttamente nelle aziende dei produttori, facendo escursioni da soli o accompagnati per le colline, visitando i musei più importanti, i castelli meglio conservati e passeggiando tra i borghi più belli.</p>
@@ -62,18 +67,56 @@
             </div>
           </div>
         </div>
-        <div class="flex-column flex-column--1-3 height--full-top padded color-travel washed">
-          <div class="flex-column__content content_box">
-            <p class="meta" style="text-align:right;"><strong>Categoria</strong><br/>Cosa Vedere</p>
-            <hr style="border-color:#fff;border-style:solid;margin-bottom: 1.5em;"/>
-            <h3 class="related-list__title">Da vedere nelle Langhe</h3>
-            <p class="related-list__element">Castello della Manta</p>
-            <p class="related-list__element">Castello di Barolo</p>
-            <p class="related-list__element">Castello di Serralunga</p>
-            <p class="related-list__element">Chiesa di santa Maria Assuntissima</p>
+        <div class="flex-column flex-column--1-3 not-equal--top"  style="text-align:right;">
+          <div class="inner__row">
+            <div class="flex-column flex-column--max height--full-top padding--medium color-travel">
+              <div class="flex-column__content content_box">
+                <p class="meta"><strong>Categoria</strong><br/>Cosa Vedere</p>
+              </div>
+            </div>
+          </div>
+          <div class="inner__row">
+            <div class="flex-column flex-column--max padding--medium color-travel washed">
+              <div class="flex-column__content content_box">
+                <h3 class="related-list__title">Da vedere nelle Langhe</h3>
+                <p class="related-list__element">Castello della Manta</p>
+                <p class="related-list__element">Castello di Barolo</p>
+                <p class="related-list__element">Castello di Serralunga</p>
+                <p class="related-list__element">Chiesa di santa Maria Assuntissima</p>
+              </div>
+            </div>
+          </div>
+          <div class="inner__row">
+            <div class="flex-column flex-column--max padding--medium color-wine washed">
+              <div class="flex-column__content content_box">
+                <h3 class="related-list__title">Cantine da Visitare</h3>
+                <p class="related-list__element">Castello della Manta</p>
+                <p class="related-list__element">Castello di Barolo</p>
+                <p class="related-list__element">Castello di Serralunga</p>
+                <p class="related-list__element">Chiesa di santa Maria Assuntissima</p>
+              </div>
+            </div>
+          </div>
+          <div class="inner__row">
+            <div class="flex-column flex-column--max gutter--none color-wine washed">
+              <div class="flex-column__content image_box">
+                <img src="http://langhe.net/wp-content/uploads/2016/08/quadrato-ter-banner-ricerca-tartufo-ita.jpg" style="width:100%" />
+              </div>
+            </div>
           </div>
         </div>
-
+      </div>
+      <div class="inner__row">
+        <div class="flex-column flex-column--1-3">
+          <div class="flex-column__content content_box">
+            Ciao
+          </div>
+        </div>
+        <div class="flex-column flex-column--2-3">
+          <div class="flex-column__content content_box">
+            Ciao
+          </div>
+        </div>
       </div>
     </div>
   </div>

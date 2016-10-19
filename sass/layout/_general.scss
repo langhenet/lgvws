@@ -71,4 +71,27 @@
   justify-content: space-between;
   box-sizing: border-box;
   margin: 0 (-$gutter);
+  position: relative;
+}
+
+// COLONNE COL BORDO: BISOGNA AGGIUNGERE POSITION RELATIVE ALLE COLONNE
+.inner__row.has-border--bottom::after {
+  content: "";
+  display: inline;
+  height: 2px;
+  position: absolute;
+  z-index: 9999;
+  width: 100%;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.has-border--bottom::after {
+  background: lighten(palette(main, heading), 50%);
+}
+.color-travel.has-border--bottom::after {
+  background: palette(travel, body);
 }

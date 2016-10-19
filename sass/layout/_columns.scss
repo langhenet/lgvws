@@ -5,19 +5,31 @@
   box-sizing: border-box;
   width: 0;
   flex-basis: 100%;
+  position: relative;
+
+  &.padding--none {
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+  &.padding--small {
+    padding-top: $height-small;
+    padding-bottom: $height-small;
+  }
+  &.padding--medium {
+    padding-top: $height;
+    padding-bottom: $height;
+  }
+  &.padding--large {
+    padding-top: $height-large;
+    padding-bottom: $height-large;
+  }
+  &.padding--huge {
+    padding-top: $height-huge;
+    padding-bottom: $height-huge;
+  }
 }
 
-.flex-column.no-padding {
-  padding-top: 0;
-  padding-bottom: 0;
-}
 
-
-
-.flex-column.padded {
-  padding-top: $height;
-  padding-bottom: $height;
-}
 
 .flex-column.height--full {
   margin-top: -$height;
@@ -53,8 +65,24 @@
 
 
 @include breakpoint-min(lg) {
+  .flex-column--1-8 {
+    flex-basis: 12.5%;
+  }
+
+  .flex-column--2-8 {
+    flex-basis: 25%;
+  }
+
+  .flex-column--3-8 {
+    flex-basis: 37.5%;
+  }
+
   .flex-column--1-4 {
     flex-basis: 25%;
+  }
+
+  .flex-column--3-4 {
+    flex-basis: 75%;
   }
 
   .flex-column--1-3 {
@@ -71,15 +99,13 @@
 
 }
 
-.flex-column.gutter--none { }
+.flex-column.gutter--none {
+  padding-right: 0;
+  padding-left: 0;
+}
 .flex-column.gutter--small {
   padding-right: $gutter-small;
   padding-left: $gutter-small;
 }
 .gutter--large { }
 .gutter--huge { }
-
-.padding--none { }
-.padding--small { }
-.padding--large { }
-.padding--huge { }

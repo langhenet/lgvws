@@ -51,7 +51,7 @@
         </div>
         <div class="flex-column flex-column--1-3 height--full">
           <div class="inner__row">
-            <div class="flex-column flex-column--max padded color-alternate--light">
+            <div class="flex-column flex-column--max padding--medium color-alternate--light">
               <div class="flex-column__content content_box">
                 <h3>Im stupid</h3>
                 <p>nisi quis porttitor congue, elit erat euismod orci, ac</p>
@@ -59,7 +59,7 @@
             </div>
           </div>
           <div class="inner__row">
-            <div class="flex-column flex-column--max padded color-food washed">
+            <div class="flex-column flex-column--max padding--medium color-food washed">
               <div class="flex-column__content content_box">
                 <h3>This is a list of posts</h3>
                 <ul style="padding-left:0;font-size:0.75em;line-height:2;list-style:none;">
@@ -102,7 +102,7 @@
             <p>In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi.</p>
           </div>
         </div>
-        <div class="flex-column flex-column--1-3 height--full padded color-wine washed">
+        <div class="flex-column flex-column--1-3 height--full padding--medium color-wine washed">
           <div class="flex-column__content content_box">
             <h3>Questo è un testo di prova</h3>
             <p>In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi.</p>
@@ -143,7 +143,7 @@
             <p>Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus.</p>
           </div>
         </div>
-        <div class="flex-column flex-column--1-3 not-equal--top padded color-sleep washed">
+        <div class="flex-column flex-column--1-3 not-equal--top padding--medium color-sleep washed">
           <div class="flex-column__content content_box">
             <h2>Questo</h2>
               <p>è un testo di prova che non rimane troppo lungo</p>
@@ -186,7 +186,7 @@
             <p>Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus.</p>
           </div>
         </div>
-        <div class="flex-column flex-column--1-3 height--full-top color-food not-equal--top padded">
+        <div class="flex-column flex-column--1-3 height--full-top color-food not-equal--top padding--medium">
           <div class="flex-column__content content_box">
             <h3>Questo è un testo</h3>
             <p>In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi.</p>
