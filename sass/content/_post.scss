@@ -1,7 +1,5 @@
 .meta__container {
-  margin-top: -$line-height;
-  margin-bottom: $line-height * 2;
-  padding: 0 $line-height bspad(2, p) $line-height;
+  padding: 0 0 $line-height / 2 0;
   border-bottom: 2px solid mix($nero, white, 20%);
   flex-basis: 100%;
   span {
@@ -13,7 +11,28 @@
   }
 }
 
+.meta {
+  font-family: family(ffh, family);
+  @include font-size(p);
+  text-transform: uppercase;
+}
+
 .content_box {
   display: block;
   width: 100%;
+//  padding-top: $height;
+//  padding-bottom: $height;
 }
+
+.gutter-overflow {
+  margin-left: -$gutter;
+//  margin-right: -$gutter;
+}
+
+/*.first-paragraph--big p:first-of-type {
+  font-size: font(h3, fs);
+  line-height: font(h3, lh);
+  @include margin(h3);
+  @include deco(p);
+  font-style: italic;
+}*/

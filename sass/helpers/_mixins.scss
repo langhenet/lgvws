@@ -227,50 +227,50 @@
 //****************************************************************************//
 @mixin breakpoint-max($media) {
   @if $media == xs {
-    @media (max-width: em($xs - 1)) { @content; }
+    @media (max-width: em-bp($xs - 1)) { @content; }
   }
   @if $media == sm {
-    @media (max-width: em($sm - 1)) { @content; }
+    @media (max-width: em-bp($sm - 1)) { @content; }
   }
   @if $media == md {
-    @media (max-width: em($md - 1)) { @content; }
+    @media (max-width: em-bp($md - 1)) { @content; }
   }
   @if $media == lg {
-    @media (max-width: em($lg - 1)) { @content; }
+    @media (max-width: em-bp($lg - 1)) { @content; }
   }
   @if $media == xl {
-    @media (max-width: em($xl - 1)) { @content; }
+    @media (max-width: em-bp($xl - 1)) { @content; }
   }
   @if $media == uxl {
-    @media (max-width: em($uxl - 1)) { @content; }
+    @media (max-width: em-bp($uxl - 1)) { @content; }
   }
 }
 
 @mixin breakpoint-min($media) {
   @if $media == xs {
-    @media (min-width: em($xs)) { @content; }
+    @media (min-width: em-bp($xs)) { @content; }
   }
   @if $media == sm {
-    @media (min-width: em($sm)) { @content; }
+    @media (min-width: em-bp($sm)) { @content; }
   }
   @if $media == md {
-    @media (min-width: em($md)) { @content; }
+    @media (min-width: em-bp($md)) { @content; }
   }
   @if $media == lg {
-    @media (min-width: em($lg)) { @content; }
+    @media (min-width: em-bp($lg)) { @content; }
   }
   @if $media == xl {
-    @media (min-width: em($sl)) { @content; }
+    @media (min-width: em-bp($sl)) { @content; }
   }
   @if $media == uxl {
-    @media (min-width: em($uxl)) { @content; }
+    @media (min-width: em-bp($uxl)) { @content; }
   }
 }
 
 /*@mixin respond-to($media) {
 
   @if $media == step-0 {
-    @media only screen and (max-width: $website-width - 1px) { @content; }
+    @media only screen and (max-width: em-bp($website-)width - 1px) { @content; }
   }
 
   @else if $media == step-1 {

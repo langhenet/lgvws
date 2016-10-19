@@ -9,30 +9,48 @@
   margin-right: -3em;
   margin-left: -3em;
 
-  @include breakpoint-max(md) {
+  @include breakpoint-max(xl) {
     justify-content: space-around;
+  }
+
+  &.gutter--small {
+    margin-right: -$gutter-small / 2;
+    margin-left: -$gutter-small / 2;
+
+    @include breakpoint-max(xl) {
+      margin-left:0;
+      margin-right:0;
+    }
   }
 }
 
 .grid-item {
   flex-grow: 0;
-  display: flex;
-  align-items: flex-start;
-  flex-direction: column;
-  border-radius: 0.2em;
+
   overflow:hidden;
   box-sizing: border-box;
+
+}
+
+.grid-item__container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  background: $bianco;
   box-shadow: 2px 1px 6px rgba(50,50,50,0.2);
+  border-radius: 0.2em;
+  border-bottom: 4px solid;
+
 }
 
 .grid-item--third {
-  flex-basis: 31.625%;
+  flex-basis: 33.333333%;
   margin-bottom: $line-height;
   width: 0;
-  border-bottom: 4px solid;
-  margin-right: 2.5625%;
+  padding-right: $gutter-small / 2;
+  padding-left: $gutter-small / 2;
 
-  &:nth-child(3n+3) {
+lefth-child(3n+3) {
     margin-right:0;
   }
 }
@@ -41,23 +59,12 @@
 @include breakpoint-max(xl) {
   .grid-item--third {
     flex-basis: 48%;
-
-    &:nth-child(even) {
-      margin-right:0;
-    }
-    &:nth-child(3n+3) {
-      margin-right:2.5625%;
-    }
   }
 }
 
-@include breakpoint-max(xs) {
+@include breakpoint-max(md) {
   .grid-item--third {
-    flex-basis: 100%;
-
-    &:nth-child(3n+3) {
-      margin-right:0;
-    }
+    flex-basis: 95%;
   }
 }
 
@@ -94,18 +101,19 @@
   position: absolute;
   bottom:0;
   background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 60%, rgba(0,0,0,0.3) 70%, rgba(0,0,0,0.0) 100%);
-  color: #fff;
   box-sizing: border-box;
 }
 
 .grid-item__meta {
   font-size: font(small, fs);
   line-height: font(small, lh);
+  font-family: family(ffh, family);
   margin-bottom: 0;
   text-align: left;
   text-transform: uppercase;
  //font-weight: bold;
   letter-spacing: 0;
+  color: #fff;
 }
 
 .grid-item__title {
@@ -114,11 +122,17 @@
   margin-top: 0;
   margin-bottom: 0;
   text-align: left;
+
+  a {
+    text-decoration: none;
+    color: palette(main, heading);
+  }
 }
 
 .grid-item__description {
   font-size: font(small, fs);
   line-height: font(small, lh);
+  font-family: family(ffh, family);
   margin-bottom: 0;
   text-align: left;
 }
@@ -141,19 +155,23 @@
 .grid-item__additional-info {
   font-size: font(small, fs);
   line-height: font(small, lh);
+  font-family: family(ffh, family);
   margin-bottom: 0;
 }
 
 .grid-item__cta-container {
   text-align: right;
 }
+
 .grid-item__read-more {
   font-size: font(small, fs);
   line-height: font(small, lh);
+  font-family: family(ffh, family);
   margin-bottom: 0;
   text-transform: uppercase;
   font-weight: bold;
   display: block;
+  text-decoration: none;
 }
 
 

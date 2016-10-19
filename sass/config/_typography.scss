@@ -23,7 +23,7 @@
 ///
 // Families
 ///
-  $font-family: Georgia, serif; //TODO
+  $font-family: 'Lora', serif; //TODO
   $font-family-heading: 'Open Sans', sans-serif; //TODO
   $font-family-special: $font-family; //TODO
   $font-family-button: $font-family;
@@ -98,7 +98,7 @@ $weights: (
     h3: (
       fs: 1.600000000em,
       lh: 1.875000000em,
-      mt: 0.9375em,
+      mt: 1.875000000em,
       mb: 0.9375em,
       fm: family(ffh, family),
       wt: family(ffh, bold),

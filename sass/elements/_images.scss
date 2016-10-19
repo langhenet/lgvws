@@ -1,0 +1,21 @@
+img {
+  max-width: 100%;
+  height: auto;
+  display:block;
+}
+
+img.aligncenter {
+}
+
+.wp-caption {
+  margin-bottom: $line-height;
+}
+
+.wp-caption-text{
+  @include font-size(small);
+  @include deco(small);
+  padding: font(small, lh) / 2 0;
+  margin-top: 0;
+  text-align: center;
+  background: palette(alternate, light);
+}

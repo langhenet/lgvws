@@ -110,7 +110,7 @@ $colors: (
   main: (
     body:       $nero,      //Corpo - testo
     body-sec:   $null,      //Secondario - blockquote o blog meta
-    heading:    rgba($nero, 0.78),      //Titoli 1 e 2
+    heading:    rgba($nero, 0.68),      //Titoli 1 e 2
     link:       $null,      //Link
     bg:         $null,      //Sfondo principale
     border:     $null,      //Bordi
@@ -141,6 +141,8 @@ $colors: (
     heading:    $bianco,      //Titoli 1 e 2
     link:       $bianco,      //Link
     bg:         $nero-chiaro,      //Sfondo principale
+    washed:     mix($nero-chiaro, $bianco, 80%),
+    light:      mix($nero-chiaro, $bianco, 10%),
     border:     $null,      //Bordi
 
     accent:     $null,      //Accento - sfondo lista icone / grassetti / icone
@@ -169,6 +171,8 @@ $colors: (
     heading:    $bianco,      //Titoli 1 e 2
     link:       $bianco,      //Link
     bg:         $food,      //Sfondo principale
+    washed:     mix($food, $bianco, 80%),
+    light:      mix($food, $bianco, 10%),
     border:     $null,      //Bordi
 
     accent:     $bianco,      //Accento - sfondo lista icone / grassetti / icone
@@ -197,6 +201,8 @@ $colors: (
     heading:    $bianco,      //Titoli 1 e 2
     link:       $bianco,      //Link
     bg:         $sleep,      //Sfondo principale
+    washed:     mix($sleep, $bianco, 80%),
+    light:      mix($sleep, $bianco, 10%),
     border:     $null,      //Bordi
 
     accent:     $bianco,      //Accento - sfondo lista icone / grassetti / icone
@@ -225,6 +231,8 @@ $colors: (
     heading:    $bianco,      //Titoli 1 e 2
     link:       $bianco,      //Link
     bg:         $travel,      //Sfondo principale
+    washed:     mix($travel, $bianco, 80%),
+    light:      mix($travel, $bianco, 10%),
     border:     $bianco,      //Bordi
 
     accent:     $bianco,      //Accento - sfondo lista icone / grassetti / icone
@@ -253,6 +261,8 @@ $colors: (
     heading:    $bianco,      //Titoli 1 e 2
     link:       $bianco,      //Link
     bg:         $wine,      //Sfondo principale
+    washed:     mix($wine, $bianco, 80%),
+    light:      mix($wine, $bianco, 10%),
     border:     $null,      //Bordi
 
     accent:     $bianco,      //Accento - sfondo lista icone / grassetti / icone

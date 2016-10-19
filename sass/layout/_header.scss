@@ -2,7 +2,7 @@ header {
   display: flex;
   flex-direction: row;
   width: 100%;
-  background-color: rgba(main-colors(header, body), 0.2);
+  background-color: rgba($nero, 0.2);
   justify-content: space-between;
   position: relative;
   z-index: 1;

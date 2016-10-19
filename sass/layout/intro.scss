@@ -6,6 +6,7 @@
   padding-bottom: $line-height * 4;
   background: main-colors(header, bg);
   position: relative;
+  background-size: cover;
 }
 
 .intro--overlay::before {

@@ -1,6 +1,6 @@
 <?php include("/../includes/header.html");?>
   <div class="lg-section intro intro--overlay" style="background-image: url('http://langhe.net/wp-content/uploads/2011/08/langhe.jpg');">
-    <div class="inner">
+    <div class="inner has-folio--xl">
       <div class="inner__row">
         <div class="flex-column__content content_box">
           <h1 class="title post--title">Gli eventi da non perdere durante la Fiera Del Tartufo Bianco D’Alba 2016</h1>
@@ -10,14 +10,12 @@
     </div>
   </div>
   <div class="lg-section">
-    <div class="inner folio">
-      <div class="meta__container meta__container--post">
-        <p class="meta meta--author">
-          <span class="meta__label meta__label--author">Autore:</span> Enrico Cassinelli
-        </p>
-      </div>
+    <div class="inner folio--xl">
       <div class="inner__row">
         <div class="flex-column flex-column--2-3">
+          <div class="flex-column__content meta__container">
+            <p class="meta__content"><strong>Autore</strong>: Enrico Cassinelli | <strong>Pubblicato il</strong> 15 Ottobre 2015</p>
+          </div>
           <div class="flex-column__content content_box">
             <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.</p>
 
@@ -51,10 +49,10 @@
             <p>Curabitur ligula sapien, tincidunt non, euismod vitae, posuere imperdiet, leo. Maecenas malesuada. Praesent congue erat at massa. Sed cursus turpis vitae tortor. Donec posuere vulputate arcu. Phasellus accumsan cursus velit. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Sed aliquam, nisi quis porttitor congue, elit erat euismod orci, ac</p>
           </div>
         </div>
-        <div class="flex-column flex-column--1-3">
+        <div class="flex-column flex-column--1-3 height--full">
           <div class="inner__row">
             <div class="flex-column flex-column--max padded color-alternate--light">
-              <div class="flex-column__content">
+              <div class="flex-column__content content_box">
                 <h3>Im stupid</h3>
                 <p>nisi quis porttitor congue, elit erat euismod orci, ac</p>
               </div>
@@ -62,7 +60,7 @@
           </div>
           <div class="inner__row">
             <div class="flex-column flex-column--max padded color-food washed">
-              <div class="flex-column__content">
+              <div class="flex-column__content content_box">
                 <h3>This is a list of posts</h3>
                 <ul style="padding-left:0;font-size:0.75em;line-height:2;list-style:none;">
                   <li>Titolo del Post</li>
@@ -79,9 +77,9 @@
   <div class="lg-section color-wine">
     <div class="inner padding--large">
       <div class="inner__row">
-        <div class="flex-column--1-3">
+        <div class="flex-column flex-column--1-3">
         </div>
-        <div class="flex-column--2-3">
+        <div class="flex-column flex-column--2-3">
           <div class="flex-column__content content_box">
             <h2 style="text-align:right;">And this is a FW Section</h2>
             <h3 style="text-align:right;">With some Text on the side to show the typography</h3>
@@ -104,7 +102,7 @@
             <p>In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi.</p>
           </div>
         </div>
-        <div class="flex-column flex-column--1-3 full-height padded color-wine washed">
+        <div class="flex-column flex-column--1-3 height--full padded color-wine washed">
           <div class="flex-column__content content_box">
             <h3>Questo è un testo di prova</h3>
             <p>In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi.</p>
@@ -116,9 +114,9 @@
   <div class="lg-section color-travel overlay--dark" style="background-image:url(../img/bute.jpg); background-size: cover;">
     <div class="inner padding--large">
       <div class="inner__row">
-        <div class="flex-column--1-3">
+        <div class="flex-column flex-column--1-3">
         </div>
-        <div class="flex-column--2-3">
+        <div class="flex-column flex-column--2-3">
           <div class="flex-column__content content_box">
             <h2 style="text-align:right;">And this is a FW Section</h2>
             <h3 style="text-align:right;">With some Text on the side to show the typography</h3>
@@ -156,11 +154,11 @@
     </div>
   </div>
   <div class="lg-section color-travel overlay--dark" style="background-image:url(../img/tappi.jpg); background-size: cover;">
-    <div class="inner padding--huge">
+    <div class="inner padding--huge has-folio--xl">
       <div class="inner__row">
-        <div class="flex-column--1-3">
+        <div class="flex-column flex-column--1-3">
         </div>
-        <div class="flex-column--2-3">
+        <div class="flex-column flex-column--2-3">
           <div class="flex-column__content content_box">
             <h2 style="text-align:right;">And this is a FW Section</h2>
             <h3 style="text-align:right;">With some Text on the side to show the typography</h3>
@@ -170,7 +168,7 @@
     </div>
   </div>
   <div class="lg-section">
-    <div class="inner folio">
+    <div class="inner folio--xl">
       <div class="inner__row">
         <div class="flex-column flex-column--2-3">
           <div class="flex-column__content content_box">
@@ -188,7 +186,7 @@
             <p>Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus.</p>
           </div>
         </div>
-        <div class="flex-column flex-column--1-3 full-height--top color-food not-equal--top padded">
+        <div class="flex-column flex-column--1-3 height--full-top color-food not-equal--top padded">
           <div class="flex-column__content content_box">
             <h3>Questo è un testo</h3>
             <p>In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi.</p>

@@ -27,15 +27,15 @@
 }
 
 
-.grid-item.sleep_accent {
-  border-color: #69a4b5;
+.grid-item__container.sleep_accent {
+  border-color: palette(sleep, washed);
 }
 
 .sleep_accent .grid-item__read-more {
-  color: #69a4b5;
+  color: palette(sleep, bg);
 
   &:hover {
-    color: darken(#69a4b5, 10%);
+    color: darken(palette(sleep, bg), 10%);
   }
 }
 

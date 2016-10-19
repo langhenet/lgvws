@@ -7,14 +7,14 @@
     }
 
     &.washed {
-      background-color: mix(palette($palette, bg), $bianco, 80%);
+      background-color: palette($palette, washed);
     }
   }
 }
 
 @each $palette, $sections in $colors {
   .color-#{$palette}--light {
-    background-color: mix(palette($palette, bg), $bianco, 10%);
+    background-color: palette($palette, light);
   }
 }
 
