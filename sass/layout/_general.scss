@@ -11,6 +11,17 @@
   position: relative;
   box-sizing: border-box;
 
+ @include breakpoint-max(xl) {
+    max-width: em-bp($md);
+ }
+
+ @include breakpoint-max(lg) {
+    max-width: em-bp($sm);
+ }
+
+ @include breakpoint-max(md) {
+    max-width: em-bp($xs);
+ }
 }
 
 .inner.folio {

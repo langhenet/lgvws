@@ -260,7 +260,7 @@
     @media (min-width: em-bp($lg)) { @content; }
   }
   @if $media == xl {
-    @media (min-width: em-bp($sl)) { @content; }
+    @media (min-width: em-bp($xl)) { @content; }
   }
   @if $media == uxl {
     @media (min-width: em-bp($uxl)) { @content; }

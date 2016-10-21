@@ -12,7 +12,7 @@
   <div class="lg-section">
     <div class="inner folio--lg">
       <div class="inner__row">
-        <div class="flex-column flex-column--2-3">
+        <div class="flex-column flex-column--2-3 color-main padding--medium">
           <div class="flex-column__content meta__container">
             <p class="meta__content"><strong>Autore</strong>: Enrico Cassinelli | <strong>Pubblicato il</strong> 15 Ottobre 2015</p>
           </div>

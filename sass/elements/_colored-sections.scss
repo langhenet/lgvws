@@ -6,6 +6,15 @@
       color: palette($palette, body);
     }
 
+    h1, h2, h3, h4, h5, h6 {
+      color: palette($palette, heading)
+    }
+
+    strong {
+      color: palette($palette, heading);
+      line-height: 0;
+    }
+
     &.washed {
       background-color: palette($palette, washed);
     }
