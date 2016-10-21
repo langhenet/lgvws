@@ -1,6 +1,6 @@
 <?php include("/../includes/header.html");?>
   <div class="lg-section intro intro--overlay" style="background-image: url('http://langhe.net/wp-content/uploads/2011/08/langhe.jpg');">
-    <div class="inner has-folio--xl">
+    <div class="inner has-folio--lg">
       <div class="inner__row">
         <div class="flex-column__content content_box">
           <h1 class="title post--title">Gli eventi da non perdere durante la Fiera Del Tartufo Bianco D’Alba 2016</h1>
@@ -10,7 +10,7 @@
     </div>
   </div>
   <div class="lg-section color-alternate--light">
-    <div class="inner folio--xl padding--none">
+    <div class="inner folio--lg padding--none">
       <div class="inner__row">
         <div class="flex-column flex-column--max full-height padding--medium color-sleep washed">
           <div class="flex-column__content">

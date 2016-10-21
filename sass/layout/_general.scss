@@ -14,24 +14,27 @@
 }
 
 .inner.folio {
-  margin-top: -($line-height * 3); //VOGLIO FARE PIU RIENTRO - **COME** - posso fare un folio-xl con più margine, e dare una classe speciale agli inner che li precedono per aumentare il padding. OPPURE - meglio ancora - faccio la classe speciale che può solo esssere usata DOPO agli HUGE, e faccio un padding specifico per la sezione intro //TODO
-  background: $bianco;
-  box-shadow: 1px 1px 10px rgba(0,0,0, 0.3);
-}
-
-.inner.folio--xl {
   margin-top: -($line-height * 6); //VOGLIO FARE PIU RIENTRO - **COME** - posso fare un folio-xl con più margine, e dare una classe speciale agli inner che li precedono per aumentare il padding. OPPURE - meglio ancora - faccio la classe speciale che può solo esssere usata DOPO agli HUGE, e faccio un padding specifico per la sezione intro //TODO
-  background: $bianco;
+}
+
+.inner.folio--lg {
+  margin-top: -($line-height * 8); //VOGLIO FARE PIU RIENTRO - **COME** - posso fare un folio-xl con più margine, e dare una classe speciale agli inner che li precedono per aumentare il padding. OPPURE - meglio ancora - faccio la classe speciale che può solo esssere usata DOPO agli HUGE, e faccio un padding specifico per la sezione intro //TODO
+}
+
+.inner.dropshadow {
   box-shadow: 1px 1px 10px rgba(0,0,0, 0.3);
 }
 
-.inner.has-folio--xl {
+.inner.has-folio--lg {
   padding-bottom: $height * 2.5;
 }
 
 
 .inner {
-  padding: $height $gutter;
+  padding-top: $height;
+  padding-bottom: $height;
+  padding-right: $gutter;
+  padding-left: $gutter;
 
   &.padding--none {
     padding-top: 0;
@@ -72,6 +75,10 @@
   box-sizing: border-box;
   margin: 0 (-$gutter);
   position: relative;
+}
+
+.inner__row.dropshadow {
+  box-shadow: 1px 1px 10px rgba(0,0,0, 0.3);
 }
 
 // COLONNE COL BORDO: BISOGNA AGGIUNGERE POSITION RELATIVE ALLE COLONNE

@@ -1,6 +1,6 @@
 <?php include("/../includes/header.html");?>
   <div class="lg-section intro intro--overlay" style="background-image: url('http://langhe.net/wp-content/uploads/2011/08/langhe.jpg');">
-    <div class="inner has-folio--xl">
+    <div class="inner has-folio--lg">
       <div class="inner__row">
         <div class="flex-column__content content_box">
           <h1 class="title post--title">Gli eventi da non perdere durante la Fiera Del Tartufo Bianco D’Alba 2016</h1>
@@ -10,7 +10,7 @@
     </div>
   </div>
   <div class="lg-section">
-    <div class="inner folio--xl">
+    <div class="inner folio--lg">
       <div class="inner__row">
         <div class="flex-column flex-column--2-3">
           <div class="flex-column__content meta__container">
@@ -90,9 +90,17 @@
   </div>
   <div class="lg-section">
     <div class="inner folio">
-      <div class="inner__row">
-        <div class="flex-column flex-column--2-3">
+      <div class="inner__row dropshadow">
+        <div class="flex-column flex-column--2-3 color-main padding--medium">
           <div class="flex-column__content content_box">
+            <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.</p>
+
+            <p>Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu.</p>
+
+            <p>In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi.</p>
+
+            <p>In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi.</p>
+
             <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.</p>
 
             <p>Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu.</p>
@@ -102,7 +110,7 @@
             <p>In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi.</p>
           </div>
         </div>
-        <div class="flex-column flex-column--1-3 height--full padding--medium color-wine washed">
+        <div class="flex-column flex-column--1-3 padding--medium color-wine washed">
           <div class="flex-column__content content_box">
             <h3>Questo è un testo di prova</h3>
             <p>In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi.</p>
@@ -118,7 +126,7 @@
         </div>
         <div class="flex-column flex-column--2-3">
           <div class="flex-column__content content_box">
-            <h2 style="text-align:right;">And this is a FW Section</h2>
+            <h2 style="text-align:right;">And this is a FW Section #2</h2>
             <h3 style="text-align:right;">With some Text on the side to show the typography</h3>
           </div>
         </div>
@@ -154,23 +162,23 @@
     </div>
   </div>
   <div class="lg-section color-travel overlay--dark" style="background-image:url(../img/tappi.jpg); background-size: cover;">
-    <div class="inner padding--huge has-folio--xl">
+    <div class="inner padding--huge has-folio--lg">
       <div class="inner__row">
-        <div class="flex-column flex-column--1-3">
-        </div>
         <div class="flex-column flex-column--2-3">
           <div class="flex-column__content content_box">
-            <h2 style="text-align:right;">And this is a FW Section</h2>
-            <h3 style="text-align:right;">With some Text on the side to show the typography</h3>
+            <h2 style="text-align:left;">And this is a FW Section #3</h2>
+            <h3 style="text-align:left;">With some Text on the side to show the typography</h3>
           </div>
+        </div>
+        <div class="flex-column flex-column--1-3">
         </div>
       </div>
     </div>
   </div>
   <div class="lg-section">
-    <div class="inner folio--xl">
-      <div class="inner__row">
-        <div class="flex-column flex-column--2-3">
+    <div class="inner folio--lg">
+      <div class="inner__row color-main">
+        <div class="flex-column flex-column--2-3 padding--medium dropshadow">
           <div class="flex-column__content content_box">
             <h2>Start the section with a title</h2>
             <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.</p>
