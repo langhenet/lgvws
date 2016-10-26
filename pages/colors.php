@@ -1,4 +1,4 @@
-<?php include("../includes/header.html");?>
+<?php include("../includes/header.php");?>
 <div class="flex-row">
   <div class="flex-cell flex-cell--fourth color-sleep">
     <div class="flex-cell__content">

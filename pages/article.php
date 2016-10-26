@@ -1,4 +1,4 @@
-<?php include("../includes/header.html");?>
+<?php include("../includes/header.php");?>
   <div class="lg-section intro intro--overlay" style="background-image: url('https://drscdn.500px.org/photo/142708983/m%3D2048/9fda99b9109532a21d873d3d657ffdd8');">
     <div class="inner has-folio--lg">
       <div class="inner__row">

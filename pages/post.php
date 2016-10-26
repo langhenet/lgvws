@@ -1,4 +1,4 @@
-<?php include("../includes/header.html");?>
+<?php include("../includes/header.php");?>
   <div class="lg-section intro intro--overlay" style="background-image: url('http://langhe.net/wp-content/uploads/2011/08/langhe.jpg');">
     <div class="inner has-folio--lg">
       <div class="inner__row">

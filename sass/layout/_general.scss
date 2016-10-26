@@ -11,9 +11,13 @@
   position: relative;
   box-sizing: border-box;
 
- @include breakpoint-max(xl) {
+  &.fluid {
+    max-width: 100%;
+  }
+
+  @include breakpoint-max(xl) {
     max-width: em-bp($md);
- }
+  }
 
  @include breakpoint-max(lg) {
     max-width: em-bp($sm);
