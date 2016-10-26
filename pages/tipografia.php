@@ -1,4 +1,4 @@
-<?php include("/../includes/header.html");?>
+<?php include("../includes/header.html");?>
 <div class="inner">
   <h1>HTML Ipsum Presents</h1>
 

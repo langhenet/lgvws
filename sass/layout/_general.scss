@@ -25,25 +25,26 @@
 }
 
 .inner.folio {
-  margin-top: -($line-height * 6); //VOGLIO FARE PIU RIENTRO - **COME** - posso fare un folio-xl con più margine, e dare una classe speciale agli inner che li precedono per aumentare il padding. OPPURE - meglio ancora - faccio la classe speciale che può solo esssere usata DOPO agli HUGE, e faccio un padding specifico per la sezione intro //TODO
+  margin-top: -($line-height * 4); //VOGLIO FARE PIU RIENTRO - **COME** - posso fare un folio-xl con più margine, e dare una classe speciale agli inner che li precedono per aumentare il padding. OPPURE - meglio ancora - faccio la classe speciale che può solo esssere usata DOPO agli HUGE, e faccio un padding specifico per la sezione intro //TODO
 }
 
 .inner.folio--lg {
-  margin-top: -($line-height * 8); //VOGLIO FARE PIU RIENTRO - **COME** - posso fare un folio-xl con più margine, e dare una classe speciale agli inner che li precedono per aumentare il padding. OPPURE - meglio ancora - faccio la classe speciale che può solo esssere usata DOPO agli HUGE, e faccio un padding specifico per la sezione intro //TODO
+  margin-top: -($line-height * 6); //VOGLIO FARE PIU RIENTRO - **COME** - posso fare un folio-xl con più margine, e dare una classe speciale agli inner che li precedono per aumentare il padding. OPPURE - meglio ancora - faccio la classe speciale che può solo esssere usata DOPO agli HUGE, e faccio un padding specifico per la sezione intro //TODO
 }
 
 .inner.dropshadow {
   box-shadow: 1px 1px 10px rgba(0,0,0, 0.3);
 }
 
+.inner.has-folio {
+  padding-bottom: $height !important;
+}
 .inner.has-folio--lg {
-  padding-bottom: $height * 2.5;
+  padding-bottom: $height-huge !important;
 }
 
 
 .inner {
-  padding-top: $height;
-  padding-bottom: $height;
   padding-right: $gutter;
   padding-left: $gutter;
 
@@ -53,18 +54,24 @@
   }
 
   &.padding--small {
-    padding-top: $gutter-small;
-    padding-bottom: $gutter-small;
+    padding-top: $height-small;
+    padding-bottom: $height-small;
+  }
+
+  &.padding--medium {
+    padding-top: $height;
+    padding-bottom: $height;
   }
 
   &.padding--large {
-    padding-top: $gutter-large;
-    padding-bottom: $gutter-large;
+    padding-top: $height-large;
+    padding-bottom: $height-large;
   }
 
+
   &.padding--huge {
-    padding-top: $gutter-huge;
-    padding-bottom: $gutter-huge;
+    padding-top: $height-huge;
+    padding-bottom: $height-huge;
   }
 
   &.gutter--none {
@@ -74,6 +81,10 @@
   &.gutter--small {
     padding-left: $gutter-small;
     padding-right:  $gutter-small;
+  }
+  &.gutter--medium {
+    padding-left: $gutter;
+    padding-right:  $gutter;
   }
 }
 

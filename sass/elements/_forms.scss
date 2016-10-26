@@ -1,0 +1,47 @@
+.form {
+  margin-left: -1.5em;
+  margin-right: -1.5em;
+}
+
+.fields__container {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.field__container {
+  flex-basis: 50%;
+  box-sizing: border-box;
+  flex-grow: 0;
+  flex-shrink: 0;
+  padding-right: 0.75em;
+  padding-left: 0.75em;
+  margin-bottom: $height-small
+}
+
+.field__container label {
+  font-size: font(small, fs);
+  line-height: font(small, lh);
+  font-family: font(small, fm);
+}
+
+input[type="text"] {
+    width: 100%;
+    padding: 0;
+    font-size: font(small, fs);
+    line-height: font(small, lh);
+}
+
+.form__button-container {
+  align-self: flex-end;
+  text-align: right;
+  width: 100%;
+}
+
+.form__button {
+  background-color: palette(main, button-bg);
+  color: palette(main, button);
+  font-size: font(p, fs);
+  line-height: font(p, lh);
+  padding: 0.2em 0.75em;
+  text-transform: uppercase;
+}
