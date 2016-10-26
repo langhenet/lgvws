@@ -60,6 +60,27 @@
             <p>L’inizio dell’attività risale al 1924, ma già <strong>verso la fine del 1800 la famiglia Abbona si dedicava alla viticoltura </strong>trasmettendo poi a nipoti e pronipoti l’amore e la passione per questo lavoro.</p>
 
             <p>Il <strong>rinnovamento graduale nel corso degli anni </strong>e l'adozione di sistemi di lavorazione più moderni e tecnologici gli hanno permesso di ottenere prodotti selezionati, eleganti, armonici senza però dimenticare la tipicità del Dolcetto.</p>
+
+            <div class="sb__image-gallery">
+              <div class="sb__image-container">
+                <img class="sb__image" src="http://langhe.net/wp-content/uploads/2016/07/Uve-180x180.jpg"/>
+              </div>
+              <div class="sb__image-container">
+                <img class="sb__image" src="http://langhe.net/wp-content/uploads/2016/07/vigne-180x180.jpg"/>
+              </div>
+              <div class="sb__image-container">
+                <img class="sb__image" src="http://langhe.net/wp-content/uploads/2016/07/vigne1-180x180.jpg"/>
+              </div>
+              <div class="sb__image-container">
+                <img class="sb__image" src="http://langhe.net/wp-content/uploads/2016/07/vigne2-180x180.jpg"/>
+              </div>
+              <div class="sb__image-container">
+                <img class="sb__image" src="http://langhe.net/wp-content/uploads/2016/07/inverno-180x180.jpg"/>
+              </div>
+              <div class="sb__image-container">
+                <img class="sb__image" src="http://langhe.net/wp-content/uploads/2016/07/logo-1-180x180.png"/>
+              </div>
+            </div>
           </div>
         </div>
         <div class="flex-column flex-column--1-3 gutter--none">
@@ -67,45 +88,35 @@
             <div class="inner__row">
               <div class="flex-column flex-column--max gutter--none padding--none">
                 <div class="flex-column__content gallery-box">
-                  <div class="sb__image-gallery">
-                    <div class="sb__image-container">
-                      <img class="sb__image" src="http://langhe.net/wp-content/uploads/2016/07/Uve-180x180.jpg"/>
-                    </div>
-                    <div class="sb__image-container">
-                      <img class="sb__image" src="http://langhe.net/wp-content/uploads/2016/07/vigne-180x180.jpg"/>
-                    </div>
-                    <div class="sb__image-container">
-                      <img class="sb__image" src="http://langhe.net/wp-content/uploads/2016/07/vigne1-180x180.jpg"/>
-                    </div>
-                    <div class="sb__image-container">
-                      <img class="sb__image" src="http://langhe.net/wp-content/uploads/2016/07/vigne2-180x180.jpg"/>
-                    </div>
-                    <div class="sb__image-container">
-                      <img class="sb__image" src="http://langhe.net/wp-content/uploads/2016/07/inverno-180x180.jpg"/>
-                    </div>
-                    <div class="sb__image-container">
-                      <img class="sb__image" src="http://langhe.net/wp-content/uploads/2016/07/logo-1-180x180.png"/>
-                    </div>
-                  </div>
+
                 </div>
               </div>
             </div>
             <div class="inner__row">
-              <div class="flex-column flex-column--max gutter--small color-alternate--light padding--medium">
+              <div class="flex-column flex-column--max gutter--none">
                 <div class="flex-column__content content-box">
                   <h3 class="box__title sb__service-title">Servizi</h3>
                   <ul class="sb__services-list">
-                    <li class="sb__service sb__service--selected">WiFi</li>
-                    <li class="sb__service">WiFi</li>
-                    <li class="sb__service">WiFi</li>
-                    <li class="sb__service sb__service--selected">WiFi</li>
-                    <li class="sb__service">WiFi</li>
-                    <li class="sb__service">WiFi</li>
-                    <li class="sb__service">WiFi</li>
-                    <li class="sb__service sb__service--selected">WiFi</li>
-                    <li class="sb__service">WiFi</li>
-                    <li class="sb__service">WiFi</li>
-                    <li class="sb__service">WiFi</li>
+                    <li class="sb__service sb__service--selected">
+                      <img class="sb-service__image" src="/../img/lgicons/business/lgb-access.png">
+                      <span class="tooltiptext">Disabili</span>
+                    </li>
+                    <li class="sb__service">
+                      <img  class="sb-service__image" src="/../img/lgicons/business/lgb-aircond.png"><span class="tooltiptext">Aria condizionata</span></li>
+                    <li class="sb__service">
+                      <img  class="sb-service__image" src="/../img/lgicons/business/lgb-dsales.png">
+                      <span class="tooltiptext">Vendita diretta</span></li>
+                    <li class="sb__service">
+                      <img  class="sb-service__image" src="/../img/lgicons/business/lgb-animals.png">
+                      <span class="tooltiptext">Animali</span></li>
+                    <li class="sb__service">Meeting Room</li>
+                    <li class="sb__service sb__service--selected">Terrazza</li>
+                    <li class="sb__service">Visite in Aazienda</li>
+                    <li class="sb__service">Internet</li>
+                    <li class="sb__service">Affitto Bici</li>
+                    <li class="sb__service sb__service--selected">Giochi per Bambini</li>
+                    <li class="sb__service">Parcheggio</li>
+                    <li class="sb__service">Parco privato</li>
                   </ul>
                   <img src="/../img/credit-card-logos.png"/>
                 </div>
@@ -147,12 +158,12 @@
         <div class="flex-column flex-column--1-3 padding--small not-equal--top color-wine washed">
           <div class="flex-column__content content-box">
             <h3 style="text-transform: uppercase;">Informazioni</h3>
-            <p style="font-family: 'Open Sans'"><strong>Ettari:</strong> 45</p>
+            <p style="font-family: 'Open Sans'"><strong>Ettari:</strong> 45<br/>
+              <strong>Locazione delle Vigne:</strong> Guarene, La Morra*</p>
             <p style="font-family: 'Open Sans'"><strong>Bottiglie Prodotte:</strong> 10.000</p>
-            <p style="font-family: 'Open Sans'"><strong>Locazione delle Vigne:</strong> Guarene, La Morra*</p>
             <p style="font-family: 'Open Sans'"><strong>Metodo Vitivinicolo:</strong> lotta integrata*</p>
-            <p style="font-family: 'Open Sans'"><strong>Biologico:</strong> Si</p>
-            <p style="font-family: 'Open Sans'"><strong>Biodinamico:</strong> No</p>
+            <p style="font-family: 'Open Sans'"><strong>Biologico:</strong> Si<br/>
+              <strong>Biodinamico:</strong> No</p>
             <p style="font-family: 'Open Sans'"><strong>Vini Prodotti:</strong> Barolo DOCG, Dogliani Superiore DOCG, Dogliani DOCG, Langhe Nebbiolo DOC, Roero Arneis DOCG, Piemonte Barbera DOC, Langhe Rosso DOC, Rosato</p>
           </div>
         </div>
