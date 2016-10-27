@@ -17,6 +17,7 @@
 $null: transparent;
 $bianco: #fff;
 $nero: #212121;
+$nero-vero: #000;
 $nero-chiaro: #666;
 $grigio: mix($nero, $bianco, 20%);
 $facebook: #3a5795;
@@ -126,7 +127,7 @@ $colors: (
     form-link: $null,
     form-desc: $null,
 
-    overlay:    $nero,      //Colore sfondo overlay
+    overlay:    $nero-vero,      //Colore sfondo overlay
 
     button:     $bianco,      //colore bottone
     button-bg:  $verde,
@@ -156,7 +157,7 @@ $colors: (
     form-link: $null,
     form-desc: $null,
 
-    overlay:    $nero,      //Colore sfondo overlay
+    overlay:    $nero-vero,      //Colore sfondo overlay
 
     button:     $bianco,      //colore bottone
     button-bg:  $verde,
@@ -186,7 +187,7 @@ $colors: (
     form-link: $null,
     form-desc: $null,
 
-    overlay:    $nero,      //Colore sfondo overlay
+    overlay:    $nero-vero,      //Colore sfondo overlay
 
     button:     $bianco,      //colore bottone
     button-bg:  $verde,
@@ -216,7 +217,7 @@ $colors: (
     form-link: $null,
     form-desc: $null,
 
-    overlay:    $nero,      //Colore sfondo overlay
+    overlay:    $nero-vero,      //Colore sfondo overlay
 
     button:     $bianco,      //colore bottone
     button-bg:  $verde,
@@ -246,7 +247,7 @@ $colors: (
     form-link: $null,
     form-desc: $null,
 
-    overlay:    $nero,      //Colore sfondo overlay
+    overlay:    $nero-vero,      //Colore sfondo overlay
 
     button:     $bianco,      //colore bottone
     button-bg:  $verde,
@@ -276,7 +277,7 @@ $colors: (
     form-link: $null,
     form-desc: $null,
 
-    overlay:    $nero,      //Colore sfondo overlay
+    overlay:    $nero-vero,      //Colore sfondo overlay
 
     button:     $bianco,      //colore bottone
     button-bg:  $verde,

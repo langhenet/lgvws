@@ -13,12 +13,12 @@
     <li class="page-nav__element extra"><a href="#contatti">Territorio</a></li>
   </ul>
 </div>
-  <div class="lg-section intro intro--overlay" style="background-image: url('http://langhe.net/wp-content/uploads/2013/04/La-produzione.jpg'); background-size: cover; background-position: center center;">
-    <div class="inner has-folio" style="padding-top:7.5em;padding-bottom:7.5em;">
+  <div class="lg-section intro padding--huge intro--overlay" style="background-image: url('http://langhe.net/wp-content/uploads/2013/04/La-produzione.jpg'); background-size: cover; background-position: center center;">
+    <div class="inner has-folio">
       <div class="inner__row">
         <div class="flex-column__content content_box">
-     <h1 class="sb--title" style="color:#fff;">Azienda Agricola Cà Neuva</h1>
-    <!--        <h3 class="subtitle post--subtitle">Una tipica cascina di Langa per una cantina con una storia secolare alle spalle che ancora oggi produce i vini rappresentativi del territorio ricordando i preziosi insegnamenti delle generazioni passate.</h3> -->
+          <h1 class="sb__title">Azienda Agricola Cà Neuva</h1>
+          <h3 class="subtitle sb__subtitle">Dogliani</h3>
         </div>
       </div>
     </div>
@@ -26,34 +26,30 @@
   <div id="descrizione" class="lg-section">
     <div class="inner folio padding--none color-wine washed">
       <div class="inner__row">
-        <div class="flex-column flex-column--1-4 padding--medium">
+        <div class="flex-column flex-column--1-3 padding--medium">
           <div class="flex-column__content content_box">
-            <p>degustazione a partire</p>
+            <h3>degustazione</h3>
           </div>
         </div>
-        <div class="flex-column flex-column--1-4 padding--medium">
+        <div class="flex-column flex-column--1-3 padding--medium">
           <div class="flex-column__content content_box">
-            <p>orari</p>
+            <h3>orari</h3>
           </div>
         </div>
-        <div class="flex-column flex-column--1-4 padding--medium">
+        <div class="flex-column flex-column--1-3 padding--medium">
           <div class="flex-column__content content_box">
-            <p>contatti</p>
-          </div>
-        </div>
-        <div class="flex-column flex-column--1-4 padding--medium">
-          <div class="flex-column__content content_box">
+            <h3>contatti</h3>
           </div>
         </div>
       </div>
     </div>
   </div>
-  <div class="leg-section">
+  <div class="lg-section">
     <div class="inner">
       <div class="inner__row color-alternate--light">
         <div class="flex-column flex-column--max padding--medium color-main">
           <div class="flex-column__content content_box">
-            <h3 style="text-align:center; font-family: PT serif; font-style:italic; font-weight:normal; max-width:770px; margin:0 auto;">Una tipica cascina di Langa per una cantina con una storia secolare alle spalle che ancora oggi produce i vini rappresentativi del territorio ricordando i preziosi insegnamenti delle generazioni passate.</h3>
+            <h3 class="sb__excerpt">Una tipica cascina di Langa per una cantina con una storia secolare alle spalle che ancora oggi produce i vini rappresentativi del territorio ricordando i preziosi insegnamenti delle generazioni passate.</h3>
           </div>
         </div>
       </div>

@@ -1,12 +1,19 @@
 
 
 .intro {
-  margin-top: -($line-height * 2);
-  padding-top: $line-height * 4;
+//  margin-top: -($line-height * 2);
+  padding-top: $line-height * 6;
   padding-bottom: $line-height * 4;
   background: main-colors(header, bg);
   position: relative;
   background-size: cover;
+
+  &.padding--huge {
+    padding-top: $height-huge + 3em;
+  }
+  .has-folio {
+    padding-bottom: $line-height * 3 !important;
+  }
 }
 
 .intro--overlay::before {

@@ -22,7 +22,7 @@
   </head>
   <body>
     <div class="site-wrapper">
-      <header class="header sticky">
+      <header class="header">
         <div class="main-nav">
           <div class="logo">
             <a href="/"><img src="/../img/logo.png"/></a>

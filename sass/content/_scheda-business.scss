@@ -1,3 +1,27 @@
+.sb__title {
+  color: palette(wine, body);
+  max-width: 770px;
+  margin: 0 auto;
+  text-align: center;
+  margin-bottom: 0;
+}
+
+.sb__subtitle {
+  color: palette(wine, body);
+  margin-top: 0;
+}
+
+.sb__excerpt {
+  color: palette(wine, body);
+  margin-top: 0;
+  max-width:770px;
+  font-family: family(ff, family);
+  font-weight: normal;
+  text-align: center;
+  font-style: italic;
+  margin: 0 auto;
+}
+
 .sb__service-title {
   text-align: center;
 }

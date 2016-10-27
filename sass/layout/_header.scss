@@ -2,19 +2,40 @@ header {
   display: flex;
   flex-direction: row;
   width: 100%;
-  background-color: rgba($nero, 0.2);
+  background-color: rgba($nero-vero, 0.2);
   justify-content: space-between;
   position: relative;
-  z-index: 1;
+  z-index: 99;
+  position: absolute;
+  top: 0;
+//fixed  position: fixed;
+//fixed  transition: all 0.5s;
+
+//fixed  &.sticky {
+//fixed    background-color: palette(wine, bg);
+//fixed    transition: all 0.5s;
+
+//fixed    .nav-bar {
+//fixed      padding: $line-height / 2 0;
+//fixed      transition: all 0.5s;
+
+//fixed    }
+//fixed  }
 }
+
 .main-nav {
   display: flex;
   flex-direction: row;
 }
 
 .logo img {
-  height: (90px / 1.5);
+  height: 90px;
   display: block;
+  transition: all 0.5s;
+//fixed  @at-root .sticky #{&} {
+//fixed    height: (90px / 1.5);
+//fixed    transition: all 0.5s;
+//fixed  }
 }
 
 .nav--secondary {
@@ -25,9 +46,11 @@ header {
 .nav-bar {
   display: flex;
   list-style: none;
-  padding: $line-height / 2 0;
+  padding: $line-height 0;
   margin-bottom: 0;
   margin-left: $line-height;
+//fixed  transition: all 0.5s;
+
 
   li {
     font-size: 0.75em;
