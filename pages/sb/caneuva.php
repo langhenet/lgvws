@@ -6,9 +6,9 @@
 <div class="page-nav color-alternate--light">
   <ul class="page-nav__list">
     <li class="page-nav__element"><a href="#descrizione">Descrizione</a></li>
-    <li class="page-nav__element"><a href="#prodotti">Prodotti</a></li>
+    <li class="page-nav__element"><a href="#vini">vini</a></li>
     <li class="page-nav__element"><a href="#visite">Visite in Azienda</a></li>
-    <li class="page-nav__element button"><a class="button" href="#prenota">Prenota</a></li>
+    <li class="page-nav__element button"><a class="button" href="#prenota">Prenota un visita</a></li>
     <li class="page-nav__element"><a href="#contatti">Contatti</a></li>
     <li class="page-nav__element extra"><a href="#contatti">Territorio</a></li>
   </ul>
@@ -34,21 +34,6 @@
       </div>
     </div>
   </div>
-<!--  <div class="lg-section color-alternate--light">
-    <div class="inner padding--none">
-      <div class="inner__row">
-        <div class="flex-column flex-column--max">
-          <ul class="sub-menu" style="display: flex; list-style: none; flex-direction: row; justify-content: space-between; font-family: 'open sans'; text-transform: uppercase;">
-            <li style="padding: 1.5em 0.75em;">Descritpion</li>
-            <li style="padding: 1.5em 0.75em;">Rooms</li>
-            <li style="padding: 1.5em 0.75em;">Events</li>
-            <li style="padding: 1.5em 0.75em;" class="color-travel washed">Contacts</li>
-            <li style="padding: 1.5em 0.75em;" class="color-travel">Book Now</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </div> -->
   <div class="lg-section">
     <div class="inner padding--medium">
       <div class="inner__row">
@@ -59,9 +44,26 @@
 
             <p>L’inizio dell’attività risale al 1924, ma già <strong>verso la fine del 1800 la famiglia Abbona si dedicava alla viticoltura </strong>trasmettendo poi a nipoti e pronipoti l’amore e la passione per questo lavoro.</p>
 
-            <p>Il <strong>rinnovamento graduale nel corso degli anni </strong>e l'adozione di sistemi di lavorazione più moderni e tecnologici gli hanno permesso di ottenere prodotti selezionati, eleganti, armonici senza però dimenticare la tipicità del Dolcetto.</p>
-
-            <div class="sb__image-gallery">
+            <p>Il <strong>rinnovamento graduale nel corso degli anni </strong>e l'adozione di sistemi di lavorazione più moderni e tecnologici gli hanno permesso di ottenere vini selezionati, eleganti, armonici senza però dimenticare la tipicità del Dolcetto.</p>
+            <div class="sb__image-gallery ">
+              <div class="sb__image-container">
+                <img class="sb__image" src="http://langhe.net/wp-content/uploads/2016/07/Uve-180x180.jpg"/>
+              </div>
+              <div class="sb__image-container">
+                <img class="sb__image" src="http://langhe.net/wp-content/uploads/2016/07/vigne-180x180.jpg"/>
+              </div>
+              <div class="sb__image-container">
+                <img class="sb__image" src="http://langhe.net/wp-content/uploads/2016/07/vigne1-180x180.jpg"/>
+              </div>
+              <div class="sb__image-container">
+                <img class="sb__image" src="http://langhe.net/wp-content/uploads/2016/07/vigne2-180x180.jpg"/>
+              </div>
+              <div class="sb__image-container">
+                <img class="sb__image" src="http://langhe.net/wp-content/uploads/2016/07/inverno-180x180.jpg"/>
+              </div>
+              <div class="sb__image-container">
+                <img class="sb__image" src="http://langhe.net/wp-content/uploads/2016/07/logo-1-180x180.png"/>
+              </div>
               <div class="sb__image-container">
                 <img class="sb__image" src="http://langhe.net/wp-content/uploads/2016/07/Uve-180x180.jpg"/>
               </div>
@@ -93,9 +95,8 @@
               </div>
             </div>
             <div class="inner__row">
-              <div class="flex-column flex-column--max gutter--none">
+              <div class="flex-column flex-column--max gutter--small padding--medium color-alternate--light">
                 <div class="flex-column__content content-box">
-                  <h3 class="box__title sb__service-title">Servizi</h3>
                   <ul class="sb__services-list">
                     <li class="sb__service sb__service--selected">
                       <img class="sb-service__image" src="/../img/lgicons/business/lgb-access.png">
@@ -109,14 +110,30 @@
                     <li class="sb__service">
                       <img  class="sb-service__image" src="/../img/lgicons/business/lgb-animals.png">
                       <span class="tooltiptext">Animali</span></li>
-                    <li class="sb__service">Meeting Room</li>
-                    <li class="sb__service sb__service--selected">Terrazza</li>
-                    <li class="sb__service">Visite in Aazienda</li>
-                    <li class="sb__service">Internet</li>
-                    <li class="sb__service">Affitto Bici</li>
-                    <li class="sb__service sb__service--selected">Giochi per Bambini</li>
-                    <li class="sb__service">Parcheggio</li>
-                    <li class="sb__service">Parco privato</li>
+                    <li class="sb__service">
+                    <img  class="sb-service__image" src="/../img/lgicons/business/lgb-meeting.png">
+                    <span class="tooltiptext">Meeting Room</span></li>
+                    <li class="sb__service sb__service--selected">
+                      <img  class="sb-service__image" src="/../img/lgicons/business/lgb-terrace.png">
+                      <span class="tooltiptext">Terrazza</span></li>
+                    <li class="sb__service">
+                      <img  class="sb-service__image" src="/../img/lgicons/business/lgb-work.png">
+                      <span class="tooltiptext">Visite in Aazienda</span></li>
+                    <li class="sb__service sb__service--selected">
+                      <img  class="sb-service__image" src="/../img/lgicons/business/lgb-internet.png">
+                      <span class="tooltiptext">Internet</span></li>
+                    <li class="sb__service sb__service--selected">
+                      <img  class="sb-service__image" src="/../img/lgicons/business/lgb-bike.png">
+                      <span class="tooltiptext">Affitto Bici</span></li>
+                    <li class="sb__service sb__service--selected">
+                      <img  class="sb-service__image" src="/../img/lgicons/business/lgb-kids.png">
+                      <span class="tooltiptext">Giochi per Bambini</span></li>
+                    <li class="sb__service">
+                      <img  class="sb-service__image" src="/../img/lgicons/business/lgb-parking.png">
+                      <span class="tooltiptext">Parcheggio</span></li>
+                    <li class="sb__service">
+                      <img  class="sb-service__image" src="/../img/lgicons/business/lgb-garden.png">
+                      <span class="tooltiptext">Parco privato</span></li>
                   </ul>
                   <img src="/../img/credit-card-logos.png"/>
                 </div>
@@ -127,13 +144,13 @@
       </div>
     </div>
   </div>
-  <div id="prodotti" class="lg-section color-wine overlay--dark" style="background-image:url(http://langhe.net/wp-content/uploads/2016/07/Uve.jpg);">
+  <div id="vini" class="lg-section color-wine overlay--dark" style="background-image:url(http://langhe.net/wp-content/uploads/2016/07/Uve.jpg);">
     <div class="inner padding--large has-folio--lg">
       <div class="inner__row">
         <div class="flex-column flex-column--2-3">
           <div class="flex-column__content content-box">
-            <h2>I Prodotti</h2>
-            <h3>Vini del roero prodotti nel rispetto della natura</h3>
+            <h2>I Vini</h2>
+            <h3>Vini del roero vini nel rispetto della natura</h3>
           </div>
         </div>
       </div>
@@ -152,7 +169,7 @@
 
             <p>Un altro grande rosso è un <strong>assemblaggio</strong> nato 2013 e dedicato a<strong> nonno Celso</strong>, il fondatore dell'azienda. Da qui il nome di questo vino composto da Barbera, Nebbiolo e Cabernet: <strong>Excelso</strong>.</p>
 
-            <p>Gli <strong>altri rossi</strong> prodotti sono <strong>Barbera</strong>, <strong>Nebbiolo</strong> e un <strong>rosato</strong>, cui si affiancano il <strong>bianco</strong> Roero <strong>Arneis</strong> e uno <strong>Spumante</strong> Metodo Classico.</p>
+            <p>Gli <strong>altri rossi</strong> vini sono <strong>Barbera</strong>, <strong>Nebbiolo</strong> e un <strong>rosato</strong>, cui si affiancano il <strong>bianco</strong> Roero <strong>Arneis</strong> e uno <strong>Spumante</strong> Metodo Classico.</p>
           </div>
         </div>
         <div class="flex-column flex-column--1-3 padding--small not-equal--top color-wine washed">
@@ -164,7 +181,7 @@
             <p style="font-family: 'Open Sans'"><strong>Metodo Vitivinicolo:</strong> lotta integrata*</p>
             <p style="font-family: 'Open Sans'"><strong>Biologico:</strong> Si<br/>
               <strong>Biodinamico:</strong> No</p>
-            <p style="font-family: 'Open Sans'"><strong>Vini Prodotti:</strong> Barolo DOCG, Dogliani Superiore DOCG, Dogliani DOCG, Langhe Nebbiolo DOC, Roero Arneis DOCG, Piemonte Barbera DOC, Langhe Rosso DOC, Rosato</p>
+            <p style="font-family: 'Open Sans'"><strong>Vini vini:</strong> Barolo DOCG, Dogliani Superiore DOCG, Dogliani DOCG, Langhe Nebbiolo DOC, Roero Arneis DOCG, Piemonte Barbera DOC, Langhe Rosso DOC, Rosato</p>
           </div>
         </div>
       </div>
@@ -191,7 +208,7 @@
 
             <p>Si inizia con la <strong>degustazione dei vini guidata da Silvia e Sergio</strong>, i quali vi racconteranno la storia di ciascuna etichetta.</p>
 
-            <p>Ciascun bicchiere è accompagnato da <strong>assaggi di prodotti locali e di piatti tipici</strong> per un vero <strong>aperitivo in cantina</strong>.</p>
+            <p>Ciascun bicchiere è accompagnato da <strong>assaggi di vini locali e di piatti tipici</strong> per un vero <strong>aperitivo in cantina</strong>.</p>
 
             <p>Dopodiché ci si sposta nel<strong> locale di fermentazione e invecchiamento</strong>, per scoprire il processo di produzione fino all'imbottigliamento ed etichettatura.</p>
             <p>La cantina offre due tipologie di visita in cantina:</p>
@@ -200,7 +217,7 @@
              	<li><strong>Completa</strong> a <strong>15 € a persona</strong>: con assaggio di tutti i vini accompagnati da salumi, formaggi, salse, marmellate e dolci e altri piatti tipici della cucina tradizionale piemontese.</li>
             </ul>
 
-            <p>Su prenotazione è possibile ordinare <strong>prodotti senza glutine</strong> per una degustazione adatta ai celiaci.</p>
+            <p>Su prenotazione è possibile ordinare <strong>vini senza glutine</strong> per una degustazione adatta ai celiaci.</p>
 
             <p>Inoltre, è possibile concordare la partecipazione ai lavori in vigna (potatura invernale, potatura verde, vendemmia, etc.).</p>
 
