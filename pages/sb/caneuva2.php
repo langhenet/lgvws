@@ -24,7 +24,7 @@
     </div>
   </div>
   <div id="descrizione" class="lg-section">
-    <div class="inner folio padding--none color-wine washed">
+    <div class="inner folio padding--none color-wine washed dropshadow">
       <div class="inner__row">
         <div class="flex-column flex-column--1-3 padding--medium">
           <div class="flex-column__content content_box">
