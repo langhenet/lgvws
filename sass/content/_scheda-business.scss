@@ -11,6 +11,22 @@
   margin-top: 0;
 }
 
+.sb__meta-info {
+  margin-top: 0;
+  margin-bottom: 0;
+  text-align: center;
+  font-family: 'open sans';
+  font-size: font(h3, fs);
+  line-height: font(h3, lh);
+
+  &.big {
+    font-size: font(h2, fs);
+    line-height: font(h2, lh);
+    font-family: 'PT Sans';
+    font-style: italic;
+  }
+}
+
 .sb__excerpt {
   color: palette(wine, body);
   margin-top: 0;

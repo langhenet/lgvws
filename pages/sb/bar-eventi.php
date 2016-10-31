@@ -6,11 +6,10 @@
 <div class="page-nav color-alternate--light">
   <ul class="page-nav__list">
     <li class="page-nav__element"><a href="#descrizione">Descrizione</a></li>
-    <li class="page-nav__element"><a href="#vini">vini</a></li>
-    <li class="page-nav__element"><a href="#visite">Visite in Azienda</a></li>
-    <li class="page-nav__element button"><a class="button" href="#prenota">Prenota un visita</a></li>
+    <li class="page-nav__element"><a href="#vini">La Cucina</a></li>
+    <li class="page-nav__element"><a href="#visite">Eventi</a></li>
+    <li class="page-nav__element button"><a class="button" href="#prenota">Prenota un Tavolo</a></li>
     <li class="page-nav__element"><a href="#contatti">Contatti</a></li>
-    <li class="page-nav__element extra"><a href="#contatti">Territorio</a></li>
   </ul>
 </div>
   <div class="lg-section intro padding--huge intro--overlay" style="background-image: url('http://langhe.net/wp-content/uploads/2013/04/La-produzione.jpg'); background-size: cover; background-position: center center;">
@@ -28,7 +27,7 @@
       <div class="inner__row">
         <div class="flex-column flex-column--1-3 padding--medium">
           <div class="flex-column__content content_box">
-            <p class="sb__meta-info">Degustazione</p>
+            <p class="sb__meta-info">Degustazione a partire da</p>
             <p class="sb__meta-info big">5€</p>
           </div>
         </div>
