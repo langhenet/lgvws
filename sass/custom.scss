@@ -747,7 +747,7 @@ color:#ce484f;
 /***MAIN COLOR**/
 .main_color strong,
 .main_color b {
-  color: #989898;
+  color: #666;
 }
 
 /*****LOGO - HEADER AREA****/
@@ -3902,9 +3902,28 @@ body .gform_wrapper img.ui-datepicker-trigger {
   position: relative;
 }
 
+.ui-datepicker .ui-corner-all {
+  display: inline-block;
+}
+
 .ui-datepicker.ui-widget.ui-widget-content {
     font-size: 1em;
     width: 13em;
+}
+
+.ui-datepicker .ui-widget-header a {
+    color: palette(main, bg);
+    background: palette(main, body-sec);
+
+  &:hover {
+    background: palette(footer, bg);
+    color: palette(main, bg);
+    border: none;
+
+    .ui-icon {
+      background-image: url(http://langhe.net/wp-content/plugins/cred-frontend-editor/embedded/toolset/toolset-common/toolset-forms/css/wpt-jquery-ui/images/ui-icons_ffffff_256x240.png);
+    }
+  }
 }
 
 /*.ui-datepicker.ui-widget-content {
