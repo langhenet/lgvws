@@ -608,7 +608,8 @@ font-size:2.55em;
 }
 
 .av-icon-char.lg-cal:before,
-.avia-button .lg-cal:before {
+.avia-button .lg-cal:before,
+.lg-icon--cal::before {
     content: "\e85b";
 }
 

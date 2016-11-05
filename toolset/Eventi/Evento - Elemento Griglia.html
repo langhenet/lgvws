@@ -16,7 +16,7 @@
 		[wpv-post-excerpt]
 		<meta itemprop="startDate" content="[types field="lge-stdate" style="text" format="Y-m-d"][/types]T[types field="lge-stdate" style="text" format="H:i"][/types]">
 		<meta itemprop="endDate" content="[types field="lge-endate" style="text" format="Y-m-d"][/types]T[types field="lge-endate" style="text" format="H:i"][/types]">
-        <div itemprop="location" itemscope itemtype="http://schema.org/Place">
+    <div itemprop="location" itemscope itemtype="http://schema.org/Place">
 			<meta itemprop="name" content="[wpv-if town="_wpcf_belongs_lgtown_id" evaluate="!empty($town)"][wpv-post-title id="$lgtown"][/wpv-if][wpv-if town="lgb-city" evaluate="!empty($town)"][wpv-post-field name="lgb-city"][/wpv-if] - [types field="lge-location"][/types]">
 			<meta itemprop="address" content="[types field="lg-geo-address"][/types]">
 		</div>

@@ -6,7 +6,7 @@
   align-items: stretch;
   margin-top: $line-height;
 
-  @include respond-to(step-3) {
+  @include respond-to(step-4) {
     justify-content: space-around;
   }
 }
@@ -38,12 +38,13 @@
 @include respond-to(step-1) {
   .grid-item--third {
     flex-basis: 48%;
+    margin-right: 0;
 
     &:nth-child(even) {
       margin-right:0;
     }
-    &:nth-child(3n+3) {
-      margin-right:2.5625%;
+    &:nth-child(odd) {
+      margin-right:4%;
     }
   }
 }
@@ -51,9 +52,12 @@
 @include respond-to(step-4) {
   .grid-item--third {
     flex-basis: 100%;
-    
+
     &:nth-child(3n+3) {
       margin-right:0;
+    }
+    &:nth-child(odd) {
+      margin-right:0%;
     }
   }
 }
