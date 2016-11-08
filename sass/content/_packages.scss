@@ -3,14 +3,12 @@
 ///
 
 .lg-activities-grid h4.iconlist_title {
-  font-size: font(small, fs);
-  line-height: font(small, lh);
+  @include size(small);
 }
 
 .lg-activities-grid .iconlist_content {
-  font-size: font(small, fs);
-  line-height: font(small, lh);
-  margin-bottom: font(small, lh) * 2;
+  @include size(small);
+  margin-bottom: size(small, lh) * 2;
 
   p {
     margin-bottom: 0;

@@ -16,11 +16,11 @@
 // Dimensioni e margini caratteri
 ///
 
-@mixin font-size($size: p) {
-  font-size: font($size, fs);
-  line-height: font($size, lh);
+@mixin size($size: p) {
+  font-size: size($size, fs);
+  line-height: size($size, lh);
 
-  @if $size == h1 {
+  /*@if $size == h1 {
     @include breakpoint-max(lg) {font-size: font(h1, fs) * 0.75;} //TODO
     @include breakpoint-max(sm) {font-size: font(h1, fs) * 0.65;} //TODO
   }
@@ -31,23 +31,76 @@
 
   @else if $size == h3 {
     @include breakpoint-max(lg) {font-size: font(h3, fs) * 0.9;} //TODO
-  }
+  }*/
 }
 
 @mixin margin($size: p) {
-  margin-top: font($size, mt);
-  margin-bottom: font($size, mb);
+  margin-top: size($size, mt);
+  margin-bottom: size($size, mb);
 }
 
 
 ///
 // Decorazioni caratteri (family e boldness)
 ///
-@mixin deco($size: p) {
-  font-family: font($size, fm);
-  font-weight: font($size, wt);
+@mixin decoration($size: p) {
+  font-family: family(decoration($size, fm), fm);
+  font-weight: decoration($size, wt);
 }
 
+
+@mixin font-alt($size: p) {
+ @include size($size);
+ @include margin($size);
+ @include family($size);
+}
+
+@mixin font($size: p, $fm: $size, $wt: $size, $mt: $size, $mb: $size) {
+  @include size($size);
+
+  //MARGIN TOP
+  @if $mt == 0 {
+    margin-top: $mt;
+  }
+  @else {
+    margin-top: size($size, mt);
+  }
+
+  //MARGIN TOP
+  @if $mb == 0 {
+    margin-bottom: $mb;
+  }
+  @else {
+    margin-bottom: size($size, mb);
+  }
+
+  //Family
+  @if $fm == serif or $fm == sans or $fm == special {
+    font-family: family($fm, fm);
+  }
+  @else {
+    font-family: family( decoration($size, fm), fm);
+  }
+
+  //WEIGHT
+  @if $wt == bolder or $wt == bold or $wt == normal or $wt == light {
+    @if $fm == serif or $fm == sans or $fm == special {
+      font-weight: family($fm, $wt);
+    }
+    @else { // DOVREI ANDARE A PESCARE LA FAMIGLIA DELLA GRANDEZZA RICHIAMATA e POTERLA METTERE QUI - FORSE CI VUOLE UN ALTRA FUNZIONE CHE FACCIA UN MERGE?!?
+      font-weight: family( decoration($size, fm), $wt);
+    }
+  }
+
+  @else {
+    @if $fm == serif or $fm == sans or $fm == special {
+      font-weight: family($fm, $wt);
+    }
+    @else {
+      font-weight: decoration($size, wt);
+    }
+  }
+}
 
 ///
 // HR
@@ -71,7 +124,7 @@
 ///
 %button {
   display:inline-block;
-  font-family: $font-family-button; //TODO
+  font-family: $ff-button; //TODO
   white-space: normal;
   border-style: solid;
   box-shadow: $button-shadow;

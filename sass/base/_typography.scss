@@ -9,11 +9,7 @@
 //****************************************************************************//
 //                            Mixin per la tipgrafia
 //****************************************************************************//
-@mixin size($size: p) {
-  @include font-size($size);
-  @include margin($size);
-  @include deco($size);
-}
+
 
 
 
@@ -24,7 +20,7 @@
 body {
   font-size: $font-size;
   line-height: $line-height;
-  font-family: $font-family;
+  font-family: $serif;
   text-rendering: optimizeLegibility;
   text-rendering: geometricPrecision;
 
@@ -34,20 +30,20 @@ body {
 }
 
 h1 {
-  @include size(h1);
+  @include font(h1);
   color: palette(main, heading);
 }
 h2 {
-  @include size(h2);
+  @include font(h2);
   color: palette(main, heading);
 }
 h3 {
-  @include size(h3);
+  @include font(h3);
   color: palette(main, heading);
 }
 
 p {
-  @include size(p);
+  @include font(p);
   color: $nero;
 
   strong {
@@ -72,8 +68,7 @@ ul, ol {
 }
 
 blockquote {
-  @include size(blockquote);
-  @include deco(blockquote);
+
   width: 45%;
   margin-right: 5%;
   padding: $line-height 0 $line-height $line-height;

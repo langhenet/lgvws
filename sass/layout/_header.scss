@@ -56,8 +56,8 @@ header {
     font-size: 0.75em;
     padding: 0 ($line-height / 0.75);
     color: main-colors(header, body);
-    font-family: family(ffh, family);
-    font-weight: family(ffh, bold);
+    font-family: family(sans, fm);
+    font-weight: family(sans, bold);
     text-transform: uppercase;
   }
 }

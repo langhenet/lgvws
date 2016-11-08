@@ -12,8 +12,7 @@ img.aligncenter {
 }
 
 .wp-caption-text{
-  @include font-size(small);
-  @include deco(small);
+  @include font(small);
   padding: font(small, lh) / 2 0;
   margin-top: 0;
   text-align: center;

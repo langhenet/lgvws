@@ -105,10 +105,7 @@ lefth-child(3n+3) {
 }
 
 .grid-item__meta {
-  font-size: font(small, fs);
-  line-height: font(small, lh);
-  font-family: family(ffh, family);
-  margin-bottom: 0;
+  @include font(small, $mb:0);
   text-align: left;
   text-transform: uppercase;
  //font-weight: bold;
@@ -117,10 +114,7 @@ lefth-child(3n+3) {
 }
 
 .grid-item__title {
-  font-size: font(small-h3, fs);
-  line-height: font(small-h3, lh);
-  margin-top: 0;
-  margin-bottom: 0;
+  @include font(p, sans, $mt:0, $mb: 0);
   text-align: left;
 
   a {
@@ -130,10 +124,7 @@ lefth-child(3n+3) {
 }
 
 .grid-item__description {
-  font-size: font(small, fs);
-  line-height: font(small, lh);
-  font-family: family(ffh, family);
-  margin-bottom: 0;
+  @include font(small, $mb:0);
   text-align: left;
 }
 
@@ -147,16 +138,14 @@ lefth-child(3n+3) {
   flex-direction: row;
   justify-content: space-between;
   box-sizing: border-box;
+  align-items: baseline;
 }
 
 .grid-item__additional-info-container {
 }
 
 .grid-item__additional-info {
-  font-size: font(small, fs);
-  line-height: font(small, lh);
-  font-family: family(ffh, family);
-  margin-bottom: 0;
+  @include font(small, $mb:0);
 }
 
 .grid-item__cta-container {
@@ -164,12 +153,8 @@ lefth-child(3n+3) {
 }
 
 .grid-item__read-more {
-  font-size: font(small, fs);
-  line-height: font(small, lh);
-  font-family: family(ffh, family);
-  margin-bottom: 0;
+  @include font(small, $fm: sans, $wt: bold, $mt: 0, $mb: 0);
   text-transform: uppercase;
-  font-weight: bold;
   display: block;
   text-decoration: none;
 }

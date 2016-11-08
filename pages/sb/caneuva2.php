@@ -26,18 +26,18 @@
   <div id="descrizione" class="lg-section">
     <div class="inner folio padding--none color-wine washed dropshadow">
       <div class="inner__row">
-        <div class="flex-column flex-column--1-3 padding--medium">
+        <div class="meta-info__container--1-3">
           <div class="flex-column__content content_box">
             <p class="sb__meta-info">Degustazione</p>
             <p class="sb__meta-info big">5€</p>
           </div>
         </div>
-        <div class="flex-column flex-column--1-3 padding--medium">
+        <div class="meta-info__container--1-3">
           <div class="flex-column__content content_box">
             <h3>orari</h3>
           </div>
         </div>
-        <div class="flex-column flex-column--1-3 padding--medium">
+        <div class="meta-info__container--1-3">
           <div class="flex-column__content content_box">
             <h3>contatti</h3>
           </div>

@@ -3,17 +3,16 @@
   border-bottom: 2px solid mix($nero, white, 20%);
   flex-basis: 100%;
   span {
-    font-weight: family(ffh, bold);
+    font-weight: family(sans, bold);
   }
   p {
-    font-family: family(ffh, family);
+    font-family: family(sans, fm);
     text-transform: uppercase;
   }
 }
 
 .meta {
-  font-family: family(ffh, family);
-  @include font-size(p);
+  @include font(p, serif);
   text-transform: uppercase;
 }
 
