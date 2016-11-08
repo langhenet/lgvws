@@ -14,18 +14,32 @@
 .meta-info__container--1-3 {
   flex-basis: 33.333%;
   flex-shrink: 0;
+  flex-grow: 0;
+  padding: 0 $gutter-small;
+  box-sizing: border-box;
+  border-right: 1px solid;
+  width: 0;
+
+  &:last-child {
+    border-right: 0;
+  }
 }
 
 .sb__meta-info {
   text-align: center;
-  font-family: 'PT Sans';
-  @include size(h3);
-  margin-top: 0;
-  margin-bottom: 0;
+  @include font(h3, $mt:0, $mb:0);
+
+  @include breakpoint-max(sm) {
+    @include m-size(h3, 0, 0);
+  }
+
+  &.small {
+    @include font(p, $fm: sans, $mb: 0);
+    text-align: left;
+  }
 
   &.big {
-    @include size(h2);
-    font-family: 'PT Sans';
+    @include font(h1, serif, normal, 0, 0);
     font-style: italic;
   }
 }

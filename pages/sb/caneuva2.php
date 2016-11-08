@@ -23,32 +23,37 @@
       </div>
     </div>
   </div>
-  <div id="descrizione" class="lg-section">
-    <div class="inner folio padding--none color-wine washed dropshadow">
+  <div id="descrizione" class="lg-section color-alternate--light">
+    <div class="inner folio padding--small color-wine washed dropshadow">
       <div class="inner__row">
         <div class="meta-info__container--1-3">
           <div class="flex-column__content content_box">
-            <p class="sb__meta-info">Degustazione</p>
             <p class="sb__meta-info big">5€</p>
           </div>
         </div>
         <div class="meta-info__container--1-3">
           <div class="flex-column__content content_box">
-            <h3>orari</h3>
+            <p class="sb__meta-info small"><strong>Orario</strong>: dalle 8:00 alle 21:00<br/>
+              <strong>Vacanza</strong>: 18/09 - 21/11<br/>
+              <strong>Giorno di chiusura</strong>: lunedì
+            </p>
           </div>
         </div>
         <div class="meta-info__container--1-3">
           <div class="flex-column__content content_box">
-            <h3>contatti</h3>
+            <p class="sb__meta-info small" style="overflow:hidden;"><strong>Telefono</strong>: +39 347 0520 328<br/>
+              <strong>Email</strong>: nomelungo@...<br/>
+              <strong>Sito Web</strong>: www.langh....
+            </p>
           </div>
         </div>
       </div>
     </div>
   </div>
-  <div class="lg-section">
+  <div class="lg-section color-alternate--light">
     <div class="inner">
-      <div class="inner__row color-alternate--light">
-        <div class="flex-column flex-column--max padding--medium color-main">
+      <div class="inner__row">
+        <div class="flex-column flex-column--max padding--medium">
           <div class="flex-column__content content_box">
             <h3 class="sb__excerpt">Una tipica cascina di Langa per una cantina con una storia secolare alle spalle che ancora oggi produce i vini rappresentativi del territorio ricordando i preziosi insegnamenti delle generazioni passate.</h3>
           </div>

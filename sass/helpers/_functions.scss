@@ -18,6 +18,11 @@
     @return map-get(map-get($sizes, $size), $attr);
 }
 
+@function m-size($size, $attr: 'fs') {
+    @return map-get(map-get($mobile-sizes, $size), $attr);
+}
+
+
 ///
 // Font Families & Weights
 ///

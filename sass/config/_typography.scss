@@ -61,37 +61,37 @@ $families: (
 $decorations: (
   p: (
     fm: serif,
-    wt: family(serif, normal),
+    wt: normal,
   ),
 
   h1: (
     fm: sans,
-    wt: family(sans, bold),
+    wt: bold
   ),
 
   h2: (
     fm: sans,
-    wt: family(sans, bold),
+    wt: bold,
   ),
 
   h3: (
     fm: sans,
-    wt: family(sans, bold),
+    wt: bold,
   ),
 
   h4: (
     fm: sans,
-    wt: family(sans, normal),
+    wt: normal,
   ),
 
   h5: (
     fm: sans,
-    wt: family(sans, normal),
+    wt: normal,
   ),
 
   small: (
     fm: sans,
-    wt: family(sans, normal),
+    wt: normal,
   ),
 );
 ////
@@ -108,8 +108,8 @@ $decorations: (
     h1: (
       fs: 3.375em,
       lh: 1.33333333333em,
-      mt: 1.09756098em,
-      mb: 0.36585366em,
+      mt: 0.888888888888889em,
+      mb: 0.44444444444444em,
     ),
 
     h2: (
@@ -148,6 +148,28 @@ $decorations: (
     ),
 );
 
+$mobile-sizes: (
+  h1: (
+    fs: 1.953125em,
+    lh: 1.538461538461538em,
+    mt: 1.536em,
+    mb: 0.768em,
+  ),
+
+  h2: (
+    fs: 1.5625em,
+    lh: 1.935483870967742em,
+    mt: 0.96em,
+    mb: 0.96em,
+  ),
+
+  h3: (
+    fs: 1.25em,
+    lh: 1.2em,
+    mt: 1.8em,
+    mb: 0.6em,
+  ),
+);
 
 ////
 // DETTAGLI

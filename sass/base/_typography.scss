@@ -23,28 +23,36 @@ body {
   font-family: $serif;
   text-rendering: optimizeLegibility;
   text-rendering: geometricPrecision;
-
-/*  @include breakpoint-max(lg) {
-    font-size: 1em;
-  }*/
 }
 
 h1 {
   @include font(h1);
   color: palette(main, heading);
+
+  @include breakpoint-max(sm) {
+    @include m-size(h1);
+  }
 }
 h2 {
   @include font(h2);
   color: palette(main, heading);
+
+  @include breakpoint-max(sm) {
+    @include m-size(h2);
+  }
 }
 h3 {
   @include font(h3);
   color: palette(main, heading);
+
+  @include breakpoint-max(sm) {
+    @include m-size(h3);
+  }
 }
 
 p {
   @include font(p);
-  color: $nero;
+  color: palette(main, body);
 
   strong {
     color: palette(main, heading);
