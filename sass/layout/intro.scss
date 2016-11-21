@@ -17,7 +17,7 @@
 }
 
 .intro--overlay::before {
-  @include color-overlay;
+  @include color-overlay($grade: 0.2);
 }
 
 .title {

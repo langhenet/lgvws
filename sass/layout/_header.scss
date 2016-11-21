@@ -2,12 +2,25 @@ header {
   display: flex;
   flex-direction: row;
   width: 100%;
-  background-color: rgba($nero-vero, 0.2);
+  background-color: rgba($nero-vero, 0.3);
   justify-content: space-between;
   position: relative;
   z-index: 99;
   position: absolute;
   top: 0;
+
+  &::after {
+    content: "";
+    position: absolute;
+    height: 1px;
+    background: #fff;
+    bottom: 0;
+    width: 70%;
+    left: 15%;
+    /* margin-left: 25%; */
+    margin: 0 auto;
+    text-align: center;
+}
 //fixed  position: fixed;
 //fixed  transition: all 0.5s;
 
@@ -39,14 +52,14 @@ header {
 }
 
 .nav--secondary {
-  background: rgba(main-colors(header, bg), 0.3);
+  background: rgba($nero-vero, 0.3);
   padding-right: $line-height;
 }
 
 .nav-bar {
   display: flex;
   list-style: none;
-  padding: $line-height 0;
+  padding: $line-height * 1.5 0;
   margin-bottom: 0;
   margin-left: $line-height;
 //fixed  transition: all 0.5s;
@@ -54,7 +67,7 @@ header {
 
   li {
     font-size: 0.75em;
-    padding: 0 ($line-height / 0.75);
+    padding: 0 ( $line-height / 0.75 );
     color: main-colors(header, body);
     font-family: family(sans, fm);
     font-weight: family(sans, bold);

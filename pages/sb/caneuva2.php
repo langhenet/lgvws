@@ -13,7 +13,7 @@
     <li class="page-nav__element extra"><a href="#contatti">Territorio</a></li>
   </ul>
 </div>
-  <div class="lg-section intro padding--huge intro--overlay" style="background-image: url('http://langhe.net/wp-content/uploads/2013/04/La-produzione.jpg'); background-size: cover; background-position: center center;">
+  <div class="lg-section intro padding--huge intro--overlay" style="background-image: url('https://lonelyplanetimages.imgix.net/assets/image/542ac9781d8b04a18c84dd2257a92329d63c08ec29159f846328b92d58cc2479/7088f8c323a74ed0cb39a4ae002734ac86c367dc68250260e41dc554ab0cc71b.jpg?sharp=10&vib=20&w=2000'); background-size: cover; background-position: center center;">
     <div class="inner has-folio">
       <div class="inner__row">
         <div class="flex-column__content content_box">
@@ -23,7 +23,7 @@
       </div>
     </div>
   </div>
-  <div id="descrizione" class="lg-section color-alternate--light">
+  <div id="descrizione" class="lg-section ">
     <div class="inner folio padding--small color-wine washed dropshadow">
       <div class="inner__row">
         <div class="meta-info__container--1-3">
@@ -50,12 +50,12 @@
       </div>
     </div>
   </div>
-  <div class="lg-section color-alternate--light">
+  <div class="lg-section ">
     <div class="inner">
       <div class="inner__row">
         <div class="flex-column flex-column--max padding--medium">
           <div class="flex-column__content content_box">
-            <h3 class="sb__excerpt">Una tipica cascina di Langa per una cantina con una storia secolare alle spalle che ancora oggi produce i vini rappresentativi del territorio ricordando i preziosi insegnamenti delle generazioni passate.</h3>
+
           </div>
         </div>
       </div>
@@ -66,50 +66,13 @@
       <div class="inner__row">
         <div class="flex-column flex-column--2-3">
           <div class="flex-column__content content_box">
+                        <h3 class="sb__excerpt">Una tipica cascina di Langa per una cantina con una storia secolare alle spalle che ancora oggi produce i vini rappresentativi del territorio ricordando i preziosi insegnamenti delle generazioni passate.</h3>
             <p>La cascina Cà Neuva di <strong>Sergio Abbona</strong> è un’azienda agricola capace di soddisfare le esigenze di tutti coloro che amano il vino.</p>
             <p>Situata in uno dei luoghi più caratteristici delle Langhe,<strong> Dogliani</strong>, si estende su una superficie di 10 ettari dove sono distribuiti i vari vigneti, la cantina, il locale degustazione, l’ufficio e l’abitazione.</p>
 
-            <p>L’inizio dell’attività risale al 1924, ma già <strong>verso la fine del 1800 la famiglia Abbona si dedicava alla viticoltura </strong>trasmettendo poi a nipoti e pronipoti l’amore e la passione per questo lavoro.</p>
+            <p>L'inizio dell’attività risale al 1924, ma già <strong>verso la fine del 1800 la famiglia Abbona si dedicava alla viticoltura </strong>trasmettendo poi a nipoti e pronipoti l’amore e la passione per questo lavoro.</p>
 
             <p>Il <strong>rinnovamento graduale nel corso degli anni </strong>e l'adozione di sistemi di lavorazione più moderni e tecnologici gli hanno permesso di ottenere vini selezionati, eleganti, armonici senza però dimenticare la tipicità del Dolcetto.</p>
-            <div class="sb__image-gallery ">
-              <div class="sb__image-container">
-                <img class="sb__image" src="http://langhe.net/wp-content/uploads/2016/07/Uve-180x180.jpg"/>
-              </div>
-              <div class="sb__image-container">
-                <img class="sb__image" src="http://langhe.net/wp-content/uploads/2016/07/vigne-180x180.jpg"/>
-              </div>
-              <div class="sb__image-container">
-                <img class="sb__image" src="http://langhe.net/wp-content/uploads/2016/07/vigne1-180x180.jpg"/>
-              </div>
-              <div class="sb__image-container">
-                <img class="sb__image" src="http://langhe.net/wp-content/uploads/2016/07/vigne2-180x180.jpg"/>
-              </div>
-              <div class="sb__image-container">
-                <img class="sb__image" src="http://langhe.net/wp-content/uploads/2016/07/inverno-180x180.jpg"/>
-              </div>
-              <div class="sb__image-container">
-                <img class="sb__image" src="http://langhe.net/wp-content/uploads/2016/07/logo-1-180x180.png"/>
-              </div>
-              <div class="sb__image-container">
-                <img class="sb__image" src="http://langhe.net/wp-content/uploads/2016/07/Uve-180x180.jpg"/>
-              </div>
-              <div class="sb__image-container">
-                <img class="sb__image" src="http://langhe.net/wp-content/uploads/2016/07/vigne-180x180.jpg"/>
-              </div>
-              <div class="sb__image-container">
-                <img class="sb__image" src="http://langhe.net/wp-content/uploads/2016/07/vigne1-180x180.jpg"/>
-              </div>
-              <div class="sb__image-container">
-                <img class="sb__image" src="http://langhe.net/wp-content/uploads/2016/07/vigne2-180x180.jpg"/>
-              </div>
-              <div class="sb__image-container">
-                <img class="sb__image" src="http://langhe.net/wp-content/uploads/2016/07/inverno-180x180.jpg"/>
-              </div>
-              <div class="sb__image-container">
-                <img class="sb__image" src="http://langhe.net/wp-content/uploads/2016/07/logo-1-180x180.png"/>
-              </div>
-            </div>
           </div>
         </div>
         <div class="flex-column flex-column--1-3 gutter--none">
@@ -122,6 +85,44 @@
               </div>
             </div>
             <div class="inner__row">
+              <div class="sb__image-gallery ">
+                <div class="sb__image-container">
+                  <img class="sb__image" src="http://langhe.net/wp-content/uploads/2016/07/Uve-180x180.jpg"/>
+                </div>
+                <div class="sb__image-container">
+                  <img class="sb__image" src="http://langhe.net/wp-content/uploads/2016/07/vigne-180x180.jpg"/>
+                </div>
+                <div class="sb__image-container">
+                  <img class="sb__image" src="http://langhe.net/wp-content/uploads/2016/07/vigne1-180x180.jpg"/>
+                </div>
+                <div class="sb__image-container">
+                  <img class="sb__image" src="http://langhe.net/wp-content/uploads/2016/07/vigne2-180x180.jpg"/>
+                </div>
+                <div class="sb__image-container">
+                  <img class="sb__image" src="http://langhe.net/wp-content/uploads/2016/07/inverno-180x180.jpg"/>
+                </div>
+                <div class="sb__image-container">
+                  <img class="sb__image" src="http://langhe.net/wp-content/uploads/2016/07/logo-1-180x180.png"/>
+                </div>
+                <div class="sb__image-container">
+                  <img class="sb__image" src="http://langhe.net/wp-content/uploads/2016/07/Uve-180x180.jpg"/>
+                </div>
+                <div class="sb__image-container">
+                  <img class="sb__image" src="http://langhe.net/wp-content/uploads/2016/07/vigne-180x180.jpg"/>
+                </div>
+                <div class="sb__image-container">
+                  <img class="sb__image" src="http://langhe.net/wp-content/uploads/2016/07/vigne1-180x180.jpg"/>
+                </div>
+                <div class="sb__image-container">
+                  <img class="sb__image" src="http://langhe.net/wp-content/uploads/2016/07/vigne2-180x180.jpg"/>
+                </div>
+                <div class="sb__image-container">
+                  <img class="sb__image" src="http://langhe.net/wp-content/uploads/2016/07/inverno-180x180.jpg"/>
+                </div>
+                <div class="sb__image-container">
+                  <img class="sb__image" src="http://langhe.net/wp-content/uploads/2016/07/logo-1-180x180.png"/>
+                </div>
+              </div>
               <div class="flex-column flex-column--max gutter--small padding--medium color-alternate--light">
                 <div class="flex-column__content content-box">
                   <ul class="sb__services-list">
