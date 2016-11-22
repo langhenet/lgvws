@@ -13,22 +13,45 @@
     <li class="page-nav__element extra"><a href="#contatti">Territorio</a></li>
   </ul>
 </div>
-  <div class="lg-section intro intro--overlay" style="background-image: url('http://langhe.net/wp-content/uploads/2016/07/vigne.jpg');">
+  <div class="lg-section intro padding--huge intro--overlay" style="background-image: url('http://langhe.net/wp-content/uploads/2016/07/vigne.jpg');">
     <div class="inner has-folio">
       <div class="inner__row">
         <div class="flex-column__content content_box">
-          <h1 class="title post--title">Azienda Agricola Langhero</h1>
-          <h3 class="subtitle post--subtitle">E' una tipica cascina piemontese del secolo scorso, a produzione diversificata. Pratica un'agricoltura a basso impatto ambientale ed è aperta alle visite e pratica la raccolta della frutta a self-service</h3>
+          <h1 class="sb__title">Azienda Agricola Langhero</h1>
+          <h3 class="subtitle sb__subtitle">Guarene</h3>
         </div>
       </div>
     </div>
   </div>
   <div id="descrizione" class="lg-section">
-    <div class="inner folio padding--none">
+    <div class="inner folio padding--small color-wine washed dropshadow">
       <div class="inner__row">
-        <div class="flex-column flex-column--max padding--medium color-wine washed">
+        <div class="meta-info__container--1-3">
           <div class="flex-column__content content_box">
-            <h2>Qualche info importante</h2>
+            <p class="sb__meta-info big">5€</p>
+          </div>
+        </div>
+        <div class="meta-info__container--2-6">
+          <div class="flex-column__content content_box">
+            <p class="sb__meta-info small">sito web</p>
+          </div>
+        </div>
+        <div class="meta-info__container--2-6">
+          <div class="flex-column__content content_box">
+            <p class="sb__meta-info small" style="overflow:hidden;">email
+            </p>
+          </div>
+        </div>
+        <div class="meta-info__container--2-6">
+          <div class="flex-column__content content_box">
+            <p class="sb__meta-info small" style="overflow:hidden;">mappa
+            </p>
+          </div>
+        </div>
+        <div class="meta-info__container--2-6">
+          <div class="flex-column__content content_box">
+            <p class="sb__meta-info small" style="overflow:hidden;">telefono
+            </p>
           </div>
         </div>
       </div>
@@ -49,6 +72,17 @@
       </div>
     </div>
   </div> -->
+  <div class="lg-section">
+    <div class="inner padding--medium">
+      <div class="inner__row">
+        <div class="flex-column flex-column--1-1">
+          <div class="flex-column__content content_box">
+            <p class="sb__excerpt">La nascita dell'azienda si perde nella notte dei tempi degli avi della famiglia Rivata da sempre presenti su queste terre,  come piccoli proprietari agricoli indipendenti.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
   <div class="lg-section">
     <div class="inner padding--medium">
       <div class="inner__row">

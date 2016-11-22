@@ -6,24 +6,24 @@
 <div class="page-nav color-alternate--light">
   <ul class="page-nav__list">
     <li class="page-nav__element"><a href="#descrizione">Descrizione</a></li>
-    <li class="page-nav__element"><a href="#vini">vini</a></li>
+    <li class="page-nav__element"><a href="#prodotti">Prodotti</a></li>
     <li class="page-nav__element"><a href="#visite">Visite in Azienda</a></li>
-    <li class="page-nav__element button"><a class="button" href="#prenota">Prenota un visita</a></li>
+    <li class="page-nav__element button"><a class="button" href="#prenota">Prenota</a></li>
     <li class="page-nav__element"><a href="#contatti">Contatti</a></li>
     <li class="page-nav__element extra"><a href="#contatti">Territorio</a></li>
   </ul>
 </div>
-  <div class="lg-section intro padding--huge intro--overlay" style="background-image: url('https://lonelyplanetimages.imgix.net/assets/image/542ac9781d8b04a18c84dd2257a92329d63c08ec29159f846328b92d58cc2479/7088f8c323a74ed0cb39a4ae002734ac86c367dc68250260e41dc554ab0cc71b.jpg?sharp=10&vib=20&w=2000'); background-size: cover; background-position: center center;">
+  <div class="lg-section intro padding--huge intro--overlay" style="background-image: url('http://langhe.net/wp-content/uploads/2016/07/vigne.jpg');">
     <div class="inner has-folio">
       <div class="inner__row">
         <div class="flex-column__content content_box">
-          <h1 class="sb__title">Azienda Agricola Cà Neuva</h1>
-          <h3 class="subtitle sb__subtitle">Dogliani</h3>
+          <h1 class="sb__title">Azienda Agricola Langhero</h1>
+          <h3 class="subtitle sb__subtitle">Guarene</h3>
         </div>
       </div>
     </div>
   </div>
-  <div id="descrizione" class="lg-section ">
+  <div id="descrizione" class="lg-section">
     <div class="inner folio padding--small color-wine washed dropshadow">
       <div class="inner__row">
         <div class="meta-info__container--1-3">
@@ -57,18 +57,35 @@
       </div>
     </div>
   </div>
+<!--  <div class="lg-section color-alternate--light">
+    <div class="inner padding--none">
+      <div class="inner__row">
+        <div class="flex-column flex-column--max">
+          <ul class="sub-menu" style="display: flex; list-style: none; flex-direction: row; justify-content: space-between; font-family: 'open sans'; text-transform: uppercase;">
+            <li style="padding: 1.5em 0.75em;">Descritpion</li>
+            <li style="padding: 1.5em 0.75em;">Rooms</li>
+            <li style="padding: 1.5em 0.75em;">Events</li>
+            <li style="padding: 1.5em 0.75em;" class="color-travel washed">Contacts</li>
+            <li style="padding: 1.5em 0.75em;" class="color-travel">Book Now</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div> -->
   <div class="lg-section">
     <div class="inner padding--medium">
       <div class="inner__row">
         <div class="flex-column flex-column--2-3">
           <div class="flex-column__content content_box">
-                        <h3 class="sb__excerpt--before-text">Una tipica cascina di Langa per una cantina con una storia secolare alle spalle che ancora oggi produce i vini rappresentativi del territorio ricordando i preziosi insegnamenti delle generazioni passate.</h3>
-            <p>La cascina Cà Neuva di <strong>Sergio Abbona</strong> è un’azienda agricola capace di soddisfare le esigenze di tutti coloro che amano il vino.</p>
-            <p>Situata in uno dei luoghi più caratteristici delle Langhe,<strong> Dogliani</strong>, si estende su una superficie di 10 ettari dove sono distribuiti i vari vigneti, la cantina, il locale degustazione, l’ufficio e l’abitazione.</p>
+            <p class="sb__excerpt--before-text">La nascita dell'azienda si perde nella notte dei tempi degli avi della famiglia Rivata da sempre presenti su queste terre,  come piccoli proprietari agricoli indipendenti.</p>
+            <p>La nascita dell'azienda si perde nella notte dei tempi degli avi della famiglia Rivata da sempre presenti su queste terre,  come piccoli proprietari agricoli indipendenti.</p>
+            <p>Langhero si presenta oggi come una tipica cascina piemontese, ora in ristrutturazione, del secolo scorso, a produzione diversificata.</p>
+            <p>Si pratica un'agricoltura a basso impatto ambientale mediante nuove pratiche d'inerbimento e lotta integrata, in modo da evitare l'uso di diserbanti e anticrittogamici.</p>
 
-            <p>L'inizio dell’attività risale al 1924, ma già <strong>verso la fine del 1800 la famiglia Abbona si dedicava alla viticoltura </strong>trasmettendo poi a nipoti e pronipoti l’amore e la passione per questo lavoro.</p>
+            <h2>La Storia</h2>
+            <p>Giuseppe Rivata e Virginia Bo dettero impulso allo sviluppo dell'azienda. Agli inizi degli anni '60 subentrò il figlio Secondo, che continuò la sistematica crescita aziendale.</p>
 
-            <p>Il <strong>rinnovamento graduale nel corso degli anni </strong>e l'adozione di sistemi di lavorazione più moderni e tecnologici gli hanno permesso di ottenere vini selezionati, eleganti, armonici senza però dimenticare la tipicità del Dolcetto.</p>
+            <p>Negli ultimi anni la conduzione è passata alla terza generazione: Luigi ed il tecnico di famiglia Massimo, perito agrario diplomatosi presso la Scuola Agraria di Grinzane Cavour.</p>
           </div>
         </div>
         <div class="flex-column flex-column--1-3 gutter--none">
@@ -76,50 +93,31 @@
             <div class="inner__row">
               <div class="flex-column flex-column--max gutter--none padding--none">
                 <div class="flex-column__content gallery-box">
-
+                  <div class="sb__image-gallery">
+                    <div class="sb__image-container">
+                      <img class="sb__image" src="http://langhe.net/wp-content/uploads/2016/07/Uve-180x180.jpg"/>
+                    </div>
+                    <div class="sb__image-container">
+                      <img class="sb__image" src="http://langhe.net/wp-content/uploads/2016/07/vigne-180x180.jpg"/>
+                    </div>
+                    <div class="sb__image-container">
+                      <img class="sb__image" src="http://langhe.net/wp-content/uploads/2016/07/vigne1-180x180.jpg"/>
+                    </div>
+                    <div class="sb__image-container">
+                      <img class="sb__image" src="http://langhe.net/wp-content/uploads/2016/07/vigne2-180x180.jpg"/>
+                    </div>
+                    <div class="sb__image-container">
+                      <img class="sb__image" src="http://langhe.net/wp-content/uploads/2016/07/inverno-180x180.jpg"/>
+                    </div>
+                    <div class="sb__image-container">
+                      <img class="sb__image" src="http://langhe.net/wp-content/uploads/2016/07/logo-1-180x180.png"/>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
             <div class="inner__row">
-              <div class="sb__image-gallery ">
-                <div class="sb__image-container">
-                  <img class="sb__image" src="http://langhe.net/wp-content/uploads/2016/07/Uve-180x180.jpg"/>
-                </div>
-                <div class="sb__image-container">
-                  <img class="sb__image" src="http://langhe.net/wp-content/uploads/2016/07/vigne-180x180.jpg"/>
-                </div>
-                <div class="sb__image-container">
-                  <img class="sb__image" src="http://langhe.net/wp-content/uploads/2016/07/vigne1-180x180.jpg"/>
-                </div>
-                <div class="sb__image-container">
-                  <img class="sb__image" src="http://langhe.net/wp-content/uploads/2016/07/vigne2-180x180.jpg"/>
-                </div>
-                <div class="sb__image-container">
-                  <img class="sb__image" src="http://langhe.net/wp-content/uploads/2016/07/inverno-180x180.jpg"/>
-                </div>
-                <div class="sb__image-container">
-                  <img class="sb__image" src="http://langhe.net/wp-content/uploads/2016/07/logo-1-180x180.png"/>
-                </div>
-                <div class="sb__image-container">
-                  <img class="sb__image" src="http://langhe.net/wp-content/uploads/2016/07/Uve-180x180.jpg"/>
-                </div>
-                <div class="sb__image-container">
-                  <img class="sb__image" src="http://langhe.net/wp-content/uploads/2016/07/vigne-180x180.jpg"/>
-                </div>
-                <div class="sb__image-container">
-                  <img class="sb__image" src="http://langhe.net/wp-content/uploads/2016/07/vigne1-180x180.jpg"/>
-                </div>
-                <div class="sb__image-container">
-                  <img class="sb__image" src="http://langhe.net/wp-content/uploads/2016/07/vigne2-180x180.jpg"/>
-                </div>
-                <div class="sb__image-container">
-                  <img class="sb__image" src="http://langhe.net/wp-content/uploads/2016/07/inverno-180x180.jpg"/>
-                </div>
-                <div class="sb__image-container">
-                  <img class="sb__image" src="http://langhe.net/wp-content/uploads/2016/07/logo-1-180x180.png"/>
-                </div>
-              </div>
-              <div class="flex-column flex-column--max gutter--small padding--medium color-alternate--light">
+              <div class="flex-column flex-column--max gutter--small color-alternate--light padding--medium">
                 <div class="flex-column__content content-box">
                   <ul class="sb__services-list">
                     <li class="sb__service sb__service--selected">
@@ -168,13 +166,13 @@
       </div>
     </div>
   </div>
-  <div id="vini" class="lg-section color-wine overlay--dark" style="background-image:url(http://langhe.net/wp-content/uploads/2016/07/Uve.jpg);">
+  <div id="prodotti" class="lg-section color-wine overlay--dark" style="background-image:url(http://langhe.net/wp-content/uploads/2016/07/Uve.jpg);">
     <div class="inner padding--large has-folio--lg">
       <div class="inner__row">
         <div class="flex-column flex-column--2-3">
           <div class="flex-column__content content-box">
-            <h2>I Vini</h2>
-            <h3>Vini del roero vini nel rispetto della natura</h3>
+            <h2>I Prodotti</h2>
+            <h3>Vini del roero prodotti nel rispetto della natura</h3>
           </div>
         </div>
       </div>
@@ -185,27 +183,28 @@
       <div class="inner__row">
         <div class="flex-column flex-column--2-3 padding--medium color-main dropshadow">
           <div class="flex-column__content content-box">
-            <p>Il <strong>Dogliani</strong> è un vino <strong>elegante</strong> ma non imegnativo, mentre il <strong>Superiore </strong>è più<strong> strutturato </strong>e<strong> complesso</strong> con un<strong> profumo speziato</strong> e una buona acidità.</p>
+            <p>Il grosso della proprietà è distribuita a ridosso dell'Azienda in località Sotteri di Guarene e, insieme ai vigneti di La Morra, si estende per 49 ettari.</p>
+            <p>Le terre sono coltivate a vigneti (13 ettari), cereali, mais e frumento (30 ettari), frutteti di mele, pere, albicocche, pesche, prugne e nocciole (5 ettari), cui si aggiunge un ettaro dedicato all'orticoltura.</p>
 
-            <p>Il <strong>Barolo</strong> è di Castiglione Falletto e si caratterizza per la <strong>prontezze di beva</strong></p>
+            <p>I vini qui prodotti sono Barolo (disponibile dal prossimo 2018), Nebbiolo, Dolcetto e Barbera per i rossi, insieme a Favorita e Arneis per i bianchi.</p>
 
-            <p>Capace di invecchiare a lungo, allo stesso tempo è pronto da bere dopo i 4 anni di invecchiamento obbligatorio.</p>
+            <h2>Maderé, il sidro di Pere</h2>
 
-            <p>Un altro grande rosso è un <strong>assemblaggio</strong> nato 2013 e dedicato a<strong> nonno Celso</strong>, il fondatore dell'azienda. Da qui il nome di questo vino composto da Barbera, Nebbiolo e Cabernet: <strong>Excelso</strong>.</p>
-
-            <p>Gli <strong>altri rossi</strong> vini sono <strong>Barbera</strong>, <strong>Nebbiolo</strong> e un <strong>rosato</strong>, cui si affiancano il <strong>bianco</strong> Roero <strong>Arneis</strong> e uno <strong>Spumante</strong> Metodo Classico.</p>
+            <p>E' il fiore all'occhiello della produzione, ottenuto dalla frantumazione e pressatura delle pere Madernassa, varietà tipica del Roero, fermentate a 14° per 15/20 giorni.</p>
+            <p>La spumantizzazione è data dalla seconda fermentazione eseguita a 12°, cui segue la filtrazione e un periodo di riposo in vasca.</p>
+            <p>A questo punto sidro Maderé è pronto per essere imbottigliato: secco, frizzante e con basso grado alcolico (Vol. 8%) è adatto a ogni situazione: da tutto pasto ad aperitivo leggero.</p>
           </div>
         </div>
         <div class="flex-column flex-column--1-3 padding--small not-equal--top color-wine washed">
           <div class="flex-column__content content-box">
             <h3 style="text-transform: uppercase;">Informazioni</h3>
-            <p style="font-family: 'Open Sans'"><strong>Ettari:</strong> 45<br/>
-              <strong>Locazione delle Vigne:</strong> Guarene, La Morra*</p>
+            <p style="font-family: 'Open Sans'"><strong>Ettari:</strong> 45</p>
             <p style="font-family: 'Open Sans'"><strong>Bottiglie Prodotte:</strong> 10.000</p>
+            <p style="font-family: 'Open Sans'"><strong>Locazione delle Vigne:</strong> Guarene, La Morra*</p>
             <p style="font-family: 'Open Sans'"><strong>Metodo Vitivinicolo:</strong> lotta integrata*</p>
-            <p style="font-family: 'Open Sans'"><strong>Biologico:</strong> Si<br/>
-              <strong>Biodinamico:</strong> No</p>
-            <p style="font-family: 'Open Sans'"><strong>Vini vini:</strong> Barolo DOCG, Dogliani Superiore DOCG, Dogliani DOCG, Langhe Nebbiolo DOC, Roero Arneis DOCG, Piemonte Barbera DOC, Langhe Rosso DOC, Rosato</p>
+            <p style="font-family: 'Open Sans'"><strong>Biologico:</strong> Si</p>
+            <p style="font-family: 'Open Sans'"><strong>Biodinamico:</strong> No</p>
+            <p style="font-family: 'Open Sans'"><strong>Vini Prodotti:</strong> Barolo, Nebbiolo, Dolcetto, Barbera, Arneis e Favorita</p>
           </div>
         </div>
       </div>
@@ -228,26 +227,28 @@
       <div class="inner__row">
         <div class="flex-column flex-column--2-3 padding--medium color-main dropshadow">
           <div class="flex-column__content content-box">
-            <p><strong>All’esterno della cascina un ampio spazio coloniale</strong> e, un paesaggio di morbide colline interamente ricoperte di vigneti, danno alla famiglia Abbona la possibilità di poter<strong> ospitare le persone amanti del vino e della terra</strong> a visitare la cantina e i propri vigneti e, non per ultimo, a degustare i vini senza problemi di parcheggio per pullman e la sosta notturna dei camper.
+            <h3>Nelle Vigne</h3>
+            <p>Si inizia con una passeggiata nei campi, nelle vigne e nei frutteti adiacenti, posti a mezza costa della collina di Guarene, sotto l’imponenza del relativo castello</p>
 
-            <p>Si inizia con la <strong>degustazione dei vini guidata da Silvia e Sergio</strong>, i quali vi racconteranno la storia di ciascuna etichetta.</p>
-
-            <p>Ciascun bicchiere è accompagnato da <strong>assaggi di vini locali e di piatti tipici</strong> per un vero <strong>aperitivo in cantina</strong>.</p>
-
-            <p>Dopodiché ci si sposta nel<strong> locale di fermentazione e invecchiamento</strong>, per scoprire il processo di produzione fino all'imbottigliamento ed etichettatura.</p>
-            <p>La cantina offre due tipologie di visita in cantina:</p>
+            <p>Qui dove è possible osservare una formazione geologica abbastanza curiosa, chiamata Paradis der Some, ovvero Paradiso delle Asine (chissà perché solo delle Asine e non di tutti gli Asini!).</p>
+            <p>Si tratta di una fenditura che taglia l'intera altezza della collina, formata dai gorghi laterali del Tanaro al termine dell'ultima glaciazione.</p>
+            <p>Durante la passeggiata è possibile assistere ai lavori in svolgimento in funzione della stagione e della coltura.</p>
+            <h3>La Degustazione</h3>
+            <p>Al termine si passa alla visita dei locali aziendali, magazzini, seccatoi e ricovero attrezzi, imponenti sono i trattori ed i relativi rimorchi, ed i locali di vinificazione, ovvero la cantina vera e propria, dove la visita si conclude con la degustazione dei vini, accompagnati da golosi stuzzichini.</p>
+            <h3>Info Utili</h3>
+            <p>Il tour dell’azienda dura circa un’ora e mezza, e comprende:</p>
             <ul>
-             	<li><strong>Gratuita</strong>: con assaggio di 3 vini e piccoli stuzzichini.</li>
-             	<li><strong>Completa</strong> a <strong>15 € a persona</strong>: con assaggio di tutti i vini accompagnati da salumi, formaggi, salse, marmellate e dolci e altri piatti tipici della cucina tradizionale piemontese.</li>
+              <li>la visita guidata ai, campi, vigne e frutteti</li>
+              <li>la degustazione del sidro Maderè (il primo e unico sidro di pere) e dei vini</li>
+              <li>stuzzichini di prodotti tipici dolci e salati</li>
             </ul>
+            <p>Il costo è di: <strong>5,00 €</strong> a persona per chi decide di assaggiare 6 vini gratuito per chi vuole assaggiare solo 3 vini a scelta.</p>
+            <p>La visita è disponibile in italiano e in inglese su appuntamento.</p>
+            <p>Sono ammessi i gruppi fino a un massimo di 50 partecipanti.</p>
 
-            <p>Su prenotazione è possibile ordinare <strong>vini senza glutine</strong> per una degustazione adatta ai celiaci.</p>
-
-            <p>Inoltre, è possibile concordare la partecipazione ai lavori in vigna (potatura invernale, potatura verde, vendemmia, etc.).</p>
-
-            <p>La cantina può ospitare <strong>grandi gruppi fino a 60 persone</strong>.</p>
-
-            <p>La visita dura circa 2 ore e le lingue disponibili sono <strong>italiano</strong>, <strong>inglese</strong>, <strong>francese</strong>, <strong>russo</strong> e <strong>cinese</strong>.</p>
+            <h3>Punto vendita</h3>
+            <p>E’ possible l’acquito dei vini ai seguenti prezzi e a richiesta si effettuano spedizione direttamente al domicilio dell’acquirente:</p>
+            <p>Per informazioni e prenotazioni compilate il modulo a lato, indicano nel campo note se si opta per la visita con degustazione gratuita o a pagamento.</p>
           </div>
         </div>
         <div class="flex-column flex-column--1-3 padding--none not-equal--top ">
@@ -291,8 +292,7 @@
           <div class="inner__row">
             <div class="flex-column flex-column--max padding--small color-alternate washed">
               <div class="flex-column__content content-box">
-                <h3>Hai un camper?</h3>
-                <p>Nell’area verde che circonda la nostra azienda offriamo la possibilità di ospitare fino a 24-28 camper! Se ti interessa questa soluzione indicalo nelle note del modulo di prenotazione.</p>
+                <img src="/../img/credit-card-logos.png"/>
               </div>
             </div>
           </div>

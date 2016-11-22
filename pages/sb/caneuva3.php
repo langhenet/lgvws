@@ -58,6 +58,45 @@
     </div>
   </div>
   <div class="lg-section">
+    <div class="inner">
+      <div class="inner__row">
+        <div class="flex-column flex-column--1-1 color-alternate--light">
+          <div class="flex-column__content content-box">
+            <ul class="sb__services-list">
+              <li class="sb__service small sb__service--selected">
+                <img class="sb-service__image" src="/../img/lgicons/business/lgb-access.png">
+                <span class="tooltiptext">Disabili</span>
+              </li>
+              <li class="sb__service small">
+                <img  class="sb-service__image" src="/../img/lgicons/business/lgb-aircond.png"><span class="tooltiptext">Aria condizionata</span></li>
+              <li class="sb__service small">
+                <img  class="sb-service__image" src="/../img/lgicons/business/lgb-animals.png">
+                <span class="tooltiptext">Animali</span></li>
+              <li class="sb__service small">
+              <img  class="sb-service__image" src="/../img/lgicons/business/lgb-meeting.png">
+              <span class="tooltiptext">Meeting Room</span></li>
+              <li class="sb__service small sb__service--selected">
+                <img  class="sb-service__image" src="/../img/lgicons/business/lgb-terrace.png">
+                <span class="tooltiptext">Terrazza</span></li>
+              <li class="sb__service small sb__service--selected">
+                <img  class="sb-service__image" src="/../img/lgicons/business/lgb-internet.png">
+                <span class="tooltiptext">Internet</span></li>
+              <li class="sb__service small sb__service--selected">
+                <img  class="sb-service__image" src="/../img/lgicons/business/lgb-kids.png">
+                <span class="tooltiptext">Giochi per Bambini</span></li>
+              <li class="sb__service small">
+                <img  class="sb-service__image" src="/../img/lgicons/business/lgb-parking.png">
+                <span class="tooltiptext">Parcheggio</span></li>
+              <li class="sb__service small">
+                <img  class="sb-service__image" src="/../img/lgicons/business/lgb-garden.png">
+                <span class="tooltiptext">Parco privato</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="lg-section">
     <div class="inner padding--medium">
       <div class="inner__row">
         <div class="flex-column flex-column--2-3">
@@ -120,47 +159,7 @@
                 </div>
               </div>
               <div class="flex-column flex-column--max gutter--small padding--medium color-alternate--light">
-                <div class="flex-column__content content-box">
-                  <ul class="sb__services-list">
-                    <li class="sb__service sb__service--selected">
-                      <img class="sb-service__image" src="/../img/lgicons/business/lgb-access.png">
-                      <span class="tooltiptext">Disabili</span>
-                    </li>
-                    <li class="sb__service">
-                      <img  class="sb-service__image" src="/../img/lgicons/business/lgb-aircond.png"><span class="tooltiptext">Aria condizionata</span></li>
-                    <li class="sb__service">
-                      <img  class="sb-service__image" src="/../img/lgicons/business/lgb-dsales.png">
-                      <span class="tooltiptext">Vendita diretta</span></li>
-                    <li class="sb__service">
-                      <img  class="sb-service__image" src="/../img/lgicons/business/lgb-animals.png">
-                      <span class="tooltiptext">Animali</span></li>
-                    <li class="sb__service">
-                    <img  class="sb-service__image" src="/../img/lgicons/business/lgb-meeting.png">
-                    <span class="tooltiptext">Meeting Room</span></li>
-                    <li class="sb__service sb__service--selected">
-                      <img  class="sb-service__image" src="/../img/lgicons/business/lgb-terrace.png">
-                      <span class="tooltiptext">Terrazza</span></li>
-                    <li class="sb__service">
-                      <img  class="sb-service__image" src="/../img/lgicons/business/lgb-work.png">
-                      <span class="tooltiptext">Visite in Aazienda</span></li>
-                    <li class="sb__service sb__service--selected">
-                      <img  class="sb-service__image" src="/../img/lgicons/business/lgb-internet.png">
-                      <span class="tooltiptext">Internet</span></li>
-                    <li class="sb__service sb__service--selected">
-                      <img  class="sb-service__image" src="/../img/lgicons/business/lgb-bike.png">
-                      <span class="tooltiptext">Affitto Bici</span></li>
-                    <li class="sb__service sb__service--selected">
-                      <img  class="sb-service__image" src="/../img/lgicons/business/lgb-kids.png">
-                      <span class="tooltiptext">Giochi per Bambini</span></li>
-                    <li class="sb__service">
-                      <img  class="sb-service__image" src="/../img/lgicons/business/lgb-parking.png">
-                      <span class="tooltiptext">Parcheggio</span></li>
-                    <li class="sb__service">
-                      <img  class="sb-service__image" src="/../img/lgicons/business/lgb-garden.png">
-                      <span class="tooltiptext">Parco privato</span></li>
-                  </ul>
-                  <img src="/../img/credit-card-logos.png"/>
-                </div>
+                <img src="/../img/credit-card-logos.png"/>
               </div>
             </div>
           </div>
