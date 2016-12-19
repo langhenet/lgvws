@@ -1,4 +1,15 @@
-.widget.widget_wp_views_filter {
+.flex_column.av_one_third .avia-builder-widget-area,
+.flex_column.av_two_third .flex_column.av_one_half .avia-builder-widget-area {
+  font-size: 1.33333333333333333333333em;
+  line-height: 1.5em;
+}
+
+.widget {
+  font-size: .75em;
+  line-height: 2em;
+}
+
+#top .widget.widget_wp_views_filter {
   padding: 0;
 
   h3.widgettitle {

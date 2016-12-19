@@ -28,16 +28,38 @@
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: space-between;
+  margin: 0 -0.75em;
 }
 .search-box__inline-fields-container {
-  flex-basis: 55%;
+  flex-basis: 50%;
   padding: 0 0.75em;
-  margin: 0 -0.75em;
+  margin: 0;
   box-sizing: border-box;
   position: relative;
   overflow: hidden;
   flex-grow: 0;
   flex-shrink: 0;
+}
+
+.js-wpv-dps-spinner.spinner {
+    position: absolute;
+    top: 3em;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    background: rgba(255, 255, 255, 0.6);
+    z-index: 999999;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+}
+
+.search-box__description {
+  margin-top: 0 !important;
+  margin-bottom: 0;
+  padding: 0 0.75em;
+  font-size: 0.75em;
+  line-height: 1.5em;
 }
 
 #top .views-search__form {
@@ -70,14 +92,14 @@
 
   .ui-datepicker-trigger {
     position: absolute;
-    top: 60%;
+    top: 2em;
     right: 10%;
   }
 
   .wpv-date-front-end-clear {
   //  display: none !important;
     position: absolute;
-    top: 60%;
+    top: 2em;
     right: 24%;
     display: inline;
   }
@@ -129,12 +151,36 @@
 }
 
 #top .widget_wp_views_filter {
+  .js-wpv-dps-spinner.spinner {
+    top:0;
+  }
+
+  input[name=wpv_post_search] {
+    height: 2em;
+  }
+
+  .wpv_date_input {
+    height: 2.675em !important;
+    line-height: 2.675em !important;
+  }
+
+  .ui-datepicker-trigger,
+  .wpv-date-front-end-clear {
+    top: 2.5em;
+  }
+
+  select {
+    height: 2.5em;
+  }
 
   .search-box__label {
     white-space: normal;
     text-overflow: ellipsis;
     overflow: hidden;
+    font-size: 1em;
+    line-height: 1.5em;
   }
+
   .event-search__button {
     width: 100%;
     margin-right: 1.5em;

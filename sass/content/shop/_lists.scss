@@ -71,6 +71,15 @@ div .product-sorting ul.sort-param-count {
   margin: 0 3.6% 60px 0;
   padding: 0;
   width: 22.3%;
+
+  @include respond-to(step-3) {
+    margin: 0 3.6% 60px 0;
+    width: 48.2%;
+
+    &:nth-child(even) {
+      margin-right: 0;
+    }
+  }
 }
 
 div .columns-1 .products .product, /*pagina vino rock - per shortcode ad una colonna*/

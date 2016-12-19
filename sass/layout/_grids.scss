@@ -19,6 +19,8 @@
   border-radius: 0.2em;
   overflow:hidden;
   box-shadow: 2px 1px 6px rgba(50,50,50,0.2);
+  border-bottom: 4px solid;
+
 }
 
 .grid-item--third {
@@ -26,13 +28,24 @@
   margin-bottom: $line-height;
   flex: 0 0 31.625%;
   width: 0;
-  border-bottom: 4px solid;
   margin-right: 2.5625%;
 
   &:nth-child(3n+3) {
     margin-right:0;
   }
 }
+
+.grid-item--half {
+  flex-basis: 48%;
+  margin-right: 0;
+  margin-bottom: $line-height;
+
+
+  &:nth-child(odd) {
+    margin-right:4%;
+  }
+}
+
 
 
 @include respond-to(step-1) {
@@ -50,7 +63,8 @@
 }
 
 @include respond-to(step-4) {
-  .grid-item--third {
+  .grid-item--third,
+  .grid-item--half {
     flex-basis: 100%;
 
     &:nth-child(3n+3) {
@@ -153,11 +167,11 @@
 //                              COLORI
 //**************************************************************************//
 
-.alternate_color .grid-item--third {
+.alternate_color .grid-item {
   background: white;
 }
 
-.main_color .grid-item--third {
+.main_color .grid-item {
   background: #f3f3f3;
 }
 
@@ -173,4 +187,8 @@
   &:hover {
     color: darken(#e28b65, 10%);
   }
+}
+
+.grid-item.event {
+  border-color: mix(palette(header, bg), white, 75%);
 }
