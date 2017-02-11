@@ -553,8 +553,16 @@ p.lg-small {
   margin-bottom:0px;
 }
 
-.main_color p.lg-ph1, .main_color p.lg-ph2, .main_color p.lg-ph3 {
+.main_color p.lg-ph1,
+.main_color p.lg-ph2,
+.main_color p.lg-ph3 {
   color:#666;
+}
+
+.main_color p.lg-ph1 strong,
+.main_color p.lg-ph2 strong,
+.main_color p.lg-ph3 strong {
+  color: palette(main, accent);
 }
 
 .avia_textblock {
