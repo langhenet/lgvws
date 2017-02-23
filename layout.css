@@ -751,6 +751,7 @@ z-index: 2;
 box-shadow: 0 32px 60px rgba(0, 0, 0, 0.1);
 overflow: hidden;
 padding:1px 0 0;
+text-align: left;
 }
 
 #header.av_minimal_header .avia_mega_div{ margin:0; border-top-style:solid; border-top-width:1px; }
@@ -1507,6 +1508,13 @@ top:50%;
 margin-top: -15px;
 right:0;
 }
+
+.html_cart_at_menu #top .av-section-bottom-logo .social_bookmarks, .html_bottom_nav_header.html_cart_at_menu  #top .av-logo-container .social_bookmarks{
+left:0;
+right: auto;
+}
+
+
 
 #top .av-logo-container .social_bookmarks li{
 border:none;
@@ -2361,7 +2369,7 @@ margin-bottom: -13px;
 .html_elegant-blog .more-link{
 	display: block;
 	text-align: center;
-	margin:30px auto 0 auto;
+	margin:30px auto 20px auto;
 	clear: both;
 	width:250px;
 	border:none;

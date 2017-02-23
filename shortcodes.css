@@ -1718,6 +1718,10 @@ div .avia-table {background: transparent; width:100%; clear:both; margin:30px 0;
         -webkit-overflow-scrolling: touch;
         -ms-overflow-style: -ms-autohiding-scrollbar;
     }
+	
+    .avia_scrollable_table .avia-table {
+    	width: auto;
+    }
 
     .responsive .avia_scrollable_table .avia-data-table > thead > tr > th,
     .responsive .avia_scrollable_table .avia-data-table > tbody > tr > th,
@@ -3461,9 +3465,9 @@ Slideshow
 
 .avia-slideshow-inner{padding:0; margin: 0; position: relative; overflow: hidden; width:100%;}
 #top .av-default-height-applied .avia-slideshow-inner{height:0px;}
-.avia-slideshow li{padding:0; margin: 0; list-style-type: none; list-style-position: outside; position: absolute; visibility: hidden; z-index: 1; top:0; left:0; width:100%; clear:both; opacity: 0;}
+.avia-slideshow li{padding:0; margin: 0; list-style-type: none; list-style-position: outside; position: absolute; visibility: hidden; z-index: 1; top:0; left:0; width:100%; clear:both; opacity: 0; overflow: hidden;}
 .avia-slideshow li:first-child{position: relative; visibility: visible; z-index: 3;}
-.avia-slideshow li img{display:block; width:100%; margin: 0 auto; border-radius: 3px;}
+.avia-slideshow li img{display:block; width:100%; margin: 0 auto; border-radius: 3px; position: relative;}
 .flex_cell_inner .avia-slideshow li img{border-radius: 0;}
 .avia-slideshow.image_no_stretch li img{width:auto;}
 .avia-slideshow li>p{margin:0;}
@@ -4146,6 +4150,10 @@ border-radius: 3px;
 text-align: center;
 line-height: 62px;
 
+}
+
+#top .avia-layerslider .ls-nav-start, #top .avia-layerslider .ls-nav-stop{
+font-size: 13px;	
 }
 
 #top .avia-layerslider .ls-bottom-slidebuttons a, #top .avia-layerslider .ls-nav-start, #top .avia-layerslider .ls-nav-stop{

@@ -185,3 +185,6 @@ left: 0!important;
 }
 
 .avia_transform .rtl .border-extra-arrow-down { left: auto; right: 50%; }
+.avia-mozilla .rtl .av_seperator_small_border .av-main-nav > li > a > .avia-menu-text {
+    margin-left: 0;
+}

@@ -43,7 +43,7 @@ html.responsive { min-width: 0px; }
 }
 .row {
   position: relative;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
   clear: both;
 }
 
@@ -72,7 +72,7 @@ body .unit.alpha, body .units.alpha {
 /* Base sizes */
 
 .container .av-content-full.units  {width: 100%}
-.container .av-content-small.units {width: 74.36%!important;}
+.container .av-content-small.units {width: 74.36% !important}
 
 
 .boxed#top, .html_boxed.html_header_sticky #header{ width: 1010px; }
@@ -118,7 +118,7 @@ body .unit.alpha, body .units.alpha {
 
   .responsive #top .container .av-content-small, .responsive #top #wrap_all .flex_column, .responsive #top #wrap_all .av-flex-cells .no_margin {
     margin: 0;
-    margin-bottom: 30px;
+    margin-bottom: 1.5em;
     width: 100%;
   }
 
@@ -264,6 +264,7 @@ div .av_four_sixth {
   width: 65.812%;
   margin-left: 2.565%;
 }
+
 /* Columns for better content separation (no margin)
 ================================================== */
 #top div .no_margin {
