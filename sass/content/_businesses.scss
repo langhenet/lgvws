@@ -20,7 +20,7 @@
   padding-bottom: 56.25%;
 
 
- @include respond-to(step-2) {
+ @include breakpoint-max(lg) {
     flex-basis: 100%;
     margin: $line-height 0;
   }

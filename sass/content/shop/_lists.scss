@@ -72,7 +72,7 @@ div .product-sorting ul.sort-param-count {
   padding: 0;
   width: 22.3%;
 
-  @include respond-to(step-3) {
+  @include breakpoint-max(md) {
     margin: 0 3.6% 60px 0;
     width: 48.2%;
 

@@ -14,15 +14,27 @@
 ///
 // Font Size
 ///
-@function font($size, $attr: 'fs') {
-    @return map-get(map-get($fonts, $size), $attr);
+@function size($size, $attr: 'fs') {
+  @return map-get(map-get($sizes, $size), $attr);
 }
+
+@function m-size($size, $attr: 'fs') {
+  @return map-get(map-get($mobile-sizes, $size), $attr);
+}
+
 
 ///
 // Font Families & Weights
 ///
-@function family($family, $weight: 'normal') {
-    @return map-get(map-get($weights, $family), $weight);
+@function family($family, $attr: 'normal') {
+  @return map-get(map-get($families, $family), $attr);
+}
+
+///
+// Font decoration
+///
+@function decoration($size, $attr: 'fm') {
+  @return map-get(map-get($decorations, $size), $attr);
 }
 
 
@@ -30,7 +42,7 @@
 // FORM Decoration
 ///
 @function form($element, $attr: 'fm') {
-    @return map-get(map-get($forms, $element), $attr);
+  @return map-get(map-get($forms, $element), $attr);
 }
 
 //****************************************************************************//
@@ -72,7 +84,7 @@
 // interlinea dall'altro lato
 ///
 @function bpad($bp-bw: 1, $bp-fs: p) {
-  @return ($base * $font-size * (font($bp-fs, fs) / 1em) * (font($bp-fs, lh) / 1em) - $bp-bw * 2) / ($base * $font-size * (font($bp-fs, fs) / 1em)) * 0.5em;
+  @return ($base * $font-size * (size($bp-fs, fs) / 1em) * (size($bp-fs, lh) / 1em) - $bp-bw * 2) / ($base * $font-size * (size($bp-fs, fs) / 1em)) * 0.5em;
 }
 
 
@@ -80,16 +92,15 @@
 // Mezzo padding
 ///
 @function bhpad($bp-bw: 1, $bp-fs: p) {
-  @return (($base * $font-size * (font($bp-fs, fs) / 1em) * (font($bp-fs, lh) / 1em) / 2) - ($bp-bw * 2)) / ($base * $font-size * (font($bp-fs, fs) / 1em)) * 0.5em;
+  @return (($base * $font-size * (size($bp-fs, fs) / 1em) * (size($bp-fs, lh) / 1em) / 2) - ($bp-bw * 2)) / ($base * $font-size * (size($bp-fs, fs) / 1em)) * 0.5em;
 }
 
 ////
 // Quarter padding - **Importante** Il quarter padding va sempre compensato con
 // del margine a metà o a un quarto
 ////
-
 @function bqpad($bp-bw: 1, $bp-fs: p) {
-  @return (($base * $font-size * (font($bp-fs, fs) / 1em) * (font($bp-fs, lh) / 1em) / 4) - ($bp-bw * 2)) / ($base * $font-size * (font($bp-fs, fs) / 1em)) * 0.5em;
+  @return (($base * $font-size * (size($bp-fs, fs) / 1em) * (size($bp-fs, lh) / 1em) / 4) - ($bp-bw * 2)) / ($base * $font-size * (size($bp-fs, fs) / 1em)) * 0.5em;
 }
 
 ////
@@ -98,7 +109,7 @@
 // e si vuole ottenere un altezza di linea intera
 ////
 @function bspad($bp-bw: 1, $bp-fs: p) {
-  @return ($base * $font-size * (font($bp-fs, fs) / 1em) * (font($bp-fs, lh) / 1em) - $bp-bw) / ($base * $font-size * (font($bp-fs, fs) / 1em)) * 1em;
+  @return ($base * $font-size * (size($bp-fs, fs) / 1em) * (size($bp-fs, lh) / 1em) - $bp-bw) / ($base * $font-size * (size($bp-fs, fs) / 1em)) * 1em;
 }
 
 
@@ -109,7 +120,7 @@
 // che usano questa funzione NON possono andare a capo
 ////
 @function blh($bp-bw: 1, $bp-fs: p, $bp-lh: $line-height) {
-  @return (($base * $font-size * (font($bp-fs, fs) / 1em) * (font($bp-fs, lh) / 1em)) - ($bp-bw * 2)) / ($base * $font-size * (font($bp-fs, fs) / 1em)) * 1em;
+  @return (($base * $font-size * (size($bp-fs, fs) / 1em) * (size($bp-fs, lh) / 1em)) - ($bp-bw * 2)) / ($base * $font-size * (size($bp-fs, fs) / 1em)) * 1em;
 }
 
 
@@ -136,4 +147,19 @@
 
 @function main-colors($palette, $element: 'body') {
     @return map-get(map-get($layout-colors, $palette), $element);
+}
+
+//****************************************************************************//
+//*                   PX to EM
+//****************************************************************************//
+@function em($value: $base * 1px) {
+  @return ($value / 1px) / ($font-size * $base / 1em) * 1em;
+}
+
+//****************************************************************************//
+//*                  EM BP
+//****************************************************************************//
+
+@function em-bp($value: $base * 1px) {
+  @return ($value / 1px) / ($base) * 1em;
 }

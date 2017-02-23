@@ -23,19 +23,18 @@
 ///
 // Families
 ///
-  $font-family: 'Open Sans', sans; //TODO
-  $font-family-heading: $font-family; //TODO
-  $font-family-special: $font-family; //TODO
-  $font-family-button: $font-family;
+$ff-primary: 'Open Sans', sans-serif; //TODO
+$ff-secondary: $ff-primary; //TODO
+$ff-special: $ff-primary; //TODO
+$ff-button: $ff-primary;
 
 
 ///
 // WEIGHTS per Families
 ///
-$weights: (
-  ff: (
-    family: $font-family,
-    u-thin: 400,
+$families: (
+  primary: (
+    family: $ff-primary,
     thin: 400,
     light: 400,
     normal: 400,
@@ -43,38 +42,71 @@ $weights: (
     bolder: 700,
   ),
 
-  ffh: (
-    family: $font-family-heading,
-    u-thin: 300,
-    thin: 300,
-    light: 300,
+  secondary: (
+    family: $ff-secondary,
+    thin: 400,
+    light: 400,
     normal: 400,
-    bold: 400,
-    bolder: 400,
+    bold: 700,
+    bolder: 700,
   ),
 
-  ffs: (
-    family: $font-family-special,
-    u-thin: 300,
-    thin: 300,
-    light: 300,
+  special: (
+    family: $ff-special,
+    thin: 400,
+    light: 400,
     normal: 400,
-    bold: 400,
-    bolder: 400,
+    bold: 700,
+    bolder: 700,
+  ),
+);
+
+$decorations: (
+  p: (
+    fm: primary,
+    wt: normal,
+  ),
+
+  h1: (
+    fm: secondary,
+    wt: normal,
+  ),
+
+  h2: (
+    fm: secondary,
+    wt: normal,
+  ),
+
+  h3: (
+    fm: secondary,
+    wt: normal,
+  ),
+
+  h4: (
+    fm: secondary,
+    wt: bold,
+  ),
+
+  h5: (
+    fm: secondary,
+    wt: normal,
+  ),
+
+  small: (
+    fm: primary,
+    wt: normal,
   ),
 );
 
 ////
 // Dimensioni & caratteristiche dei font principali
 ////
-  $fonts: (
+  $sizes: (
     p: (
       fs: 1em,
       lh: $line-height,
       mt: $margin-top,
       mb: $margin-bottom,
-      fm: family(ff, family),
-      wt: family(ff, normal),
     ),
 
     h1: (
@@ -82,8 +114,6 @@ $weights: (
       lh: 1.097560976em,
       mt: 1.09756098em,
       mb: 0.36585366em,
-      fm: family(ffh, family),
-      wt: family(ffh, thin),
     ),
 
     h2: (
@@ -91,8 +121,6 @@ $weights: (
       lh: 1.176470588em,
       mt: 1.17647059em,
       mb: 0.58823529em,
-      fm: family(ffh, family),
-      wt: family(ffh, thin),
     ),
 
     h3: (
@@ -100,8 +128,6 @@ $weights: (
       lh: 1.875000000em,
       mt: 0.9375em,
       mb: 0.9375em,
-      fm: family(ffh, family),
-      wt: family(ffh, normal),
     ),
 
     h4: (
@@ -109,8 +135,6 @@ $weights: (
       lh: 1.5em,
       mt: 1.5em,
       mb: 1.5em,
-      fm: family(ffh, family),
-      wt: family(ffh, normal),
     ),
 
     h5: (
@@ -118,8 +142,6 @@ $weights: (
       lh: 2em,
       mt: 2em,
       mb: 0em,
-      fm: family(ffh, family),
-      wt: family(ffh, light),
     ),
 
     small: (
@@ -127,8 +149,6 @@ $weights: (
       lh: 2em,
       mt: 2em,
       mb: 0,
-      fm: family(ffh, family),
-      wt: family(ffh, light),
     ),
 
     small-h3: (
@@ -136,8 +156,6 @@ $weights: (
       lh: 1.25em,
       mt: 1.25em,
       mb: 0,
-      fm: family(ffh, family),
-      wt: family(ffh, normal),
     ),
 
     blockquote: (
@@ -145,8 +163,29 @@ $weights: (
       lh: 1.583333333333333em,
       mt: 1.583333333333333em,
       mb: 1.583333333333333em,
-      fm: family(ffh, family),
-      wt: family(ffh, light),
+  ),
+);
+
+$mobile-sizes: (
+  h1: (
+    fs: 2.38888889em,
+    lh: 1.6744186em,
+    mt: 0.8372093em,
+    mb: 0.8372093em,
+  ),
+
+  h2: (
+    fs: 1.77777778em,
+    lh: 1.125em,
+    mt: 1.125em,
+    mb: 1.125em,
+  ),
+
+  h3: (
+    fs: 1.33333333em,
+    lh: 1.5em,
+    mt: 1.5em,
+    mb: 1.5em,
   ),
 );
 
@@ -166,17 +205,17 @@ $weights: (
 
 $forms: (
   field: (
-    fm: family(ff, family),
-    wt: family(ff, normal),
+    fm: family(secondary, fm),
+    wt: family(secondary, normal),
   ),
 
   label: (
-    fm: family(ff, family),
-    wt: family(ff, normal),
+    fm: family(secondary, fm),
+    wt: family(secondary, normal),
   ),
 
   desc: (
-    fm: family(ff, family),
-    wt: family(ff, normal),
+    fm: family(secondary, fm),
+    wt: family(secondary, normal),
   ),
 );
