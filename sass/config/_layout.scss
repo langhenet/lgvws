@@ -19,6 +19,28 @@ $height--large: $line-height * 5;
 $height--huge: $line-height * 8;
 
 //***********************************************************************//
+//            BOOTSTRAP CONFIG
+//***********************************************************************//
+
+///
+// Enable Bootstrap Flex
+///
+$enable-flex: true;
+
+///
+// Changes bootstrap gutter with our gutter
+///
+$grid-gutter-width-base: $gutter;
+
+$grid-gutter-widths: (
+  xs: $grid-gutter-width-base,
+  sm: $grid-gutter-width-base,
+  md: $grid-gutter-width-base,
+  lg: $grid-gutter-width-base,
+  xl: $grid-gutter-width-base
+);
+
+//***********************************************************************//
 //             LARGHEZZA LAYOUT & BREAKPOINT MEDIA QUERIES
 //***********************************************************************//
 $uxl: 1980px;
