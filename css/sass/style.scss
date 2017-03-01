@@ -1,0 +1,30 @@
+// vendors import
+//@import 'sassy-gridlover/main';
+
+// FUNCTIONS & PROJECT CONFIGURATION
+@import 'helpers/functions';
+@import 'config/typography';
+@import 'config/colors';
+@import 'config/layout';
+@import 'helpers/mixins';
+
+//BOOTSTRAP
+@import './node_modules/bootstrap/scss/variables';
+@import './node_modules/bootstrap/scss/mixins';
+
+@import 'custom';
+
+
+@import 'layout/grids';
+
+@import 'elements/buttons';
+@import 'elements/icons';
+@import 'elements/iconlist';
+@import 'elements/colored-sections';
+@import 'elements/search-boxes';
+@import 'elements/sidebar';
+@import 'elements/pagination';
+
+@import 'content/packages';
+@import 'content/businesses';
+@import 'content/shop/lists';

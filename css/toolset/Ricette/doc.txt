@@ -1,0 +1,2 @@
+Shortcode Elemento Griglia
+wpv-post-body view_template="Ricetta - Elemento Griglia"]

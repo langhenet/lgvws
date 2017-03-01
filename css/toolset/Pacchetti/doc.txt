@@ -1,0 +1,2 @@
+Shortcode Pacchetto Elemento Griglia
+[wpv-post-body view_template="Pacchetto - Elemento Griglia"]

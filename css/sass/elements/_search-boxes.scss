@@ -1,0 +1,205 @@
+#top .wpv-filter-form {
+  margin-bottom: 0;
+}
+
+.views-search__form {
+  position: relative;
+  padding: 3em 1.5em;
+  background: palette(alternate, bg);
+  margin-bottom: 3em;
+}
+
+.search-box__inner {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  margin: 0 -1.5em;
+}
+
+.search-box--2-col {
+  flex-basis: 50%;
+  box-sizing: border-box;
+  padding: 0 1.5em;
+  margin-bottom: 1.5em;
+}
+
+.search-box__inline-fields {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  margin: 0 -0.75em;
+}
+.search-box__inline-fields-container {
+  flex-basis: 50%;
+  padding: 0 0.75em;
+  margin: 0;
+  box-sizing: border-box;
+  position: relative;
+  overflow: hidden;
+  flex-grow: 0;
+  flex-shrink: 0;
+}
+
+.js-wpv-dps-spinner.spinner {
+    position: absolute;
+    top: 3em;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    background: rgba(255, 255, 255, 0.6);
+    z-index: 999999;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+}
+
+.search-box__description {
+  margin-top: 0 !important;
+  margin-bottom: 0;
+  padding: 0 0.75em;
+  font-size: 0.75em;
+  line-height: 1.5em;
+}
+
+#top .views-search__form {
+
+  .search-box__label {
+    font-size: 0.75em;
+    line-height: 2em;
+    text-transform: uppercase;
+    color: palette(main, body-sec);
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+
+  .wpv_date_input {
+    display: block;
+    height: 2em;
+    background: #fff;
+    border-top: 2px solid;
+    border-bottom: 2px solid;
+    border-right: 2px solid;
+    border-left: 2px solid;
+    border-color: #eaeaea;
+    width: 100%;
+    font-size: 0.75em;
+    line-height: 2em;
+    padding-left: 0.2em;
+    padding-bottom: 0.2em;
+  }
+
+  .ui-datepicker-trigger {
+    position: absolute;
+    top: 2em;
+    right: 10%;
+  }
+
+  .wpv-date-front-end-clear {
+  //  display: none !important;
+    position: absolute;
+    top: 2em;
+    right: 24%;
+    display: inline;
+  }
+
+  input[name=wpv_post_search] {
+    height: 1.5em;
+    line-height: 2em;
+  }
+
+  select {
+    height: 2em;
+    line-height: 1.5em;
+    padding: 0 0.75em;
+
+    option:nth-of-type(2) {
+      padding-top: 0.5em;
+    }
+  }
+}
+
+
+.event-search__button {
+  @include button(p);
+  margin-left: 1.5em;
+  text-transform: uppercase;
+}
+
+@include breakpoint-max(sm) {
+  .event-search__button {
+    width: 100%;
+    margin-right: 1.5em;
+  }
+
+  .views-search__form {
+    padding-top: 1.5em;
+  }
+
+  .search-box--2-col {
+    flex-basis: 100%;
+  }
+
+  .search-box__inline-fields-container {
+    flex-basis: 100%;
+
+    &:first-of-type {
+      margin-bottom: 0.75em;
+    }
+  }
+}
+
+#top .widget_wp_views_filter {
+  .js-wpv-dps-spinner.spinner {
+    top:0;
+  }
+
+  input[name=wpv_post_search] {
+    height: 2em;
+  }
+
+  .wpv_date_input {
+    height: 2.675em !important;
+    line-height: 2.675em !important;
+  }
+
+  .ui-datepicker-trigger,
+  .wpv-date-front-end-clear {
+    top: 2.5em;
+  }
+
+  select {
+    height: 2.5em;
+  }
+
+  .search-box__label {
+    white-space: normal;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    font-size: 1em;
+    line-height: 1.5em;
+  }
+
+  .event-search__button {
+    width: 100%;
+    margin-right: 1.5em;
+  }
+
+  .views-search__form {
+    padding-top: 1.5em;
+    margin-bottom: 0;
+  }
+
+  .search-box--2-col {
+    flex-basis: 100%;
+  }
+
+  .search-box__inline-fields-container {
+    flex-basis: 100%;
+
+    &:first-of-type {
+      margin-bottom: 0.75em;
+    }
+  }
+}

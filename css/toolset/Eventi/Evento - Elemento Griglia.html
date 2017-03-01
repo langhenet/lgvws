@@ -1,0 +1,36 @@
+<a class="grid-item__image-container" href="[wpv-post-url]" title="[wpv-post-title]">
+  <img width="495" height="400" src="[wpv-post-featured-image size="magazine" raw="true"]" class="grid-item__image attachment-portfolio wp-post-image" alt="[wpv-post-title]">
+  <div class="grid-item__meta-container">
+    <p class="grid-item__meta event-item__meta">
+      <strong style="color: #fff;">
+      [wpv-if town="_wpcf_belongs_lgtown_id" evaluate="!empty($town)"][wpv-post-title id="$lgtown"][/wpv-if]
+      [wpv-if town="lgb-city" evaluate="!empty($town)"][wpv-post-field name="lgb-city"][/wpv-if]</strong><br/>
+      [wpv-if evaluate="'[types field="lge-stdate" style="text" format="j-F-Y"][/types]' != '[types field="lge-endate" style="text" format="j-F-Y"][/types]'"]
+        <span class="lg-icons lg-icon--entypo lg-icon--left lg-icon--small lg-icon--cal"></span> [types field="lge-stdate" style="text" format="j M"][/types] - [types field="lge-endate" style="text" format="j M Y"][/types]
+      [/wpv-if]
+      [wpv-if evaluate="'[types field="lge-stdate" style="text" format="j-F-Y"][/types]' = '[types field="lge-endate" style="text" format="j-F-Y"][/types]'"]
+        <span class="lg-icons lg-icon--entypo lg-icon--left lg-icon--small lg-icon--cal"></span>[types field="lge-stdate" style="text" format="j F Y"][/types]
+      [/wpv-if]
+    </p>
+  </div>
+</a>
+<div class="grid-item__title-container">
+  <h3 class="grid-item__title" itemprop="name"><a href="[wpv-post-url]" title="[wpv-post-title]" itemprop="url">[wpv-post-title]</a></h3>
+  <meta itemprop="startDate" content="[types field="lge-stdate" style="text" format="Y-m-d"][/types]T[types field="lge-stdate" style="text" format="H:i"][/types]">
+  <meta itemprop="endDate" content="[types field="lge-endate" style="text" format="Y-m-d"][/types]T[types field="lge-endate" style="text" format="H:i"][/types]">
+  <div itemprop="location" itemscope itemtype="http://schema.org/Place">
+    <meta itemprop="name" content="[wpv-if town="_wpcf_belongs_lgtown_id" evaluate="!empty($town)"][wpv-post-title id="$lgtown"][/wpv-if][wpv-if town="lgb-city" evaluate="!empty($town)"][wpv-post-field name="lgb-city"][/wpv-if] - [types field="lge-location"][/types]">
+    <meta itemprop="address" content="[types field="lg-geo-address"][/types]">
+  </div>
+</div>
+<div class="grid-item__description-container">
+  <p class="grid-item__description">[wpv-post-excerpt format='noautop']</p>
+</div>
+<div class="grid-item__footer">
+  <div class="grid-item__additional-info-container">
+  <p class="grid-item__additional-info"><span class="lg-icons lg-icon--entypo lg-icon--left lg-icon--medium lg-icon--clock"></span> [types field="lge-stdate" style="text" format="H:i"][/types]</p>
+  </div>
+  <div class="grid-item__cta-container">
+    <a href="[wpv-post-url]" title="[wpv-post-title]" class="grid-item__read-more">[wpml-string context="StandardText"]Read More[/wpml-string] &raquo;</a>
+  </div>
+</div>

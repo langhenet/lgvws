@@ -1,0 +1,515 @@
+<div id="lg-pacakge-intro" class="avia-section header_color avia-section-large avia-no-shadow avia-bg-style-scroll avia-builder-el-0  el_before_av_submenu avia-builder-el-first submenu-not-first container_wrap fullsize lg-full-header" style="background-image:url('[wpv-post-featured-image size="full" raw="true"]'); background-attachment: scroll; background-position: top left; background-repeat: no-repeat; background-size: cover;" itemscope="itemscope" itemtype="http://schema.org/Product">
+  <div class="av-section-color-overlay-wrap">
+		<div class="b-overlay">
+			<a href="#next-section" title="" class="scroll-down-link lg-darrow" aria-hidden="true" data-av_iconfont="entypo-fontello"></a>
+			<div class="container">
+				<div class="template-page content av-content-full alpha units">
+					<div class="flex_column av_one_sixth  flex_column_div first">
+					</div>
+					<div class="flex_column av_four_sixth  flex_column_div">
+						<h1 itemprop="name" class="title">[wpv-post-title]</h1>
+            <p style="text-align: center;" class="lg-ph2">[wpml-string context="VacationPackages"]Only[/wpml-string]   [wpv-conditional debug="false" if="( NOT(empty($(wpcf-lgp-sale-price))) )"]<del>[types field='lgp-sale-price' format='FIELD_VALUE'][/types]€</del> <strong>[types field='lgp-price' format='FIELD_VALUE'][/types]€</strong>
+              [/wpv-conditional]
+              [wpv-conditional debug="false" if="( empty($(wpcf-lgp-sale-price)) )"]<strong>[types field='lgp-price' format='FIELD_VALUE'][/types]€</strong>
+               [/wpv-conditional]
+              [wpv-conditional debug="false" if="( $(wpcf-lgp-people) != 1 )"]
+                [wpml-string context="VacationPackages"]for[/wpml-string] [types field='lgp-people' format='FIELD_VALUE'][/types] [wpml-string context="VacationPackages"]people[/wpml-string]
+              [/wpv-conditional]
+              [wpv-conditional debug="false" if="( $(wpcf-lgp-people) = 1 )"]
+                [wpml-string context="VacationPackages"]per person[/wpml-string]
+              [/wpv-conditional]
+            </p>
+            <!-- EXCERPT del post -->
+            <p class="lg-excerpt">[wpv-post-excerpt format='noautop']</p>
+
+          </div>
+          <div class="flex_column av_one_sixth flex_column_div first">
+					</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="sub-nav" class="lg-submenu av-submenu-container alternate_color avia-builder-el-1  el_after_av_section el_before_av_section submenu-not-first container_wrap fullsize">
+  <div class="container av-menu-mobile-disabled ">
+    <ul id="av-custom-submenu-1" class="av-subnav-menu av-submenu-pos-center">
+      <li class="menu-item menu-item-top-level  menu-item-top-level-1">
+        <a href="#description">
+          <span class="avia-bullet"></span>
+          <span class="avia-menu-text">[wpml-string context="VacationPackages"]Description[/wpml-string]</span>
+        </a>
+      </li>
+      [wpv-conditional if="( NOT(empty($(wpcf-lgp-stay))) )"]
+        <li class="menu-item menu-item-top-level  menu-item-top-level-2">
+          <a href="#sleep">
+            <span class="avia-bullet"></span>
+            <span class="avia-menu-text">[wpml-string context="VacationPackages" ]Overnight Stay[/wpml-string]</span>
+          </a>
+        </li>
+      [/wpv-conditional]
+      [wpv-conditional if="( NOT(empty($(wpcf-lgp-eat))) )"]
+        <li class="menu-item menu-item-top-level  menu-item-top-level-2">
+          <a href="#eat">
+            <span class="avia-bullet"></span>
+            <span class="avia-menu-text">[wpml-string context="VacationPackages" ]Food Experiences[/wpml-string]</span>
+          </a>
+        </li>
+      [/wpv-conditional]
+      [wpv-conditional if="( NOT(empty($(wpcf-lgp-activities))) )"]
+        <li class="menu-item menu-item-top-level  menu-item-top-level-2">
+          <a href="#activities">
+            <span class="avia-bullet"></span>
+            <span class="avia-menu-text">[wpml-string context="VacationPackages" ]Activities[/wpml-string]</span>
+          </a>
+        </li>
+      [/wpv-conditional]
+      <li class="menu-item menu-item-top-level lg-button menu-item-top-level-2">
+        <a href="#book">
+          <span class="avia-bullet"></span>
+          <span class="avia-menu-text">[wpml-string context="VacationPackages" ]Buy Now[/wpml-string]</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+</div>
+<!-- BODY PRINCIPALE -->
+<div id="description" class="avia-section main_color avia-section-huge avia-no-shadow avia-bg-style-scroll avia-builder-el-2 lg-after-sub-menu container_wrap fullsize">
+	<div class="av-section-color-overlay-wrap">
+		<div class="container">
+			<div class="template-page lgpackage-description content av-content-full alpha units">
+				<div class="post-entry post-entry-type-lgbusiness post-entry-">
+					<div class="entry-content-wrapper clearfix">
+            <!--! layout 1/2 se ci sono le attività -->
+            [wpv-conditional if="( NOT(empty($(wpcf-lgp-activities))) )"]
+              <div class="flex_column_table av-equal-height-column-flextable">
+      					<div class="flex_column av_one_half flex_column av_one_half  flex_column_table_cell av-equal-height-column av-align-middle first flex_column_div">
+                  <!-- BODY del post -->
+                  [wpv-post-body view_template='None' suppress_filters='true']
+                  <div class="avia-button-wrap avia-button-center">
+                      <a href="#book" class="avia-button avia-icon_select-yes-left-icon avia-color-theme-color avia-size-medium avia-position-center "><span class="lg-cal avia_button_icon avia_button_icon_left " aria-hidden="true" data-av_iconfont="entypo-fontello"></span><span class="avia_iconbox_title">
+                        [wpml-string context="VacationPackages"]Buy the Package at[/wpml-string]
+                        [wpv-conditional debug="false" if="( NOT(empty($(wpcf-lgp-sale-price))) )"]<del>[types field='lgp-sale-price' format='FIELD_VALUE'][/types]€</del> [types field='lgp-price' format='FIELD_VALUE'][/types]€
+                        [/wpv-conditional]
+                        [wpv-conditional debug="false" if="( empty($(wpcf-lgp-sale-price)) )"][types field='lgp-price' format='FIELD_VALUE'][/types]€
+                        [/wpv-conditional]</span>
+                      </a>
+                  </div>
+                  <p class="lg-validity">
+                    <small><strong>Validity:</strong>
+                    [wpv-conditional debug="false" if="( NOT(empty($(wpcf-lgp-stdate))) )"]
+                      [wpml-string context="VacationPackages"]from[/wpml-string] [types field='lgp-stdate' style='text' format='j F Y'][/types]
+                    [/wpv-conditional]
+                        <!-- check condizionale per data fine -->
+                    [wpv-conditional debug="false" if="( NOT(empty($(wpcf-lgp-endate))) )"]
+                      [wpml-string context="VacationPackages"]until[/wpml-string]  [types field='lgp-endate' style='text' format='j F Y'][/types]
+                    [/wpv-conditional]
+                    <!-- check condizionale per solo data inizio completa -->
+                    [wpv-conditional debug="false" if="( NOT(empty($(wpcf-lgp-stdate))) AND empty($(wpcf-lgp-endate)) )"]
+                      [wpml-string context="VacationPackages"]and for two years after purchase[/wpml-string]
+                    [/wpv-conditional]
+                        <!-- check condizionale per data fine e inizio - se vuote output dei due anni-->
+                    [wpv-conditional debug="false" if="( empty($(wpcf-lgp-stdate)) AND empty($(wpcf-lgp-endate)) )"]
+                          [wpml-string context="VacationPackages"]valid for two years after purchase[/wpml-string]
+                    [/wpv-conditional]</small>
+                  </p>
+                  [wpv-conditional debug="false" if="( NOT(empty($(wpcf-lgp-restrictions))) )"]
+                    <p class="lg-restrictions">
+                      <small>
+                        <strong>[wpml-string context="VacationPackages"]Restrictions[/wpml-string]:</strong>
+                        [types field="lgp-restrictions"][/types]
+
+                      </small>
+                    </p>
+                  [/wpv-conditional]
+                </div>
+                <div class="av-flex-placeholder"></div>
+                <div class="flex_column av_one_half flex_column av_one_half  flex_column_table_cell av-equal-height-column av-align-middle flex_column_div">
+                  [wpv-conditional if="( NOT(empty($(wpcf-lgp-stay))) )"]
+                    <div class="lg-box with-header lg-no-content">
+                      <div class="sleep_color lg--bg washed lg-box-header">
+                        <h3>
+                          <a href="#sleep">[types field="lgp-stay-nights"][/types] [wpml-string context="VacationPackages"]Nights[/wpml-string] [wpv-post-title id="[types field='lgp-stay'][/types]"] &raquo;</a>
+                        </h3>
+                      </div>
+                    </div>
+                  [/wpv-conditional]
+                  [wpv-conditional if="( NOT(empty($(wpcf-lgp-eat))) )"]
+                    <div class="lg-box with-header lg-no-content">
+                      <div class="eat_color lg--bg washed lg-box-header">
+                        <h3>
+                          <a href="#eat">[wpv-post-title id="[types field='lgp-eat'][/types]"] &raquo;</a>
+                        </h3>
+                      </div>
+                    </div>
+                  [/wpv-conditional]
+                  <div class="lg-box with-header" style="background:#f3f3f3;">
+                    <div class="wine_color lg--bg washed lg-box-header lg-arrow-down">
+                      <h3>Activities</h3>
+                    </div>
+                    <div class="lg-box-content">
+                      <ul>
+
+                    <!-- Loop attività -->
+                        <li>[wpv-post-title output="sanitize" id="[types field='lgp-activities' index='0' ][/types]"]</li>
+                        <li>[wpv-post-title output="sanitize" id="[types field='lgp-activities' index='1' ][/types]"]</li>
+                        <li>[wpv-post-title output="sanitize" id="[types field='lgp-activities' index='2' ][/types]"]</li>
+                      </ul>
+                      [wpv-conditional if="( '[types field='lgp-activities' index='3' ][/types]' > '0' )"]
+                        <p style="text-align:center"><a href="#activities">[wpml-string context="VacationPackages"]View all the included activities[/wpml-string] &raquo;</a></p>
+                      [/wpv-conditional]
+                    </div>
+                  </div>
+                </div>
+              </div>
+            [/wpv-conditional]
+
+            <!--! layout 1/5 + 3/5 se non sono le attività -->
+
+            [wpv-conditional if="(empty($(wpcf-lgp-activities)) )"]
+              <div class="flex_column av_one_fifth first flex_column_div">
+              </div>
+              <div class="flex_column av_three_fifth flex_column_div">
+                [wpv-post-body view_template='None' suppress_filters='true']
+                <div class="avia-button-wrap avia-button-center">
+                    <a href="#book" class="avia-button avia-icon_select-yes-left-icon avia-color-theme-color avia-size-medium avia-position-center "><span class="lg-cal avia_button_icon avia_button_icon_left " aria-hidden="true" data-av_iconfont="entypo-fontello"></span><span class="avia_iconbox_title">
+                      [wpml-string context="VacationPackages"]Buy the Package at[/wpml-string]
+                      [wpv-conditional debug="false" if="( NOT(empty($(wpcf-lgp-sale-price))) )"]<del>[types field='lgp-sale-price' format='FIELD_VALUE'][/types]€</del> [types field='lgp-price' format='FIELD_VALUE'][/types]€
+                      [/wpv-conditional]
+                      [wpv-conditional debug="false" if="( empty($(wpcf-lgp-sale-price)) )"][types field='lgp-price' format='FIELD_VALUE'][/types]€
+                      [/wpv-conditional]</span>
+                    </a>
+                </div>
+                <p class="lg-validity">
+                  <small><strong>Validity:</strong>
+                  [wpv-conditional debug="false" if="( NOT(empty($(wpcf-lgp-stdate))) )"]
+                    [wpml-string context="VacationPackages"]from[/wpml-string] [types field='lgp-stdate' style='text' format='j F Y'][/types]
+                  [/wpv-conditional]
+                      <!-- check condizionale per data fine -->
+                  [wpv-conditional debug="false" if="( NOT(empty($(wpcf-lgp-endate))) )"]
+                    [wpml-string context="VacationPackages"]until[/wpml-string]  [types field='lgp-endate' style='text' format='j F Y'][/types]
+                  [/wpv-conditional]
+                  <!-- check condizionale per solo data inizio completa -->
+                  [wpv-conditional debug="false" if="( NOT(empty($(wpcf-lgp-stdate))) AND empty($(wpcf-lgp-endate)) )"]
+                    [wpml-string context="VacationPackages"]and for two years after purchase[/wpml-string]
+                  [/wpv-conditional]
+                      <!-- check condizionale per data fine e inizio - se vuote output dei due anni-->
+                  [wpv-conditional debug="false" if="( empty($(wpcf-lgp-stdate)) AND empty($(wpcf-lgp-endate)) )"]
+                        [wpml-string context="VacationPackages"]valid for two years after purchase[/wpml-string]
+                  [/wpv-conditional]</small>
+                </p>
+                [wpv-conditional debug="false" if="( NOT(empty($(wpcf-lgp-restrictions))) )"]
+                  <p class="lg-restrictions">
+                    <small>
+                      <strong>[wpml-string context="VacationPackages"]Restrictions[/wpml-string]:</strong>
+                      [types field="lgp-restrictions"][/types]
+
+                    </small>
+                  </p>
+                [/wpv-conditional]
+              </div>
+              <div class="flex_column av_one_fifth flex_column_div">
+              </div>
+            [/wpv-conditional]
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- PERNOTTAMENTO -->
+[wpv-conditional if="( NOT(empty($(wpcf-lgp-stay))) )"]
+  <div id="sleep" class="avia-section sleep_color lg--bg avia-section-no-padding avia-no-shadow avia-bg-style-scroll el_before_av_section  container_wrap fullsize">
+    <div class="container">
+      <div class="template-page content av-content-full alpha units">
+        <div class="entry-content-wrapper clearfix">
+    <!-- Titolo pernottamento -->
+          <h2 class="lg-package__section-title">[wpml-string context="VacationPackages"]Overnight Stay[/wpml-string]</h2>
+          <h3 class="lg-package__section-subtitle">
+            [types field="lgp-stay-nights"][/types] [wpml-string context="VacationPackages"]Nights[/wpml-string] [wpv-post-title id="[types field='lgp-stay'][/types]"]
+            [wpv-conditional if="$(wpcf-lgp-breakfast) eq '1'"]
+              - [wpml-string context="VacationPackages"]breakfasts included[/wpml-string]
+            [/wpv-conditional]
+          </h3>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="avia-section main_color avia-section-huge avia-no-shadow avia-bg-style-scroll container_wrap fullsize">
+  	<div class="container">
+  		<div class="template-page content av-content-full alpha units">
+  			<div class="post-entry post-entry-">
+  				<div class="entry-content-wrapper clearfix">
+
+          <!-- Testo pernottamento -->
+            <div class="flex_column_table av-equal-height-column-flextable">
+              <div class="flex_column av_one_half flex_column av_one_half  flex_column_table_cell av-equal-height-column av-align-middle flex_column_div first">
+                [wpv-post-body view_template="None" suppress_filters="true" id="[types field='lgp-stay'][/types]"]
+              </div>
+              <div class="av-flex-placeholder"></div>
+              <div class="flex_column av_one_half flex_column av_one_half  flex_column_table_cell av-equal-height-column av-align-middle flex_column_div">
+                <!-- Check condizionale per business: positivo / output immagine del business -->
+                [wpv-conditional debug="false" if="( NOT(empty($(_wpcf_belongs_lgbusiness_id))) AND ( $(_wpcf_belongs_lgbusiness_id) > '0') )"]
+                [wpv-post-featured-image id="$lgbusiness" output="url"]
+                [/wpv-conditional]
+
+                <!-- Check condizionale per business: negativo / output delle gallerie -->
+                [wpv-conditional debug="false" if="( empty($(_wpcf_belongs_lgbusiness_id)) OR ( $(_wpcf_belongs_lgbusiness_id) = '0') )"]
+                  <!-- Check condizionale gallery Personalizzata -->
+                  [wpv-conditional debug="false" if="( $(wpcf-lgp-stay-gallery) = '1' )"]
+                    <div class="avia-gallery avia-gallery-1 deactivate_avia_lazyload avia_animate_when_visible avia_start_animation">
+                      <div class="avia-gallery-thumb gallery-columns-2 popup-gallery">
+                        <a href="[types field="lg-images" index="0" url="true" id="[types field="lgp-stay"][/types]"][/types]" data-rel="gallery-1" class="" itemprop="contentURL"><img src="[types field="lg-images" index="0" url="true" size="portfolio" id="[types field="lgp-stay"][/types]"][/types]" width="814" height="462" class="avia_start_animation">
+                        </a>
+                        <a href="[types field="lg-images" index="1" url="true" id="[types field="lgp-stay"][/types]"][/types]" data-rel="gallery-1" class="" itemprop="contentURL"><img src="[types field="lg-images" index="1" url="true" size="portfolio" id="[types field="lgp-stay"][/types]"][/types]" width="814" height="462" class="avia_start_animation">
+                        </a>
+                        <a href="[types field="lg-images" index="2" url="true" id="[types field="lgp-stay"][/types]"][/types]" data-rel="gallery-1" class="" itemprop="contentURL"><img src="[types field="lg-images" index="2" url="true" size="portfolio" id="[types field="lgp-stay"][/types]"][/types]" width="814" height="462" class="avia_start_animation">
+                        </a>
+                        <a href="[types field="lg-images" index="3" url="true" id="[types field="lgp-stay"][/types]"][/types]" data-rel="gallery-1" class="" itemprop="contentURL"><img src="[types field="lg-images" index="3" url="true" size="portfolio" id="[types field="lgp-stay"][/types]"][/types]" width="814" height="462" class="avia_start_animation">
+                        </a>
+                      </div>
+                    </div>
+                  [/wpv-conditional]
+                  <!-- Check condizionale gallery B&B Agriturismo -->
+                  [wpv-conditional debug="false" if="( $(wpcf-lgp-stay-gallery) = '2' )"]
+                    <div class="avia-gallery avia-gallery-1 deactivate_avia_lazyload avia_animate_when_visible avia_start_animation">
+                      <div class="avia-gallery-thumb gallery-columns-2 popup-gallery">
+                        <a href="http://langhe.net/wp-content/uploads/2016/08/pacchetto-dormire-bb1.jpg" data-rel="gallery-1" class="" itemprop="contentURL" title="[wpml-string context="VacationPackages"]This image does not represent the actual location, but only the type of the structure you'll be staying in[/wpml-string]"><img src="http://langhe.net/wp-content/uploads/2016/08/pacchetto-dormire-bb1-814x462.jpg" width="814" height="462" class="avia_start_animation">
+                        </a>
+                        <a href="http://langhe.net/wp-content/uploads/2016/08/pacchetto-dormire-bb4.jpg" data-rel="gallery-4" class="" itemprop="contentURL" title="[wpml-string context="VacationPackages"]This image does not represent the actual location, but only the type of the structure you'll be staying in[/wpml-string]"><img src="http://langhe.net/wp-content/uploads/2016/08/pacchetto-dormire-bb4-814x462.jpg" width="814" height="462" class="avia_start_animation">
+                        </a>
+                        <a href="http://langhe.net/wp-content/uploads/2016/08/pacchetto-dormire-bb3.jpg" data-rel="gallery-3" class="" itemprop="contentURL" title="[wpml-string context="VacationPackages"]This image does not represent the actual location, but only the type of the structure you'll be staying in[/wpml-string]"><img src="http://langhe.net/wp-content/uploads/2016/08/pacchetto-dormire-bb3-814x462.jpg" width="814" height="462" class="avia_start_animation">
+                        </a>
+                        <a href="http://langhe.net/wp-content/uploads/2016/08/pacchetto-dormire-bb2.jpg" data-rel="gallery-2" class="" itemprop="contentURL" title="[wpml-string context="VacationPackages"]This image does not represent the actual location, but only the type of the structure you'll be staying in[/wpml-string]"><img src="http://langhe.net/wp-content/uploads/2016/08/pacchetto-dormire-bb2-814x462.jpg" width="814" height="462" class="avia_start_animation">
+                        </a>
+                      </div>
+                    </div>
+                  [/wpv-conditional]
+                    <!-- Check condizionale gallery Relais -->
+                  [wpv-conditional debug="false" if="( $(wpcf-lgp-stay-gallery) = '3' )"]
+                    <div class="avia-gallery avia-gallery-1 deactivate_avia_lazyload avia_animate_when_visible avia_start_animation">
+                      <div class="avia-gallery-thumb gallery-columns-2 popup-gallery">
+                        <a href="http://langhe.net/wp-content/uploads/2016/08/pacchetto-dormire-relais1.jpg" data-rel="gallery-1" class="" itemprop="contentURL" title="[wpml-string context="VacationPackages"]This image does not represent the actual location, but only the type of the structure you'll be staying in[/wpml-string]"><img src="http://langhe.net/wp-content/uploads/2016/08/pacchetto-dormire-relais1-814x462.jpg" width="814" height="462" class="avia_start_animation">
+                        </a>
+                        <a href="http://langhe.net/wp-content/uploads/2016/08/pacchetto-dormire-relais4.jpg" data-rel="gallery-4" class="" itemprop="contentURL" title="[wpml-string context="VacationPackages"]This image does not represent the actual location, but only the type of the structure you'll be staying in[/wpml-string]"><img src="http://langhe.net/wp-content/uploads/2016/08/pacchetto-dormire-relais4-814x462.jpg" width="814" height="462" class="avia_start_animation">
+                        </a>
+                        <a href="http://langhe.net/wp-content/uploads/2016/08/pacchetto-dormire-relais3.jpg" data-rel="gallery-3" class="" itemprop="contentURL" title="[wpml-string context="VacationPackages"]This image does not represent the actual location, but only the type of the structure you'll be staying in[/wpml-string]"><img src="http://langhe.net/wp-content/uploads/2016/08/pacchetto-dormire-relais3-814x462.jpg" width="814" height="462" class="avia_start_animation">
+                        </a>
+                        <a href="http://langhe.net/wp-content/uploads/2016/08/pacchetto-dormire-relais2.jpg" data-rel="gallery-2" class="" itemprop="contentURL" title="[wpml-string context="VacationPackages"]This image does not represent the actual location, but only the type of the structure you'll be staying in[/wpml-string]"><img src="http://langhe.net/wp-content/uploads/2016/08/pacchetto-dormire-relais2-814x462.jpg" width="814" height="462" class="avia_start_animation">
+                        </a>
+                      </div>
+                    </div>
+                  [/wpv-conditional]
+
+                    <!-- Check condizionale gallery Appartamento -->
+                  [wpv-conditional debug="false" if="( $(wpcf-lgp-stay-gallery) = '4' )"]
+                    <div class="avia-gallery avia-gallery-1 deactivate_avia_lazyload avia_animate_when_visible avia_start_animation">
+                      <div class="avia-gallery-thumb gallery-columns-2 popup-gallery">
+                        <a href="http://langhe.net/wp-content/uploads/2016/08/pacchetto-dormire1.jpg" data-rel="gallery-1" class="" itemprop="contentURL" title="[wpml-string context="VacationPackages"]This image does not represent the actual location, but only the type of the structure you'll be staying in[/wpml-string]"><img src="http://langhe.net/wp-content/uploads/2016/08/pacchetto-dormire1-814x462.jpg" width="814" height="462" class="avia_start_animation">
+                        </a>
+                        <a href="http://langhe.net/wp-content/uploads/2016/08/pacchetto-dormire4.jpg" data-rel="gallery-4" class="" itemprop="contentURL" title="[wpml-string context="VacationPackages"]This image does not represent the actual location, but only the type of the structure you'll be staying in[/wpml-string]"><img src="http://langhe.net/wp-content/uploads/2016/08/pacchetto-dormire4-814x462.jpg" width="814" height="462" class="avia_start_animation">
+                        </a>
+                        <a href="http://langhe.net/wp-content/uploads/2016/08/pacchetto-dormire3.jpg" data-rel="gallery-3" class="" itemprop="contentURL" title="[wpml-string context="VacationPackages"]This image does not represent the actual location, but only the type of the structure you'll be staying in[/wpml-string]"><img src="http://langhe.net/wp-content/uploads/2016/08/pacchetto-dormire3-814x462.jpg" width="814" height="462" class="avia_start_animation">
+                        </a>
+                        <a href="http://langhe.net/wp-content/uploads/2016/08/pacchetto-dormire2.jpg" data-rel="gallery-2" class="" itemprop="contentURL" title="[wpml-string context="VacationPackages"]This image does not represent the actual location, but only the type of the structure you'll be staying in[/wpml-string]"><img src="http://langhe.net/wp-content/uploads/2016/08/pacchetto-dormire2-814x462.jpg" width="814" height="462" class="avia_start_animation">
+                        </a>
+                      </div>
+                    </div>
+                  [/wpv-conditional]
+                [/wpv-conditional]
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+[/wpv-conditional]
+<!-- FOOD -->
+[wpv-conditional if="( NOT(empty($(wpcf-lgp-eat))) )"]
+  <div id="eat" class="avia-section eat_color lg--bg avia-section-no-padding avia-no-shadow avia-bg-style-scroll el_before_av_section container_wrap fullsize">
+    <div class="container">
+      <div class="template-page content av-content-full alpha units">
+        <div class="entry-content-wrapper clearfix">
+          <!-- Titolo pernottamento -->
+          <h2 style="text-align:left;" class="lg-package__section-title">[wpml-string context="VacationPackages"]Food Experiences[/wpml-string]</h2>
+          <h3 class="lg-package__section-subtitle">[wpv-post-title id="[types field='lgp-eat'][/types]"]</h3>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="avia-section main_color avia-section-huge avia-no-shadow avia-bg-style-scroll container_wrap fullsize">
+  	<div class="container">
+  		<div class="template-page content av-content-full alpha units">
+  			<div class="post-entry post-entry-">
+  				<div class="entry-content-wrapper clearfix">
+            <div class="flex_column_table av-equal-height-column-flextable">
+              <div class="flex_column av_one_half flex_column av_one_half  flex_column_table_cell av-equal-height-column av-align-middle flex_column_div first">
+                [wpv-post-body view_template="None" suppress_filters="true" id="[types field='lgp-eat'][/types]"]
+              </div>
+              <div class="av-flex-placeholder"></div>
+              <div class="flex_column av_one_half flex_column av_one_half  flex_column_table_cell av-equal-height-column av-align-middle flex_column_div">
+                <!-- Check condizionale tipo di galleria - standard -->
+                [wpv-conditional debug="false" if="( $(wpcf-lgp-eat-gallery) = '1' )"]
+                  <div class="avia-gallery avia-gallery-1 deactivate_avia_lazyload avia_animate_when_visible avia_start_animation">
+                    <div class="avia-gallery-thumb gallery-columns-2 popup-gallery">
+                      <a href="http://langhe.net/wp-content/uploads/2016/08/pacchetto-mangiare1.jpg" data-rel="gallery-1" class="" itemprop="contentURL"><img src="http://langhe.net/wp-content/uploads/2016/08/pacchetto-mangiare1-814x462.jpg" width="814" height="462" class="avia_start_animation">
+                      </a>
+                      <a href="http://langhe.net/wp-content/uploads/2016/08/pacchetto-mangiare4.jpg" data-rel="gallery-4" class="" itemprop="contentURL"><img src="http://langhe.net/wp-content/uploads/2016/08/pacchetto-mangiare4-814x462.jpg" width="814" height="462" class="avia_start_animation">
+                      </a>
+                      <a href="http://langhe.net/wp-content/uploads/2016/08/pacchetto-mangiare3.jpg" data-rel="gallery-3" class="" itemprop="contentURL"><img src="http://langhe.net/wp-content/uploads/2016/08/pacchetto-mangiare3-814x462.jpg" width="814" height="462" class="avia_start_animation">
+                      </a>
+                      <a href="http://langhe.net/wp-content/uploads/2016/08/pacchetto-mangiare2.jpg" data-rel="gallery-2" class="" itemprop="contentURL"><img src="http://langhe.net/wp-content/uploads/2016/08/pacchetto-mangiare2-814x462.jpg" width="814" height="462" class="avia_start_animation">
+                      </a>
+                    </div>
+                  </div>
+                [/wpv-conditional]
+                <!-- Check condizionale tipo di galleria - personalizzata -->
+                [wpv-conditional debug="false" if="( $(wpcf-lgp-eat-gallery) = '2' )"]
+                  <div class="avia-gallery avia-gallery-1 deactivate_avia_lazyload avia_animate_when_visible avia_start_animation">
+                    <div class="avia-gallery-thumb gallery-columns-2 popup-gallery">
+                      <a href="[types field="lg-images" index="0" url="true" id="[types field="lgp-eat"][/types]"][/types]" data-rel="gallery-1" class="" itemprop="contentURL">
+                        <img src="[types field="lg-images" index="0" url="true" size="portfolio" id="[types field="lgp-eat"][/types]"][/types]" width="814" height="462" class="avia_start_animation">
+                      </a>
+                      <a href="[types field="lg-images" index="1" url="true" id="[types field="lgp-eat"][/types]"][/types]" data-rel="gallery-1" class="" itemprop="contentURL">
+                        <img src="[types field="lg-images" index="1" url="true" size="portfolio" id="[types field="lgp-eat"][/types]"][/types]" width="814" height="462" class="avia_start_animation">
+                      </a>
+                      <a href="[types field="lg-images" index="2" url="true" id="[types field="lgp-eat"][/types]"][/types]" data-rel="gallery-1" class="" itemprop="contentURL">
+                        <img src="[types field="lg-images" index="2" url="true" size="portfolio" id="[types field="lgp-eat"][/types]"][/types]" width="814" height="462" class="avia_start_animation">
+                      </a>
+                      <a href="[types field="lg-images" index="3" url="true" id="[types field="lgp-eat"][/types]"][/types]" data-rel="gallery-1" class="" itemprop="contentURL">
+                        <img src="[types field="lg-images" index="3" url="true" size="portfolio" id="[types field="lgp-eat"][/types]"][/types]" width="814" height="462" class="avia_start_animation">
+                      </a>
+                    </div>
+                  </div>
+                [/wpv-conditional]
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+[/wpv-conditional]
+<!-- ATTIVITA' -->
+[wpv-conditional if="( NOT(empty($(wpcf-lgp-activities))) )"]
+  <div id="activities" class="avia-section lg--bg wine_color avia-section-no-padding avia-no-shadow avia-bg-style-scroll el_before_av_section  container_wrap fullsize">
+    <div class="container">
+      <div class="template-page content av-content-full alpha units">
+        <div class="entry-content-wrapper clearfix">
+          <h2 class="lg-package__section-title">[wpml-string context="VacationPackages"]Activities[/wpml-string]</h2>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="avia-section main_color wine_accent avia-section-huge avia-no-shadow avia-bg-style-scroll container_wrap fullsize">
+  	<div class="container">
+  		<div class="template-page content av-content-full alpha units">
+  			<div class="post-entry post-entry-">
+  				<div class="entry-content-wrapper clearfix">
+            <div class="avia-icon-list-container avia-builder-el-1  avia-builder-el-no-sibling ">
+              <ul class="avia-icon-list lg-thirds lg-activities-grid avia-icon-list-left av-iconlist-big avia_animate_when_almost_visible avia_start_animation">
+                [wpv-for-each field="wpcf-lgp-activities"]
+                  <li class="avia_start_animation av_one_third">
+                    <div class="iconlist_icon avia-font-entypo-fontello">
+                      <span class="iconlist-char lg-icon--[wpv-post-taxonomy type='lgactivity-type' format='slug' id='[types field="lgp-activities"][/types]']" aria-hidden="true" data-av_iconfont="entypo-fontello"></span>
+                    </div>
+                    <article class="article-icon-entry">
+                      <div class="iconlist_content_wrap">
+                        <header class="entry-content-header">
+                          <h4 class="iconlist_title" itemprop="headline">[wpv-post-title output='sanitize' id='[types field="lgp-activities"][/types]']</h4>
+                        </header>
+                        <div class="iconlist_content " itemprop="text">
+                          [wpv-post-body view_template="None" suppress_filters="true" id='[types field="lgp-activities"][/types]']
+                        </div>
+                      </div>
+                    </article>
+                  </li>
+                [/wpv-for-each]
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+[/wpv-conditional]
+<div id="book" class="avia-section alternate_color avia-section-large avia-no-shadow avia-bg-style-scroll el_before_av_section  container_wrap fullsize">
+  <div class="container">
+    <div class="template-page content av-content-full alpha units">
+      <div class="entry-content-wrapper clearfix">
+        <h2 class="title">[wpml-string context="VacationPackages"]Buy the Package[/wpml-string]</h2>
+        <div class="flex_column av_three_fifth flex_column_div first">
+          [wpv-conditional debug="false" if="('[get_wpml_language_code_value]' eq 'it')"]
+            <!-- modulo di test[gravityform id="2" title="false" description="false" ajax="true" field_values="prezzo=[types field="lgp-price" format="FIELD_VALUE"][/types]&nome=[wpv-post-title]"] -->
+            [gravityform id="59" title="false" description="false" ajax="true" field_values="prezzo=[types field="lgp-price" format="FIELD_VALUE"][/types]&nome=[wpv-post-title]"]
+          [/wpv-conditional]
+          [wpv-conditional if="( '[get_wpml_language_code_value]' eq 'en' )"]
+            <p>BAUBAU</p>
+          [/wpv-conditional]
+        </div>
+        <div class="flex_column av_two_fifth flex_column_div">
+          <div class="lg-box with-header with-sub-header">
+            <div class="wine_color lg-box-header lg-arrow-down">
+              <h4>[wpv-post-title]</h4>
+            </div>
+            <div class="wine_color washed lg-box-sub-header lg-arrow-down">
+              <h4>
+                [wpml-string context="VacationPackages"]Only[/wpml-string]
+                [wpv-conditional debug="false" if="( NOT(empty($(wpcf-lgp-sale-price))) )"]
+                  <del>[types field='lgp-sale-price' format='FIELD_VALUE'][/types]€</del>
+                [/wpv-conditional]
+                [types field="lgp-price"][/types]€
+                [wpml-string context="VacationPackages"]for[/wpml-string]
+                [types field="lgp-people"][/types]
+                [wpv-conditional debug="false" if="( $(wpcf-lgp-people) >= 2 )"]
+                  [wpml-string context="VacationPackages"]people[/wpml-string]
+                [/wpv-conditional]
+                [wpv-conditional debug="false" if="( $(wpcf-lgp-people) = 1 )"]
+                  [wpml-string context="VacationPackages"]person[/wpml-string]
+                [/wpv-conditional]
+              </h4>
+            </div>
+            <div class="lg-box-content">
+              <ul>
+                [wpv-conditional if="( NOT(empty($(wpcf-lgp-stay))) )"]
+                  <li>[types field="lgp-stay-nights"][/types] [wpml-string context="VacationPackages"]Nights[/wpml-string] [wpv-post-title id="[types field='lgp-stay'][/types]"]     </li>
+                [/wpv-conditional]
+                [wpv-conditional if="( NOT(empty($(wpcf-lgp-eat))) )"]
+                  <li>[wpv-post-title id="[types field='lgp-eat'][/types]"]</li>
+                [/wpv-conditional]
+                <!-- Loop attività -->
+                [wpv-for-each field="wpcf-lgp-activities"]
+                  <li>[wpv-post-title output='sanitize' id='[types field="lgp-activities"][/types]']</li>
+                [/wpv-for-each]
+              </ul>
+              <p><strong>Validity:</strong>
+                [wpv-conditional debug="false" if="( NOT(empty($(wpcf-lgp-stdate))) )"]
+                  [wpml-string context="VacationPackages"]from[/wpml-string] [types field='lgp-stdate' style='text' format='j F Y'][/types]
+                [/wpv-conditional]
+                [wpv-conditional debug="false" if="( NOT(empty($(wpcf-lgp-endate))) )"]
+              <!-- check condizionale per data fine -->
+                  [wpml-string context="VacationPackages"]until[/wpml-string]  [types field='lgp-endate' style='text' format='j F Y'][/types]
+                [/wpv-conditional]
+                [wpv-conditional debug="false" if="( NOT(empty($(wpcf-lgp-stdate))) AND empty($(wpcf-lgp-endate)) )"]
+                <!-- check condizionale per solo data inizio completa -->
+                  [wpml-string context="VacationPackages"]and for two years after purchase[/wpml-string]
+                [/wpv-conditional]
+                [wpv-conditional debug="false" if="( empty($(wpcf-lgp-stdate)) AND empty($(wpcf-lgp-endate)) )"]
+                <!-- check condizionale per data fine e inizio - se vuote output dei due anni-->
+                      [wpml-string context="VacationPackages"]valid for two years after purchase[/wpml-string]
+                [/wpv-conditional]
+              </p>
+              [wpv-conditional debug="false" if="( NOT(empty($(wpcf-lgp-restrictions))) )"]
+                <p>
+                  <strong>[wpml-string context="VacationPackages"]Restrictions[/wpml-string]:</strong>
+                  [types field="lgp-restrictions"][/types]
+                </p>
+                <p>[wpml-string context="VacationPackages"]NOTE: the package does not include transfer, extras and everything that's not explicitly stated[/wpml-string]
+              [/wpv-conditional]
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

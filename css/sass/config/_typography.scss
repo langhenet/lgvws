@@ -1,0 +1,221 @@
+//*==========================================================================*//
+//*                                                                          *//
+//*                   VARIABILI PER    TIPOGRAFIA
+//*                          DIMENSIONI & FACE
+//*                                                                          *//
+//*==========================================================================*//
+
+///
+// BASE DEL BODY
+///
+  $base: 16;
+  $font-size: 1.25em; //TODO
+  $line-height: 1.5em; //TODO
+
+
+///
+// p and other standard elements
+///
+  $margin-top: 0em; //TODO
+  $margin-bottom: 2em; //TODO
+
+
+///
+// Families
+///
+$ff-primary: 'Open Sans', sans-serif; //TODO
+$ff-secondary: $ff-primary; //TODO
+$ff-special: $ff-primary; //TODO
+$ff-button: $ff-primary;
+
+
+///
+// WEIGHTS per Families
+///
+$families: (
+  primary: (
+    family: $ff-primary,
+    thin: 400,
+    light: 400,
+    normal: 400,
+    bold: 700,
+    bolder: 700,
+  ),
+
+  secondary: (
+    family: $ff-secondary,
+    thin: 400,
+    light: 400,
+    normal: 400,
+    bold: 700,
+    bolder: 700,
+  ),
+
+  special: (
+    family: $ff-special,
+    thin: 400,
+    light: 400,
+    normal: 400,
+    bold: 700,
+    bolder: 700,
+  ),
+);
+
+$decorations: (
+  p: (
+    fm: primary,
+    wt: normal,
+  ),
+
+  h1: (
+    fm: secondary,
+    wt: normal,
+  ),
+
+  h2: (
+    fm: secondary,
+    wt: normal,
+  ),
+
+  h3: (
+    fm: secondary,
+    wt: normal,
+  ),
+
+  h4: (
+    fm: secondary,
+    wt: bold,
+  ),
+
+  h5: (
+    fm: secondary,
+    wt: normal,
+  ),
+
+  small: (
+    fm: primary,
+    wt: normal,
+  ),
+);
+
+////
+// Dimensioni & caratteristiche dei font principali
+////
+  $sizes: (
+    p: (
+      fs: 1em,
+      lh: $line-height,
+      mt: $margin-top,
+      mb: $margin-bottom,
+    ),
+
+    h1: (
+      fs: 4.100000000em,
+      lh: 1.097560976em,
+      mt: 1.09756098em,
+      mb: 0.36585366em,
+    ),
+
+    h2: (
+      fs: 2.550000000em,
+      lh: 1.176470588em,
+      mt: 1.17647059em,
+      mb: 0.58823529em,
+    ),
+
+    h3: (
+      fs: 1.600000000em,
+      lh: 1.875000000em,
+      mt: 0.9375em,
+      mb: 0.9375em,
+    ),
+
+    h4: (
+      fs: 1em,
+      lh: 1.5em,
+      mt: 1.5em,
+      mb: 1.5em,
+    ),
+
+    h5: (
+      fs: 0.75em,
+      lh: 2em,
+      mt: 2em,
+      mb: 0em,
+    ),
+
+    small: (
+      fs: 0.75em,
+      lh: 2em,
+      mt: 2em,
+      mb: 0,
+    ),
+
+    small-h3: (
+      fs: 1.2em,
+      lh: 1.25em,
+      mt: 1.25em,
+      mb: 0,
+    ),
+
+    blockquote: (
+      fs: 1.263157894736842em,
+      lh: 1.583333333333333em,
+      mt: 1.583333333333333em,
+      mb: 1.583333333333333em,
+  ),
+);
+
+$mobile-sizes: (
+  h1: (
+    fs: 2.38888889em,
+    lh: 1.6744186em,
+    mt: 0.8372093em,
+    mb: 0.8372093em,
+  ),
+
+  h2: (
+    fs: 1.77777778em,
+    lh: 1.125em,
+    mt: 1.125em,
+    mb: 1.125em,
+  ),
+
+  h3: (
+    fs: 1.33333333em,
+    lh: 1.5em,
+    mt: 1.5em,
+    mb: 1.5em,
+  ),
+);
+
+
+////
+// DETTAGLI
+////
+  $sup-top: -0.5em; //TODO
+  $sub-bottom: -0.25em; //TODO
+  $hr-spacing: 1px; //TODO
+
+
+
+//****************************************************************************//
+//                                      FORMS
+//****************************************************************************//
+
+$forms: (
+  field: (
+    fm: family(secondary, fm),
+    wt: family(secondary, normal),
+  ),
+
+  label: (
+    fm: family(secondary, fm),
+    wt: family(secondary, normal),
+  ),
+
+  desc: (
+    fm: family(secondary, fm),
+    wt: family(secondary, normal),
+  ),
+);
