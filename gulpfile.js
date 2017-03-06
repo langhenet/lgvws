@@ -31,15 +31,15 @@ gulp.task('browser-sync', function() {
 // Sass task, will run when any SCSS files change & BrowserSync
 // will auto-update browsers
 gulp.task('sass', function () {
-    return gulp.src('/css/sass/*.scss')
+    return gulp.src('css/sass/*.scss')
         .pipe(sass({precision: '20'})) //compila sass
         .pipe(postcss([ autoprefixer({ browsers: ['last 7 versions'] }) ])) // aggiunge css di autoprefixer
-        .pipe(rename('/css/unmin-style.css')) //rinomina il file
+        .pipe(rename('css/unmin-style.css')) //rinomina il file
         .pipe(gulp.dest('./'))
         .pipe(sourceMaps.init())
         //.pipe(postcss([ autoprefixer({ browsers: ['last 10 versions'] }) ]))
         .pipe(minifyCSS({keepSpecialComments:1},{processImport: false}))
-        .pipe(rename('/css/custom.css')) //rinomina il file minifcato
+        .pipe(rename('css/custom.css')) //rinomina il file minifcato
         .pipe(sourceMaps.write())
         .pipe(gulp.dest('./'))
         .pipe(reload({stream:true}));
@@ -48,5 +48,5 @@ gulp.task('sass', function () {
 
 // Default task to be run with `gulp`
 gulp.task('default', ['sass', 'browser-sync'], function () {
-    gulp.watch("/css/sass/**/*.scss", ['sass']);
+    gulp.watch("css/sass/**/*.scss", ['sass']);
 });

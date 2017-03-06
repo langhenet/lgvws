@@ -319,14 +319,6 @@
   @if $media == uxl {
     @media (max-width: em-bp($uxl - 1)) { @content; }
   }
-
-  //DIVI
-  @if $media == divi-lg {
-    @media (max-width: em-bp($divi-lg - 1)) { @content; }
-  }
-  @if $media == divi-uxxl {
-    @media (max-width: em-bp($divi-uxxl - 1)) { @content; }
-  }
 }
 
 @mixin breakpoint-min($media) {
@@ -348,14 +340,6 @@
   @if $media == uxl {
     @media (min-width: em-bp($uxl)) { @content; }
   }
-
-  //DIVI
-  @if $media == divi-lg {
-    @media (min-width: em-bp($divi-lg)) { @content; }
-  }
-  @if $media == divi-uxxl {
-    @media (min-width: em-bp($divi-uxxl)) { @content; }
-  }
 }
 
 
@@ -367,21 +351,25 @@
 // Overlay di colore da mettere sui ::before //TOCR
 ///
 @mixin color-overlay($palette: main, $grade: 0.3) {
-  content: '';
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left:0;
-//  background: palette($palette, overlay);
-  @if $palette == main {
-    background-color: rgba( main-colors($palette, overlay), $grade);
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left:0;
+    z-index: 0;
+
+    @if $palette == main {
+      background-color: rgba( main-colors($palette, overlay), $grade);
+    }
+    @else if $palette == fheader {
+      background-color: rgba( main-colors($palette, overlay), $grade);
+    }
+    @else {
+      background-color: rgba( palette($palette, overlay), $grade);
+    }
   }
-  @else if $palette == fheader {
-    background-color: rgba( main-colors($palette, overlay), $grade);
-  }
-  @else {
-    background-color: rgba( palette($palette, overlay), $grade);
-  }
-  z-index: 0;
 }

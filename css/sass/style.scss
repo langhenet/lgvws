@@ -1,6 +1,10 @@
 // vendors import
 //@import 'sassy-gridlover/main';
 
+//BOOTSTRAP
+@import './node_modules/bootstrap/scss/variables';
+@import './node_modules/bootstrap/scss/mixins';
+
 // FUNCTIONS & PROJECT CONFIGURATION
 @import 'helpers/functions';
 @import 'config/typography';
@@ -8,14 +12,13 @@
 @import 'config/layout';
 @import 'helpers/mixins';
 
-//BOOTSTRAP
-@import './node_modules/bootstrap/scss/variables';
-@import './node_modules/bootstrap/scss/mixins';
+
 
 @import 'custom';
 
 
 @import 'layout/grids';
+@import 'pages/activity';
 
 @import 'elements/buttons';
 @import 'elements/icons';
