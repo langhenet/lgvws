@@ -839,7 +839,7 @@ text-align:center;
 }
 
 p.lg-ph3,
-.lg-full-header .lg-excerpt p,
+.lg-full-header .lg-excerpt,
 .lg-full-header p.lg-excerpt {
   font-size: 1.600000000em;
   line-height: 1.875000000em;
@@ -848,8 +848,12 @@ p.lg-ph3,
   font-weight: 300;
 }
 
+.lg-full-header .lg-excerpt {
+  color: #fff;
+}
+
 p.lg-ph2,
-.lg-related-fw .lg-excerpt p,
+.lg-related-fw .lg-excerpt,
 .lg-related-fw p.lg-excerpt {
   font-size: 2.550000000em;
   line-height: 1.176470588em;
