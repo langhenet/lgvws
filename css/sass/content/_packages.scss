@@ -3,14 +3,14 @@
 ///
 
 .lg-activities-grid h4.iconlist_title {
-  font-size: size(small, fs);
-  line-height: size(small, lh);
+  font-size: scale(small, fs);
+  line-height: scale(small, lh);
 }
 
 .lg-activities-grid .iconlist_content {
-  font-size: size(small, fs);
-  line-height: size(small, lh);
-  margin-bottom: size(small, lh) * 2;
+  font-size: scale(small, fs);
+  line-height: scale(small, lh);
+  margin-bottom: scale(small, lh) * 2;
 
   p {
     margin-bottom: 0;
@@ -40,6 +40,6 @@
 }
 
 .grid-item__additional-info.grid-item__price {
-  font-size: size(p, fs);
-  line-height: size(p, lh);
+  font-size: scale(p, fs);
+  line-height: scale(p, lh);
 }

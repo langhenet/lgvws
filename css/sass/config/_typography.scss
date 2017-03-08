@@ -101,7 +101,7 @@ $decorations: (
 ////
 // Dimensioni dei font principali
 ////
-  $sizes: (
+  $scales: (
     p: (
       fs: 1em,
       lh: $line-height,
@@ -166,7 +166,7 @@ $decorations: (
   ),
 );
 
-$mobile-sizes: (
+$mobile-scales: (
   h1: (
     fs: 2.38888889em,
     lh: 1.6744186em,

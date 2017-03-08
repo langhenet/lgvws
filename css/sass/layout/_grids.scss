@@ -104,8 +104,8 @@
 }
 
 .grid-item__meta {
-  font-size: size(small, fs);
-  line-height: size(small, lh);
+  font-size: scale(small, fs);
+  line-height: scale(small, lh);
   margin-bottom: 0;
   text-align: left;
   text-transform: uppercase;
@@ -114,16 +114,16 @@
 }
 
 .grid-item__title {
-  font-size: size(small-h3, fs);
-  line-height: size(small-h3, lh);
+  font-size: scale(small-h3, fs);
+  line-height: scale(small-h3, lh);
   margin-top: 0;
   margin-bottom: 0;
   text-align: left;
 }
 
 .grid-item__description {
-  font-size: size(small, fs);
-  line-height: size(small, lh);
+  font-size: scale(small, fs);
+  line-height: scale(small, lh);
   margin-bottom: 0;
   text-align: left;
 }
@@ -143,8 +143,8 @@
 }
 
 .grid-item__additional-info {
-  font-size: size(small, fs);
-  line-height: size(small, lh);
+  font-size: scale(small, fs);
+  line-height: scale(small, lh);
   margin-bottom: 0;
 }
 
@@ -152,8 +152,8 @@
   text-align: right;
 }
 .grid-item__read-more {
-  font-size: size(small, fs);
-  line-height: size(small, lh);
+  font-size: scale(small, fs);
+  line-height: scale(small, lh);
   margin-bottom: 0;
   text-transform: uppercase;
   font-weight: bold;

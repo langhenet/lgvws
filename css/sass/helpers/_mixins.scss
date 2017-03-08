@@ -16,32 +16,32 @@
 // Dimensioni e margini caratteri
 ///
 
-@mixin size($size: p) {
-  font-size: size($size, fs);
-  line-height: size($size, lh);
+@mixin scale($size: p) {
+  font-size: scale($size, fs);
+  line-height: scale($size, lh);
 }
 
 @mixin margin($size: p) {
-  margin-top: size($size, mt);
-  margin-bottom: size($size, mb);
+  margin-top: scale($size, mt);
+  margin-bottom: scale($size, mb);
 }
 
-@mixin m-size($size: h3, $mt: $size, $mb: $size) {
-  font-size: m-size($size, fs);
-  line-height: m-size($size, lh);
+@mixin m-scale($size: h3, $mt: $size, $mb: $size) {
+  font-size: m-scale($size, fs);
+  line-height: m-scale($size, lh);
 
   @if $mt != $size {
     margin-top: $mt;
   }
   @else {
-    margin-top: m-size($size, mt);
+    margin-top: m-scale($size, mt);
   }
 
   @if $mb != $size {
     margin-bottom: $mt;
   }
   @else {
-    margin-bottom: m-size($size, mb);
+    margin-bottom: m-scale($size, mb);
   }
 }
 
@@ -55,20 +55,20 @@
 
 
 @mixin font-alt($size: p) {
-  @include size($size);
+  @include scale($size);
   @include margin($size);
   @include family($size);
 }
 
 @mixin font($size: p, $fm: $size, $wt: $size, $mt: $size, $mb: $size) {
-  @include size($size);
+  @include scale($size);
 
   //MARGIN TOP
   @if $mt != $size  {
     margin-top: $mt;
   }
   @else {
-    margin-top: size($size, mt);
+    margin-top: scale($size, mt);
   }
 
   //MARGIN bottom
@@ -76,7 +76,7 @@
     margin-bottom: $mb;
   }
   @else {
-    margin-bottom: size($size, mb);
+    margin-bottom: scale($size, mb);
   }
 
   //Family
@@ -139,8 +139,8 @@
 // Mixin per i bottoni con padding
 ///
 @mixin button($size: p, $bw:2, $pw: null) {
-  font-size: size($size, fs);
-  line-height: size($size, lh);
+  font-size: scale($size, fs);
+  line-height: scale($size, lh);
 
   @if $pw == half {
     padding-top: bhpad($bw, $size);
@@ -165,9 +165,9 @@
 // Mixin per i bottoni con line-height
 ///
 @mixin button-lh($size: p, $bw:2) {
-  @include size($size);
+  @include scale($size);
 
-  line-height: blh($bw, size($size, fs), size($size, lh));
+  line-height: blh($bw, scale($size, fs), scale($size, lh));
 
   padding: 0 1.5em;
   border-bottom-width: $bw * 1px;
@@ -258,8 +258,8 @@
 ///
 @mixin form-field($size: p, $bw: 1) {
   font-family: inherit;
-  font-size: size($size, fs);
-  line-height: size($size, lh); //TOCR - forse è più facile farla con la funzione blh?
+  font-size: scale($size, fs);
+  line-height: scale($size, lh); //TOCR - forse è più facile farla con la funzione blh?
 //  margin-bottom: font($size, mb);
   margin-top: 0;
   padding: bhpad($bw, $size) !important;
@@ -270,8 +270,8 @@
 // Forms Labels size settings
 ///
 @mixin form-label($size: p) {
-  font-size: size($size, fs);
-  line-height: size($size, lh) !important;
+  font-size: scale($size, fs);
+  line-height: scale($size, lh) !important;
   margin-top: 0 !important;
   margin-bottom: 0 !important;
   padding-top: 0;
@@ -285,15 +285,15 @@
 // Forms Field Descritpions
 ///
 @mixin form-desc($size: h5) {
-  font-size: size($size, fs) !important;
-  line-height: size($size, lh);
+  font-size: scale($size, fs) !important;
+  line-height: scale($size, lh);
   font-style: none;
   margin: 0 !important;
   font-family: form(desc, fm);
   font-weight: form(desc, wt);
   text-transform: none; //TODO //TOCR
   letter-spacing: 0 !important;
-  padding-top: size($size, lh);
+  padding-top: scale($size, lh);
 }
 
 
