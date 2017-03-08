@@ -864,9 +864,13 @@ p.lg-ph2,
 
 .lg-full-header .lg-excerpt p,
 .lg-related-fw .lg-excerpt p,
+.lg-full-header .lg-excerpt,
+.lg-related-fw .lg-excerpt,
 .lg-full-header p.lg-excerpt,
 .lg-related-fw p.lg-excerpt {
 text-align:center;
+margin-left: auto;
+margin-right: auto;
 }
 
 .header_color.lg-full-header .lg-icon.av-icon-style-border.lg-piena .av-icon-char {
