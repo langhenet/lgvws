@@ -1,0 +1,204 @@
+.single-lgactivity {
+  p, ul, ol, h1, h2, h3, h4, h5 {
+    &:first-child {
+      margin-top: 0;
+    }
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+
+#trekksoft-popup-popup {
+  background-image: url(http://localhost:3000/wp-content/uploads/sites/10/2016/10/Alba-Sotterranea-2.jpg) !important;
+    background-position: center !important;
+    background-size: cover !important;
+    background-color: transparent !important;
+    background-repeat: no-repeat !important;
+}
+.activity__header {
+  @include color-overlay(main);
+  background-size: cover;
+  background-repeat: no-repeat;
+  overflow: hidden;
+  padding-bottom: $line-height * 3;
+  padding-top: $line-height * 3;
+}
+
+.activity__header-inner {
+  z-index: 1;
+  position: relative;
+  margin: 0 auto;
+  @include make-container();
+  @include make-container-max-widths();
+}
+
+.activity__header-row {
+  @include make-row();
+}
+
+.activity__title-container {
+  @include make-col-ready();
+  @include make-col(8);
+  @include  make-col-push(2);
+  text-align: center;
+
+  @include breakpoint-max(md) {
+    @include make-col(12);
+    @include make-col-push(0);
+  }
+}
+
+.lgactivity__title {
+  @include font(h1);
+  color: $bianco;
+
+  @include breakpoint-max(md) {
+    @include m-scale(h1);
+  }
+}
+
+.activity__excerpt {
+
+  p {
+
+      @include font(h3);
+
+
+  //  @include breakpoint-max(md) {
+  //    @include m-scale(h3);
+  //  }
+  }
+}
+
+.activity__breadcrumbs-row {
+  @include make-row();
+}
+
+.activity__breadcrumbs {
+  @include make-col-ready();
+  @include make-col(8);
+  @include  make-col-push(2);
+  text-align: center;
+  color: $bianco;
+
+  a {
+    color: $bianco;
+  }
+
+  @include breakpoint-max(md) {
+    @include make-col(12);
+  }
+}
+
+.activity__content {
+  background: $bianco;
+
+  &-inner {
+    @include make-container();
+    max-width: $website-width;
+    //@include make-container-max-widths();
+  }
+
+  &-row {
+    @include make-row();
+
+    padding: ($line-height * 2) 0;
+    align-items: flex-start;
+  }
+}
+
+.activty__info-container {
+  @include make-col-ready();
+  @include make-col(4);
+  position: relative;
+  box-sizing: border-box;
+}
+
+.activity__info-box {
+  background: $bianco-sporco;
+  box-shadow: 3px 3px 3px rgba(1,1,1,0.1);
+  //max-width: 320px;
+//  margin-top: ($line-height * -4);
+  padding: 0 $line-height $line-height;
+  border-radius: 3px;
+  overflow: hidden;
+
+  @include breakpoint-max(sm) {
+    margin: -3em -1.5em 3em -1.5em;
+  }
+}
+
+.info-box__title {
+  text-transform: uppercase;
+  background: $viola;
+  margin-left: -$line-height;
+  margin-right: -$line-height;
+  text-align: center;
+  padding: 0 $line-height;
+
+  &.lg-sticky {
+    top: 0;
+    //left: 20%;
+    position: fixed;
+    margin-top: 0;
+  //  width: inherit;
+    margin-top: $line-height * 2;
+    box-sizing: border-box;
+    box-shadow: 3px 3px 3px rgba(1,1,1,0.1);
+  }
+
+  h3 {
+    color: $bianco;
+    font-weight: family(secondary, bold);
+
+    @include breakpoint-max(md) {
+      @include m-scale(h3);
+    }
+  }
+}
+
+.info-box__price {
+  @include font(h2, $mt: (scale(h2, lh) / 2) );
+  text-align: center;
+  color: main-colors(main, heading);
+
+  @include breakpoint-max(md) {
+    @include m-scale(h2);
+  }
+}
+.info-box__additional-info {
+  text-transform: uppercase;
+  margin-top: $line-height;
+  text-align: center;
+  font-weight: family(primary, bold);
+  color: main-colors(main, heading);
+}
+
+.info-box__button-container {
+  text-align: center;
+  margin-bottom: 0;
+}
+
+.info-box__button {
+  @extend %button;
+  @include button(p, 4, half);
+  @include button-color(main);
+  font-weight: family(primary, bold);
+  text-transform: uppercase;
+  padding-left: 1em;
+  padding-right: 1em;
+}
+
+.activity__content-text {
+  @include make-col-ready();
+  @include make-col(8);
+}
+
+.activty__info-container,
+.activity__content-text {
+  @include breakpoint-max(sm) {
+    @include make-col(12);
+  }
+}

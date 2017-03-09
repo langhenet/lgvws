@@ -1,0 +1,45 @@
+////
+// Icon Lists
+///
+
+.lg-activities-grid h4.iconlist_title {
+  font-size: scale(small, fs);
+  line-height: scale(small, lh);
+}
+
+.lg-activities-grid .iconlist_content {
+  font-size: scale(small, fs);
+  line-height: scale(small, lh);
+  margin-bottom: scale(small, lh) * 2;
+
+  p {
+    margin-bottom: 0;
+  }
+}
+
+
+//****************************************************************************************************************//
+//*           GRIGLIA PRINCIPALE
+//***************************************************************************************************************//
+// Override del background principale
+.main_color .grid-item--third.vacation-package {
+  background: mix(#c3dbe1, white, 12%);
+}
+
+
+.grid-item.sleep_accent {
+  border-color: #69a4b5;
+}
+
+.sleep_accent .grid-item__read-more {
+  color: #69a4b5;
+
+  &:hover {
+    color: darken(#69a4b5, 10%);
+  }
+}
+
+.grid-item__additional-info.grid-item__price {
+  font-size: scale(p, fs);
+  line-height: scale(p, lh);
+}

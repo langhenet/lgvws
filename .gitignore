@@ -1,8 +1,9 @@
 bower_components/
 node_modules/
 .sass-cache/
-unmin-style.css
-style.css
+css/unmin-style.css
+css/style.css
+css/custom.css
 config.json
-functions.php
-custom.css
+config-layerslider/
+includes/admin/demo_files/
