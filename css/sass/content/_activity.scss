@@ -18,12 +18,11 @@
     background-repeat: no-repeat !important;
 }
 .activity__header {
-  @include color-overlay(main);
+  @include color-overlay(main, $grade: 0.5);
   background-size: cover;
   background-repeat: no-repeat;
   overflow: hidden;
   padding-bottom: $line-height * 3;
-  padding-top: $line-height * 3;
 }
 
 .activity__header-inner {
@@ -32,6 +31,8 @@
   margin: 0 auto;
   @include make-container();
   @include make-container-max-widths();
+
+  padding-top: $line-height * 5;
 }
 
 .activity__header-row {
@@ -59,6 +60,12 @@
   }
 }
 
+.activity__title-details {
+  @include font(h3);
+  color: $bianco;
+  font-style: italic;
+}
+
 .activity__excerpt {
 
   p {
@@ -72,17 +79,27 @@
   }
 }
 
-.activity__breadcrumbs-row {
-  @include make-row();
+.activity__breadcrumbs-container {
+  max-width: $website-width;
+  position: relative;
+  margin: 0 auto;
 }
 
 .activity__breadcrumbs {
-  @include make-col-ready();
-  @include make-col(8);
-  @include  make-col-push(2);
+  position: absolute;
+  top: $line-height;
+  right: 0;
   text-align: center;
   color: $bianco;
 
+  p {
+    @include font(small);
+    padding: 0 ($line-height / 2);
+    background: rgba($viola, 0.7);
+    text-transform: uppercase;
+    border-radius: 3px;
+//    font-weight: bold;
+  }
   a {
     color: $bianco;
   }
@@ -104,14 +121,14 @@
   &-row {
     @include make-row();
 
-    padding: ($line-height * 2) 0;
+    padding: ($line-height * 4) 0;
     align-items: flex-start;
   }
 }
 
 .activty__info-container {
   @include make-col-ready();
-  @include make-col(4);
+  @include make-col(5);
   position: relative;
   box-sizing: border-box;
 }
@@ -119,11 +136,17 @@
 .activity__info-box {
   background: $bianco-sporco;
   box-shadow: 3px 3px 3px rgba(1,1,1,0.1);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+  transition: all 0.3s cubic-bezier(.25,.8,.25,1);
   //max-width: 320px;
 //  margin-top: ($line-height * -4);
   padding: 0 $line-height $line-height;
   border-radius: 3px;
   overflow: hidden;
+
+  &:hover {
+  // box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+  }
 
   @include breakpoint-max(sm) {
     margin: -3em -1.5em 3em -1.5em;
@@ -136,7 +159,7 @@
   margin-left: -$line-height;
   margin-right: -$line-height;
   text-align: center;
-  padding: 0 $line-height;
+  padding: ($line-height / 2) $line-height;
 
   &.lg-sticky {
     top: 0;
@@ -160,12 +183,12 @@
 }
 
 .info-box__price {
-  @include font(h2, $mt: (scale(h2, lh) / 2) );
+  @include font(h2, $mt: (scale(h2, lh) / 2), $mb: 0 );
   text-align: center;
   color: main-colors(main, heading);
 
   @include breakpoint-max(md) {
-    @include m-scale(h2);
+    @include m-scale(h2, $mb: 0);
   }
 }
 .info-box__additional-info {
@@ -174,6 +197,8 @@
   text-align: center;
   font-weight: family(primary, bold);
   color: main-colors(main, heading);
+  margin-top: 0;
+  margin-bottom: $line-height * 2;
 }
 
 .info-box__button-container {
@@ -193,7 +218,41 @@
 
 .activity__content-text {
   @include make-col-ready();
-  @include make-col(8);
+  @include make-col(7);
+}
+
+
+.activity__form-container {
+  height: 0px;
+  transition: all 0.25s ease;
+  opacity: 0;
+  visibility: hidden;
+
+  .gform_wrapper .gform_footer {
+    margin-top: $line-height !important;
+  }
+
+  @at-root #top #{&} .gform_wrapper .gform_footer input.button {
+    @include button(p, 4, half);
+    @include button-color(main);
+    width: auto;
+    margin: 0 auto;
+  }
+}
+
+#top input[class="activity__form-trigger"] {
+  display: none;
+}
+
+label.activity__form-trigger {
+  cursor: pointer;
+}
+
+.activity__form-trigger:checked ~ .activity__form-container {
+  height: 100%;
+  transition: all 0.25s ease;
+  opacity: 1;
+  visibility: visible;
 }
 
 .activty__info-container,
@@ -201,4 +260,8 @@
   @include breakpoint-max(sm) {
     @include make-col(12);
   }
+}
+
+.activity-gallery__image {
+  border-color: $bianco;
 }
