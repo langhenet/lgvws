@@ -39,7 +39,7 @@ jQuery(function(){
 		<div class="activity__header-row">
 			<div class="activity__title-container">
 				<h1 class="<?php echo $type ?>__title"><?php the_title(); ?></h1>
-				<p class="activity__title-details">€<?php echo $activitymeta['wpcf-lgp-price'][0] ?> / <?php _e( 'Duration', 'activities' ); echo ' ' . $activitymeta['wpcf-lgp-price'][0] ?></p>
+				<p class="activity__title-details">€<?php echo $activitymeta['wpcf-lgp-price'][0] ?> / <?php echo __( 'Duration', 'activities' ) .  ' ' . $activitymeta['wpcf-lg-duration'][0] . ' ' . __('hours' , 'activities') ?></p>
 			</div>
 		</div>
 	</div>
@@ -54,7 +54,7 @@ jQuery(function(){
 						<h3><?php _e('Book this activity') ?></h3>
 					</div>
 					<p class="info-box__price">€<?php echo $activitymeta['wpcf-lgp-price'][0] ?></p>
-					<p class="info-box__additional-info"><?php _e( 'Duration', 'activities' ); ?>: <?php echo $activitymeta['wpcf-lgp-price'][0] ?></p>
+					<p class="info-box__additional-info"><?php  echo __( 'Duration:', 'activities' ) .  ' ' . $activitymeta['wpcf-lg-duration'][0] . ' ' . __('hours' , 'activities') ?></p>
 					<p class="info-box__button-container">
 						<a href="#" id="trekksoft_2428" class="info-box__button">Book Now</a>
 					</p>
@@ -79,9 +79,6 @@ jQuery(function(){
 						<?php gravity_form( 3, $display_title = false, $display_description = false, $display_inactive = false, $field_values = null, $ajax = true, $tabindex = 1, $echo = true ); ?>
 					</div>
 				</div>
-			</div>
-			<div class="activity__content-text">
-				<?php the_content(); ?>
 				<div class="activity__gallery">
 					<div class="avia-gallery deactivate_avia_lazyload avia_animate_when_visible avia_start_animation">
 						<div class="avia-gallery-thumb gallery-columns-2 popup-gallery">
@@ -95,6 +92,9 @@ jQuery(function(){
 						</div>
 					</div>
 				</div>
+			</div>
+			<div class="activity__content-text">
+				<?php the_content(); ?>
 			</div>
 			<pre><?php var_dump($activitymeta) ?></pre>
 		</div>
