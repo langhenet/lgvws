@@ -1,17 +1,12 @@
 <?php
-	//global $avia_config;
-	$type = get_post_type();
-	$activitymeta = get_post_meta(get_the_ID());
 	/*
 	 * get_header is a basic wordpress function, used to retrieve the header.php file in your theme directory.
 	 */
 	 get_header();
- //   $cats = get_the_category();
-	//	$title 	= get_the_title(); //if the blog is attached to a page use this title
-	//	$t_link = get_category_link( $cats[0] );
-
-	//if( get_post_meta(get_the_ID(), 'header', true) != 'no') echo avia_title(array('heading'=>'strong', 'title' => $cats[0]->cat_name, 'link' => $t_link));
-
+	 $type = get_post_type();
+	 $id = get_the_ID();
+	 $activitymeta = get_post_meta($id);
+	 $tax = wp_get_post_terms( $id, 'lgarea' );
 ?>
 <!-- <script>
 jQuery(function(){
@@ -48,6 +43,16 @@ jQuery(function(){
 <div class="activity__content">
 	<div class="activity__content-inner">
 		<div class="activity__content-row">
+			<div class="activity__content-text">
+				<h2 class="activity-content__title"><?php _e('Activity Details' , 'activities') ?></h2>
+
+				<?php the_content(); ?>
+
+				<?php if ( !empty($activitymeta['_wpcf_belongs_lgbusiness_id'][0]) ) : ?>
+					<h3 class="activity-content__title"><?php _e('About ' , 'activities'); echo get_the_title( $activitymeta['_wpcf_belongs_lgbusiness_id'][0] ) ?></h3>
+					<?php echo get_the_excerpt( $activitymeta['_wpcf_belongs_lgbusiness_id'][0] ) ?>
+				<?php endif; ?>
+			</div>
 			<div class="activty__info-container">
 				<div class="activity__info-box">
 					<div class="info-box__title">
@@ -56,7 +61,7 @@ jQuery(function(){
 					<p class="info-box__price">€<?php echo $activitymeta['wpcf-lgp-price'][0] ?></p>
 					<p class="info-box__additional-info"><?php  echo __( 'Duration:', 'activities' ) .  ' ' . $activitymeta['wpcf-lg-duration'][0] . ' ' . __('hours' , 'activities') ?></p>
 					<p class="info-box__button-container">
-						<a href="#" id="trekksoft_2428" class="info-box__button">Book Now</a>
+						<a href="#" id="book-now" class="info-box__button">Book Now</a>
 					</p>
 					<script src="//booking.langhe.net/it/api/public"></script>
 					<script>
@@ -67,16 +72,16 @@ jQuery(function(){
 												.setAttrib("entryPoint", "tour")
 												.setAttrib("tourId", "<?php echo $activitymeta['wpcf-lg-trekksoft-activity'][0] ?>")
 												.setAttrib("fancywidth", "95%")
-												.registerOnClick("#trekksoft_2428");
+												.registerOnClick("#book-now");
 							})();
 					</script>
-					<p style="text-align:center; margin-top: 3em; margin-bottom:0;"><strong>NOT SURE?</strong></p>
+					<p class="activity__trigger-question"><strong>NOT SURE?</strong></p>
 					<input type="checkbox" id="activity__form-trigger" class="activity__form-trigger" />
-					<p style="text-align:center;margin-bottom:0;">
+					<p class="activity__trigger-container">
 						<label for="activity__form-trigger"><?php _e('ask us a question &raquo') ?></label>
 					</p>
 					<div class="activity__form-container">
-						<?php gravity_form( 3, $display_title = false, $display_description = false, $display_inactive = false, $field_values = null, $ajax = true, $tabindex = 1, $echo = true ); ?>
+						<?php gravity_form( 65, $display_title = false, $display_description = false, $display_inactive = false, $field_values = null, $ajax = true, $tabindex = 1, $echo = true ); ?>
 					</div>
 				</div>
 				<div class="activity__gallery">
@@ -93,11 +98,41 @@ jQuery(function(){
 					</div>
 				</div>
 			</div>
-			<div class="activity__content-text">
-				<?php the_content(); ?>
-			</div>
-			<pre><?php var_dump($activitymeta) ?></pre>
 		</div>
 	</div>
 </div>
+<div class="activity__related">
+	<div class="activity__related-inner">
+		<h2 class="activity__section-title">Activities Nearby</h2>
+		<div class="activity__related-row">
+			<?php
+				$related_activities = new WP_Query( array(
+	    		'post_type' => 'lgactivity',
+	    		'posts_per_page' => 6,
+					'no_found_rows' => true,
+					'meta_key' => 'wpcf-lg-public',
+					'meta_value' => '1',
+					'meta_compare' => '=',
+					'tax_query' => array(
+						array(
+							'taxonomy' => 'lgarea',
+							'field'    => 'slug',
+							'terms'    => $tax[0]->slug,
+						),
+					),
+				) );
+
+				if ( $related_activities->have_posts() ) :
+				    while ( $related_activities->have_posts() ) :
+				        $related_activities->the_post();
+								get_template_part( 'templates/grid', 'activities' );
+				    endwhile;
+						wp_reset_postdata();
+				endif;
+			?>
+		</div>
+	</div>
+</div>
+<pre><?php var_dump($activitymeta) ?></pre>
+
 <?php get_footer(); ?>

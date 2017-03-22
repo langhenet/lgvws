@@ -31,7 +31,7 @@
   background-size: cover;
   background-repeat: no-repeat;
   overflow: hidden;
-  padding-bottom: $line-height * 3;
+  padding-bottom: $line-height * 5;
 }
 
 .activity__header-inner {
@@ -47,11 +47,11 @@
 
 
 #trekksoft-popup-popup {
-  background-image: url(http://localhost:3000/wp-content/uploads/sites/10/2016/10/Alba-Sotterranea-2.jpg) !important;
-    background-position: center !important;
-    background-size: cover !important;
-    background-color: transparent !important;
-    background-repeat: no-repeat !important;
+  background-image: url(/wp-content/themes/langhe/images/lgbackgrounds/trekksoft-bg.jpg) !important;
+  background-position: center !important;
+  background-size: cover !important;
+  background-color: transparent !important;
+  background-repeat: no-repeat !important;
 }
 
 
@@ -67,12 +67,9 @@
 .activity__title-container {
   @include make-col-ready();
   @include make-col(8);
-  @include  make-col-push(2);
-  text-align: center;
 
   @include breakpoint-max(md) {
     @include make-col(12);
-    @include make-col-push(0);
   }
 }
 
@@ -102,6 +99,10 @@
   max-width: $website-width;
   position: relative;
   margin: 0 auto;
+
+  @include breakpoint-max(sm) {
+    display: none;
+  }
 }
 
 .activity__breadcrumbs {
@@ -114,10 +115,9 @@
   p {
     @include font(small);
     padding: 0 ($line-height / 2);
-    background: rgba($viola, 0.7);
+    background: rgba($nero, 0.7);
     text-transform: uppercase;
     border-radius: 3px;
-//    font-weight: bold;
   }
   a {
     color: $bianco;
@@ -138,14 +138,13 @@
 
   &-inner {
     @include make-container();
-    max-width: $website-width;
-    //@include make-container-max-widths();
+    @include make-container-max-widths();
   }
 
   &-row {
     @include make-row();
 
-    padding: ($line-height * 4) 0;
+    padding: 0 0 ($line-height * 3) 0;
     align-items: flex-start;
   }
 }
@@ -158,9 +157,11 @@
   @include make-col(5);
   position: relative;
   box-sizing: border-box;
+  margin-top: ($line-height * -3);
 
   @include breakpoint-max(sm) {
     order: 1;
+    margin-top: 0;
   }
 }
 
@@ -170,6 +171,8 @@
 .activity__content-text {
   @include make-col-ready();
   @include make-col(7);
+
+  padding-top: $line-height * 2;
 }
 
 ///
@@ -195,13 +198,18 @@
   padding: 0 $line-height $line-height;
   border-radius: 3px;
   overflow: hidden;
+  background: $viola-washed ;
+
+  * {
+    color: #fff !important;
+  }
 
   &:hover {
     //box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
   }
 
   @include breakpoint-max(sm) {
-    margin: -3em -1.5em 3em -1.5em;
+    margin: $line-height * 2 0;
   }
 }
 
@@ -258,11 +266,11 @@
 .info-box__additional-info {
   text-transform: uppercase;
   margin-top: $line-height;
+  margin-bottom: 0;
   text-align: center;
   font-weight: family(primary, bold);
   color: main-colors(main, heading);
   margin-top: 0;
-  margin-bottom: $line-height * 2;
 }
 
 
@@ -271,7 +279,7 @@
 ///
 .info-box__button-container {
   text-align: center;
-  margin-bottom: 0;
+  margin: ($line-height * 2) 0;
 }
 
 .info-box__button {
@@ -288,6 +296,19 @@
 ///
 // Form
 ///
+
+//Questione
+.activity__trigger-question {
+  text-align: center;
+  margin-bottom: 0;
+  margin-top:0 ;
+}
+
+//Trigger
+.activity__trigger-container {
+  text-align: center;
+  margin-bottom: 0;
+}
 
 //Container
 .activity__form-container {
@@ -338,4 +359,113 @@ label[for="activity__form-trigger"] {
 
 .activity-gallery__image {
   border-color: $bianco;
+}
+
+
+
+//*************************************************************************************************//
+// CONTENT
+//************************************************************************************************//
+.activity-content__title {
+  font-weight: bold;
+  text-transform: uppercase;
+
+  @include breakpoint-max(sm) {
+    @include m-scale(h2);
+  }
+}
+
+
+
+
+//*************************************************************************************************//
+// CONTENT
+//************************************************************************************************//
+.activity__related-inner {
+  position: relative;
+  margin: 0 auto;
+  padding-top: $line-height * 3;
+  padding-bottom: $line-height * 3;
+  padding-left: ($line-height / 2);
+  padding-right: ($line-height / 2);
+
+  @include make-container-max-widths();
+}
+
+.activity__section-title {
+  @include font(h1, $mb: scale(h1, lh));
+  text-align: center;
+  text-transform: uppercase;
+  font-weight: bold;
+
+  @include breakpoint-max(sm) {
+    @include m-scale(h1, $mb: m-scale(h1, lh));
+  }
+}
+
+//*************************************************************************************************//
+// GRID
+//************************************************************************************************//
+.activity__related-row {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 ($line-height / -1);
+
+  @include breakpoint-max(sm) {
+    padding: 0 $line-height;
+  }
+}
+
+.activity-grid__column {
+
+  position: relative;
+  width: 100%;
+  min-height: 1px;
+  flex-basis: 33.3333333%;
+  width: 33.3333333%;
+  flex-grow: 0;
+  flex-shrink: 0;
+  padding-right: $line-height / 2;
+  padding-left: $line-height / 2;
+  margin-bottom: $line-height * 2;
+
+  @include breakpoint-max(md) {
+    @include make-col(6);
+  }
+
+  @include breakpoint-max(sm) {
+    @include make-col(12);
+  }
+}
+
+.activity-grid__item-container {
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  height: 100%;
+  background: $bianco;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.grid-item__description-container p {
+  @include font(small, $mt: 0);
+
+  strong {
+    font-weight: decoration(p, wt);
+  }
+}
+
+.grid-item__book-now {
+  @extend %button;
+  @include button(small, 3, quarter);
+  @include button-color(main);
+
+  margin-bottom: scale(small, lh) / 2;
+
+  text-transform: uppercase;
+  padding-left: 0.5em;
+  padding-right: 0.5em;
+  font-weight: bold;
 }
