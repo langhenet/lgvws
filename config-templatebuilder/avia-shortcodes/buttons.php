@@ -21,6 +21,7 @@ if ( !class_exists( 'avia_sc_button' ) )
 				$this->config['shortcode'] 	= 'av_button';
 				$this->config['tooltip'] 	= __('Creates a colored button', 'avia_framework' );
 				$this->config['tinyMCE']    = array('tiny_always'=>true);
+				$this->config['preview'] 	= true;
 			}
 		
 			/**
@@ -257,7 +258,7 @@ if ( !class_exists( 'avia_sc_button' ) )
 			                                 'font' =>'',
 			                                 'icon_hover' => '',
 			                                 ), $atts, $this->config['shortcode']);
-			
+											 
 				$display_char 	= av_icon($atts['icon'], $atts['font']);
 				$extraClass 	= $atts['icon_hover'] ? "av-icon-on-hover" : "";
 				

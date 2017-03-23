@@ -23,9 +23,9 @@
 if (!class_exists('avia_fb_likebox'))
 {
 	class avia_fb_likebox extends WP_Widget {
-
+	
 		static $script_loaded = 0;
-
+	
 		function __construct() {
 			//Constructor
 			$widget_ops = array('classname' => 'avia_fb_likebox', 'description' => __('A widget that displays a facebook Likebox to a facebook page of your choice', 'avia_framework') );
@@ -39,40 +39,40 @@ if (!class_exists('avia_fb_likebox'))
 			extract($args, EXTR_SKIP);
 			if(empty($instance['url'])) return;
 			$url 		= $instance['url'];
-			$title 		= isset($instance['title']) ? $instance['title'] : "";
-			$height 	= 151;
+			$title 		= isset($instance['title']) ? $instance['title'] : ""; 
+			$height 	= 151; 
 			$faces 		= "true";
 			$extraClass = "";
 			$style 		= "";
-
-
+			
+			
 			if(strpos($height, "%") !== false)
 			{
 				$extraClass = "av_facebook_widget_wrap_positioner";
 				$style		= "style='padding-bottom:{$height}'";
 				$height		= "100%";
 			}
-
-
+			
+			
 			echo $before_widget;
-
+			
 			if ( !empty( $title ) ) { echo $before_title . $title . $after_title; };
-
+			
 			echo "<div class='av_facebook_widget_wrap {$extraClass}' {$style}>";
 			echo '<div class="fb-page" data-width="500" data-href="'.$url.'" data-small-header="false" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="true" data-show-posts="false"><div class="fb-xfbml-parse-ignore"></div></div>';
 			echo "</div>";
 			echo $after_widget;
 			add_action('wp_footer', array( $this,'fb_js' ));
 		}
-
-
-
+		
+		
+		
 		function fb_js()
 		{
 			if ( function_exists('icl_object_id') ) {
 				$locale = ICL_LANGUAGE_NAME_EN;
 				$fbxml = @simplexml_load_file( AVIA_BASE . '/config-wpml/FacebookLocales.xml' );
-
+				
 				if(is_object($fbxml))
 				{
 					$langcode = array();
@@ -117,21 +117,21 @@ if (!class_exists('avia_fb_likebox'))
 
 			$instance = wp_parse_args( (array) $instance, array('url' => 'https://www.facebook.com/kriesi.at', 'title' => '') );
 			$html = new avia_htmlhelper();
-
-
+			
+			
 	?>
-
+			
 			<p>
 			<label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title:', 'avia_framework'); ?>
 			<input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo esc_attr($instance['title']); ?>" /></label>
 			</p>
-
+			
 			<p>
 			<label for="<?php echo $this->get_field_id('url'); ?>"><?php _e('Enter the url to the Page. Please note that it needs to be a link to a <strong>facebook fanpage</strong>. Personal profiles are not allowed!', 'avia_framework'); ?>
 			<input class="widefat" id="<?php echo $this->get_field_id('url'); ?>" name="<?php echo $this->get_field_name('url'); ?>" type="text" value="<?php echo esc_attr($instance['url']); ?>" /></label>
 			</p>
-
-
+			
+			
 
 
 		<?php
@@ -515,11 +515,11 @@ if (!class_exists('avia_newsbox'))
 			if(empty($this->avia_post_type)) 	$format = $this->avia_post_type;
 			if(empty($format)) 					$format = get_post_format();
 	     	if(empty($format)) 					$format = 'standard';
-
+			
 			$the_id = get_the_ID();
 			$link = get_post_meta( $the_id  ,'_portfolio_custom_link', true) != "" ? get_post_meta( $the_id ,'_portfolio_custom_link_url', true) : get_permalink();
-
-
+			
+			
 			echo '<li class="news-content post-format-'.$format.'">';
 
 			//check for preview images:
@@ -553,12 +553,12 @@ if (!class_exists('avia_newsbox'))
 			if(empty($avia_config['widget_image_size']) || 'display title and excerpt' != $excerpt)
 			{
 				echo "<strong class='news-headline'>".get_the_title();
-
+				
 				if($time_format)
 				{
-					echo "<span class='news-time'>".get_the_time($time_format)."</span>";
+					echo "<span class='news-time'>".get_the_time($time_format)."</span>";	
 				}
-
+				
 				echo "</strong>";
 			}
 			echo "</a>";
@@ -574,7 +574,7 @@ if (!class_exists('avia_newsbox'))
 					echo "</a>";
 					if($time_format)
 					{
-						echo "<span class='news-time'>".get_the_time($time_format)."</span>";
+						echo "<span class='news-time'>".get_the_time($time_format)."</span>";	
 					}
 
 				}
@@ -616,7 +616,7 @@ if (!class_exists('avia_newsbox'))
 			$excerpt = strip_tags($instance['excerpt']);
 
 
-			$elementCat = array("name" 	=> __("Which categories should be used for the portfolio?", 'avia_framework'),
+			$elementCat = array("name" 	=> __("Which categories should be used for the portfolio?", 'avia_framework'), 
 								"desc" 	=> __("You can select multiple categories here", 'avia_framework'),
 					            "id" 	=> $this->get_field_name('cat')."[]",
 					            "type" 	=> "select",
@@ -758,7 +758,7 @@ if (!class_exists('avia_socialcount'))
 					$link = 'http://twitter.com/'.$twitter.'/';
 					$before = apply_filters('avf_social_widget', "", 'twitter');
 					$output .= "<a href='$link' class='asc_twitter $addClass'>{$before}<strong class='asc_count'>".__('Follow','avia_framework')."</strong><span>".__('on Twitter','avia_framework')."</span></a>";
-
+					
 				}
 
 				if($rss)
@@ -1088,8 +1088,8 @@ if (!function_exists('avia_get_comment_list'))
 		$time_format = apply_filters( 'avia_widget_time', get_option('date_format')." - ".get_option('time_format'), 'avia_get_comment_list' );
 
 		global $avia_config;
-
-
+		
+		
 		$comments = get_comments($avia_new_query);
 
 		if(!empty($comments)) :
@@ -1105,7 +1105,7 @@ if (!function_exists('avia_get_comment_list'))
 			echo get_avatar($comment,'48', '', $gravatar_alt);
 			echo "</span>";
 			echo "<strong class='news-headline'>".avia_backend_truncate($comment->comment_content, 55," ");
-
+			
 			if($time_format)
 			{
 				echo "<span class='news-time'>".get_comment_date($time_format, $comment->comment_ID)." ".__('by','avia_framework')." ".$comment->comment_author."</span>";
@@ -1303,16 +1303,16 @@ if (!class_exists('avia_google_maps'))
             $prefix  = is_ssl() ? "https" : "http";
             $api_key = avia_get_option('gmap_api');
             $api_url = $prefix.'://maps.google.com/maps/api/js?v=3.27';
-
+            
             if($api_key != ""){
 	           $api_url .= "&key=" .$api_key;
             }
-
+            
             wp_register_script( 'avia-google-maps-api', $api_url, array('jquery'), NULL, true);
-
-
+            
+            
             $load_google_map_api = apply_filters('avf_load_google_map_api', true, 'avia_google_map_widget');
-
+            
             if($load_google_map_api) wp_enqueue_script( 'avia-google-maps-api' );
 
             $is_widget_edit_page = in_array(basename($_SERVER['PHP_SELF']), array('widgets.php'));
@@ -1352,12 +1352,12 @@ if(!function_exists('avia_printmap'))
 		if (!$content) {$content = $SGMoptions['content'];}
 		$output = "";
 		$unique = uniqid();
-
+		
 		$prefix  = isset($_SERVER['HTTPS'] ) ? "https" : "http";
         $width = !empty($width) ? 'width:'.$width.';' : 'width:100%;';
         $height = !empty($height) ? 'height:'.$height.';' : '';
         $icon = !empty($icon) ? $icon : '';
-
+		
 		$content = htmlspecialchars($content, ENT_QUOTES);
 		$content = str_replace('&lt;', '<', $content);
 		$content = str_replace('&gt;', '>', $content);
@@ -1365,7 +1365,7 @@ if(!function_exists('avia_printmap'))
 		$content = str_replace('&#039;', '"', $content);
 		$content = json_encode($content);
 
-
+		
 		$directionsForm = "";
 		if(empty($avia_config['g_maps_widget_active']))
 		{
@@ -1378,11 +1378,11 @@ if(!function_exists('avia_printmap'))
 	        $prefix  = is_ssl() ? "https" : "http";
             $api_key = avia_get_option('gmap_api');
             $api_url = $prefix.'://maps.google.com/maps/api/js?v=3.24';
-
+            
             if($api_key != ""){
 	           $api_url .= "&key=" .$api_key;
             }
-
+	  
             wp_register_script( 'avia-google-maps-api', $api_url, array('jquery'), NULL, true);
             wp_enqueue_script( 'avia-google-maps-api' );
         }
@@ -1485,7 +1485,7 @@ class avia_instagram_widget extends WP_Widget {
 			array( 'classname' => 'avia-instagram-feed', 'description' => __( 'Displays your latest Instagram photos', 'avia_framework' ) )
 		);
 	}
-
+	
 	function widget( $args, $instance ) {
 
 		extract( $args, EXTR_SKIP );
@@ -1525,18 +1525,18 @@ class avia_instagram_widget extends WP_Widget {
 				$imgclass = esc_attr( apply_filters( 'aviw_img_class', '' ) );
 
 				?><div class="<?php echo esc_attr( $ulclass ); ?>"><?php
-
+				
 				$last_id  = end($media_array);
 				$last_id  = $last_id['id'];
-
-				$rowcount = 0;
-				foreach ( $media_array as $item )
+				
+				$rowcount = 0;	
+				foreach ( $media_array as $item ) 
 				{
 					if($rowcount == 0)
 					{
 						echo "<div class='{$rowclass}'>";
 					}
-
+					
 					$rowcount ++ ;
 					$targeting = $target;
 					if($target == "lightbox")
@@ -1544,18 +1544,18 @@ class avia_instagram_widget extends WP_Widget {
 						$targeting = "";
 						$item['link'] = $item['original'];
 					}
-
+	
 					echo '<div class="'. $liclass .'">';
 					echo '<a href="'. esc_url( $item['link'] ) .'" target="'. esc_attr( $targeting ) .'"  class="'. $aclass .'">';
 					echo '<img src="'. esc_url( $item[$size] ) .'"  alt="'. esc_attr( $item['description'] ) .'" title="'. esc_attr( $item['description'] ).'"  class="'. $imgclass .'"/>';
 					echo '</a></div>';
-
+					
 					if($rowcount % $columns == 0 || $last_id == $item['id'])
 					{
 						echo '</div>';
 						$rowcount = 0;
 					}
-
+					
 				}
 				echo '</div>';
 			}
@@ -1570,22 +1570,22 @@ class avia_instagram_widget extends WP_Widget {
 
 		echo $after_widget;
 	}
+	
 
-
-
-	function form( $instance )
+	
+	function form( $instance ) 
 	{
-
-		$instance = wp_parse_args( (array) $instance, array(
-			'title' => __( 'Instagram', 'avia_framework' ),
-			'username' => '',
-			'size' => 'large',
-			'link' => __( 'Follow Me!', 'avia_framework' ),
-			'number' => 9,
-			'target' => 'lightbox' ,
-			'columns' => 3 )
+			
+		$instance = wp_parse_args( (array) $instance, array( 
+			'title' => __( 'Instagram', 'avia_framework' ), 
+			'username' => '', 
+			'size' => 'large', 
+			'link' => __( 'Follow Me!', 'avia_framework' ), 
+			'number' => 9, 
+			'target' => 'lightbox' , 
+			'columns' => 3 ) 
 		);
-
+		
 		$title = esc_attr( $instance['title'] );
 		$username = esc_attr( $instance['username'] );
 		$number = absint( $instance['number'] );
@@ -1617,24 +1617,24 @@ class avia_instagram_widget extends WP_Widget {
 		<p><label for="<?php echo $this->get_field_id( 'link' ); ?>"><?php _e( 'Link text', 'avia_framework' ); ?>: <input class="widefat" id="<?php echo $this->get_field_id( 'link' ); ?>" name="<?php echo $this->get_field_name( 'link' ); ?>" type="text" value="<?php echo $link; ?>" /></label></p>
 		<?php
 	}
-
+	
 	function update( $new_instance, $old_instance ) {
 		$instance = $old_instance;
 		$instance['title'] = strip_tags( $new_instance['title'] );
 		$instance['username'] = trim( strip_tags( $new_instance['username'] ) );
 		$instance['number'] = ! absint( $new_instance['number'] ) ? 9 : $new_instance['number'];
 		$instance['columns'] = ! absint( $new_instance['columns'] ) ? 3 : $new_instance['columns'];
-
+		
 		if($instance['columns'] > 6) $instance['columns'] = 6;
 		if($instance['columns'] < 1) $instance['columns'] = 1;
-
-
+		
+		
 		$instance['size'] = ( ( $new_instance['size'] == 'thumbnail' || $new_instance['size'] == 'large' || $new_instance['size'] == 'small' || $new_instance['size'] == 'original' ) ? $new_instance['size'] : 'large' );
 		$instance['target'] = ( ( $new_instance['target'] == '_self' || $new_instance['target'] == '_blank'|| $new_instance['target'] == 'lightbox' ) ? $new_instance['target'] : '_self' );
 		$instance['link'] = strip_tags( $new_instance['link'] );
 		return $instance;
 	}
-
+	
 		// based on https://gist.github.com/cosmocatalano/4544576
 	function scrape_instagram( $username, $slice = 9 ) {
 
@@ -1645,7 +1645,7 @@ class avia_instagram_widget extends WP_Widget {
 
 			//$remote = wp_remote_get( 'http://instagram.com/'.trim( $username ) );
 			$remote = wp_remote_get( 'https://www.instagram.com/'.trim( $username ), array( 'sslverify' => false, 'timeout' => 60 ) );
-
+			
 			if ( is_wp_error( $remote ) )
 				return new WP_Error( 'site_down', __( 'Unable to communicate with Instagram.', 'avia_framework' ) );
 

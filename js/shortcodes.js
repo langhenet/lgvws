@@ -26,7 +26,7 @@
     	
     	//calculate the browser height and append a css rule to the head
 		if($.fn.avia_browser_height)
-		$('.av-minimum-height, .avia-fullscreen-slider').avia_browser_height();
+		$('.av-minimum-height, .avia-fullscreen-slider, .av-cell-min-height').avia_browser_height();
 		
 		//calculate the height of each video section
 		if($.fn.avia_video_section)
@@ -59,6 +59,23 @@
 		if($.fn.avia_textrotator)
 		$('.av-rotator-container').avia_textrotator();
 		
+		//activates the tab section shortcode
+		if($.fn.avia_sc_tab_section)
+		{
+			$('.av-tab-section-container').avia_sc_tab_section();
+		}
+		
+		//activates the hor gallery  shortcode
+		if($.fn.avia_hor_gallery)
+		{
+			$('.av-horizontal-gallery').avia_hor_gallery();
+		}
+		
+		
+		if($.fn.avia_delayed_animation_in_container)
+		{
+			$('.av-animation-delay-container').avia_delayed_animation_in_container();
+		}
 		
 		
     });
@@ -117,7 +134,7 @@
 			$('.top_tab', container).avia_sc_tabs();
 			$('.sidebar_tab', container).avia_sc_tabs({sidebar:true});
 		}
-
+		
 		//activates behavior and animation for gallery
 		if($.fn.avia_sc_gallery)
 		{
@@ -193,11 +210,6 @@
         	$('.av-countdown-timer', container).aviaCountdown();
     	}
     	
-    	 //load countdown
-        if($.fn.aviaCountdown)
-        {
-        	$('.av-countdown-timer', container).aviaCountdown();
-    	}
     	
     	
     }
@@ -298,7 +310,7 @@
 			}
 			
 			ticker(_self);
-			_self.countdown 	= setInterval(function(){ ticker(_self); }, _self.data.interval);
+			_self.countdown 	= setInterval(function(){ ticker(_self); }, 1000);
 
 			
 		});
@@ -511,7 +523,8 @@
 				streetViewControl: false,
 				panControl: this.$data.pan_control,
 				zoomControl: this.$data.zoom_control,
-				draggable: mobile_drag,
+				//draggable: mobile_drag,
+				gestureHandling: 'cooperative',
 				scrollwheel: false,
 				zoom: zoomValue,
 				mapTypeId:google.maps.MapTypeId.ROADMAP,
@@ -1253,6 +1266,11 @@ $.fn.avia_masonry = function(options)
 		{
 			var filters = selector ? {filter: '.'+selector} : {};
 			
+			filters['layoutMode'] = 'packery';
+			filters['packery'] = {gutter:0};
+			filters['percentPosition'] = true;
+			filters['itemSelector'] = "a.isotope-item";
+			
 			container.isotope(filters, function()
 			{
 				the_win.trigger('av-height-change');
@@ -1893,7 +1911,7 @@ $.fn.avia_masonry = function(options)
     	
     	_parallax_scroll: function(e)
     	{
-    		if(this.isMobile) return; //disable parallax scrolling on mobile
+    		if(this.isMobile || ! this.options.parallax_enabled) return; //disable parallax scrolling on mobile
     	
     		var winTop 		= this.$win.scrollTop(),
     			winBottom	=  winTop + this.property.wh,
@@ -2184,16 +2202,25 @@ $.fn.avia_sc_progressbar = function(options)
 {
 	return this.each(function()
 	{
-		var container = $(this), elements = container.find('.progress');
-
-
-		//trigger displaying of thumbnails
+		var container = $(this), elements = container.find('.avia-progress-bar');
+		
+		
+		//trigger displaying of progress bar
 		container.on('avia_start_animation', function()
 		{
 			elements.each(function(i)
 			{
-				var element = $(this);
-				setTimeout(function(){ element.addClass('avia_start_animation') }, (i * 250));
+				var element = $(this)
+				
+				setTimeout(function()
+				{ 
+					element.find('.progress').addClass('avia_start_animation') 
+					element.find('.progressbar-percent').avia_sc_animated_number(
+					{
+						instant_start:true, simple_up:true, start_timer: 10
+					});
+					
+				}, (i * 250));
 			});
 		});
 	});
@@ -2230,8 +2257,10 @@ $.fn.avia_sc_iconlist = function(options)
 $.fn.avia_sc_animation_delayed = function(options)
 {
 	var global_timer = 0,
-		delay = options.delay || 50;
-
+		delay = options.delay || 50,
+		max_timer = 10,
+		new_max = setTimeout(function(){ max_timer = 20; }, 500);
+	
 	return this.each(function()
 	{
 		var elements = $(this);
@@ -2240,11 +2269,46 @@ $.fn.avia_sc_animation_delayed = function(options)
 		elements.on('avia_start_animation', function()
 		{
 			var element = $(this);
-			global_timer ++;
-			setTimeout(function(){ element.addClass('avia_start_delayed_animation'); global_timer --; }, (global_timer * delay));
+			 
+			if(global_timer < max_timer) global_timer ++;
+			
+			setTimeout(function()
+			{ 
+				element.addClass('avia_start_delayed_animation'); 
+				if(global_timer > 0) global_timer --; 
+			
+			}, (global_timer * delay));
+			
 		});
 	});
 }
+
+/*delayd animations when used within tab sections or similar elements. this way they get animated each new time a tab is shown*/
+$.fn.avia_delayed_animation_in_container = function(options)
+{
+	return this.each(function()
+	{
+		var elements = $(this);
+		
+		elements.on('avia_start_animation_if_current_slide_is_active', function()
+		{
+			var current = $(this),
+				animate = current.find('.avia_start_animation_when_active');
+				
+				animate.addClass('avia_start_animation').trigger('avia_start_animation');
+		});
+		
+		elements.on('avia_remove_animation', function()
+		{
+			var current = $(this),
+				animate = current.find('.avia_start_animation_when_active, .avia_start_animation');
+				animate.removeClass('avia_start_animation avia_start_delayed_animation');
+		});
+	});
+}
+
+
+
 
 
 // -------------------------------------------------------------------------------------------
@@ -2642,7 +2706,7 @@ $.fn.avia_sc_tabs= function(options)
 		sidebar: false
 	};
 
-	var win = $(window)
+	var win = $(window),
 		options = $.extend(defaults, options);
 
 	return this.each(function()
@@ -2749,17 +2813,295 @@ $.fn.avia_sc_tabs= function(options)
 
 
 
+
+// -------------------------------------------------------------------------------------------
+// Tab Section
+// -------------------------------------------------------------------------------------------
+
+$.fn.avia_sc_tab_section= function()
+{
+	var win 			= $(window),
+		browserPrefix 	= $.avia_utilities.supports('transition'),
+		cssActive 		= this.browserPrefix !== false ? true : false,
+		isMobile 		= $.avia_utilities.isMobile,
+		transform3d		= document.documentElement.className.indexOf('avia_transform3d') !== -1 ? true : false,
+		transition		= {};
+		
+	return this.each(function()
+	{
+		var container 		= $(this),
+			tabs			= container.find('.av-section-tab-title'),
+			tab_wrap		= container.find('.av-tab-section-tab-title-container'),
+			tab_nav			= container.find('.av_tab_navigation'), 
+			content_wrap	= container.find('.av-tab-section-inner-container'),
+			single_tabs		= container.find('.av-animation-delay-container'), //for elements inside the tab that receive waypoint animation
+			min_width		= 0,
+			change_tab 		= function(e)
+			{
+				e.preventDefault();
+				
+				var current_tab 	= $(e.currentTarget),
+					current_arrow	= current_tab.find('.av-tab-arrow-container span'),
+					tab_nr			= current_tab.data('av-tab-section-title'),
+					current_content = container.find('[data-av-tab-section-content="'+tab_nr+'"]'),
+					new_bg			= current_content.data('av-tab-bg-color'),
+					new_font		= current_content.data('av-tab-color');
+
+				tabs.attr('style','').removeClass('av-active-tab-title');
+				current_tab.addClass('av-active-tab-title');
+				
+				if(new_bg != "") current_arrow.css('background-color', new_bg);
+				if(new_font != "") current_tab.css('color', new_font);
+				
+				var new_pos = ((parseInt(tab_nr,10) - 1) * -100 );
+				
+				if(cssActive)
+				{
+					//move the slides
+					new_pos = new_pos / tabs.length;
+					transition['transform']  = transform3d ? "translate3d(" + new_pos  + "%, 0, 0)" : "translate(" + new_pos + "%,0)"; //3d or 2d transform?
+					transition['left'] = "0%";
+					content_wrap.css(transition);
+				}
+				else
+				{
+					content_wrap.css('left',  new_pos + "%");
+				}
+				
+				set_tab_titlte_pos();
+				
+				setTimeout(function()
+				{
+					current_content.trigger('avia_start_animation_if_current_slide_is_active');
+					single_tabs.not(current_content).trigger('avia_remove_animation');
+				}, 600);				
+			},
+			set_min_width = function()
+			{
+				min_width = 0;
+				tabs.each(function()
+				{ 
+					min_width += $(this).outerWidth(); 
+				});
+				
+				tab_wrap.css('min-width',min_width);
+			},
+			set_tab_titlte_pos = function()
+			{
+				//scroll the tabs if there is not enough room to display them all
+				var current_tab = container.find('.av-active-tab-title'),
+					viewport	= container.width(),
+					left_pos	= viewport < min_width ? (current_tab.position().left * - 1) - (current_tab.outerWidth() / 2) + (viewport / 2): 0;
+				
+				if(left_pos + min_width < viewport) left_pos = (min_width - viewport) * -1;
+				if(left_pos > 0) left_pos = 0;
+				
+				tab_wrap.css('left',left_pos );
+			},
+			switch_to_next_prev = function(e)
+			{
+				if(!isMobile) return;
+				
+				var clicked 		= $(e.currentTarget),
+					current_tab 	= container.find('.av-active-tab-title');
+					
+					if(clicked.is('.av_prev_tab_section'))
+					{
+						current_tab.prev('.av-section-tab-title').trigger('click');
+					}
+					else
+					{
+						current_tab.next('.av-section-tab-title').trigger('click');
+					}
+			}
+			
+			
+		tabs.on('click', change_tab);
+		
+		tab_nav.on('click', switch_to_next_prev);
+		
+		win.on('debouncedresize', set_tab_titlte_pos);	
+		
+		set_min_width();
+		
+		//force a click on page load to properly set the tab color
+		container.find('.av-active-tab-title').trigger('click');	
+		
+		content_wrap.avia_swipe_trigger({prev:'.av_prev_tab_section', next:'.av_next_tab_section'});
+			
+	});
+};
+
+
+
+
+// -------------------------------------------------------------------------------------------
+// Horizontal Gallery
+// -------------------------------------------------------------------------------------------
+
+$.fn.avia_hor_gallery= function(options)
+{
+	var defaults =
+		{
+			slide_container	: '.av-horizontal-gallery-inner', //element with max width
+			slide_element	: '.av-horizontal-gallery-slider', //element that gets moved
+			slide_content	: '.av-horizontal-gallery-wrap',
+			active			: 'av-active-gal-item',				// must be a class string without the . in front
+			prev			: '.av-horizontal-gallery-prev',
+			next			: '.av-horizontal-gallery-next'
+		};
+
+	var options = $.extend(defaults, options);
+	
+	var win 			= $(window),
+		browserPrefix 	= $.avia_utilities.supports('transition'),
+		cssActive 		= this.browserPrefix !== false ? true : false,
+		isMobile 		= $.avia_utilities.isMobile,
+		transform3d		= document.documentElement.className.indexOf('avia_transform3d') !== -1 ? true : false,
+		transition		= {};
+		
+	return this.each(function()
+	{
+		var container 			= $(this),
+			slide_container 	= container.find(options.slide_container),
+			slide_element		= container.find(options.slide_element),
+			slide_content		= container.find(options.slide_content),
+			prev				= container.find(options.prev),
+			next				= container.find(options.next),
+			imgs				= container.find('img'),
+			
+			all_elements_width 	= 0,
+			currentIndex		= false,
+			
+			set_up = function( init )
+			{
+				var sl_height = (slide_container.width() / 100 ) * slide_container.data('av-height');
+				
+				slide_container.css({'padding':0}).height(sl_height);
+				
+				//fixes img distortion when resizing browser:
+				imgs.css('display','inline-block');
+				setTimeout(function(){ imgs.css('display','block'); }, 10);
+				
+				//calculate the slidelement width based on the elements inside
+				all_elements_width = 0;
+				
+				slide_content.each(function()
+				{ 
+					all_elements_width += $(this).outerWidth( true ); 
+				});
+				
+				slide_element.css( 'min-width' , all_elements_width );
+				
+				if(currentIndex !== false )
+				{
+					change_active(currentIndex);
+				}
+			},
+			change_active = function(index)
+			{
+				//scroll the tabs if there is not enough room to display them all
+				var current 	= slide_element.find(options.slide_content).eq(index),
+					viewport	= slide_container.width(),
+					outerWidth	= current.outerWidth( true ),
+					left_pos	= viewport < all_elements_width ? (current.position().left * - 1) - (outerWidth / 2) + (viewport / 2): 0;
+				
+				//out of bounce right side
+				if(left_pos + all_elements_width < viewport) left_pos = (all_elements_width - viewport - parseInt(current.css('margin-right'),10) ) * -1;
+				
+				//out of bounce left side
+				if(left_pos > 0) left_pos = 0;
+				
+				//set pos
+				slide_element.css('left',left_pos );
+				
+				slide_container.find("." +options.active).removeClass(options.active);
+				current.addClass(options.active);
+				currentIndex = index;
+				
+			};
+
+			
+		// activate behavior
+		set_up( 'init' );
+		win.on('debouncedresize', set_up);
+		
+		//swipe on mobile
+		slide_element.avia_swipe_trigger({prev:options.prev, next:options.next});
+		
+		//element click
+		slide_content.on('click', function(e)
+		{
+			var current = $(this);
+			var index = slide_content.index(current);
+			
+			if(currentIndex === index)
+			{
+				if(container.data('av-enlarge') > 1 && !$(e.target).is('a') )
+				{
+					slide_container.find("." +options.active).removeClass(options.active);
+					currentIndex = false;	
+				}
+				return;
+			}
+			
+			change_active(index);
+		});
+		
+		prev.on('click', function(e)
+		{
+			if(currentIndex === false) currentIndex = 1;
+			var index = currentIndex - 1;
+			if(index < 0) index = 0;
+			
+			change_active(index);
+		});
+		
+		next.on('click', function(e)
+		{
+			if(currentIndex === false) currentIndex = -1;
+			var index = currentIndex + 1;
+			if(index > slide_content.length - 1) index = slide_content.length - 1;
+			
+			change_active(index);
+		});
+		
+		//if its a desktop browser add arrow navigation, otherwise add touch nav
+		if(!isMobile)
+		{
+			container.avia_keyboard_controls({ 37: options.prev, 39: options.next });
+		}
+		else
+		{
+			container.avia_swipe_trigger({next: options.next, prev: options.prev});
+		}
+		
+		
+	
+	});
+};
+
 // -------------------------------------------------------------------------------------------
 // Big Number animation shortcode javascript
 // -------------------------------------------------------------------------------------------
 
 (function($)
 {
-	$.fn.avia_sc_animated_number = function(options)
+	// options.simple_up = dont prepend leading zeros, options.instant_start = trigger counting instantly, options.start_timer = delay when to start counting
+	$.fn.avia_sc_animated_number = function(options) 
 	{
+		if(!this.length) return;
+		if(this.is('.avia_sc_animated_number_active')) return;
+		
+		this.addClass('avia_sc_animated_number_active');
+	
 		var skipStep = false,
+			simple_upcount 	= (options && options.simple_up) ? true : false,
+			start_timer 	= (options && options.start_timer) ? options.start_timer : 300,
 		start_count = function(element, countTo, increment, current, fakeCountTo)
 		{
+			
+			
 			//calculate the new number
 			var newCount = current + increment;
 			
@@ -2767,6 +3109,7 @@ $.fn.avia_sc_tabs= function(options)
 			if(newCount >= fakeCountTo) 
 			{
 				element.text(countTo); //exit
+				
 			}
 			else
 			{
@@ -2775,14 +3118,16 @@ $.fn.avia_sc_tabs= function(options)
 				//if the number has less digits than the final number some zeros where omitted. add them to the front
 				for(var i = addZeros; i > 0; i--){ prepend += "0"; }
 				
+				if(simple_upcount) prepend = 0;
 				element.text(prepend + newCount);
+				
 				window.requestAnimationFrame(function(){ start_count(element, countTo, increment, newCount, fakeCountTo) });
 			}
 		};
 	
 		return this.each(function()
 		{
-			var number_container = $(this), elements = number_container.find('.avia-single-number'), countTimer = number_container.data('timer') || 3000;
+			var number_container = $(this), elements = number_container.find('.__av-single-number'), countTimer = number_container.data('timer') || 3000;
 			
 			//prepare elements
 			elements.each(function(i)
@@ -2807,9 +3152,16 @@ $.fn.avia_sc_tabs= function(options)
 					increment = Math.round( fakeCountTo * 32 / countTimer);
 					if(increment == 0 || increment % 10 == 0) increment += 1;
 					
-					setTimeout(function(){ start_count(element, countTo, increment, current, fakeCountTo);}, 300);
+					setTimeout(function(){ start_count(element, countTo, increment, current, fakeCountTo);}, start_timer);
 				});
 			});
+			
+			if(options && options.instant_start == true)
+			{
+				number_container.trigger('avia_start_animation');
+			}
+			
+			
 		});
 	}
 })(jQuery);
@@ -3432,7 +3784,7 @@ $.fn.aviaccordion = function( options )
     		
     		_self.options = $.extend({}, options, this.$slider.data());
 			_self.$inner.addClass('av-rotation-active');
-			if(_self.options.fixwidth == 1) this.$inner.width(this.$current.width());
+			//if(_self.options.fixwidth == 1) this.$inner.width(this.$current.width());
 			_self._autoplay();
     	},
     	
@@ -3544,7 +3896,20 @@ $.fn.avia_textrotator = function( options )
 				{
 					element.waypoint(function(direction)
 					{
-					 	$(this.element).addClass('avia_start_animation').trigger('avia_start_animation');
+					 	var current 	= $(this.element),
+					 		parent  	= current.parents('.av-animation-delay-container:eq(0)');
+					 	
+					 	if(parent.length)
+					 	{
+						 	current.addClass('avia_start_animation_when_active').trigger('avia_start_animation_when_active');
+					 	}
+					 	
+					 	if(!parent.length || (parent.length && parent.is('.__av_init_open')))
+					 	{
+						 	current.addClass('avia_start_animation').trigger('avia_start_animation');
+					 	}
+					 	
+					 	
 					 	
 					}, options );
 				}
@@ -3711,7 +4076,7 @@ $.extend( $.easing,
 					loader.loading_item.css({display:'block', opacity:0});
 				}
 
-				loader.loading_item.stop().animate({opacity:0.7});
+				loader.loading_item.stop().animate({opacity:1});
 			},
 
 			hide: function()
@@ -3729,7 +4094,7 @@ $.extend( $.easing,
 			{
 				if(typeof attach_to === 'undefined'){ attach_to = 'body';}
 
-				loader.loading_item = $('<div class="avia_loading_icon"></div>').css({display:"none"}).appendTo(attach_to);
+				loader.loading_item = $('<div class="avia_loading_icon"><div class="av-siteloader"></div></div>').css({display:"none"}).appendTo(attach_to);
 			}
 		}
 
