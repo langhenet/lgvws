@@ -479,7 +479,8 @@ label[for="activity__form-trigger"] {
 }
 
 .activity-grid__item-container,
-.main_color .activity-grid__item-container {
+.main_color .activity-grid__item-container,
+.alternate_color .activity-grid__item-container {
   box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
   display: flex;
   flex-direction: column;
@@ -500,7 +501,8 @@ label[for="activity__form-trigger"] {
 }
 
 .activity-grid__read-more,
-.main_color .activity-grid__read-more {
+.main_color .activity-grid__read-more,
+.alternate_color .activity-grid__read-more {
   font-weight: family(primary, bold);
   text-transform: uppercase;
   color: $viola;
@@ -514,7 +516,8 @@ label[for="activity__form-trigger"] {
 }
 
 .grid-item__book-now,
-.main_color .grid-item__book-now {
+.main_color .grid-item__book-now,
+.alternate_color .grid-item__book-now {
   @extend %button;
   @include button(small, 3, quarter);
   @include button-color(main);

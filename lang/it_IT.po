@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Enfold v3.6\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-03-23 08:05+0100\n"
-"PO-Revision-Date: 2017-03-23 08:10+0100\n"
+"POT-Creation-Date: 2017-03-23 09:20+0100\n"
+"PO-Revision-Date: 2017-03-23 09:22+0100\n"
 "Last-Translator: Alessandro Di Leonardo <axdil@hotmail.it>\n"
 "Language-Team: Alessandro Di Leonardo <axdil1972@libero.it>\n"
 "Language: it_IT\n"
@@ -20799,7 +20799,7 @@ msgstr "Durata:"
 #: single-lgactivity.php:49 single-lgactivity.php:90
 #: templates/grid-activities.php:30
 msgid "Book Now"
-msgstr "Prenota Adesso"
+msgstr "Prenota Ora"
 
 #: single-lgactivity.php:63
 msgid "NOT SURE?"
@@ -20808,6 +20808,10 @@ msgstr "NON SEI SICURO?"
 #: single-lgactivity.php:66
 msgid "ask us a question &raquo"
 msgstr "facci una domanda &raquo"
+
+#: single-lgactivity.php:106
+msgid "Activities Nearby"
+msgstr ""
 
 # @ avia_framework
 #: template-archives.php:53
