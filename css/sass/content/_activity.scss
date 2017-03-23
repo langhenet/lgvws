@@ -332,6 +332,7 @@
 }
 
 
+
 ///
 // Hidden checkbox for togle effect
 ///
@@ -341,6 +342,7 @@
 
 label[for="activity__form-trigger"] {
   cursor: pointer;
+  border-bottom: 1px dashed;
 }
 
 .activity__form-trigger:checked ~ .activity__form-container {

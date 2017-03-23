@@ -8,21 +8,6 @@
 	 $activitymeta = get_post_meta($id);
 	 $tax = wp_get_post_terms( $id, 'lgarea' );
 ?>
-<!-- <script>
-jQuery(function(){
-        // Check the initial Position of the fixed_nav_container
-        var stickyHeaderTop = jQuery('.info-box__title').offset().top;
-
-        jQuery(window).scroll(function(){
-                if( jQuery(window).scrollTop() > stickyHeaderTop + 210 ) {
-                        jQuery('.info-box__title').addClass('lg-sticky');
-
-                } else {
-                        jQuery('.info-box__title').removeClass('lg-sticky');
-                }
-        });
-  });
-</script> -->
 <!-- Header -->
 <div class="activity__header" style="background-image: url(<?php the_post_thumbnail_url( 'full' ) ?>)">
 	<div class="activity__breadcrumbs-container">
@@ -61,7 +46,7 @@ jQuery(function(){
 					<p class="info-box__price">€<?php echo $activitymeta['wpcf-lgp-price'][0] ?></p>
 					<p class="info-box__additional-info"><?php  echo __( 'Duration:', 'activities' ) .  ' ' . $activitymeta['wpcf-lg-duration'][0] . ' ' . __('hours' , 'activities') ?></p>
 					<p class="info-box__button-container">
-						<a href="#" id="book-now" class="info-box__button">Book Now</a>
+						<a href="#" id="book-now" class="info-box__button"><?php _e('Book Now' , 'activities'); ?></a>
 					</p>
 					<script src="//booking.langhe.net/it/api/public"></script>
 					<script>
@@ -75,7 +60,7 @@ jQuery(function(){
 												.registerOnClick("#book-now");
 							})();
 					</script>
-					<p class="activity__trigger-question"><strong>NOT SURE?</strong></p>
+					<p class="activity__trigger-question"><strong><?php _e('NOT SURE?'); ?></strong></p>
 					<input type="checkbox" id="activity__form-trigger" class="activity__form-trigger" />
 					<p class="activity__trigger-container">
 						<label for="activity__form-trigger"><?php _e('ask us a question &raquo') ?></label>
@@ -102,7 +87,7 @@ jQuery(function(){
 	</div>
 </div>
 <p class="mobile-button__container">
-	<a href="#" id="mobile-book-now" class="mobile__button">Book Now</a>
+	<a href="#" id="mobile-book-now" class="mobile__button"><?php _e('Book Now' , 'activities'); ?></a>
 </p>
 <script src="//booking.langhe.net/it/api/public"></script>
 <script>
@@ -118,7 +103,7 @@ jQuery(function(){
 </script>
 <div class="activity__related">
 	<div class="activity__related-inner">
-		<h2 class="activity__section-title">Activities Nearby</h2>
+		<h2 class="activity__section-title"><?php _e('Activities Nearby' , 'activities'); ?></h2>
 		<div class="activity__related-row">
 			<?php
 				$related_activities = new WP_Query( array(
