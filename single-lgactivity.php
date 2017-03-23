@@ -41,7 +41,7 @@
 			<div class="activty__info-container">
 				<div class="activity__info-box">
 					<div class="info-box__title">
-						<h3><?php _e('Book this activity') ?></h3>
+						<h3><?php _e('Book this activity' , 'activities') ?></h3>
 					</div>
 					<p class="info-box__price">€<?php echo $activitymeta['wpcf-lgp-price'][0] ?></p>
 					<p class="info-box__additional-info"><?php  echo __( 'Duration:', 'activities' ) .  ' ' . $activitymeta['wpcf-lg-duration'][0] . ' ' . __('hours' , 'activities') ?></p>
@@ -60,10 +60,10 @@
 												.registerOnClick("#book-now");
 							})();
 					</script>
-					<p class="activity__trigger-question"><strong><?php _e('NOT SURE?'); ?></strong></p>
+					<p class="activity__trigger-question"><strong><?php _e('NOT SURE?' , 'activities'); ?></strong></p>
 					<input type="checkbox" id="activity__form-trigger" class="activity__form-trigger" />
 					<p class="activity__trigger-container">
-						<label for="activity__form-trigger"><?php _e('ask us a question &raquo') ?></label>
+						<label for="activity__form-trigger"><?php _e('ask us a question &raquo' , 'activities') ?></label>
 					</p>
 					<div class="activity__form-container">
 						<?php gravity_form( 65, $display_title = false, $display_description = false, $display_inactive = false, $field_values = null, $ajax = true, $tabindex = 1, $echo = true ); ?>
