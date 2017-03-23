@@ -649,3 +649,31 @@ add_shortcode('lg-breadcrumbs', 'avia_breadcrumbs');
 
 //FIX MAPS
 add_filter( 'avf_load_google_map_api', '__return_false' );
+
+//Shortcode Attività
+add_shortcode( 'activities', 'lg_listactivities' );
+function lg_listactivities() {
+  ob_start();
+  $activities = new WP_Query( array(
+    'post_type' => 'lgactivity',
+    'posts_per_page' => -1,
+    'no_found_rows' => true,
+    'meta_key' => 'wpcf-lg-public',
+    'meta_value' => '1',
+    'meta_compare' => '=',
+  ) );
+  ?>
+	<div class="activity__related-row">
+  <?php  if ( $activities->have_posts() ) :
+      while ( $activities->have_posts() ) :
+          $activities->the_post();
+          get_template_part( 'templates/grid', 'activities' );
+      endwhile;
+      wp_reset_postdata();
+  endif;
+  ?>
+</div>
+<?php
+  $output = ob_get_clean();
+  return $output;
+}

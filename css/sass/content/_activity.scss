@@ -70,6 +70,7 @@
 
   @include breakpoint-max(md) {
     @include make-col(12);
+    padding: 0 $line-height;
   }
 }
 
@@ -403,6 +404,42 @@ label[for="activity__form-trigger"] {
   }
 }
 
+//**************************************************************************************************//
+// MOBILE button
+//*************************************************************************************************//
+
+@include breakpoint-min(md) {
+  .mobile-button__container {
+    display: none;
+  }
+}
+
+.mobile-button__container {
+  position: fixed;
+  margin-top: 0;
+  margin-bottom: 0;
+  bottom: 2vw;
+  right: 2vw;
+  background: $verde;
+  height: 5em;
+  width: 5em;
+  border-radius: 100%;
+  z-index: 99999;
+  vertical-align: middle;
+  padding-top: 1.5em;
+  font-size: 0.75em;
+  line-height: 1em;
+  text-transform: uppercase;
+  font-weight: bold;
+  text-align: center;
+  box-shadow: 0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);
+}
+
+.mobile__button {
+  color: #fff;
+  padding-top: 1.5em;
+}
+
 //*************************************************************************************************//
 // GRID
 //************************************************************************************************//
@@ -438,7 +475,8 @@ label[for="activity__form-trigger"] {
   }
 }
 
-.activity-grid__item-container {
+.activity-grid__item-container,
+.main_color .activity-grid__item-container {
   box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
   display: flex;
   flex-direction: column;
@@ -447,6 +485,7 @@ label[for="activity__form-trigger"] {
   background: $bianco;
   border-radius: 3px;
   overflow: hidden;
+  border-bottom: 3px solid $viola-washed;
 }
 
 .grid-item__description-container p {
@@ -457,12 +496,27 @@ label[for="activity__form-trigger"] {
   }
 }
 
-.grid-item__book-now {
+.activity-grid__read-more,
+.main_color .activity-grid__read-more {
+  font-weight: family(primary, bold);
+  text-transform: uppercase;
+  color: $viola;
+}
+
+.activity-grid__price {
+  @include font(p, $mb:0);
+  strong {
+    color: $grigio;
+  }
+}
+
+.grid-item__book-now,
+.main_color .grid-item__book-now {
   @extend %button;
   @include button(small, 3, quarter);
   @include button-color(main);
 
-  margin-bottom: scale(small, lh) / 2;
+  margin-bottom: 0;
 
   text-transform: uppercase;
   padding-left: 0.5em;

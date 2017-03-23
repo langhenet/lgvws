@@ -101,6 +101,21 @@ jQuery(function(){
 		</div>
 	</div>
 </div>
+<p class="mobile-button__container">
+	<a href="#" id="mobile-book-now" class="mobile__button">Book Now</a>
+</p>
+<script src="//booking.langhe.net/it/api/public"></script>
+<script>
+		(function() {
+				var button = new TrekkSoft.Embed.Button();
+				button
+							.setAttrib("target", "fancy")
+							.setAttrib("entryPoint", "tour")
+							.setAttrib("tourId", "<?php echo $activitymeta['wpcf-lg-trekksoft-activity'][0] ?>")
+							.setAttrib("fancywidth", "95%")
+							.registerOnClick("#mobile-book-now");
+		})();
+</script>
 <div class="activity__related">
 	<div class="activity__related-inner">
 		<h2 class="activity__section-title">Activities Nearby</h2>
@@ -121,7 +136,6 @@ jQuery(function(){
 						),
 					),
 				) );
-
 				if ( $related_activities->have_posts() ) :
 				    while ( $related_activities->have_posts() ) :
 				        $related_activities->the_post();
@@ -133,6 +147,5 @@ jQuery(function(){
 		</div>
 	</div>
 </div>
-<pre><?php var_dump($activitymeta) ?></pre>
 
 <?php get_footer(); ?>
