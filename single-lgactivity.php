@@ -34,7 +34,7 @@
 				<?php the_content(); ?>
 
 				<?php if ( !empty($activitymeta['_wpcf_belongs_lgbusiness_id'][0]) ) : ?>
-					<h3 class="activity-content__title"><?php _e('About ' , 'activities'); echo get_the_title( $activitymeta['_wpcf_belongs_lgbusiness_id'][0] ) ?></h3>
+					<h3 class="activity-content__title"><?php echo __('About' , 'activities') , ' ' , get_the_title( $activitymeta['_wpcf_belongs_lgbusiness_id'][0] ) ?></h3>
 					<?php echo get_the_excerpt( $activitymeta['_wpcf_belongs_lgbusiness_id'][0] ) ?>
 				<?php endif; ?>
 			</div>
@@ -87,7 +87,7 @@
 	</div>
 </div>
 <p class="mobile-button__container">
-	<a href="#" id="mobile-book-now" class="mobile__button"><?php _e('Book Now' , 'activities'); ?></a>
+	<a href="#" id="mobile-book-now" class="mobile__button"><?php _e('Book<br/>Now' , 'activities'); ?></a>
 </p>
 <script src="//booking.langhe.net/it/api/public"></script>
 <script>
