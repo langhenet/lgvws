@@ -100,7 +100,7 @@
   max-width: $website-width;
   position: relative;
   margin: 0 auto;
-  z-index: 999;
+  z-index: 99;
 
   @include breakpoint-max(sm) {
     display: none;
@@ -117,7 +117,7 @@
   p {
     @include font(small);
     padding: 0 ($line-height / 2);
-    background: rgba($nero, 0.7);
+    background: rgba($rosso, 0.5);
     text-transform: uppercase;
     border-radius: 3px;
   }
