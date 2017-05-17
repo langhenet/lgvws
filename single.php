@@ -8,10 +8,11 @@
 	 */
 	 get_header();
 
-	$cats = get_the_category();
-	$title  = __('Blog - Latest News', 'avia_framework'); //default blog title
-	$t_link = get_category_link( $cats[0] );
-	$t_sub = "";
+	 $cats = get_the_category();
+	 $title  = __('Blog - Latest News', 'avia_framework'); //default blog title
+	 $t_link = get_category_link( $cats[0] );
+	 $t_sub = "";
+
 
 	if(avia_get_option('frontpage') && $new = avia_get_option('blogpage'))
 	{

@@ -1043,7 +1043,8 @@ if(!function_exists('avia_which_archive'))
 		elseif(is_tax())
 		{
 			$term = get_term_by( 'slug', get_query_var( 'term' ), get_query_var( 'taxonomy' ) );
-			$output = $term->name;
+      $output = $term->name;
+
 		}
 		else
 		{

@@ -1171,6 +1171,11 @@ color: #f3f3f3;
 font-size: 0.8em;
 font-weight: 300;
 font-family: 'Open Sans';
+
+  a {
+    color: #f3f3f3;
+  }
+
 }
 
 /*****************HEADER
@@ -1314,6 +1319,10 @@ display:none;
 }
 
 /*Carrellino */
+
+.cart_dropdown {
+  right: 0;
+}
 
 @media only screen and (max-width: 989px) and (min-width: 768px) {
   .responsive.html_mobile_menu_tablet.html_visible_cart #top .cart_dropdown {
@@ -2215,7 +2224,7 @@ div.product div.images div.thumbnails {
   width: 23.2%;
 }
 
-#top .related.products h2, #top .upsells.products h2 {
+#top .related.products > h2, #top .upsells.products > h2 {
   font-size: 4.100000000em;
   line-height: 1.097560976em;
   margin-top: 0em;
@@ -2788,6 +2797,7 @@ table.shop_table tr.total td {
   padding:0;
   text-align: left;
   margin-top: 30px;
+  margin-bottom: 0;
 }
 
 #top #payment .terms label.checkbox {

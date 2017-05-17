@@ -31,7 +31,7 @@ if (have_posts()) :
 	$current_post['post_format'] 	= get_post_format() ? get_post_format() : 'standard';
 	$current_post['post_layout']	= avia_layout_class('main', false);
 	$blog_content = !empty($avia_config['blog_content']) ? $avia_config['blog_content'] : "content";
-	if(!is_single()) $blog_content = "excerpt_read_more";
+if(!is_single()) $blog_content = "excerpt_read_more";
 
 
 	/*If post uses builder change content to exerpt on overview pages*/

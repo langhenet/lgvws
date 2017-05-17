@@ -146,11 +146,11 @@ $avia_config['imgSize']['square'] 		 	    = array('width'=>180, 'height'=>180);	
 $avia_config['imgSize']['featured'] 		 	= array('width'=>1500, 'height'=>430 );						// images for fullsize pages and fullsize slider
 $avia_config['imgSize']['featured_large'] 		= array('width'=>1500, 'height'=>630 );						// images for fullsize pages and fullsize slider
 $avia_config['imgSize']['extra_large'] 		 	= array('width'=>1500, 'height'=>1500 , 'crop' => false);	// images for fullscrren slider
-$avia_config['imgSize']['portfolio']        = array('width'=>814, 'height'=>462 );						// images for portfolio entries (2,3 column)
+$avia_config['imgSize']['portfolio']        = array('width'=>814, 'height'=>462 );                					// images for portfolio entries (2,3 column)
 $avia_config['imgSize']['portfolio_small'] 		= array('width'=>260, 'height'=>185 );						// images for portfolio 4 columns
 $avia_config['imgSize']['gallery'] 		 		= array('width'=>845, 'height'=>684 );						// images for portfolio entries (2,3 column)
-$avia_config['imgSize']['magazine']       = array('width'=>555, 'height'=>315 );						// images for magazines
-$avia_config['imgSize']['masonry']        = array('width'=>855, 'height'=>495 );		// images for fullscreen masonry
+$avia_config['imgSize']['magazine']      = array('width'=>555, 'height'=>315 );						// images for magazines
+$avia_config['imgSize']['masonry']                     = array('width'=>855, 'height'=>495 );		// images for fullscreen masonry
 $avia_config['imgSize']['entry_with_sidebar']      = array('width'=>870, 'height'=>480);		            	// big images for blog and page entries
 $avia_config['imgSize']['entry_without_sidebar']= array('width'=>1210, 'height'=>423 );						// images for fullsize pages and fullsize slider
 $avia_config['imgSize'] = apply_filters('avf_modify_thumb_size', $avia_config['imgSize']);
@@ -562,7 +562,6 @@ require_once( 'functions-enfold.php');
  * add option to edit elements via css class
  */
 // add_theme_support('avia_template_builder_custom_css');
-
 
 //PAGINAZIONE PER VIEWS// i dati per le funzioni della paginaziona sono: framework/php/function-set-avia-frontend.php
 // Get the page number into wp_pagenavi
