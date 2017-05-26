@@ -33,42 +33,6 @@
 
 				<?php the_content(); ?>
 
-				<?php if ( !empty($activitymeta['_wpcf_belongs_lgbusiness_id'][0]) ) : ?>
-					<h3 class="activity-content__title"><?php echo __('About' , 'activities') , ' ' , get_the_title( $activitymeta['_wpcf_belongs_lgbusiness_id'][0] ) ?></h3>
-					<?php echo get_the_excerpt( $activitymeta['_wpcf_belongs_lgbusiness_id'][0] ) ?>
-				<?php endif; ?>
-			</div>
-			<div class="activty__info-container">
-				<div class="activity__info-box">
-					<div class="info-box__title">
-						<h3><?php _e('Book this activity' , 'activities') ?></h3>
-					</div>
-					<p class="info-box__price">€<?php echo $activitymeta['wpcf-lgp-price'][0] ?></p>
-					<p class="info-box__additional-info"><?php  echo __( 'Duration:', 'activities' ) .  ' ' . $activitymeta['wpcf-lg-duration'][0] . ' ' . __('hours' , 'activities') ?></p>
-					<p class="info-box__button-container">
-						<a href="#" id="book-now" class="info-box__button"><?php _e('Book Now' , 'activities'); ?></a>
-					</p>
-					<script src="//booking.langhe.net/it/api/public"></script>
-					<script>
-							(function() {
-									var button = new TrekkSoft.Embed.Button();
-									button
-												.setAttrib("target", "fancy")
-												.setAttrib("entryPoint", "tour")
-												.setAttrib("tourId", "<?php echo $activitymeta['wpcf-lg-trekksoft-activity'][0] ?>")
-												.setAttrib("fancywidth", "95%")
-												.registerOnClick("#book-now");
-							})();
-					</script>
-					<p class="activity__trigger-question"><strong><?php _e('NOT SURE?' , 'activities'); ?></strong></p>
-					<input type="checkbox" id="activity__form-trigger" class="activity__form-trigger" />
-					<p class="activity__trigger-container">
-						<label for="activity__form-trigger"><?php _e('ask us a question &raquo' , 'activities') ?></label>
-					</p>
-					<div class="activity__form-container">
-						<?php gravity_form( 65, $display_title = false, $display_description = false, $display_inactive = false, $field_values = null, $ajax = true, $tabindex = 1, $echo = true ); ?>
-					</div>
-				</div>
 				<div class="activity__gallery">
 					<div class="avia-gallery deactivate_avia_lazyload avia_animate_when_visible avia_start_animation">
 						<div class="avia-gallery-thumb gallery-columns-2 popup-gallery">
@@ -79,6 +43,44 @@
 								<img src="<?php echo(types_render_field( "lg-images", array( "alt" => "<?php the_title() ?>", "size" => "portfolio", "url" => "true", "index" => $key ) )); ?>" class="activity-gallery__image">
 							</a>
 							<?php endforeach; ?>
+						</div>
+					</div>
+				</div>
+
+				<?php if ( !empty($activitymeta['_wpcf_belongs_lgbusiness_id'][0]) ) : ?>
+					<h3 class="activity-content__title"><?php echo __('About' , 'activities') , ' ' , get_the_title( $activitymeta['_wpcf_belongs_lgbusiness_id'][0] ) ?></h3>
+					<p><?php echo get_the_excerpt( $activitymeta['_wpcf_belongs_lgbusiness_id'][0] ) ?></p>
+				<?php endif; ?>
+			</div>
+			<div class="activty__info-container">
+				<div class="activity__info-box">
+					<div class="info-box__title">
+						<h3><?php _e('Book this activity' , 'activities') ?></h3>
+					</div>
+					<script type="text/javascript" src="//langhe.checkfront.com/lib/interface--31.js"></script>
+						<!-- CHECKFRONT BOOKING PLUGIN v23 -->
+						<div id="CHECKFRONT_WIDGET_01" style="margin: 0 0">
+							<p id="CHECKFRONT_LOADER" style="background: url('//langhe.checkfront.com/images/loader.gif') left center no-repeat; padding: 5px 5px 5px 20px">Searching Availability...</p>
+						</div>
+							<script>
+								new DROPLET.Widget ({
+									host: 'langhe.checkfront.com',
+									target: 'CHECKFRONT_WIDGET_01',
+									//item_id: '3',
+									category_id: '1',
+									lang_id: 'it',
+									options: 'hidedates', //hidesearch, tabs
+									provider: 'droplet'
+								}).render();
+							</script>
+					<div class="activity__trigger">
+						<p class="activity__trigger-question"><strong><?php _e('NOT SURE?' , 'activities'); ?></strong></p>
+						<input type="checkbox" id="activity__form-trigger" class="activity__form-trigger" />
+						<p class="activity__trigger-container">
+							<label for="activity__form-trigger"><?php _e('ask us a question &raquo' , 'activities') ?></label>
+						</p>
+						<div class="activity__form-container">
+							<?php gravity_form( 65, $display_title = false, $display_description = false, $display_inactive = false, $field_values = null, $ajax = true, $tabindex = 1, $echo = true ); ?>
 						</div>
 					</div>
 				</div>
