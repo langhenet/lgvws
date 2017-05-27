@@ -13,7 +13,6 @@
 	 $t_link = get_category_link( $cats[0] );
 	 $t_sub = "";
 
-
 	if(avia_get_option('frontpage') && $new = avia_get_option('blogpage'))
 	{
 		$cats = get_the_category();
@@ -42,9 +41,7 @@
                     */
 
                         get_template_part( 'includes/loop', 'index' );
-
 												get_template_part( 'includes/loop', 'about-author' );
-
                         //show related posts based on tags if there are any
                         get_template_part( 'includes/related-posts');
 

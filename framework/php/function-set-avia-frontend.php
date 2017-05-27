@@ -1044,7 +1044,6 @@ if(!function_exists('avia_which_archive'))
 		{
 			$term = get_term_by( 'slug', get_query_var( 'term' ), get_query_var( 'taxonomy' ) );
       $output = $term->name;
-
 		}
 		else
 		{

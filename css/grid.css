@@ -72,7 +72,7 @@ body .unit.alpha, body .units.alpha {
 /* Base sizes */
 
 .container .av-content-full.units  {width: 100%}
-.container .av-content-small.units {width: 74.36% !important}
+.container .av-content-small.units {width: 74.36%!important;}
 
 
 .boxed#top, .html_boxed.html_header_sticky #header{ width: 1010px; }

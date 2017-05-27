@@ -15,8 +15,8 @@
 ?><!DOCTYPE html>
 <html <?php language_attributes(); ?> class="<?php echo "html_{$style} ".$responsive." ".$preloader." ".$av_lightbox." ".$filterable_classes." ".$av_classes_manually ?> ">
 <head>
-<!-- TradeDoubler site verification 2872196 -->
 <meta charset="<?php bloginfo( 'charset' ); ?>" />
+<link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,400,600,300' rel='stylesheet' type='text/css'>
 <?php
 /*
  * outputs a rel=follow or nofollow tag to circumvent google duplicate content for archives
@@ -45,7 +45,7 @@ if( strpos($responsive, 'responsive') !== false ) echo '<meta name="viewport" co
 wp_head();
 
 ?>
-<link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,400,600,300' rel='stylesheet' type='text/css'>
+
 </head>
 
 
