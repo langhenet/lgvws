@@ -15,6 +15,14 @@
   z-index: -1;
 }
 
+///
+// GALLERIA
+///
+#top.single-lgvacation-package .avia-gallery .avia-gallery-thumb.gallery-columns-2 a:nth-child(odd),
+#top.single-lgvacation-package .gallery.gallery-columns-2 dl:nth-child(odd) {
+  clear: both;
+}
+
 ////
 // Icon Lists
 ///

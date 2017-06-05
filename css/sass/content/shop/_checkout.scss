@@ -1,0 +1,36 @@
+///
+// Select speciale
+///
+#top .select2-container {
+  //-webkit-appearance: menulist-button;
+  //height: size(h5, lh) * 2;
+
+  &.select2-container--open {
+    //position: relative !important;
+  }
+
+  .selection {
+    //height: $line-height;
+  }
+
+  &.select2-container--default .select2-selection--single {
+    @include form-field(h5, 2);
+    border-style: solid;
+    display: block;
+    height: scale(h5, lh) * 1.5;
+    border-color: $grigio-chiarissimo;
+  //  -webkit-appearance: menulist-button;
+
+    .select2-selection__arrow {
+      top: 25%;
+    }
+
+    .select2-selection__rendered {
+      line-height: scale(h5, lh);
+    }
+  }
+}
+
+.select2-container--open .select2-dropdown--below {
+  box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+}
