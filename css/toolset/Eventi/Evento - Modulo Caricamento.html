@@ -1,0 +1,220 @@
+[credform class='cred-form cred-keep-original']
+
+	[cred_field field='form_messages' value='' class='alert alert-warning']
+
+	<div class="form-group">
+		<label class="p-h3">Nome Evento</label>
+		[cred_field field='post_title' post='event' value='' urlparam='' class='form-control' output='bootstrap']
+    <div class="gfield_description">Usa un titolo siginificativo, che permetta al visitatori di capire di cosa si tratta
+    </div>
+	</div>
+
+	<div class="form-group">
+		<label class="p-h3">Descrizione Evento</label>
+		[cred_field field='post_content' post='event' value='' urlparam='' output='bootstrap']
+    <div class="gfield_description">Scrivi qui il programma completo dell'evento, includendo quante più informazioni possibili
+    </div>
+	</div>
+
+	<div class="form-group">
+		<label class="p-h3">Descrizione Breve</label>
+		[cred_field field='post_excerpt' post='event' value='' urlparam='' class='form-control' output='bootstrap']
+    <div class="gfield_description">Scrivi una breve descrizione del tuo evento, non più lunga di 2-3 righe.
+    </div>
+	</div>
+
+
+	<h2 class="gsection_title">Contatti dell&apos;Evento</h2>
+
+	<div class="form-group">
+		<label class="p-h3">Sito Web</label>
+		[cred_field field='lgb-url' post='event' value='' urlparam='' class='form-control' output='bootstrap']
+		<div class="gfield_description">L'indirizzo alla pagina specifica dell'evento, se ne esiste una.</div>
+	</div>
+
+	<div class="form-group">
+		<label class="p-h3">Email</label>
+		[cred_field field='lgb-email' post='event' value='' urlparam='' class='form-control' output='bootstrap']
+		<div class="gfield_description">L&apos;email che devono usare i visitatori per chiedere informazioni
+		</div>
+	</div>
+
+	<div class="form-group">
+		<label class="p-h3">Numero di telefono</label>
+		[cred_field field='lgb-telephone' post='event' value='' urlparam='' class='form-control' output='bootstrap']
+		<div class="gfield_description">Che numero di telefono devono chiamare i visitatori per chiedere informazioni?
+		</div>
+	</div>
+
+	<div class="form-group">
+		<label class="p-h3">Numero di Cellulare</label>
+		[cred_field field='lgb-mobile' post='event' value='' urlparam='' class='form-control' output='bootstrap']
+		<div class="gfield_description">
+			Che numero di cellulare devono chiamare i visitatori per chiedere informazioni?
+		</div>
+	</div>
+
+	<div class="form-group">
+		<label class="p-h3">Pagina Facebook</label>
+		[cred_field field='lgb-facebook' post='event' value='' urlparam='' class='form-control' output='bootstrap']
+		<div class="gfield_description">
+			Inserisci la pagina o l'evento Facebook di riferimento
+		</div>
+	</div>
+
+	<div class="form-group">
+		<label class="p-h3">Account Twitter</label>
+		[cred_field field='lgb-twitter' post='event' value='' urlparam='' class='form-control' output='bootstrap']
+		<div class="gfield_description">Inserisci l'account twitter di riferimento
+		</div>
+	</div>
+
+
+	<h2 class="gsection_title">Data e Ora</h2>
+
+	<div class="form-group">
+		<label class="p-h3">Data di Inizio</label>
+		[cred_field field='lge-stdate' post='event' value='' urlparam='' class='form-control' output='bootstrap']
+	</div>
+
+	<div class="form-group">
+		<label class="p-h3">Data Fine</label>
+		[cred_field field='lge-endate' post='event' value='' urlparam='' class='form-control' output='bootstrap']
+	</div>
+
+
+	<h2 class="gsection_title">Partecipazione</h2>
+
+	<div class="form-group">
+		<label class="p-h3">Come Partecipare</label>
+		[cred_field field='lge-reg' post='event' value='' urlparam='' output='bootstrap']
+		<div class="gfield_description">Cosa devono fare i visitatori per partecipare a questo evento? Telefonare? Scrivere un&apos;email? C&apos;è un biglietto da pagare? Quanto costa? Scrivi qui tutte le informazioni necessarie.
+		</div>
+	</div>
+
+	<div class="form-group">
+		<label class="p-h3">Link acquisto biglietto</label>
+		[cred_field field='lge-aff' post='event' value='' urlparam='' class='form-control' output='bootstrap']
+	</div>
+
+
+	<h2 class="gsection_title">Indirizzo e Posizione</h2>
+
+	<div class="form-group">
+		<label class="p-h3">Indirizzo Completo</label>
+		[cred_field field='lg-geo-address' post='event' value='' urlparam='' class='form-control' output='bootstrap']
+	</div>
+
+	<div class="form-group">
+		<label class="p-h3">Location</label>
+		[cred_field field='lge-location' post='event' value='' urlparam='' class='form-control' output='bootstrap']
+		<div class="gfield_description">
+			P.es "in piazza" o "Al Bar Mario"
+		</div>
+	</div>
+
+
+	<h2 class="gsection_title">Immagini & Video</h2>
+	<p>Carica immagini grandi almeno 1000px di lato lungo, preferibilmente di formato orizzontale. Grazie :-)</p>
+
+	<div class="form-group">
+		<label class="p-h3">Immagine in evidenza</label>
+		[cred_field field='_featured_image' value='' urlparam='' output='bootstrap']
+		<div class="gfield_description">
+			Carica qui l&apos;immagine più bella e significativa
+		</div>
+	</div>
+
+	<div class="form-group">
+		<label class="p-h3">Galleria Immagini</label>
+		[cred_field field='lg-images' post='event' value='' urlparam='' output='bootstrap']
+	</div>
+
+	<div class="form-group">
+		<label class="p-h3">Video</label>
+		[cred_field field='lgb-video' post='event' value='' urlparam='' class='form-control' output='bootstrap']
+		<div class="gfield_description">
+			Il tuo evento ha un video su YouTube o Vimeo? Incolla qui l&apos;indirizzo!
+		</div>
+	</div>
+
+
+	<h2 class="gsection_title">Categoria</h2>
+
+	<div class="form-group">
+		<label class="p-h3">Event Categories</label>
+		[cred_field field='event-categories' display='checkbox' output='bootstrap']
+	</div>
+
+
+	<h2 class="gsection_title">Informazioni sull&apos;Organizzatore</h2>
+
+	<div class="form-group">
+		<label class="p-h3">Seleziona l'&apos;organizzatore</label>
+		[cred_field field='_wpcf_belongs_lgevent-organizer_id' value='' class='form-control' output='bootstrap']
+		<div class="gfield_description">Se non trovi l&apos;organizzatore in questo elenco, seleziona &apos;Nessun Genitore&apos; e compila i dati qui sotto. Una volta inviati, creeremo l'organizzatore per te.
+		</div>
+	</div>
+
+	[cred_show_group if="($(_wpcf_belongs_lgevent-organizer_id) eq  '' ) OR ($(_wpcf_belongs_lgevent-organizer_id) eq  '-1' )"  mode="fade-slide"]
+
+	          <li class="gfield gfield_contains_required field_sublabel_below field_description_below">
+					<label class="gfield_label">Nome Organizzatore <small><sup style="color:red;">obbligatorio</sup></small></label>
+					<div class="ginput_container">
+						[cred_generic_field field="nome-organizzatore" type="textfield" class="" urlparam=""]
+	                    {
+	                      "required":1,
+	                      "validate_format":0,
+	                      "persist":1,
+	                      "default":""
+	                      }
+						[/cred_generic_field]
+					</div>
+				</li>
+	          <li class="gfield gfield_contains_required field_sublabel_below field_description_below">
+					<label class="gfield_label">Numero di Telefono Organizzatore</label>
+					<div class="ginput_container">
+						[cred_generic_field field="telefono-organizzatore" type="textfield" class="" urlparam=""]
+	                    {
+	                      "required":0,
+	                      "validate_format":0,
+	                      "persist":1,
+	                      "default":""
+	                      }
+						[/cred_generic_field]
+					</div>
+				</li>
+	          <li class="gfield gfield_contains_required field_sublabel_below field_description_below">
+					<label class="gfield_label">Email Organizzatore <small><sup style="color:red;">obbligatorio</sup></small></label>
+					<div class="ginput_container">
+						[cred_generic_field field="email-organizzatore" type="textfield" class="" urlparam=""]
+	                    {
+	                      "required":1,
+	                      "validate_format":0,
+	                      "persist":1,
+	                      "default":""
+	                      }
+						[/cred_generic_field]
+					</div>
+				</li>
+	          <li class="gfield gfield_contains_required field_sublabel_below field_description_below">
+					<label class="gfield_label">Sito Web Organizzatore</label>
+					<div class="ginput_container">
+						[cred_generic_field field="sito-organizzatore" type="textfield" class="" urlparam=""]
+	                    {
+	                      "required":0,
+	                      "validate_format":0,
+	                      "persist":1,
+	                      "default":""
+	                      }
+						[/cred_generic_field]
+					</div>
+				</li>
+	[/cred_show_group]
+
+
+
+
+	[cred_field field='form_submit' value='Invia il tuo Evento!' urlparam='' class='btn btn-primary btn-lg' output='bootstrap']
+
+[/credform]
