@@ -2,6 +2,7 @@
 if ( !defined('ABSPATH') ){ die(); }
 
 global $avia_config;
+add_theme_support('deactivate_layerslider');
 
 /*
  * if you run a child theme and dont want to load the default functions.php file

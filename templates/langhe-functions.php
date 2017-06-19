@@ -114,3 +114,4 @@ add_filter( 'avf_load_google_map_api', '__return_false' );
 
 //SHORTCODE BREADCRUMBS
 add_shortcode('lg-breadcrumbs', 'avia_breadcrumbs');
+

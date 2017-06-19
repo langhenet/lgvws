@@ -1,0 +1,14 @@
+#top label.p-h3 {
+  @include font(p, $mt: scale(p, lh), $mb: 0, $wt: bold);
+  display: block;
+  text-transform: uppercase;
+}
+
+#top .cred-form .form-group {
+  margin-bottom: $line-height;
+
+  .gfield_description {
+    @include font(h5, $mt: 0);
+    font-style: italic;
+  }
+}
