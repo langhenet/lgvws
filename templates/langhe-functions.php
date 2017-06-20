@@ -109,9 +109,44 @@ function lg_listactivities() {
   return $output;
 }
 
+//Shortcode POST
+add_shortcode( 'articles', 'lg_listarticles' );
+function lg_listarticles($atts) {
+  ob_start();
+  $atts = shortcode_atts( array (
+      'number'   => 6,
+      'category' => '',
+  ), $atts );
+
+  //$paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
+  $articles = new WP_Query( array(
+    'post_type' => 'post',
+    'posts_per_page' => $atts['number'],
+    //'no_found_rows' => true,
+    'category_name' => $atts['category'],
+    //'paged' => $paged,
+    //'nopaging' => false,
+    'paged' => get_query_var('paged')
+  ) );
+  ?>
+    <div class="articles__related-row">
+  <?php  if ( $articles->have_posts() ) :
+      while ( $articles->have_posts() ) :
+          $articles->the_post();
+          get_template_part( 'templates/grid', 'posts' );
+      endwhile;
+      wp_pagenavi( array( 'query' => $articles) );
+      wp_reset_postdata();
+  endif;
+  ?>
+</div>
+<?php
+  $output = ob_get_clean();
+  return $output;
+}
+
 //FIX MAPS
 add_filter( 'avf_load_google_map_api', '__return_false' );
 
 //SHORTCODE BREADCRUMBS
 add_shortcode('lg-breadcrumbs', 'avia_breadcrumbs');
-
