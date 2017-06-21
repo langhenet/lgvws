@@ -270,6 +270,13 @@
   margin-top: 0;
 }
 
+///
+// CHECKFRONT LOADER
+////
+#CHECKFRONT_LOADER {
+  padding: $line-height !important;
+  margin-left: $line-height;
+}
 
 ///
 // button
@@ -296,7 +303,7 @@
 
 .activity__trigger {
   padding-top: $line-height;
-  border-top: 3px solid $bianco-sporco;
+  //border-top: 3px solid $bianco-sporco;
   overflow: hidden;
 }
 

@@ -66,8 +66,8 @@
 								new DROPLET.Widget ({
 									host: 'langhe.checkfront.com',
 									target: 'CHECKFRONT_WIDGET_01',
-									//item_id: '3',
-									category_id: '1',
+									item_id: '<?php echo $activitymeta["wpcf-lg-checkfront-activity"][0] ?>',
+									//category_id: '1',
 									lang_id: 'it',
 									options: 'hidedates', //hidesearch, tabs
 									provider: 'droplet'
@@ -88,21 +88,6 @@
 		</div>
 	</div>
 </div>
-<p class="mobile-button__container">
-	<a href="#" id="mobile-book-now" class="mobile__button"><?php _e('Book<br/>Now' , 'activities'); ?></a>
-</p>
-<script src="//booking.langhe.net/it/api/public"></script>
-<script>
-		(function() {
-				var button = new TrekkSoft.Embed.Button();
-				button
-							.setAttrib("target", "fancy")
-							.setAttrib("entryPoint", "tour")
-							.setAttrib("tourId", "<?php echo $activitymeta['wpcf-lg-trekksoft-activity'][0] ?>")
-							.setAttrib("fancywidth", "95%")
-							.registerOnClick("#mobile-book-now");
-		})();
-</script>
 <div class="activity__related">
 	<div class="activity__related-inner">
 		<h2 class="activity__section-title"><?php _e('Activities Nearby' , 'activities'); ?></h2>
