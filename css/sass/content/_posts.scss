@@ -25,12 +25,38 @@
   padding-left: $line-height / 2;
   margin-bottom: $line-height * 2;
 
-  @include breakpoint-max(md) {
+  @include breakpoint-max(lg) {
     @include make-col(6);
   }
 
   @include breakpoint-max(sm) {
     @include make-col(12);
+  }
+}
+
+.articles-grid__author-container {
+  display: flex;
+  align-items: center;
+}
+
+.articles-grid__author-name,
+.articles-grid__author-image {
+  padding: $line-height / 2 $line-height;
+}
+
+.articles-grid__author-name {
+  flex-basis: 70%;
+  text-align: right;
+}
+
+.articles-grid__author-image {
+  flex-basis: 30%;
+
+
+  img {
+    width: $line-height * 2;
+    border-radius: 100%;
+    display: block;
   }
 }
 
@@ -60,13 +86,6 @@
   }
 }
 
-.articles-grid__read-more,
-.main_color .articles-grid__read-more,
-.alternate_color .articles-grid__read-more {
-  font-weight: family(primary, bold);
-  text-transform: uppercase;
-  color: $viola;
-}
 
 .articles-grid__price {
   @include font(p, $mb:0);
@@ -75,12 +94,16 @@
   }
 }
 
-.grid-item__book-now,
-.main_color .grid-item__book-now,
-.alternate_color .grid-item__book-now {
+.grid-item__read-more,
+.main_color .grid-item__read-more,
+.alternate_color .grid-item__read-more {
   @extend %button;
   @include button(small, 3, quarter);
   @include button-color(main);
+
+  &:hover {
+    @include button-color(hover, main);
+  }
 
   margin-bottom: 0;
 

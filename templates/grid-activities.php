@@ -19,7 +19,6 @@
     <div class="grid-item__description-container">
       <p>
         <?php echo(get_the_excerpt()); ?>
-        <a href="<?php the_permalink() ?>" title="<?php the_title(); ?>" class="activity-grid__read-more"><?php _e('Read More' , 'GeneralText') ?> &raquo;</a>
       </p>
     </div>
     <div class="grid-item__footer">
@@ -27,19 +26,7 @@
       <p class="activity-grid__price"><strong><?php echo $activitymeta['wpcf-lgp-price'][0] ?>€</strong></p>
       </div>
       <div class="grid-item__cta-container">
-        <a id="book-now--<?php echo $activitymeta['wpcf-lg-trekksoft-activity'][0] ?>" href="#" title="<?php the_title(); ?>" class="grid-item__book-now"><?php _e('Book Now' , 'activities') ?></a>
-        <script src="//booking.langhe.net/it/api/public"></script>
-        <script>
-            (function() {
-                var button = new TrekkSoft.Embed.Button();
-                button
-                      .setAttrib("target", "fancy")
-                      .setAttrib("entryPoint", "tour")
-                      .setAttrib("tourId", "<?php echo $activitymeta['wpcf-lg-trekksoft-activity'][0] ?>")
-                      .setAttrib("fancywidth", "95%")
-                      .registerOnClick("#book-now--<?php echo $activitymeta['wpcf-lg-trekksoft-activity'][0] ?>");
-            })();
-        </script>
+        <a title="<?php the_title(); ?>" href="<?php the_permalink() ?>" title="<?php the_title(); ?>" class="grid-item__book-now"><?php _e('Book Now' , 'activities') ?></a>
       </div>
     </div>
   </div>
