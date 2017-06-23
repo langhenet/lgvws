@@ -19,7 +19,9 @@
     <a class="grid-item__image-container" href="<?php the_permalink() ?>" title="<?php the_title(); ?>">
       <?php echo get_the_post_thumbnail( $post->ID, 'magazine', array( 'class' => 'grid-item__image attachment-portfolio wp-post-image' ) ); ?>
       <div class="grid-item__meta-container">
-        <?php the_date('F j, Y'); ?>
+        <p class="grid-item__meta artcles-item__meta">
+          <?php the_date('F j, Y'); ?>
+        </p>
       </div>
     </a>
     <div class="grid-item__title-container">
