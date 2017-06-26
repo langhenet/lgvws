@@ -134,13 +134,13 @@ function lg_listarticles($atts) {
       while ( $articles->have_posts() ) :
           $articles->the_post();
           get_template_part( 'templates/grid', 'posts' );
-      endwhile;
-      wp_pagenavi( array( 'query' => $articles) );
-      wp_reset_postdata();
+      endwhile; ?>
+    </div>
+    <?php
+    wp_pagenavi( array( 'query' => $articles) );
+    wp_reset_postdata();
   endif;
-  ?>
-</div>
-<?php
+
   $output = ob_get_clean();
   return $output;
 }
