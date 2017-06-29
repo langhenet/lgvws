@@ -566,3 +566,4 @@ require_once( 'functions-enfold.php');
 
 //INCLUDE CUSTOM FUNCTIONS
 include( 'templates/langhe-functions.php' );
+include( 'templates/algolia-functions.php' );
