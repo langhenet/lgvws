@@ -55,7 +55,11 @@
 			<div class="activty__info-container">
 				<div class="activity__info-box">
 					<div class="info-box__title">
-						<h3><?php _e('Book this activity' , 'activities') ?></h3>
+						<?php if ($activitymeta['wpcf-lga-hide-cal'] < 1 ) : ?>
+							<h3><?php _e('Book this activity' , 'activities') ?></h3>
+						<?php else : ?>
+							<h3><?php _e('Buy the voucher' , 'activities') ?></h3>
+						<?php endif; ?>
 					</div>
 					<script type="text/javascript" src="//langhe.checkfront.com/lib/interface--31.js"></script>
 						<!-- CHECKFRONT BOOKING PLUGIN v23 -->
@@ -69,7 +73,7 @@
 									item_id: '<?php echo $activitymeta["wpcf-lg-checkfront-activity"][0] ?>',
 									//category_id: '1',
 									lang_id: 'it',
-									options: 'hidedates <?php if ( $activitymeta["wpcf-lga-hide-cal"] > 0 ) { echo (",hidesearch");} ?>', //hidesearch, tabs
+									options: 'hidedates <?php if ( $activitymeta["wpcf-lga-hide-cal"] > 0 ) { echo (",hidesearch"); } ?>', //hidesearch, tabs
 									provider: 'droplet'
 								}).render();
 							</script>
