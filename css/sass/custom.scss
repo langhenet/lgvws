@@ -1282,8 +1282,10 @@ font-family:'Open Sans'
 }
 
 #top #header .mega_menu_title a {
-font-size:1em;
+font-size: 1em;
 color:#787878;
+line-height: 1.5em;
+padding: (1.5em / 4) 0;
 }
 
 #top #header .mega_menu_title a:hover {

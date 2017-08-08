@@ -1,0 +1,14 @@
+#top #header .avia_mega_div .lg-special-menu a {
+  font-size: 1em;
+  line-height: $line-height;
+  color: $grigio-chiaro-2;
+  padding: ($line-height / 4) 0 !important;
+
+  &:hover {
+    font-weight: normal !important;
+  }
+
+  .avia-bullet {
+    display: none;
+  }
+}
