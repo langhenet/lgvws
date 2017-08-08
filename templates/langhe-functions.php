@@ -122,10 +122,7 @@ function lg_listarticles($atts) {
   $articles = new WP_Query( array(
     'post_type' => 'post',
     'posts_per_page' => $atts['number'],
-    //'no_found_rows' => true,
     'category_name' => $atts['category'],
-    //'paged' => $paged,
-    //'nopaging' => false,
     'paged' => get_query_var('paged')
   ) );
   ?>

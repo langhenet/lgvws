@@ -36,7 +36,7 @@
       <div class="grid-item__additional-info-container">
       </div>
       <div class="grid-item__cta-container">
-        <a title="<?php the_title(); ?>" href="<?php the_permalink() ?>" title="<?php the_title(); ?>" class="grid-item__read-more"><?php _e('Read More' , 'general-texts') ?></a>
+        <a title="<?php the_title(); ?>" href="<?php the_permalink(); ?>" title="<?php the_title(); ?>" class="grid-item__read-more"><?php _e('Read More' , 'general-texts') ?></a>
       </div>
     </div>
   </div>
