@@ -116,6 +116,7 @@ function lg_listarticles($atts) {
   $atts = shortcode_atts( array (
       'number'   => 6,
       'category' => '',
+      'tag' => '',
   ), $atts );
 
   //$paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
@@ -123,6 +124,7 @@ function lg_listarticles($atts) {
     'post_type' => 'post',
     'posts_per_page' => $atts['number'],
     'category_name' => $atts['category'],
+    'tag_id' => $atts['tag'],
     'paged' => get_query_var('paged')
   ) );
   ?>
