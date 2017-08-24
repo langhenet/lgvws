@@ -12,3 +12,47 @@
     display: none;
   }
 }
+
+/******
+**** HEADER TRASPARENTE
+**********************************/
+
+.av_header_transparency {
+  .header_color .main_menu ul:first-child>li>a:hover {
+    background: transparent;
+  }
+}
+
+/*** HEADER QUANDO TRASPARENTE **/
+
+
+
+@include breakpoint-max(md) {
+
+  .responsive #top .av_header_transparency #header_meta {
+  background: #ce484f;
+  color: #fff;
+  border-bottom: 0;
+  }
+
+  .responsive #top .av_header_transparency #header_main {
+    background: #e9e3cd;
+  }
+}
+
+.av_header_transparency #advanced_menu_toggle {
+  background-color: #f4f1e8;
+}
+
+/******************************
+** MOBILE NAV
+*******************************/
+.html_av-overlay-side.av-burger-overlay-active-delayed .av-burger-overlay-scroll {
+  background: $beige;
+}
+
+@media only screen and (max-width: 767px) {
+  .responsive #top #wrap_all .main_menu {
+    right: $line-height;
+  }
+}
