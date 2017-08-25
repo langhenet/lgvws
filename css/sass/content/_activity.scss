@@ -175,6 +175,15 @@
   @include make-col(7);
 
   padding-top: $line-height * 2;
+
+  ul, ol {
+    padding-left: $line-height;
+    margin-left: 0;
+  }
+
+  ul li {
+    list-style: disc;
+  }
 }
 
 ///

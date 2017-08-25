@@ -55,28 +55,36 @@
 			<div class="activty__info-container">
 				<div class="activity__info-box">
 					<div class="info-box__title">
-						<?php if ($activitymeta['wpcf-lga-hide-cal'] < 1 ) : ?>
-							<h3><?php _e('Book this activity' , 'activities') ?></h3>
+						<?php if ( empty( $activitymeta['wpcf-lg-checkfront-activity'][0] ) ) : ?>
+							<h3>Non Prenotabile</h3>
 						<?php else : ?>
-							<h3><?php _e('Buy the voucher' , 'activities') ?></h3>
+							<?php if ($activitymeta['wpcf-lga-hide-cal'][0] <= 0 ) : ?>
+								<h3><?php _e('Book this activity' , 'activities') ?></h3>
+							<?php else : ?>
+								<h3><?php _e('Buy the voucher' , 'activities') ?></h3>
+							<?php endif; ?>
 						<?php endif; ?>
 					</div>
-					<script type="text/javascript" src="//langhe.checkfront.com/lib/interface--31.js"></script>
-						<!-- CHECKFRONT BOOKING PLUGIN v23 -->
+					<?php if ( !empty( $activitymeta['wpcf-lg-checkfront-activity'][0] ) ) : ?>
+						<script type="text/javascript" src="//langhe.checkfront.com/lib/interface--31.js"></script>
+							<!-- CHECKFRONT BOOKING PLUGIN v23 -->
 						<div id="CHECKFRONT_WIDGET_01" style="margin: 0 0">
 							<p id="CHECKFRONT_LOADER" style="background: url('//langhe.checkfront.com/images/loader.gif') left center no-repeat; padding: 5px 5px 5px 20px">Searching Availability...</p>
 						</div>
-							<script>
-								new DROPLET.Widget ({
-									host: 'langhe.checkfront.com',
-									target: 'CHECKFRONT_WIDGET_01',
-									item_id: '<?php echo $activitymeta["wpcf-lg-checkfront-activity"][0] ?>',
-									//category_id: '1',
-									lang_id: 'it',
-									options: 'hidedates <?php if ( $activitymeta["wpcf-lga-hide-cal"] > 0 ) { echo (",hidesearch"); } ?>', //hidesearch, tabs
-									provider: 'droplet'
-								}).render();
-							</script>
+						<script>
+							new DROPLET.Widget ({
+								host: 'langhe.checkfront.com',
+								target: 'CHECKFRONT_WIDGET_01',
+								item_id: '<?php echo $activitymeta["wpcf-lg-checkfront-activity"][0] ?>',
+								//category_id: '1',
+								lang_id: 'it',
+								options: 'hidedates <?php if ( $activitymeta["wpcf-lga-hide-cal"][0] > 1 ) { echo (",hidesearch"); } ?>', //hidesearch, tabs
+								provider: 'droplet'
+							}).render();
+						</script>
+					<?php else : ?>
+						<p style="padding: 1.5em; text-align:center;">Ci spiace, quest&apos;attività non è prenotabile :-(</p>
+					<?php endif ; ?>
 					<div class="activity__trigger">
 						<p class="activity__trigger-question"><strong><?php _e('NOT SURE?' , 'activities'); ?></strong></p>
 						<input type="checkbox" id="activity__form-trigger" class="activity__form-trigger" />
