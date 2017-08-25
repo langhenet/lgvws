@@ -17,22 +17,33 @@
 **** HEADER TRASPARENTE
 **********************************/
 
-.av_header_transparency {
-  .header_color .main_menu ul:first-child>li>a:hover {
-    background: transparent;
-  }
+
+.header_color.av_header_transparency .main_menu ul:first-child>li>a:hover {
+  background: transparent !important;
 }
 
-/*** HEADER QUANDO TRASPARENTE **/
 
+.header_color.av_header_transparency .main_menu ul:first-child>li>a:hover {
+  background: transparent;
+}
+
+.header_color.av_header_transparency {
+  .main_menu .menu ul li a,
+  .main_menu ul:first-child>li.current-menu-ancestor>a,
+  .main_menu ul:first-child>li.current-menu-item>a,
+  .main_menu ul:first-child>li.current_page_ancestor>a,
+  .main_menu ul:first-child>li.current_page_item>a {
+    background: transparent;   
+  }
+}
 
 
 @include breakpoint-max(md) {
 
   .responsive #top .av_header_transparency #header_meta {
-  background: #ce484f;
-  color: #fff;
-  border-bottom: 0;
+    background: #ce484f;
+    color: #fff;
+    border-bottom: 0;
   }
 
   .responsive #top .av_header_transparency #header_main {
