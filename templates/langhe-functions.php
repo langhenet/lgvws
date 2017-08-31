@@ -83,15 +83,27 @@ function func_wpml_language_code_value_func() {
 
 //Shortcode Attività
 add_shortcode( 'activities', 'lg_listactivities' );
-function lg_listactivities() {
+function lg_listactivities($atts) {
   ob_start();
+  $atts = shortcode_atts( array (
+      'number'   => -1,
+      'type' => '',
+  ), $atts );
+
   $activities = new WP_Query( array(
     'post_type' => 'lgactivity',
-    'posts_per_page' => -1,
+    'posts_per_page' => $atts['number'],
     'no_found_rows' => true,
     'meta_key' => 'wpcf-lg-public',
     'meta_value' => '1',
     'meta_compare' => '=',
+    'tax_query' => array(
+      array(
+        'taxonomy' => 'lgactivity-type',
+        'field' => 'term_id',
+        'terms' => $atts['type'],
+      ),
+    ),
   ) );
   ?>
     <div class="activity__related-row">
