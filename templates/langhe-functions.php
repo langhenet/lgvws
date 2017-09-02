@@ -199,7 +199,7 @@ function lg_listbusiness($atts) {
     </div>
     <?php
     //wp_pagenavi( array( 'query' => $business) );
-    //wp_reset_postdata();
+    wp_reset_postdata();
   endif;
 
   $output = ob_get_clean();
