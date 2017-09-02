@@ -85,7 +85,7 @@ function func_wpml_language_code_value_func() {
 add_shortcode( 'activities', 'lg_listactivities' );
 function lg_listactivities($atts) {
   ob_start();
-  $atts = shortcode_atts( array (
+  $atts = shortcode_atts( array(
       'number'   => -1,
       'type' => '',
   ), $atts );
@@ -129,7 +129,7 @@ function lg_listactivities($atts) {
 add_shortcode( 'articles', 'lg_listarticles' );
 function lg_listarticles($atts) {
   ob_start();
-  $atts = shortcode_atts( array (
+  $atts = shortcode_atts( array(
       'number'   => 6,
       'category' => '',
       'tag' => '',
@@ -164,7 +164,7 @@ function lg_listarticles($atts) {
 add_shortcode( 'business', 'lg_listbusiness' );
 function lg_listbusiness($atts) {
   ob_start();
-  $atts = shortcode_atts( array (
+  $atts = shortcode_atts( array(
       'number'   => 6,
       'type' => '',
       'custom-field' => '',
@@ -174,7 +174,7 @@ function lg_listbusiness($atts) {
 
   if (!empty($atts['type'])) {
     $tax_query[] = array(
-      'taxonomy' => 'lgtype',
+      'taxonomy' => 'lgtypes',
       'field' => 'term_id',
       'terms' => $atts['type'],
     );

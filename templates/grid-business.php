@@ -27,7 +27,7 @@
       <div class="grid-item__additional-info-container">
       </div>
       <div class="grid-item__cta-container">
-        <a title="<?php the_title(); ?>" href="<?php the_permalink() ?>" title="<?php the_title(); ?>" class="grid-item__book-now"><?php _e('Book Now' , 'activities') ?></a>
+        <a title="<?php the_title(); ?>" href="<?php the_permalink() ?>" title="<?php the_title(); ?>" class="grid-item__book-now"><?php _e('Read More' , 'activities') ?></a>
       </div>
     </div>
   </div>
