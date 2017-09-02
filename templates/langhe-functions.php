@@ -90,6 +90,16 @@ function lg_listactivities($atts) {
       'type' => '',
   ), $atts );
 
+  $tax_query = array();
+
+  if (!empty($atts['type'])) {
+    $tax_query[] = array(
+      'taxonomy' => 'lgactivity-type',
+      'field' => 'term_id',
+      'terms' => $atts['type'],
+    );
+  }
+
   $activities = new WP_Query( array(
     'post_type' => 'lgactivity',
     'posts_per_page' => $atts['number'],
@@ -97,13 +107,7 @@ function lg_listactivities($atts) {
     'meta_key' => 'wpcf-lg-public',
     'meta_value' => '1',
     'meta_compare' => '=',
-    'tax_query' => array(
-      array(
-        'taxonomy' => 'lgactivity-type',
-        'field' => 'term_id',
-        'terms' => $atts['type'],
-      ),
-    ),
+    'tax_query' => $tax_query,
   ) );
   ?>
     <div class="activity__related-row">
@@ -150,6 +154,52 @@ function lg_listarticles($atts) {
     <?php
     wp_pagenavi( array( 'query' => $articles) );
     wp_reset_postdata();
+  endif;
+
+  $output = ob_get_clean();
+  return $output;
+}
+
+//Shortcode Business
+add_shortcode( 'business', 'lg_listbusiness' );
+function lg_listbusiness($atts) {
+  ob_start();
+  $atts = shortcode_atts( array (
+      'number'   => 6,
+      'type' => '',
+      'custom-field' => '',
+  ), $atts );
+
+  $tax_query = array();
+
+  if (!empty($atts['type'])) {
+    $tax_query[] = array(
+      'taxonomy' => 'lgtype',
+      'field' => 'term_id',
+      'terms' => $atts['type'],
+    );
+  }
+
+  $business = new WP_Query( array(
+    'post_type' => 'lgbusiness',
+    'posts_per_page' => $atts['number'],
+    'no_found_rows' => true,
+    'meta_key' => $atts['custom-field'],
+    'meta_value' => '1',
+    'meta_compare' => '=',
+    'tax_query' => $tax_query,
+  ) );
+  ?>
+    <div class="articles__related-row">
+  <?php  if ( $business->have_posts() ) :
+      while ( $business->have_posts() ) :
+          $business->the_post();
+          get_template_part( 'templates/grid', 'business' );
+      endwhile; ?>
+    </div>
+    <?php
+    //wp_pagenavi( array( 'query' => $business) );
+    //wp_reset_postdata();
   endif;
 
   $output = ob_get_clean();
