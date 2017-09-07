@@ -88,6 +88,7 @@ function lg_listactivities($atts) {
   $atts = shortcode_atts( array(
       'number'   => -1,
       'type' => '',
+      'orderby' => 'title'
   ), $atts );
 
   $tax_query = array();
@@ -108,6 +109,8 @@ function lg_listactivities($atts) {
     'meta_value' => '1',
     'meta_compare' => '=',
     'tax_query' => $tax_query,
+    'order' => 'ASC',
+    'orderby' => $atts['orderby'],
   ) );
   ?>
     <div class="activity__related-row">
@@ -168,6 +171,7 @@ function lg_listbusiness($atts) {
       'number'   => 6,
       'type' => '',
       'custom-field' => '',
+      'orderby' => 'title',
   ), $atts );
 
   $tax_query = array();
@@ -188,6 +192,7 @@ function lg_listbusiness($atts) {
     'meta_value' => '1',
     'meta_compare' => '=',
     'tax_query' => $tax_query,
+    'orderby' => $atts['orderby'],
   ) );
   ?>
     <div class="articles__related-row">
