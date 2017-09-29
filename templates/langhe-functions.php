@@ -175,13 +175,16 @@ function lg_listbusiness($atts) {
   ), $atts );
 
   $tax_query = array();
+  $integerIDs = json_decode('[' . $atts['type'] . ']', true);
 
   if (!empty($atts['type'])) {
     $tax_query[] = array(
-      'taxonomy' => 'lgtypes',
-      'field' => 'term_id',
-      'terms' => $atts['type'],
-    );
+      'relation' => 'OR',
+      array(
+        'taxonomy' => 'lgtypes',
+        'field' => 'term_id',
+        'terms' => $integerIDs,
+    ));
   }
 
   $business = new WP_Query( array(
