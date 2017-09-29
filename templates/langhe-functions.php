@@ -196,6 +196,7 @@ function lg_listbusiness($atts) {
     'meta_compare' => '=',
     'tax_query' => $tax_query,
     'orderby' => $atts['orderby'],
+    'order' => 'ASC'
   ) );
   ?>
     <div class="articles__related-row">
