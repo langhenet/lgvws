@@ -136,6 +136,7 @@ function lg_listarticles($atts) {
       'number'   => 6,
       'category' => '',
       'tag' => '',
+      'pagination' => 'true'
   ), $atts );
 
   //$paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
@@ -155,8 +156,12 @@ function lg_listarticles($atts) {
       endwhile; ?>
     </div>
     <?php
-    wp_pagenavi( array( 'query' => $articles) );
+    if ( $atts['pagination'] == 'true') {
+      wp_pagenavi( array( 'query' => $articles) );
+    }
     wp_reset_postdata();
+
+
   endif;
 
   $output = ob_get_clean();

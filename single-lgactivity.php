@@ -78,7 +78,7 @@
 								item_id: '<?php echo $activitymeta["wpcf-lg-checkfront-activity"][0] ?>',
 								//category_id: '1',
 								lang_id: 'it',
-								options: 'hidedates <?php if ( $activitymeta["wpcf-lga-hide-cal"][0] > 1 ) { echo (",hidesearch"); } ?>', //hidesearch, tabs
+								options: 'hidedates <?php if ( $activitymeta["wpcf-lga-hide-cal"][0] > 0 ) { echo (",hidesearch"); } ?>', //hidesearch, tabs
 								provider: 'droplet'
 							}).render();
 						</script>
