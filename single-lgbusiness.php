@@ -28,7 +28,7 @@
                        //wordpress function that loads the comments template "comments.php"
 ?>
                         
-                       <div id=ìlgb-book' class='avia-section main_color avia-section-default avia-no-shadow avia-bg-style-scroll  el_after_av_textblock  el_before_av_section  container_wrap fullsize'>
+                       <div id="lgb-book" class="avia-section main_color avia-section-default avia-no-shadow avia-bg-style-scroll  el_after_av_textblock  el_before_av_section  container_wrap fullsize">
                           <div class='container'>
                             <div class='template-page content twelve alpha units'>
                               <div class='post-entry post-entry-type-page'>
