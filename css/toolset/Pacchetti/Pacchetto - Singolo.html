@@ -190,11 +190,11 @@
                   [/wpv-conditional]
                   <!-- check condizionale per solo data inizio completa -->
                   [wpv-conditional debug="false" if="( NOT(empty($(wpcf-lgp-stdate))) AND empty($(wpcf-lgp-endate)) )"]
-                    [wpml-string context="VacationPackages"]and for two years after purchase[/wpml-string]
+                    [wpml-string context="VacationPackages"]and for one year after purchase[/wpml-string]
                   [/wpv-conditional]
                       <!-- check condizionale per data fine e inizio - se vuote output dei due anni-->
                   [wpv-conditional debug="false" if="( empty($(wpcf-lgp-stdate)) AND empty($(wpcf-lgp-endate)) )"]
-                        [wpml-string context="VacationPackages"]valid for two years after purchase[/wpml-string]
+                        [wpml-string context="VacationPackages"]valid for one year after purchase[/wpml-string]
                   [/wpv-conditional]</small>
                 </p>
                 [wpv-conditional debug="false" if="( NOT(empty($(wpcf-lgp-restrictions))) )"]
@@ -493,11 +493,11 @@
                 [/wpv-conditional]
                 [wpv-conditional debug="false" if="( NOT(empty($(wpcf-lgp-stdate))) AND empty($(wpcf-lgp-endate)) )"]
                 <!-- check condizionale per solo data inizio completa -->
-                  [wpml-string context="VacationPackages"]and for two years after purchase[/wpml-string]
+                  [wpml-string context="VacationPackages"]and for one year after purchase[/wpml-string]
                 [/wpv-conditional]
                 [wpv-conditional debug="false" if="( empty($(wpcf-lgp-stdate)) AND empty($(wpcf-lgp-endate)) )"]
                 <!-- check condizionale per data fine e inizio - se vuote output dei due anni-->
-                      [wpml-string context="VacationPackages"]valid for two years after purchase[/wpml-string]
+                      [wpml-string context="VacationPackages"]valid for one year after purchase[/wpml-string]
                 [/wpv-conditional]
               </p>
               [wpv-conditional debug="false" if="( NOT(empty($(wpcf-lgp-restrictions))) )"]
