@@ -37,7 +37,9 @@
 								[/wpv-for-each]
 							</div>
 						[/wpv-if]
-						<!--[gallery link="file" columns="6"]-->
+						[wpv-if gallery="wpcf-lg-images" evaluate="empty($gallery)"]
+							[gallery link="file" columns="6"]
+						[/wpv-if]
             [wpv-if video="vpcf-lgb-video" evaluate="!empty($video)"][types field="lgb-video" width="100%"][/types][/wpv-if]
 						<article class="iconbox iconbox_top business-details main_color  avia-builder-el-39  avia-builder-el-no-sibling ">
 							<div class="iconbox_content">
