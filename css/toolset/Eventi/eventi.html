@@ -56,8 +56,19 @@
 									<div id="foto-container" class="tab_content active_tab_content">
 										<div class="tab_inner_content invers-color">
 											<img src="[wpv-post-featured-image size="masonry" output="url"]" class="attachment-masonry wp-post-image"/>
-											[wpv-if gallery="wpcf-lg-gallery" evaluate="!empty($gallery)"][gallery columns="8" link="file" ids="[types field="lg-gallery" output="raw"][/types]"][/wpv-if]
-											[wpv-if gallery="wpcf-lg-gallery" evaluate="empty($gallery)"][gallery columns="8"  link="file"][/wpv-if]
+											[wpv-if galleryurl="wpcf-lg-images" evaluate="!empty($galleryurl)"]
+												<div style="overflow:hidden;" id="gallery-1" class="gallery galleryid-68005 gallery-columns-8 gallery-size-thumbnail">
+													[wpv-for-each field="wpcf-lg-images"]
+														<dl style="float:left" class="gallery-item">
+															<dt class="gallery-icon landscape">
+																<a href="[types field='lg-images' url='true' size='full'][/types]" class="mfp-image image-link" rel="lightbox">[types field='lg-images' alt='%%ALT%%' title='%%TITLE%%' size="thumbnail" align='none' separator=', '][/types]</a>
+															</dt>
+														</dl>
+													[/wpv-for-each]
+												</div>
+											[/wpv-if]
+											[wpv-if gallery="wpcf-lg-gallery" galleryurl="wpcf-lg-images" evaluate="!empty($gallery) AND empty($galleryurl)"][gallery columns="8" link="file" ids="[types field="lg-gallery" output="raw"][/types]"][/wpv-if]
+											[wpv-if gallery="wpcf-lg-gallery" galleryurl="wpcf-lg-images" evaluate="empty($gallery) AND empty($galleryurl)"][gallery columns="8"  link="file"][/wpv-if]
 										</div>
 									</div>
 								</section>

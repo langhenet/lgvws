@@ -27,11 +27,8 @@
 							<div style="overflow:hidden;" id="gallery-1" class="gallery galleryid-68005 gallery-columns-6 gallery-size-thumbnail">
 								[wpv-for-each field="wpcf-lg-images"]
 									<dl style="float:left" class="gallery-item">
-										<dt class="gallery-icon portrait">
-											<a href="[types field="lg-images" url="true" size="full"][/types]"
-											 class="lightbox-added">
-												<img width="70" height="60" src="[types field="lg-images" url="true" size="thumbnail"][/types]" class="attachment-thumbnail size-thumbnail">
-											</a>
+										<dt class="gallery-icon landscape">
+											<a href="[types field='lg-images' url='true' size='full'][/types]" class="mfp-image image-link" rel="lightbox">[types field='lg-images' alt='%%ALT%%' title='%%TITLE%%' size="thumbnail" align='none' separator=', '][/types]</a>
 										</dt>
 									</dl>
 								[/wpv-for-each]
