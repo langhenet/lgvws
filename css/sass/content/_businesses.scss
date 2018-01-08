@@ -6,6 +6,12 @@
 .business__booking-title {
   flex-basis: 100%;
   padding: 0 $line-height;
+
+  .title {
+    @include font(h1, $mb: scale(h1, lh));
+    text-transform: uppercase;
+    text-align: center;
+  }
 }
 .business__booking-column--full {
   @include make-col-ready();
@@ -16,7 +22,6 @@
   padding: 0 $line-height;
   box-sizing: border-box;
   position: relative;
-  padding-bottom: 56.25%;
 
 
  @include breakpoint-max(lg) {

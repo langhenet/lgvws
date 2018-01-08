@@ -8,7 +8,7 @@
     $cats = get_the_category();
 		$title 	= get_the_title($new); //if the blog is attached to a page use this title
 		$t_link = get_category_link( $cats[0] );
-		$t_sub =  avia_post_meta($new, 'subtitle');
+		//$t_sub =  avia_post_meta($new, 'subtitle');
 
 	if( get_post_meta(get_the_ID(), 'header', true) != 'no') echo avia_title(array('heading'=>'strong', 'title' => $cats[0]->cat_name, 'link' => $t_link, 'subtitle' => $t_sub));
 
@@ -23,12 +23,12 @@
                     */
 
                         //get_template_part( 'includes/loop', 'index' );
-                        //get_template_part( 'includes/loop', 'about-author' );						
+                        //get_template_part( 'includes/loop', 'about-author' );
                         //show related posts based on tags if there are any
                         the_content();
                        //wordpress function that loads the comments template "comments.php"
 ?>
-                        
+
                        <div class='avia-section main_color avia-section-default avia-no-shadow avia-bg-style-scroll  el_after_av_textblock  el_before_av_section  container_wrap fullsize'>
                           <div class='container'>
                             <div class='template-page content twelve alpha units'>
@@ -42,9 +42,9 @@
                             </div>
                           </div>
                         </div>
-                        
 
-                    
+
+
 		</div><!-- close default .container_wrap element -->
 
 
