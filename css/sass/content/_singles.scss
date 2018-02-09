@@ -1,0 +1,54 @@
+/*********************************************/
+/***************  BLOG  *********************/
+/*******************************************/
+
+/***NO img evidenza in listati e single blog */
+
+.template-blog .big-preview.multi-big,
+.template-single-blog .big-preview.single-big {
+//display:none;
+}
+
+.entry-content-wrapper .entry-content-header .post-meta-infos {
+  margin-bottom: 1.5em;
+}
+
+.template-blog.template-single-blog .entry-content-wrapper .post-title {
+  font-size: 3em;
+  line-height: 1.5em;
+  margin-top: 0;
+  margin-bottom: 0.5em;
+  letter-spacing: 0px;
+  font-weight: 300;
+}
+
+// .single-post {
+//   .content .post-entry {
+//     display: flex;
+//     flex-direction: column;
+//
+//     & > * {
+//       flex-basis: 100%;
+//       box-sizing: border-box;
+//     }
+//
+//     .entry-content-header {
+//       order: -1;
+//     }
+//   }
+// }
+
+/*===================*/
+/*****AUTHOR BOX*****/
+/*=================*/
+
+.single section.author-box {
+display: inline-block;
+background: #f3f3f3;
+padding: 30px 28px;
+margin-bottom:60px;
+}
+
+.single section.author-box p {
+font-size:0.80em;
+}
