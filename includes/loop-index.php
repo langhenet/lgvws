@@ -30,27 +30,30 @@ if (have_posts()) :
 	$current_post['post_class']	.= ($current_post['post_type'] == "post") ? '' : ' post';
 	$current_post['post_format'] 	= get_post_format() ? get_post_format() : 'standard';
 	$current_post['post_layout']	= avia_layout_class('main', false);
-	$blog_content = !empty($avia_config['blog_content']) ? $avia_config['blog_content'] : "content";
-	
+
+$blog_content = !empty($avia_config['blog_content']) ? $avia_config['blog_content'] : "content";
+if(!is_single()) $blog_content = "excerpt_read_more";
+
+
 	/*If post uses builder change content to exerpt on overview pages*/
     if( Avia_Builder()->get_alb_builder_status( $current_post['the_id'] ) && !is_singular($current_post['the_id']) && $current_post['post_type'] == 'post')
     {
 	   $current_post['post_format'] = 'standard';
 	   $blog_content = "excerpt_read_more";
     }
-	
-	
+
+
 	/*
      * retrieve slider, title and content for this post,...
      */
     $size = strpos($blog_style, 'big') ? (strpos($current_post['post_layout'], 'sidebar') !== false) ? 'entry_with_sidebar' : 'entry_without_sidebar' : 'square';
-    
+
     if(!empty($avia_config['preview_mode']) && !empty($avia_config['image_size']) && $avia_config['preview_mode'] == 'custom') $size = $avia_config['image_size'];
 	$current_post['slider']  	= get_the_post_thumbnail($current_post['the_id'], $size);
-	
+
 	if(is_single($initial_id) && get_post_meta( $current_post['the_id'], '_avia_hide_featured_image', true ) ) $current_post['slider'] = "";
-	
-	
+
+
 	$current_post['title']   	= get_the_title();
 	$current_post['content'] 	= $blog_content == "content" ? get_the_content(__('Read more','avia_framework').'<span class="more-link-arrow"></span>') : get_the_excerpt();
 	$current_post['content'] 	= $blog_content == "excerpt_read_more" ? $current_post['content'].'<div class="read-more-link"><a href="'.get_permalink().'" class="more-link">'.__('Read more','avia_framework').'<span class="more-link-arrow"></span></a></div>' : $current_post['content'];
@@ -64,8 +67,8 @@ if (have_posts()) :
 	/*
      * ... last apply the default wordpress filters to the content
      */
-     
-    
+
+
 	$current_post['content'] = str_replace(']]>', ']]&gt;', apply_filters('the_content', $current_post['content'] ));
 
 	/*
@@ -85,12 +88,12 @@ if (have_posts()) :
 	 */
 
 	echo "<article class='".implode(" ", get_post_class('post-entry post-entry-type-'.$post_format . " " . $post_class . " ".$with_slider))."' ".avia_markup_helper(array('context' => 'entry','echo'=>false)).">";
-		
-		
-		
+
+
+
         //default link for preview images
         $link = !empty($url) ? $url : get_permalink();
-        
+
         //preview image description
         $desc = get_post( get_post_thumbnail_id() );
         if(is_object($desc))  $desc = $desc -> post_excerpt;
@@ -111,11 +114,11 @@ if (have_posts()) :
 		        if($slider) $slider = '<a href="'.$link.'" title="'.$featured_img_desc.'">'.$slider.'</a>';
 		        if($slider) echo '<div class="big-preview '.$blog_style.'">'.$slider.'</div>';
 		    }
-			
+
 		    if(!empty($before_content))
 		        echo '<div class="big-preview '.$blog_style.'">'.$before_content.'</div>';
 		}
-		
+
         echo "<div class='blog-meta'>";
 
         $blog_meta_output = "";
@@ -129,7 +132,7 @@ if (have_posts()) :
                 {
                 	$author_name = apply_filters('avf_author_name', get_the_author_meta('display_name', $post->post_author), $post->post_author);
 					$author_email = apply_filters('avf_author_email', get_the_author_meta('email', $post->post_author), $post->post_author);
-                	
+
 					$gravatar_alt = esc_html($author_name);
 					$gravatar = get_avatar($author_email, '81', "blank", $gravatar_alt);
 					$link = get_author_posts_url($post->post_author);
@@ -148,12 +151,12 @@ if (have_posts()) :
 
         echo "<div class='entry-content-wrapper clearfix {$post_format}-content'>";
             echo '<header class="entry-content-header">';
-            	
+
             	$content_output  =  '<div class="entry-content" '.avia_markup_helper(array('context' => 'entry_content','echo'=>false)).'>';
 				$content_output .=  $content;
 				$content_output .=  '</div>';
-            	
-            	
+
+
             	$taxonomies  = get_object_taxonomies(get_post_type($the_id));
                 $cats = '';
                 $excluded_taxonomies = array_merge( get_taxonomies( array( 'public' => false ) ), array('post_tag','post_format') );
@@ -169,15 +172,15 @@ if (have_posts()) :
                         }
                     }
                 }
-            	
-            	
-            	
+
+
+
             	//elegant blog
             	//prev: if( $blog_global_style == 'elegant-blog' )
             	if( strpos($blog_global_style, 'elegant-blog') !== false )
             	{
 	            	$cat_output = "";
-	            	
+
 	            	if(!empty($cats))
                     {
                         $cat_output .= '<span class="blog-categories minor-meta">';
@@ -185,36 +188,36 @@ if (have_posts()) :
                         $cat_output .= '</span>';
                         $cats = "";
                     }
-            
+
 					echo strpos($blog_global_style, 'modern-blog') === false ? $cat_output.$title : $title.$cat_output;
-					
+
 					echo '<span class="av-vertical-delimiter"></span>';
-					
+
 					//echo preview image
 				    if(strpos($blog_style, 'big') !== false)
 				    {
 				        if($slider) $slider = '<a href="'.$link.'" title="'.$featured_img_desc.'">'.$slider.'</a>';
 				        if($slider) echo '<div class="big-preview '.$blog_style.'">'.$slider.'</div>';
 				    }
-					
+
 				    if(!empty($before_content))
 				        echo '<div class="big-preview '.$blog_style.'">'.$before_content.'</div>';
-					
-					
+
+
 					echo $content_output;
-					
+
 					$cats = "";
 					$title = "";
 					$content_output = "";
 				}
-				
-				
-				
-				
+
+
+
+
 				echo $title;
-				
+
                 echo "<span class='post-meta-infos'>";
-                
+
                 echo "<time class='date-container minor-meta updated' >".get_the_time(get_option('date_format'))."</time>";
                 echo "<span class='text-sep text-sep-date'>/</span>";
 
@@ -274,12 +277,12 @@ if (have_posts()) :
                 	the_tags('<strong>'.__('Tags:','avia_framework').'</strong><span> ');
                 	echo '</span></span>';
             	}
-            	
+
             	//share links on single post
             	avia_social_share_links();
-   
+
             }
-            
+
             do_action('ava_after_content', $the_id, 'post');
 
             echo '</footer>';
