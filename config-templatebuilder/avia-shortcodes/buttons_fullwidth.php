@@ -1,9 +1,12 @@
 <?php
 /**
- * Button
- * Displays a button that links to any url of your choice
+ * Fullwidth Button
+ * 
+ * Displays a a colored button that stretches across the full width and links to any url of your choice
  */
- 
+if ( ! defined( 'ABSPATH' ) ) {  exit;  }    // Exit if accessed directly
+
+
 if ( !class_exists( 'avia_sc_button_full' ) ) 
 {
 	class avia_sc_button_full extends aviaShortcodeTemplate
@@ -15,6 +18,8 @@ if ( !class_exists( 'avia_sc_button_full' ) )
 			 */
 			function shortcode_insert_button()
 			{
+				$this->config['self_closing']	=	'no';
+				
 				$this->config['name']		= __('Fullwidth Button', 'avia_framework' );
 				$this->config['tab']		= __('Content Elements', 'avia_framework' );
 				$this->config['icon']		= AviaBuilder::$path['imagesURL']."sc-button.png";
@@ -413,9 +418,6 @@ if ( !class_exists( 'avia_sc_button_full' ) )
 				$output  =  avia_new_section($params);
 				$output .= $button_html;
 				$output .= avia_section_after_element_content( $meta , 'after_fullwidth_button' );
-				
-				return $output;
-				
 				
 				return $output;
 			}

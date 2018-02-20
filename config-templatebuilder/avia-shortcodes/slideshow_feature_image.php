@@ -1,4 +1,11 @@
 <?php
+/**
+ * Featured Image Slider
+ * 
+ * Display a Slideshow of featured images from various posts
+ */
+if ( ! defined( 'ABSPATH' ) ) {  exit;  }    // Exit if accessed directly
+
 
 if ( !class_exists( 'avia_sc_featureimage_slider' ))
 {
@@ -12,6 +19,12 @@ if ( !class_exists( 'avia_sc_featureimage_slider' ))
 		 */
 		function shortcode_insert_button()
 		{
+			/**
+			 * inconsistent behaviour up to 4.2: a new element was created with a close tag, after editing it was self closing !!!
+			 * @since 4.2.1: We make new element self closing now because no id='content' exists.
+			 */
+			$this->config['self_closing']	=	'yes';
+			
 			$this->config['name']		= __('Featured Image Slider', 'avia_framework' );
 			$this->config['tab']		= __('Media Elements', 'avia_framework' );
 			$this->config['icon']		= AviaBuilder::$path['imagesURL']."sc-postslider.png";
@@ -358,19 +371,19 @@ if ( !class_exists( 'avia_sc_featureimage_slider' ))
 									"description_class" => "av-builder-note av-neutral",
 									),
 										
-									array(	"name" 	=> __("Font Size for medium sized screens", 'avia_framework' ),
+									array(	"name" 	=> __("Font Size for medium sized screens (between 768px and 989px - eg: Tablet Landscape)", 'avia_framework' ),
 						            "id" 	=> "av-medium-font-size-title",
 						            "type" 	=> "select",
 						            "subtype" => AviaHtmlHelper::number_array(10,120,1, array( __("Default", 'avia_framework' )=>'' , __("Hidden", 'avia_framework' )=>'hidden' ), "px"),
 						            "std" => ""),
 						            
-						            array(	"name" 	=> __("Font Size for small screens", 'avia_framework' ),
+						            array(	"name" 	=> __("Font Size for small screens (between 480px and 767px - eg: Tablet Portrait)", 'avia_framework' ),
 						            "id" 	=> "av-small-font-size-title",
 						            "type" 	=> "select",
 						            "subtype" => AviaHtmlHelper::number_array(10,120,1, array( __("Default", 'avia_framework' )=>'', __("Hidden", 'avia_framework' )=>'hidden'), "px"),
 						            "std" => ""),
 						            
-									array(	"name" 	=> __("Font Size for very small screens", 'avia_framework' ),
+									array(	"name" 	=> __("Font Size for very small screens (smaller than 479px - eg: Smartphone Portrait)", 'avia_framework' ),
 						            "id" 	=> "av-mini-font-size-title",
 						            "type" 	=> "select",
 						            "subtype" => AviaHtmlHelper::number_array(10,120,1, array( __("Default", 'avia_framework' )=>'', __("Hidden", 'avia_framework' )=>'hidden'), "px"),
@@ -384,19 +397,19 @@ if ( !class_exists( 'avia_sc_featureimage_slider' ))
 									"description_class" => "av-builder-note av-neutral",
 									),
 										
-									array(	"name" 	=> __("Font Size for medium sized screens", 'avia_framework' ),
+									array(	"name" 	=> __("Font Size for medium sized screens (between 768px and 989px - eg: Tablet Landscape)", 'avia_framework' ),
 						            "id" 	=> "av-medium-font-size",
 						            "type" 	=> "select",
 						            "subtype" => AviaHtmlHelper::number_array(10,120,1, array( __("Default", 'avia_framework' )=>'', __("Hidden", 'avia_framework' )=>'hidden'), "px"),
 						            "std" => ""),
 						            
-						            array(	"name" 	=> __("Font Size for small screens", 'avia_framework' ),
+						            array(	"name" 	=> __("Font Size for small screens (between 480px and 767px - eg: Tablet Portrait)", 'avia_framework' ),
 						            "id" 	=> "av-small-font-size",
 						            "type" 	=> "select",
 						            "subtype" => AviaHtmlHelper::number_array(10,120,1, array( __("Default", 'avia_framework' )=>'', __("Hidden", 'avia_framework' )=>'hidden'), "px"),
 						            "std" => ""),
 						            
-									array(	"name" 	=> __("Font Size for very small screens", 'avia_framework' ),
+									array(	"name" 	=> __("Font Size for very small screens (smaller than 479px - eg: Smartphone Portrait)", 'avia_framework' ),
 						            "id" 	=> "av-mini-font-size",
 						            "type" 	=> "select",
 						            "subtype" => AviaHtmlHelper::number_array(10,120,1, array( __("Default", 'avia_framework' )=>'', __("Hidden", 'avia_framework' )=>'hidden'), "px"),

@@ -259,8 +259,19 @@ function avia_nl2br (str, is_xhtml)
 			//edit item in modal window via sub modal window
 			$body.on('click', '.avia-modal-group-element-inner', function() 
 			{
+				
 				var parent				= $(this).parents('.avia-modal-group-element:eq(0)'),
-					params				= parent.data(), modal;
+					params				= parent.data();
+					
+					if( ( 'undefined' !== typeof parent.data('modal_open') ) && ( 'no' == parent.data('modal_open') ) )
+					{
+						//	reroute click event to another button/element in this modal group
+						if( ( 'undefined' !== typeof parent.data('trigger_button') ) && ( '' != parent.data('trigger_button').trim() ) )
+						{
+							parent.closest( '.avia-modal-group-wrapper ' ).find('.' + parent.data('trigger_button').trim() ).trigger( 'click' );
+						}
+						return false;
+					}
 					
 					params.scope		= obj;
 					params.on_load		= parent.data('modal_on_load');
@@ -359,6 +370,7 @@ function avia_nl2br (str, is_xhtml)
 					handle: '>.menu-item-handle:not( .av-no-drag-drop .menu-item-handle )',
 					helper: "clone",
 					scroll: true,
+					cancel: '#aviaLayoutBuilder .avia_sorthandle a, input, textarea, button, select, option',
 					zIndex: 20000, /*must be bigger than fullscreen overlay in fixed pos*/
 					cursorAt: { left: 20 },
 					start: function( event, ui )
@@ -730,7 +742,7 @@ function avia_nl2br (str, is_xhtml)
                     content_fields	= container.find('>.avia_inner_shortcode > div ' +this.datastorage + ':not(.avia_layout_column .avia_sortable_element '+this.datastorage+', .avia_layout_cell .avia_layout_column ' +this.datastorage +' , .avia_layout_tab .avia_layout_column ' +this.datastorage +' )'),
                     content			= "",
 				    currentName		= container.data('shortcodehandler'),
-				    open_tag        = main_storage.val().match(new RegExp("\\["+currentName+".*?\\]"));
+				    open_tag        = main_storage.val().match(new RegExp("\\["+currentName+"[^]*?\\]"));
 				    
 				    
 				    
@@ -750,7 +762,7 @@ function avia_nl2br (str, is_xhtml)
                     content_fields	= container.find('>.avia_inner_shortcode > div ' +this.datastorage + ':not(.avia_layout_column_no_cell .avia_sortable_element '+this.datastorage+')'),
                     content			= "",
 				    currentSize		= container.data('width'),
-				    open_tag        = main_storage.val().match(new RegExp("\\["+currentSize+".*?\\]"));
+				    open_tag        = main_storage.val().match(new RegExp("\\["+currentSize+"[^]*?\\]"));
 				 
 				for (var i = 0; i < content_fields.length; i++) 
     			{
@@ -767,7 +779,7 @@ function avia_nl2br (str, is_xhtml)
                     content_fields	= container.find('>.avia_inner_shortcode > div ' +this.datastorage + ':not(.avia_layout_column_no_cell .avia_sortable_element '+this.datastorage+')'),
                     content			= "",
 				    currentTag		= "av_tab_sub_section",
-				    open_tag        = main_storage.val().match(new RegExp("\\["+currentTag+".*?\\]"));
+				    open_tag        = main_storage.val().match(new RegExp("\\["+currentTag+"[^]*?\\]"));
 				 
 				for (var i = 0; i < content_fields.length; i++) 
     			{
@@ -786,7 +798,7 @@ function avia_nl2br (str, is_xhtml)
                     content			= "",
 				    currentSize		= container.data('width'),
 				    currentFirst	= container.is('.avia-first-col') ? " first" : "",
-				    open_tag        = main_storage.val().match(new RegExp("\\["+currentSize+".*?\\]"));
+				    open_tag        = main_storage.val().match(new RegExp("\\["+currentSize+"[^]*?\\]"));
 				    
 				for (var i = 0; i < content_fields.length; i++) 
     			{
@@ -964,6 +976,14 @@ function avia_nl2br (str, is_xhtml)
 				{
                 	text = this.classic_textarea.val(); //entity-test: val() to html()
                 	if(this.tiny_active) text = window.switchEditors._wp_Nop(text);
+					
+					/**
+					 * With WP 4.9 we get an empty 
+					 * <span style="display: inline-block; width: 0px; overflow: hidden; line-height: 0;" data-mce-type="bookmark" class="mce_SELRES_start"></span>
+					 * which breaks our backend
+					 */
+					text = text.replace( /<\s*?span\b[^>]*mce_SELRES_start[^>]*>(.*?)<\/span\b[^>]*>/gi, '' );
+
                 	this.secureContent.val(text);
 				}
 			}
@@ -1338,11 +1358,21 @@ function avia_nl2br (str, is_xhtml)
 					var shortcode		= element_container.data('shortcodehandler'),
 						visual_updates	= element_container.find("[data-update_with]"),
 						class_updates	= element_container.find("[data-update_class_with]"),
+						closing_tag		= element_container.data("closing_tag"),
 						visual_key 		= "",
 						visual_el		= "",
 						visual_template	= "",
 						update_html		= "",
 						replace_val		= "";
+				
+						//	check if element must have a closing tag (independent if a content exists)
+						if( ( 'undefined' == typeof force_content_close ) || ( true !== force_content_close ) )
+						{
+							if( ( 'string' == typeof closing_tag ) && ( 'yes' == closing_tag ) )
+							{
+								force_content_close = true;
+							}
+						}
 						
 						if(!element_container.is('.avia-no-visual-updates'))
 						{	

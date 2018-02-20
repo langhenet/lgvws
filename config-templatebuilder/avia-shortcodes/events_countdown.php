@@ -1,9 +1,13 @@
 <?php
 /**
- * Display Numbers that count from 0 to the number you entered
+ * Events Countdown
+ * 
+ * Display a countdown to the next upcoming event
  */
- 
- if( !class_exists( 'Tribe__Events__Main' ) )
+if ( ! defined( 'ABSPATH' ) ) {  exit;  }    // Exit if accessed directly
+
+
+if( !class_exists( 'Tribe__Events__Main' ) )
 {
 	function av_countdown_events_fallback()
 	{
@@ -20,11 +24,36 @@ if ( !class_exists( 'avia_sc_events_countdown' ) )
 	
 	class avia_sc_events_countdown extends aviaShortcodeTemplate
 	{
+		
+			/**
+			 *
+			 * @var array 
+			 */
+			protected $time_array;
+			
+			
+			/**
+			 * 
+			 * @since 4.2.1
+			 */
+			public function __destruct() 
+			{
+				parent::__destruct();
+				
+				unset( $this->time_array );
+			}
+			
 			/**
 			 * Create the config array for the shortcode button
 			 */
 			function shortcode_insert_button()
 			{
+				/**
+				 * inconsistent behaviour up to 4.2: a new element was created with a close tag, after editing it was self closing !!!
+				 * @since 4.2.1: We make new element self closing now because no id='content' exists.
+				 */
+				$this->config['self_closing']	=	'yes';
+				
 				$this->config['name']		= __('Events Countdown', 'avia_framework' );
 				$this->config['tab']		= __('Plugin Additions', 'avia_framework' );
 				$this->config['icon']		= AviaBuilder::$path['imagesURL']."sc-countdown.png";

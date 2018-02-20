@@ -1,5 +1,8 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) ) {  exit;  }    // Exit if accessed directly
+
+
 /* - WPML compatibility - */
 if(defined('ICL_SITEPRESS_VERSION') && defined('ICL_LANGUAGE_CODE'))
 {
@@ -235,7 +238,11 @@ if(defined('ICL_SITEPRESS_VERSION') && defined('ICL_LANGUAGE_CODE'))
 	{
 		function avia_wpml_register_assets()
 		{
-			wp_enqueue_style( 'avia-wpml', AVIA_BASE_URL.'config-wpml/wpml-mod.css');
+			$theme = wp_get_theme(); 
+			$version = ( false === $theme->parent() ) ? $theme->get( 'Version' ) : $theme->parent()->get( 'Version' );
+			
+			wp_enqueue_style( 'avia-wpml', AVIA_BASE_URL.'config-wpml/wpml-mod.css', array(), $version );
+			wp_enqueue_script( 'avia-wpml-script', AVIA_BASE_URL.'config-wpml/wpml-mod.js', array( 'jquery' ), $version );
 		}
 	}
 

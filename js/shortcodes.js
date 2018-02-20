@@ -210,6 +210,11 @@
         	$('.av-countdown-timer', container).aviaCountdown();
     	}
     	
+		 //load audio player
+		if($.fn.aviaPlayer)
+        {
+        	$('.av-player', container).aviaPlayer();
+    	}
     	
     	
     }
@@ -272,7 +277,7 @@
 			}
 			
 			//show ticker
-			if(_self.firstrun) _self.container.addClass('av-countdown-active')
+			if(_self.firstrun) _self.container.addClass('av-countdown-active');
 			
 			_self.oldtime 	= $.extend( {}, _self.time );
 			_self.firstrun	= false;
@@ -299,7 +304,7 @@
 			{
 				_self.update[_units[i]] = {
 					time_container:  _self.container.find('.av-countdown-' + _units[i] + ' .av-countdown-time'),
-					label_container: _self.container.find('.av-countdown-' + _units[i] + ' .av-countdown-time-label'),
+					label_container: _self.container.find('.av-countdown-' + _units[i] + ' .av-countdown-time-label')
 				};
 				
 				if(_self.update[_units[i]].label_container.length)
@@ -314,10 +319,74 @@
 
 			
 		});
-	}
+	};
+	
+	
 	
 }(jQuery));
 
+
+// -------------------------------------------------------------------------------------------
+// 
+// AVIA Player
+// 
+// -------------------------------------------------------------------------------------------
+(function($)
+{ 
+	"use strict";
+	
+	var autostarted = false,
+		container = null,
+	
+		monitorStart = function( container )
+			{
+				var play_pause	= container.find('.av-player-player-container .mejs-playpause-button');
+				
+				if( play_pause.length == 0 )
+				{
+					setTimeout( function(){
+							monitorStart( container );
+						}, 200 );
+				}
+				
+				if( ! play_pause.hasClass('mejs-pause') )
+				{
+					play_pause.trigger( 'click' );
+				}
+				
+			};
+	
+	$.fn.aviaPlayer = function( options )
+	{	
+		if( ! this.length ) return; 
+
+		return this.each(function()
+		{
+			var _self 			= {};
+			
+			_self.container		= $( this );
+			
+			/**
+			 * Limit autostart to the first player with this option set only
+			 * 
+			 * DOM is not loaded completely and we have no event when player is loaded
+			 */
+			if( _self.container.hasClass( 'avia-playlist-autoplay' ) && ! autostarted )
+			{
+				if( ( _self.container.css('display') == 'none') || ( _self.container.css("visibility") == "hidden" ) )
+				{
+					return;
+				}
+				
+				autostarted = true;
+				setTimeout( function(){
+							monitorStart( _self.container );
+						}, 200 );
+			}
+			
+		});
+	};
+}(jQuery));
 
 
 // -------------------------------------------------------------------------------------------
@@ -353,7 +422,7 @@
 				});
 
 		});
-	}
+	};
 	
 }(jQuery));
 
@@ -444,7 +513,8 @@
 	{
 		if(typeof window.av_google_map == 'undefined')
 		{
-			$.avia_utilities.log('Map creation stopped, var av_google_map not found'); return
+			$.avia_utilities.log('Map creation stopped, var av_google_map not found'); 
+			return;
 		}
 	
 		// gatehr container and map data
@@ -457,19 +527,33 @@
 		
 		// set up the whole api object
 		this._init( options );
-	}
+	};
 	
 	$.AviaMapsAPI.apiFiles = 
 	{
 		loading: false, 
 		finished: false, 
-		src: 'https://maps.googleapis.com/maps/api/js?v=3.27&callback=aviaOnGoogleMapsLoaded' 
-	}
+		src: ''
+	};
 	
   	$.AviaMapsAPI.prototype =
     {
     	_init: function()
     	{
+			if( 'undefined' == typeof avia_framework_globals.gmap_maps_loaded || avia_framework_globals.gmap_maps_loaded == '' )
+			{
+						//	this is only a fallback setting 
+				$.AviaMapsAPI.apiFiles.src = 'https://maps.googleapis.com/maps/api/js?v=3.30&callback=aviaOnGoogleMapsLoaded';
+				if( typeof avia_framework_globals.gmap_api != 'undefined' && avia_framework_globals.gmap_api != "" )
+				{
+					$.AviaMapsAPI.apiFiles.src += "&key=" + avia_framework_globals.gmap_api;
+				}
+			}
+			else
+			{
+				$.AviaMapsAPI.apiFiles.src = avia_framework_globals.gmap_maps_loaded;
+			}
+			
     		this._bind_execution();
     		this._getAPI();
     	},
@@ -481,14 +565,9 @@
 			{	
 				$.AviaMapsAPI.apiFiles.loading = true;
 				var script 	= document.createElement('script');
-				script.type = 'text/javascript';	
-				script.src 	= $.AviaMapsAPI.apiFiles.src;
-				
-				if(avia_framework_globals.gmap_api != 'undefined' && avia_framework_globals.gmap_api != "")
-				{
-					script.src 	+= "&key=" + avia_framework_globals.gmap_api;
-				}
-				
+					script.type = 'text/javascript';	
+					script.src 	= $.AviaMapsAPI.apiFiles.src;
+
       			document.body.appendChild(script);
 			}
 			else if((typeof window.google != 'undefined' && typeof window.google.maps != 'undefined') || $.AviaMapsAPI.apiFiles.loading == false)
@@ -735,7 +814,7 @@
 		}
 		
     	
-    }
+    };
 
     //simple wrapper to call the api. makes sure that the api data is not applied twice
     $.fn.aviaMaps = function( options )
@@ -749,7 +828,7 @@
     			self = $.data( this, 'aviaMapsApi', new $.AviaMapsAPI( options, this ) );
     		}
     	});
-    }
+    };
     
 })( jQuery );
 
@@ -772,6 +851,8 @@ window.aviaOnGoogleMapsLoaded = function(){ $('body').trigger('av-google-maps-ap
 
 	$.AviaVideoAPI  =  function(options, video, option_container)
 	{	
+		this.videoElement = video;
+		
 		// actual video element. either iframe or video
 		this.$video	= $( video );
 		
@@ -805,6 +886,11 @@ window.aviaOnGoogleMapsLoaded = function(){ $('body').trigger('av-google-maps-ap
     {
     	youtube : {loaded: false, src: 'https://www.youtube.com/iframe_api' }
     }
+    
+    $.AviaVideoAPI.players =
+    {
+    	
+    }
 	
   	$.AviaVideoAPI.prototype =
     {
@@ -815,6 +901,8 @@ window.aviaOnGoogleMapsLoaded = function(){ $('body').trigger('av-google-maps-ap
 			
 			// info which video service we are using: html5, vimeo or youtube
 			this.type = this._getPlayerType();
+			
+			this.player = false;
 			
 			// store the player object to the this.player variable created by one of the APIs (mediaelement, youtube, vimeo)
 			this._setPlayer();			
@@ -874,8 +962,16 @@ window.aviaOnGoogleMapsLoaded = function(){ $('body').trigger('av-google-maps-ap
 			{
 				case "html5": 	
 				
-					this.player = this.$video.data('mediaelementplayer');  
-					this._playerReady(); 
+				this.player = this.$video.data('mediaelementplayer');  
+				
+				//appply fallback. sometimes needed for safari
+				if(!this.player)
+				{
+					this.$video.data('mediaelementplayer', $.AviaVideoAPI.players[ this.$video.attr('id').replace(/_html5/,'') ] );
+					this.player = this.$video.data('mediaelementplayer'); 
+				}
+				
+				this._playerReady(); 
 					
 				break; 
 					
@@ -1195,33 +1291,37 @@ window.aviaOnGoogleMapsLoaded = function(){ $('body').trigger('av-google-maps-ap
 		_html5_play: function( )
 		{
 			//disable stoping of other videos in case the user wants to run section bgs
-			this.player.options.pauseOtherPlayers = false;
-			this.player.play();
+			if(this.player) 
+			{	
+				this.player.options.pauseOtherPlayers = false;
+				this.player.play();
+			}
+			
 		},
 		
 		_html5_pause: function( )
 		{
-			this.player.pause();
+			if(this.player) this.player.pause();
 		},
 		
 		_html5_mute: function( )
 		{
-			this.player.setMuted(true);
+			if(this.player) this.player.setMuted(true);
 		},
 		
 		_html5_unmute: function( )
 		{
-			this.player.setVolume(0.7);
+			if(this.player) this.player.setVolume(0.7);
 		},
 		
 		_html5_loop: function( )
 		{
-			this.player.options.loop = true;
+			if(this.player) this.player.options.loop = true;
 		},
 		
 		_html5_reset: function( )
 		{	
-			this.player.setCurrentTime(0);	
+			if(this.player) this.player.setCurrentTime(0);	
 		},
 		
 		_html5_unload: function()
@@ -1296,6 +1396,8 @@ $.fn.avia_masonry = function(options)
 				{
 					container.css({overflow:'visible'});
 				});
+			
+				setTimeout(function() { the_win.trigger('debouncedresize'); }, 500);
 				
 				return false;
 		},
@@ -1461,7 +1563,7 @@ $.fn.avia_masonry = function(options)
 				error: finished,
 				complete: function()
 				{
-				    
+				    setTimeout(function() { the_win.trigger('debouncedresize'); }, 500);
 				}
 			});
 		}
@@ -2648,6 +2750,9 @@ $.fn.avia_sc_toggle = function(options)
 					{
 						content.removeClass('active_tc').attr({style:''});
 						win.trigger('av-height-change');
+						win.trigger('av-content-el-height-changed', this );
+						
+						location.replace(thisheading.data('fake-id') + "-closed");
 					});
 					thisheading.removeClass('activeTitle');
 
@@ -2663,19 +2768,28 @@ $.fn.avia_sc_toggle = function(options)
 						});
 						heading.removeClass('activeTitle');
 					}
-					content.addClass('active_tc').slideDown(200,
 					
-					function()
-					{
-                        if(!container.is('.toggle_close_all'))
-                        {
-                            scroll_to_viewport();
-                        }
-                        
-                        win.trigger('av-height-change');
-					}
+					content.addClass('active_tc');
 					
-					);
+					setTimeout(function(){
+						
+						content.slideDown(200,
+						
+							function()
+							{
+		                        if(!container.is('.toggle_close_all'))
+		                        {
+		                            scroll_to_viewport();
+		                        }
+		                        
+		                        win.trigger('av-height-change');
+								win.trigger('av-content-el-height-changed', this );
+							}
+						
+						);
+					
+					}, 1);
+					
 					thisheading.addClass('activeTitle');
 					location.replace(thisheading.data('fake-id'));
 				}
@@ -2830,6 +2944,8 @@ $.fn.avia_sc_tabs= function(options)
 					$('html:not(:animated),body:not(:animated)').scrollTop(scoll_target);
 				}
 			}
+			
+			win.trigger( 'av-content-el-height-changed', tab );
 		}
 
 		function trigger_default_open(hash)
@@ -2869,6 +2985,7 @@ $.fn.avia_sc_tab_section= function()
 	{
 		var container 		= $(this),
 			tabs			= container.find('.av-section-tab-title'),
+		    tab_outer		= container.find('.av-tab-section-outer-container'),
 			tab_wrap		= container.find('.av-tab-section-tab-title-container'),
 			tab_nav			= container.find('.av_tab_navigation'), 
 			content_wrap	= container.find('.av-tab-section-inner-container'),
@@ -2948,7 +3065,10 @@ $.fn.avia_sc_tab_section= function()
 					var old_height = inner_content.height();
 					inner_content.height('auto');
 					
-					var height = current_content.find('.av-layout-tab-inner').height();
+					var height = current_content.find('.av-layout-tab-inner').height(),
+					    add_height = tab_wrap.height();
+					
+					tab_outer.css('max-height', height + add_height + 100);
 					inner_content.height(old_height);
 					inner_content.height(height);
 					
@@ -2960,15 +3080,41 @@ $.fn.avia_sc_tab_section= function()
 			
 			set_tab_titlte_pos = function()
 			{
-				//scroll the tabs if there is not enough room to display them all
+				//	scroll the tabs if there is not enough room to display them all - rtl allign right to left !!
 				var current_tab = container.find('.av-active-tab-title'),
 					viewport	= container.width(),
-					left_pos	= viewport < min_width ? (current_tab.position().left * - 1) - (current_tab.outerWidth() / 2) + (viewport / 2): 0;
+					left_pos	= ( current_tab.position().left * - 1) - (current_tab.outerWidth() / 2) + (viewport / 2);
+			
+				if( ! $('body').hasClass("rtl") )
+				{
+					if( viewport >= min_width )
+					{
+						left_pos = 0;
+					}
+					
+					if(left_pos + min_width < viewport) left_pos = (min_width - viewport) * -1;
+					if(left_pos > 0) left_pos = 0;
 				
-				if(left_pos + min_width < viewport) left_pos = (min_width - viewport) * -1;
-				if(left_pos > 0) left_pos = 0;
-				
-				tab_wrap.css('left',left_pos );
+					tab_wrap.css('left',left_pos );
+				}
+				else
+				{
+					var right_pos = 0;
+					
+					if( viewport < min_width )
+					{
+						if( left_pos + min_width > viewport )
+						{
+							if( left_pos > 0 ) left_pos = 0;
+							
+							var right_pos = (left_pos + min_width - viewport) * -1;
+							tab_wrap.css('left', 'auto' );
+							tab_wrap.css('right', right_pos );
+						}
+					}
+					tab_wrap.css('left', 'auto' );
+					tab_wrap.css('right', right_pos );
+				}
 			},
 			switch_to_next_prev = function(e)
 			{
@@ -3012,7 +3158,17 @@ $.fn.avia_sc_tab_section= function()
 				tabs.on('click', change_tab);
 				tab_nav.on('click', switch_to_next_prev);
 				win.on('debouncedresize', set_tab_titlte_pos);	
-				win.on('debouncedresize', set_slide_height);	
+				
+				/**
+				 * We had to remove av-height-change because this event is recursivly triggered in set_slide_height and lead to performance problems 
+				 * AND broken layout - content was not displayed completly
+				 * 
+				 * Content elements that can can change their height and trigger av-height-change should trigger this additional event after to
+				 * allow layout elements like tab section to react on this and then call av-height-change by themself
+				 * 
+				 * @since 4.2.3
+				 */
+				win.on('debouncedresize av-content-el-height-changed', set_slide_height);	
 				
 				set_min_width();
 				set_slide_height(); 
@@ -3314,7 +3470,7 @@ $.fn.avia_hor_gallery= function(options)
 
 				responseContainer = form.next(options.responseContainer+":eq(0)");
 
-				send.button.bind('click', checkElements);
+				send.button.on('click', checkElements);
 				
 				
 				//change type of email forms on mobile so the e-mail keyboard with @ sign is used
@@ -3377,7 +3533,22 @@ $.fn.avia_hor_gallery= function(options)
 							}
 							nomatch = false;
 						}
-
+						
+						if(classes && classes.match(/is_ext_email/))
+						{
+							//  also allowed would be: ! # $ % & ' * + - / = ? ^ _ ` { | } ~
+							if( ! value.match( /^[\w|\.|\-|ÄÖÜäöü]+@\w[\w|\.|\-|ÄÖÜäöü]*\.[a-zA-Z]{2,20}$/ ) )
+							{
+								surroundingElement.removeClass("valid error ajax_alert").addClass("error");
+								send.validationError = true;
+							}
+							else
+							{
+								surroundingElement.removeClass("valid error ajax_alert").addClass("valid");
+							}
+							nomatch = false;
+						}
+						
 						if(classes && classes.match(/is_phone/))
 						{
 							if(!value.match(/^(\d|\s|\-|\/|\(|\)|\[|\]|e|x|t|ension|\.|\+|\_|\,|\:|\;){3,}$/))
@@ -4687,19 +4858,41 @@ Avia Slideshow
 				alter.each(function()
 				{	
 					var current  = $(this).removeClass('av-video-slide').data({'avia_video_events': true, 'video-ratio':0}),
-						fallback = current.data('mobile-img');
+						fallback = current.data('mobile-img'),
+						fallback_link = current.data('fallback-link'),
+						appendTo = current.find('.avia-slide-wrap');
 						
 					current.find('.av-click-overlay, .mejs-mediaelement, .mejs-container').remove();
 					
 					if(!fallback)
 					{
-						var appendTo = current.find('.avia-slide-wrap');
 						$('<p class="av-fallback-message"><span>Please set a mobile device fallback image for this video in your wordpress backend</span></p>').appendTo(appendTo);
 					}
 					
 					if(options && options.bg_slider)
 					{
 						current.data('img-url', fallback);
+						
+						//if we got a fallback link we need to either replace the default link on mobile devices, or if there is no default link change the wrapping <div> to an <a>
+						if(fallback_link != "")
+						{
+							if(appendTo.is('a'))
+							{
+								appendTo.attr('href', fallback_link);
+							}
+							else
+							{
+								appendTo.find('a').remove();
+								appendTo.replaceWith(function(){
+									var cur_slide = $(this);
+								    return $("<a>").attr({'data-rel': cur_slide.data('rel'), 'class': cur_slide.attr('class'), 'href': fallback_link} ).append( $(this).contents() );
+								});
+									
+								appendTo = current.find('.avia-slide-wrap');
+							}
+							
+							current.parents('#main').avia_activate_lightbox();
+						}
 					}
 					else
 					{
@@ -5235,7 +5428,10 @@ Avia Slideshow
 				if(event.data.iteration === 0) 
 				{	
 					event.data.wrap.css('opacity',0);
-					if(!event.data.self.isMobile && !event.data.slide.data('disableAutoplay')) { event.data.slide.trigger('play'); } 
+					if(!event.data.self.isMobile && !event.data.slide.data('disableAutoplay'))
+					{ 
+						event.data.slide.trigger('play'); 
+					} 
 					setTimeout(function(){ event.data.wrap.avia_animate({opacity:1}, 400); }, 50);
 				}
 				else if ($html.is('.avia-msie') && !event.data.slide.is('.av-video-service-html5'))

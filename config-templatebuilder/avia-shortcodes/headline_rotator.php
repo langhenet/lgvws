@@ -1,4 +1,11 @@
 <?php
+/**
+ * Headline Rotator
+ * 
+ * Creates a text rotator for dynamic headings
+ */
+if ( ! defined( 'ABSPATH' ) ) {  exit;  }    // Exit if accessed directly
+
 
 if ( !class_exists( 'avia_sc_headline_rotator' ) )
 {
@@ -10,6 +17,8 @@ if ( !class_exists( 'avia_sc_headline_rotator' ) )
 			 */
 			function shortcode_insert_button()
 			{
+				$this->config['self_closing']	=	'no';
+				
 				$this->config['name']		= __('Headline Rotator', 'avia_framework' );
 				$this->config['tab']		= __('Content Elements', 'avia_framework' );
 				$this->config['icon']		= AviaBuilder::$path['imagesURL']."sc-heading.png";
@@ -270,19 +279,19 @@ if ( !class_exists( 'avia_sc_headline_rotator' ) )
 									"description_class" => "av-builder-note av-neutral",
 									),
 										
-									array(	"name" 	=> __("Font Size for medium sized screens", 'avia_framework' ),
+									array(	"name" 	=> __("Font Size for medium sized screens (between 768px and 989px - eg: Tablet Landscape)", 'avia_framework' ),
 						            "id" 	=> "av-medium-font-size-title",
 						            "type" 	=> "select",
 						            "subtype" => AviaHtmlHelper::number_array(10,120,1, array( __("Default", 'avia_framework' )=>'' , __("Hidden", 'avia_framework' )=>'hidden' ), "px"),
 						            "std" => ""),
 						            
-						            array(	"name" 	=> __("Font Size for small screens", 'avia_framework' ),
+						            array(	"name" 	=> __("Font Size for small screens (between 480px and 767px - eg: Tablet Portrait)", 'avia_framework' ),
 						            "id" 	=> "av-small-font-size-title",
 						            "type" 	=> "select",
 						            "subtype" => AviaHtmlHelper::number_array(10,120,1, array( __("Default", 'avia_framework' )=>'', __("Hidden", 'avia_framework' )=>'hidden'), "px"),
 						            "std" => ""),
 						            
-									array(	"name" 	=> __("Font Size for very small screens", 'avia_framework' ),
+									array(	"name" 	=> __("Font Size for very small screens (smaller than 479px - eg: Smartphone Portrait)", 'avia_framework' ),
 						            "id" 	=> "av-mini-font-size-title",
 						            "type" 	=> "select",
 						            "subtype" => AviaHtmlHelper::number_array(10,120,1, array( __("Default", 'avia_framework' )=>'', __("Hidden", 'avia_framework' )=>'hidden'), "px"),
@@ -322,7 +331,23 @@ if ( !class_exists( 'avia_sc_headline_rotator' ) )
 				return $params;
 			}
 
+			/**
+			 * Returns false by default.
+			 * Override in a child class if you need to change this behaviour.
+			 * 
+			 * @since 4.2.1
+			 * @param string $shortcode
+			 * @return boolean
+			 */
+			public function is_nested_self_closing( $shortcode )
+			{
+				if( in_array( $shortcode, $this->config['shortcode_nested'] ) )
+				{
+					return true;
+				}
 
+				return false;
+			}
 
 			/**
 			 * Frontend Shortcode Handler

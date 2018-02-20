@@ -24,7 +24,7 @@
 
             var widget_id_base = 'avia_google_maps';
 
-            if(typeof(settings.data) !== 'undefined' && settings.data.search('action=save-widget') !== -1 && settings.data.search('id_base=' + widget_id_base) !== -1)
+            if(typeof(settings.data) !== 'undefined' && typeof(settings.data.search) !== 'undefined' && settings.data.search('action=save-widget') !== -1 && settings.data.search('id_base=' + widget_id_base) !== -1)
             {
                 $('body').avia_google_maps_options();
             }

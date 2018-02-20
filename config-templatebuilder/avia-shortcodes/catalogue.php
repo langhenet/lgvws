@@ -1,4 +1,10 @@
 <?php
+/**
+ * Catalogue
+ * 
+ * Creates a pricing list
+ */
+if ( ! defined( 'ABSPATH' ) ) {  exit;  }    // Exit if accessed directly
 
 
 if ( !class_exists( 'avia_sc_catalogue' ) )
@@ -10,6 +16,8 @@ if ( !class_exists( 'avia_sc_catalogue' ) )
 			 */
 			function shortcode_insert_button()
 			{
+				$this->config['self_closing']	=	'no';
+				
 				$this->config['name']		= __('Catalogue', 'avia_framework' );
 				$this->config['tab']		= __('Content Elements', 'avia_framework' );
 				$this->config['icon']		= AviaBuilder::$path['imagesURL']."sc-catalogue.png";

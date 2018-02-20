@@ -1,7 +1,8 @@
 <?php
 /**
- * COLUMNS
- * Shortcode which creates columns for better content separation
+ * Single Tab
+ * 
+ * Shortcode creates a single tab for the tab section element
  */
 
  // Don't load directly
@@ -15,12 +16,19 @@ if ( !class_exists( 'avia_sc_tab_sub_section' ) )
 
 			static $extraClass = "";
 			static $attr = array();
-
+			
+			
 			/**
 			 * Create the config array for the shortcode button
 			 */
 			function shortcode_insert_button()
 			{
+				$this->config['type']				=	'layout';
+				$this->config['self_closing']		=	'no';
+				$this->config['contains_text']		=	'no';
+				$this->config['contains_layout']	=	'yes';
+				$this->config['contains_content']	=	'yes';
+				
 				$this->config['invisible'] = true;
 				$this->config['name']		= 'Single Tab';
 				$this->config['icon']		= AviaBuilder::$path['imagesURL']."sc-full.png";
@@ -469,7 +477,7 @@ if ( !class_exists( 'avia_sc_tab_sub_section' ) )
 				
 				$active_tab = avia_sc_tab_section::$tab == avia_sc_tab_sub_section::$attr['initial'] ? "av-active-tab-content __av_init_open" : "";
 				
-				$tab_link = AviaHelper::save_string($atts['tab_title'],'-');
+				$tab_link = AviaHelper::valid_href( $atts['tab_title'], '-', 'av-tab-section-' . avia_sc_tab_section::$count . '-' . avia_sc_tab_section::$tab );
 				
 				$output   = '<div data-av-tab-section-content="'.avia_sc_tab_section::$tab.'" class="av-layout-tab av-animation-delay-container '.$active_tab.' '.$meta['el_class'].' '.$extraClass.' '.avia_sc_tab_sub_section::$extraClass.'" '.$outer_style.' '.$data.' data-tab-section-id="'.$tab_link.'">';
 				$output  .= "<div class='av-layout-tab-inner'>";

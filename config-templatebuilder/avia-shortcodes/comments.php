@@ -1,7 +1,8 @@
 <?php
 /**
  * Comments Element
- * Adds a comment form to the page
+ * 
+ * Add a comment form and comments list to the template
  */
  
 // Don't load directly
@@ -18,6 +19,8 @@ if ( !class_exists( 'avia_sc_comments_list' ) )
 			 */
 			function shortcode_insert_button()
 			{
+				$this->config['self_closing']	=	'yes';
+				
 				$this->config['name']		= __('Comments', 'avia_framework' );
 				$this->config['tab']		= __('Content Elements', 'avia_framework' );
 				$this->config['icon']		= AviaBuilder::$path['imagesURL']."sc-comments.png";
@@ -131,7 +134,7 @@ if ( !class_exists( 'avia_sc_comments_list' ) )
 			 * @param string $shortcodename the shortcode found, when == callback name
 			 * @return string $output returns the modified html string 
 			 */
-			function shortcode_handler($atts = array(), $content = "", $shortcodename = "", $meta = "")
+			function shortcode_handler($atts, $content = "", $shortcodename = "", $meta = "")
 			{
 	        	extract(AviaHelper::av_mobile_sizes($atts)); //return $av_font_classes, $av_title_font_classes and $av_display_classes 
 				

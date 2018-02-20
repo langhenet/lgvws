@@ -1,4 +1,11 @@
 <?php
+/**
+ * Related Products
+ * 
+ * Display a list of related products and/or up-sells
+ */
+if ( ! defined( 'ABSPATH' ) ) {  exit;  }    // Exit if accessed directly
+
 
 if( !class_exists( 'woocommerce' ) )
 {
@@ -15,6 +22,8 @@ if ( !class_exists( 'avia_sc_product_upsells' ) )
 		 */
 		function shortcode_insert_button()
 		{
+			$this->config['self_closing']	=	'yes';
+			
 			$this->config['name']		= __('Related Products', 'avia_framework' );
 			$this->config['tab']		= __('Plugin Additions', 'avia_framework' );
 			$this->config['icon']		= AviaBuilder::$path['imagesURL']."sc-tabs.png";
@@ -88,7 +97,7 @@ if ( !class_exists( 'avia_sc_product_upsells' ) )
 		{
 			$params['innerHtml'] = "<img src='".$this->config['icon']."' title='".$this->config['name']."' />";
 			$params['innerHtml'].= "<div class='avia-element-label'>".$this->config['name']."</div>";
-			$params['content'] 	 = NULL; //remove to allow content elements
+
 			return $params;
 		}
 

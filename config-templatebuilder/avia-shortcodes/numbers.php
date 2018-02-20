@@ -1,8 +1,12 @@
 <?php
 /**
+ * Animated Numbers
+ * 
  * Display Numbers that count from 0 to the number you entered
  */
- 
+if ( ! defined( 'ABSPATH' ) ) {  exit;  }    // Exit if accessed directly
+
+
 if ( !class_exists( 'avia_sc_animated_numbers' ) ) 
 {
 	
@@ -13,6 +17,8 @@ if ( !class_exists( 'avia_sc_animated_numbers' ) )
 			 */
 			function shortcode_insert_button()
 			{
+				$this->config['self_closing']	=	'no';
+				
 				$this->config['name']		= __('Animated Numbers', 'avia_framework' );
 				$this->config['tab']		= __('Content Elements', 'avia_framework' );
 				$this->config['icon']		= AviaBuilder::$path['imagesURL']."sc-numbers.png";

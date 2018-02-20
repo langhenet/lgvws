@@ -1,8 +1,11 @@
 <?php
 /**
- * Contact
- * Displays a form field
+ * Contact Form
+ * 
+ * Displays a customizable contact form
  */
+if ( ! defined( 'ABSPATH' ) ) {  exit;  }    // Exit if accessed directly
+
 
 if ( !class_exists( 'avia_sc_contact' ) )
 {
@@ -13,6 +16,8 @@ if ( !class_exists( 'avia_sc_contact' ) )
 			 */
 			function shortcode_insert_button()
 			{
+				$this->config['self_closing']	=	'no';
+				
 				$this->config['name']		= __('Contact Form', 'avia_framework' );
 				$this->config['tab']		= __('Content Elements', 'avia_framework' );
 				$this->config['icon']		= AviaBuilder::$path['imagesURL']."sc-contact.png";
@@ -143,7 +148,7 @@ if ( !class_exists( 'avia_sc_contact' ) )
 									
 								    array(
 									"name" 	=> __("Form Element Validation", 'avia_framework' ),
-									"desc" 	=> "",
+									"desc" 	=> "When selecting &quot;Valid E-Mail address with special characters&quot; keep in mind, that not all E-Mail systems support this feature properly.",
 									"id" 	=> "check",
 									"type" 	=> "select",
 									"std" 	=> "",
@@ -152,6 +157,7 @@ if ( !class_exists( 'avia_sc_contact' ) )
 									"subtype" => array(	__('No Validation', 'avia_framework' ) =>'',
 														__('Is not empty', 'avia_framework' ) =>'is_empty',
 														__('Valid E-Mail address', 'avia_framework' ) =>'is_email',
+														__('Valid E-Mail address with special characters', 'avia_framework' ) =>'is_ext_email',
 														__('Valid Phone Number', 'avia_framework' ) =>'is_phone',
 														__('Valid Number', 'avia_framework' ) =>'is_number')),
 
@@ -231,7 +237,7 @@ if ( !class_exists( 'avia_sc_contact' ) )
 
 						array(
 							"name" 	=> __("Contact Form Captcha", 'avia_framework' ),
-							"desc" 	=> __("Do you want to display a Captcha field at the end of the form so users must prove they are human by solving a simply mathematical question?", 'avia_framework' )."</br></br>". 										   __("(It is recommended to only activate this if you receive spam from your contact form, since an invisible spam protection is also implemented that should filter most spam messages by robots anyways)", 'avia_framework' ),
+							"desc" 	=> __("Do you want to display a Captcha field at the end of the form so users must prove they are human by solving a simply mathematical question?", 'avia_framework' )."</br></br>". 										   __("(It is recommended to only activate this if you receive spam from your contact form, since an invisible spam protection is also implemented that should filter most spam messages by robots anyway)", 'avia_framework' ),
 							"id" 	=> "captcha",
 							"type" 	=> "select",
 							"std" 	=> "",

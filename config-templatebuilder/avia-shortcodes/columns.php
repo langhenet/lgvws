@@ -1,6 +1,7 @@
 <?php
 /**
  * COLUMNS
+ * 
  * Shortcode which creates columns for better content separation
  */
 
@@ -11,12 +12,13 @@ if ( !defined('ABSPATH') ) { die('-1'); }
 
 if ( !class_exists( 'avia_sc_columns' ) )
 {
-	class avia_sc_columns extends aviaShortcodeTemplate{
+	class avia_sc_columns extends aviaShortcodeTemplate
+	{
 
 			static $extraClass 		= "";
 			static $calculated_size = 0;
 			static $first_atts  = array(); 
-			static $size_array = array(	'av_one_full' 		=> 1, 
+			static $size_array = array(	'av_one_full' 		=> 1.0, 
 										'av_one_half' 		=> 0.5, 
 										'av_one_third' 		=> 0.33, 
 										'av_one_fourth' 	=> 0.25, 
@@ -27,6 +29,37 @@ if ( !class_exists( 'avia_sc_columns' ) )
 										'av_three_fifth' 	=> 0.6, 
 										'av_four_fifth' 	=> 0.8
 									);
+
+			
+			/**
+			 * This constructor is implicity called by all derived classes
+			 * To avoid duplicating code we put this in the constructor
+			 * 
+			 * @since 4.2.1
+			 * @param AviaBuilder $builder
+			 */
+			public function __construct( $builder ) 
+			{
+				parent::__construct( $builder );
+				
+				$this->config['type']				=	'layout';
+				$this->config['self_closing']		=	'no';
+				$this->config['contains_content']	=	'yes';
+				$this->config['contains_text']		=	'no';
+				$this->config['first_in_row']		=	'first';
+			}
+			
+			/**
+			 * Returns the width of the column. As this is the base class for all columns we only need to implement it here.
+			 * 
+			 * @since 4.2.1
+			 * @return float
+			 */
+			public function get_element_width()
+			{
+				return isset( avia_sc_columns::$size_array[ $this->config['shortcode'] ] ) ? avia_sc_columns::$size_array[ $this->config['shortcode'] ] : 1.0;
+			}
+
 
 			/**
 			 * Create the config array for the shortcode button

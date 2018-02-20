@@ -1,7 +1,11 @@
 <?php
 /**
  * Testimonials
+ * 
+ * Creates a Testimonial Grid
  */
+if ( ! defined( 'ABSPATH' ) ) {  exit;  }    // Exit if accessed directly
+
 
 if ( !class_exists( 'avia_sc_testimonial' ) )
 {
@@ -19,6 +23,8 @@ if ( !class_exists( 'avia_sc_testimonial' ) )
 			 */
 			function shortcode_insert_button()
 			{
+				$this->config['self_closing']	=	'no';
+				
 				$this->config['name']		= __('Testimonials', 'avia_framework' );
 				$this->config['tab']		= __('Content Elements', 'avia_framework' );
 				$this->config['icon']		= AviaBuilder::$path['imagesURL']."sc-testimonials.png";
@@ -471,7 +477,9 @@ array(
 	if($name)	$output .= 					"<strong  class='avia-testimonial-name'  {$this->title_styling} {$markup_name}>{$name}</strong>";
 if($subtitle)	$output .= 					"<span  class='avia-testimonial-subtitle {$this->subtitle_class}' {$this->title_styling}  {$markup_job}>{$subtitle}</span>";
     if($link)	$output .= 					"<span class='hidden avia-testimonial-markup-link'  {$markup_url}>{$link}</span>";
-	if($link)	$output .= 					" &ndash; <a class='aviablank avia-testimonial-link' href='{$link}' >{$linktext}</a>";
+	
+	if($link && $subtitle)	$output .= 					" &ndash; ";
+	if($link)	$output .= 					"<a class='aviablank avia-testimonial-link' href='{$link}' >{$linktext}</a>";
 				$output .= 				"</div>";
 				$output .= 			"</div>";
 				$output .= "</div>";

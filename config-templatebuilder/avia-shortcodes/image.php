@@ -1,8 +1,11 @@
 <?php
 /**
- * Textblock
- * Shortcode which creates a text element wrapped in a div
+ * Image
+ * 
+ * Shortcode which inserts an image of your choice
  */
+if ( ! defined( 'ABSPATH' ) ) {  exit;  }    // Exit if accessed directly
+
 
 if ( !class_exists( 'avia_sc_image' ) )
 {
@@ -13,6 +16,8 @@ if ( !class_exists( 'avia_sc_image' ) )
 			 */
 			function shortcode_insert_button()
 			{
+				$this->config['self_closing']	=	'no';
+				
 				$this->config['name']			= __('Image', 'avia_framework' );
 				$this->config['tab']			= __('Media Elements', 'avia_framework' );
 				$this->config['icon']			= AviaBuilder::$path['imagesURL']."sc-image.png";
@@ -73,7 +78,7 @@ if ( !class_exists( 'avia_sc_image' ) )
 					
 					array(
 							"name" 	=> __("Image Styling", 'avia_framework' ),
-							"desc" 	=> __("Chose a styling variaton", 'avia_framework' ),
+							"desc" 	=> __("Choose a styling variaton", 'avia_framework' ),
 							"id" 	=> "styling",
 							"type" 	=> "select",
 							"std" 	=> "",

@@ -1,9 +1,12 @@
 <?php
 /**
- * Post/Page Content
+ * Upcoming Events
  *
+ * Show a list of upcoming events
  * Element is in Beta and by default disabled. Todo: test with layerslider elements. currently throws error bc layerslider is only included if layerslider element is detected which is not the case with the post/page element
  */
+if ( ! defined( 'ABSPATH' ) ) {  exit;  }    // Exit if accessed directly
+
 
 if( !class_exists( 'Tribe__Events__Main' ) )
 {
@@ -27,6 +30,8 @@ if ( !class_exists( 'avia_sc_upcoming_events' ) )
 		 */
 		function shortcode_insert_button()
 		{
+			$this->config['self_closing']	=	'yes';
+			
 			$this->config['name']		= __('Upcoming Events', 'avia_framework' );
 			$this->config['tab']		= __('Plugin Additions', 'avia_framework' );
 			$this->config['icon']		= AviaBuilder::$path['imagesURL']."sc-blog.png";

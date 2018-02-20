@@ -1,8 +1,11 @@
 <?php
 /**
- * Sidebar
- * Displays one of the registered Widget Areas of the theme
+ * Progress Bars
+ * 
+ * Creates some progress bars
  */
+if ( ! defined( 'ABSPATH' ) ) {  exit;  }    // Exit if accessed directly
+
 
 if ( !class_exists( 'avia_sc_progressbar' ) )
 {
@@ -13,6 +16,8 @@ if ( !class_exists( 'avia_sc_progressbar' ) )
 			 */
 			function shortcode_insert_button()
 			{
+				$this->config['self_closing']	=	'no';
+				
 				$this->config['name']		= __('Progress Bars', 'avia_framework' );
 				$this->config['tab']		= __('Content Elements', 'avia_framework' );
 				$this->config['icon']		= AviaBuilder::$path['imagesURL']."sc-progressbar.png";
@@ -120,7 +125,7 @@ if ( !class_exists( 'avia_sc_progressbar' ) )
 								
 								array(
 									"name" 	=> __("Progress Bar Coloring", 'avia_framework' ),
-									"desc" 	=> __("Chose the coloring of the progress bar here", 'avia_framework' ),
+									"desc" 	=> __("Choose the coloring of the progress bar here", 'avia_framework' ),
 									"id" 	=> "bar_styling",
 									"type" 	=> "select",
 									"std" 	=> "av-striped-bar",
@@ -130,7 +135,7 @@ if ( !class_exists( 'avia_sc_progressbar' ) )
 															
 							array(
 									"name" 	=> __("Progress Bar Animation enabled?", 'avia_framework' ),
-									"desc" 	=> __("Chose if you want to enable the continuous animation of the progress bar", 'avia_framework' ),
+									"desc" 	=> __("Choose if you want to enable the continuous animation of the progress bar", 'avia_framework' ),
 									"id" 	=> "bar_animation",
 									"type" 	=> "select",
 									"std" 	=> "av-animated-bar",
@@ -141,7 +146,7 @@ if ( !class_exists( 'avia_sc_progressbar' ) )
 									
 							array(
 									"name" 	=> __("Progress Bar Style", 'avia_framework' ),
-									"desc" 	=> __("Chose the styling of the progress bar here", 'avia_framework' ),
+									"desc" 	=> __("Choose the styling of the progress bar here", 'avia_framework' ),
 									"id" 	=> "bar_styling_secondary",
 									"type" 	=> "select",
 									"std" 	=> "",
@@ -152,7 +157,7 @@ if ( !class_exists( 'avia_sc_progressbar' ) )
 							
 							array(
 									"name" 	=> __("Show Progress Bar percentage?", 'avia_framework' ),
-									"desc" 	=> __("Chose if you want to show the % of the progress bar", 'avia_framework' ),
+									"desc" 	=> __("Choose if you want to show the numeric percentage of the progress bar", 'avia_framework' ),
 									"id" 	=> "show_percentage",
 									"type" 	=> "select",
 									"std" 	=> "",
@@ -269,7 +274,25 @@ if ( !class_exists( 'avia_sc_progressbar' ) )
 				return $params;
 			}
 
+			
+			/**
+			 * Returns false by default.
+			 * Override in a child class if you need to change this behaviour.
+			 * 
+			 * @since 4.2.1
+			 * @param string $shortcode
+			 * @return boolean
+			 */
+			public function is_nested_self_closing( $shortcode )
+			{
+				if( in_array( $shortcode, $this->config['shortcode_nested'] ) )
+				{
+					return true;
+				}
 
+				return false;
+			}
+			
 
 			/**
 			 * Frontend Shortcode Handler

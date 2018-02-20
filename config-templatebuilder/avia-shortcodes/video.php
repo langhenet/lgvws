@@ -1,9 +1,12 @@
 <?php
 /**
- * Textblock
- * Shortcode which creates a text element wrapped in a div
+ * Video
+ * 
+ * Shortcode which display a video
  */
- 
+if ( ! defined( 'ABSPATH' ) ) {  exit;  }    // Exit if accessed directly
+
+
 if ( !class_exists( 'avia_sc_video' ) ) 
 {
 	class avia_sc_video extends aviaShortcodeTemplate
@@ -13,6 +16,8 @@ if ( !class_exists( 'avia_sc_video' ) )
 			 */
 			function shortcode_insert_button()
 			{
+				$this->config['self_closing']	=	'yes';
+				
 				$this->config['name']			= __('Video', 'avia_framework' );
 				$this->config['tab']			= __('Media Elements', 'avia_framework' );
 				$this->config['icon']			= AviaBuilder::$path['imagesURL']."sc-video.png";

@@ -8,17 +8,30 @@ if($builder->disable_drag_drop == true)
 }
 
 $boxes = array(
+	
     array( 'title' =>$av_default_title, 'id'=>'avia_builder', 'page'=>array('post','portfolio','page','product'), 'context'=>'normal', 'priority'=>'high', 'expandable'=>true ),
+	array( 'title' =>__('Enfold Shortcode Parser','avia_framework' ), 'id'=>'avia_sc_parser', 'page'=>array('post','portfolio','page','product'), 'context'=>'normal', 'priority'=>'high', 'expandable'=>false ),
     array( 'title' =>__('Layout','avia_framework' ), 'id'=>'layout', 'page'=>array('portfolio', 'page' , 'post'), 'context'=>'side', 'priority'=>'low'),
     array( 'title' =>__('Additional Portfolio Settings','avia_framework' ), 'id'=>'preview', 'page'=>array('portfolio'), 'context'=>'normal', 'priority'=>'high' ),
     array( 'title' =>__('Breadcrumb Hierarchy','avia_framework' ), 'id'=>'hierarchy', 'page'=>array('portfolio'), 'context'=>'side', 'priority'=>'low'),
 );
 
+/**
+ * used_by:		enfold\config-woocommerce\admin-options.php  avia_woocommerce_product_options()			10
+ */
 $boxes = apply_filters('avf_builder_boxes', $boxes);
 
 
 $elements = array(
-array(
+	
+	array(
+		"slug"          => "avia_sc_parser",
+        "name"          => __("Enfold Shortcode Parser Info Window", 'avia_framework' ),
+        "id"            => "sc_parser_info",
+		"type"          => array( $builder, 'parser_select_panel' )
+		),
+	
+	array(
         "slug"          => "avia_builder",
         "name"          => __("Visual layout editor",'avia_framework'),
         "id"            => "layout_editor",
@@ -39,7 +52,7 @@ array(
                             '   <li>'.__('Press ESC on your keyboard or the Close Button to close popup window.', 'avia_framework' ).'</li>'.
                             '   <li>'.__('Press ENTER on your keyboard or the Save Button to save current state of a popup window', 'avia_framework' ).'</li>'.
                             "</ul>"
-    ),
+		),
 
     array(
         "container_class" => "av_2columns av_col_1 avia-style",

@@ -184,7 +184,6 @@ var lsLogo = {
 }( jQuery ));
 
 
-
 (function( $ ) {
 
 	$.fn.kmAccordion = function() {
@@ -594,12 +593,17 @@ jQuery(function($) {
 		LS_CodeMirror.init();
 	}
 
+	// About page
+	if( document.location.href.indexOf('section=about') !== -1 ) {
+		lsLogo.append( '.layerslider-logo', true );
+		$('.km-tabs').kmTabs();
+	}
+
 
 	// Skin/CSS Editor
-	if(document.location.href.indexOf('ls-skin-editor') != -1 ||
-		document.location.href.indexOf('ls-style-editor') != -1) {
+	if( document.location.href.indexOf('section=skin-editor') !== -1 ) {
 		$('select[name="skin"]').change(function() {
-			document.location.href = 'admin.php?page=ls-skin-editor&skin=' + $(this).children(':selected').val();
+			document.location.href = 'admin.php?page=layerslider-options&section=skin-editor&skin=' + $(this).children(':selected').val();
 		});
 	}
 
@@ -614,12 +618,12 @@ jQuery(function($) {
 		// Disabled, exit quietly
 		if( el.disabled ) { return; }
 
-		if( $(el).is(':checked') ) {
+		if( $(el).is(':checked') && ! $(this).is('.indeterminate') ) {
 			$(el).prop('checked', false);
-			$(this).removeClass('on').addClass('off');
+			$(this).removeClass('on indeterminate').addClass('off');
 		} else {
 			$(el).prop('checked', true);
-			$(this).removeClass('off').addClass('on');
+			$(this).removeClass('off indeterminate').addClass('on');
 		}
 
 		// Trigger events

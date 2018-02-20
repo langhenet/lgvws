@@ -1,8 +1,11 @@
 <?php
 /**
- * Contact
- * Displays a form field
+ * Mailchimp signup form
+ * 
+ * Creates a mailschimp signup form
  */
+if ( ! defined( 'ABSPATH' ) ) {  exit;  }    // Exit if accessed directly
+
 
 if ( !class_exists( 'avia_sc_mailchimp' ) )
 {
@@ -21,6 +24,8 @@ if ( !class_exists( 'avia_sc_mailchimp' ) )
 			function shortcode_insert_button()
 			{
 				$this->api_key = avia_get_option('mailchimp_api');
+				
+				$this->config['self_closing']	=	'no';
 				
 				$this->config['name']		= __('Mailchimp Signup', 'avia_framework' );
 				$this->config['tab']		= __('Content Elements', 'avia_framework' );

@@ -15,6 +15,8 @@
 	$sliderItem = LS_Sliders::find($id);
 	$slider = $sliderItem['data'];
 
+	// Product activation
+	$lsActivated = get_option( 'layerslider-authorized-site', false );
 
 	// Get screen options
 	$lsScreenOptions = get_option('ls-screen-options', '0');
@@ -100,9 +102,16 @@ include LS_ROOT_PATH . '/templates/tmpl-share-sheet.php';
 include LS_ROOT_PATH . '/templates/tmpl-layer-item.php';
 include LS_ROOT_PATH . '/templates/tmpl-static-layer-item.php';
 include LS_ROOT_PATH . '/templates/tmpl-layer.php';
+include LS_ROOT_PATH . '/templates/tmpl-preview-context-menu.php';
 include LS_ROOT_PATH . '/templates/tmpl-transition-window.php';
 include LS_ROOT_PATH . '/templates/tmpl-popup-presets-window.php';
 include LS_ROOT_PATH . '/templates/tmpl-popup-example-slider.php';
+include LS_ROOT_PATH . '/templates/tmpl-post-chooser.php';
+include LS_ROOT_PATH . '/templates/tmpl-insert-icons-modal.php';
+include LS_ROOT_PATH . '/templates/tmpl-insert-media-modal.php';
+include LS_ROOT_PATH . '/templates/tmpl-button-presets.php';
+include LS_ROOT_PATH . '/templates/tmpl-import-slide.php';
+include LS_ROOT_PATH . '/templates/tmpl-import-layer.php';
 
 ?>
 
@@ -285,6 +294,17 @@ include LS_ROOT_PATH . '/templates/tmpl-popup-example-slider.php';
 				$layerVal['innerAttributes'] = !empty($layerVal['innerAttributes']) ?  (object) $layerVal['innerAttributes'] : new stdClass;
 				$layerVal['outerAttributes'] = !empty($layerVal['outerAttributes']) ?  (object) $layerVal['outerAttributes'] : new stdClass;
 
+
+				// v6.5.6: Convert old checkbox media settings to the new
+				// select based options.
+				if( isset( $layerVal['transition']->controls ) ) {
+					if( true === $layerVal['transition']->controls ) {
+						$layerVal['transition']->controls = 'auto';
+					} elseif( false === $layerVal['transition']->controls ) {
+						$layerVal['transition']->controls = 'disabled';
+					}
+				}
+
 				$slider['layers'][$slideKey]['sublayers'][$layerKey] = $layerVal;
 			}
 		} else {
@@ -296,6 +316,12 @@ include LS_ROOT_PATH . '/templates/tmpl-popup-example-slider.php';
 		foreach( $slider['callbacks'] as $key => $callback ) {
 			$slider['callbacks'][$key] = stripslashes($callback);
 		}
+	}
+
+	// v6.8.8: Set slider type to responsive in case of Popup
+	// on a non-activated site.
+	if( ! $lsActivated && $slider['properties']['type'] === 'popup' ) {
+		$slider['properties']['type'] = 'responsive';
 	}
 
 	// Slider version
@@ -331,7 +357,7 @@ include LS_ROOT_PATH . '/templates/tmpl-popup-example-slider.php';
 			<?php _e('Editing slider:', 'LayerSlider') ?>
 			<?php $sliderName = !empty($slider['properties']['title']) ? $slider['properties']['title'] : 'Unnamed'; ?>
 			<?php echo apply_filters('ls_slider_title', $sliderName, 30) ?>
-			<a href="?page=layerslider" class="add-new-h2"><?php _e('Back to the list', 'LayerSlider') ?></a>
+			<a href="?page=layerslider" class="add-new-h2"><?php _e('&larr; Sliders', 'LayerSlider') ?></a>
 		</h2>
 
 		<!-- Version number -->
@@ -399,7 +425,9 @@ include LS_ROOT_PATH . '/templates/tmpl-popup-example-slider.php';
 					<span class="dashicons dashicons-dismiss"></span>
 				</a>
 				<?php endforeach; ?>
-				<a href="#"  title="<?php _e('Add new slide', 'LayerSlider') ?>" class="unsortable" id="ls-add-layer"><i class="dashicons dashicons-plus"></i></a>
+				<a href="#"  data-help="<?php _e('Add new slide', 'LayerSlider') ?>" class="unsortable" id="ls-add-layer"><i class="dashicons dashicons-plus"></i></a>
+				<a href="#"  data-help="<?php _e('Import slide', 'LayerSlider') ?>" class="unsortable" id="ls-import-slide"><i class="dashicons dashicons-upload"></i></a>
+
 				<div class="unsortable clear"></div>
 			</div>
 
@@ -635,7 +663,7 @@ include LS_ROOT_PATH . '/templates/tmpl-popup-example-slider.php';
 					<figure><span>|</span> <?php _e('Fires when the Popup starts its opening transition and becomes visible.', 'LayerSlider') ?></figure>
 				</h3>
 				<div>
-					<textarea name="popupWillOpen" data-event-data="false" cols="20" rows="5" class="ls-codemirror">function( event ) {
+					<textarea name="popupWillOpen" data-event-data="false" cols="20" rows="5" class="ls-codemirror">function( event, slider ) {
 
 }</textarea>
 				</div>
@@ -647,7 +675,7 @@ include LS_ROOT_PATH . '/templates/tmpl-popup-example-slider.php';
 					<figure><span>|</span> <?php _e('Fires when the Popup completed its opening transition.', 'LayerSlider') ?></figure>
 				</h3>
 				<div>
-					<textarea name="popupDidOpen" data-event-data="false" cols="20" rows="5" class="ls-codemirror">function( event ) {
+					<textarea name="popupDidOpen" data-event-data="false" cols="20" rows="5" class="ls-codemirror">function( event, slider ) {
 
 }</textarea>
 				</div>
@@ -659,7 +687,7 @@ include LS_ROOT_PATH . '/templates/tmpl-popup-example-slider.php';
 					<figure><span>|</span> <?php _e('Fires when the Popup stars its closing transition.', 'LayerSlider') ?></figure>
 				</h3>
 				<div>
-					<textarea name="popupWillClose" data-event-data="false" cols="20" rows="5" class="ls-codemirror">function( event ) {
+					<textarea name="popupWillClose" data-event-data="false" cols="20" rows="5" class="ls-codemirror">function( event, slider ) {
 
 }</textarea>
 				</div>
@@ -671,7 +699,7 @@ include LS_ROOT_PATH . '/templates/tmpl-popup-example-slider.php';
 					<figure><span>|</span> <?php _e('Fires when the Popup completed its closing transition and became hidden.', 'LayerSlider') ?></figure>
 				</h3>
 				<div>
-					<textarea name="popupDidClose" data-event-data="false" cols="20" rows="5" class="ls-codemirror">function( event ) {
+					<textarea name="popupDidClose" data-event-data="false" cols="20" rows="5" class="ls-codemirror">function( event, slider ) {
 
 }</textarea>
 				</div>
@@ -802,7 +830,7 @@ include LS_ROOT_PATH . '/templates/tmpl-popup-example-slider.php';
 			<?php
 				$revisions = LS_Revisions::count( $id );
 				if( $revisions > 1 ) : ?>
-				<p class="revisions"><span><i class="dashicons dashicons-backup"></i><?php echo sprintf(__('Revisions Available:', 'LayerSlider'), $revisions) ?></span><br><a href="<?php echo admin_url('admin.php?page=ls-revisions&id='.$id) ?>"><?php echo sprintf(__('Browse %d Revisions', 'LayerSlider'), $revisions) ?></a></p>
+				<p class="revisions"><span><i class="dashicons dashicons-backup"></i><?php echo sprintf(__('Revisions Available:', 'LayerSlider'), $revisions) ?></span><br><a href="<?php echo admin_url('admin.php?page=layerslider-addons&section=revisions&id='.$id) ?>"><?php echo sprintf(__('Browse %d Revisions', 'LayerSlider'), $revisions) ?></a></p>
 			<?php endif ?>
 
 			<p><span><?php _e('Use shortcode:', 'LayerSlider') ?></span><br><span>[layerslider id="<?php echo !empty($slider['properties']['slug']) ? $slider['properties']['slug'] : $id ?>"]</span></p>

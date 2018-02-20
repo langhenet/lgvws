@@ -1,8 +1,11 @@
 <?php
 /**
- * Sidebar
- * Displays one of the registered Widget Areas of the theme
+ * Portfolio Grid
+ * 
+ * Creates a grid of portfolio excerpts
  */
+if ( ! defined( 'ABSPATH' ) ) {  exit;  }    // Exit if accessed directly
+
 
 if ( !class_exists( 'avia_sc_portfolio' ) )
 {
@@ -13,6 +16,8 @@ if ( !class_exists( 'avia_sc_portfolio' ) )
 			 */
 			function shortcode_insert_button()
 			{
+				$this->config['self_closing']	=	'yes';
+				
 				$this->config['name']		= __('Portfolio Grid', 'avia_framework' );
 				$this->config['tab']		= __('Content Elements', 'avia_framework' );
 				$this->config['icon']		= AviaBuilder::$path['imagesURL']."sc-portfolio.png";
@@ -252,19 +257,19 @@ if ( !class_exists( 'avia_sc_portfolio' ) )
 								),
 							
 							
-								array(	"name" 	=> __("Column count for medium sized screens", 'avia_framework' ),
+								array(	"name" 	=> __("Column count for medium sized screens (between 768px and 989px - eg: Tablet Landscape)", 'avia_framework' ),
 						            "id" 	=> "av-medium-columns",
 						            "type" 	=> "select",
 						            "subtype" => AviaHtmlHelper::number_array(1,4,1, array( __("Default", 'avia_framework' )=>'')),
 						            "std" => ""),
 						            
-						            array(	"name" 	=> __("Column count for small screens", 'avia_framework' ),
+						            array(	"name" 	=> __("Column count for small screens (between 480px and 767px - eg: Tablet Portrait)", 'avia_framework' ),
 						            "id" 	=> "av-small-columns",
 						            "type" 	=> "select",
 						            "subtype" => AviaHtmlHelper::number_array(1,4,1, array( __("Default", 'avia_framework' )=>'')),
 						            "std" => ""),
 						            
-									array(	"name" 	=> __("Column count for very small screens", 'avia_framework' ),
+									array(	"name" 	=> __("Column count for very small screens (smaller than 479px - eg: Smartphone Portrait)", 'avia_framework' ),
 						            "id" 	=> "av-mini-columns",
 						            "type" 	=> "select",
 						            "subtype" => AviaHtmlHelper::number_array(1,4,1, array( __("Default", 'avia_framework' )=>'')),

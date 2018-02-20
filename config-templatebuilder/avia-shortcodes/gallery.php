@@ -1,8 +1,11 @@
 <?php
 /**
  * Gallery
+ * 
  * Shortcode that allows to create a gallery based on images selected from the media library
  */
+if ( ! defined( 'ABSPATH' ) ) {  exit;  }    // Exit if accessed directly
+
 
 if ( !class_exists( 'avia_sc_gallery' ) )
 {
@@ -17,6 +20,8 @@ if ( !class_exists( 'avia_sc_gallery' ) )
 			 */
 			function shortcode_insert_button()
 			{
+				$this->config['self_closing']	=	'yes';
+				
 				$this->config['name']			= __('Gallery', 'avia_framework' );
 				$this->config['tab']			= __('Media Elements', 'avia_framework' );
 				$this->config['icon']			= AviaBuilder::$path['imagesURL']."sc-gallery.png";

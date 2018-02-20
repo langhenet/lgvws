@@ -1,8 +1,11 @@
 <?php
 /**
- * Slider
- * Shortcode that allows to display a simple partner logo element
+ * Partner/Logo Element
+ * 
+ * Shortcode that allows to display a simple partner logo grid or slider
  */
+if ( ! defined( 'ABSPATH' ) ) {  exit;  }    // Exit if accessed directly
+
 
 if ( !class_exists( 'avia_sc_partner_logo' ) )
 {
@@ -13,6 +16,8 @@ if ( !class_exists( 'avia_sc_partner_logo' ) )
 			 */
 			function shortcode_insert_button()
 			{
+				$this->config['self_closing']	=	'no';
+				
 				$this->config['name']			= __('Partner/Logo Element', 'avia_framework' );
 				$this->config['tab']			= __('Media Elements', 'avia_framework' );
 				$this->config['icon']			= AviaBuilder::$path['imagesURL']."sc-partner.png";
@@ -331,6 +336,25 @@ if ( !class_exists( 'avia_sc_partner_logo' ) )
 				return $params;
 			}
 
+			
+			/**
+			 * Returns false by default.
+			 * Override in a child class if you need to change this behaviour.
+			 * 
+			 * @since 4.2.1
+			 * @param string $shortcode
+			 * @return boolean
+			 */
+			public function is_nested_self_closing( $shortcode )
+			{
+				if( in_array( $shortcode, $this->config['shortcode_nested'] ) )
+				{
+					return true;
+				}
+
+				return false;
+			}
+			
 
 			/**
 			 * Frontend Shortcode Handler

@@ -368,7 +368,7 @@ jQuery(function($) {
 							{
 								var resultcontainer = $('.avia_import_result_parent', me.container);
 								//resultcontainer.css('display','none').html(response).slideDown();
-								$('body').avia_alert({text: 'Alright sparky!<br/>Import worked out, no problems whatsoever. <br/>The page will now be reloaded to reflect the changes'}, function()
+								$('body').avia_alert({text: 'Alright!<br/>Import worked out, no problems whatsoever. <br/>The page will now be reloaded to reflect the changes'}, function()
 								{
 									window.location.hash = "#wpwrap";
 						 			window.location.reload(true);

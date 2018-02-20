@@ -1,4 +1,10 @@
 <?php
+/**
+ * Helper for masonry 
+ * 
+ */
+if ( ! defined( 'ABSPATH' ) ) {  exit;  }    // Exit if accessed directly
+
 
 if ( !class_exists( 'avia_masonry' ) )
 {

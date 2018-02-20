@@ -31,6 +31,18 @@ if(!current_theme_supports('avia_disable_import_export')){
 }
 
 
+/**
+ * Allow to include a user defined file to add or alter backend styles
+ * 
+ * @since 4.2.1
+ * @return string		full path to the include file ( not a relative path !!! )
+ */
+$custom_path = apply_filters( 'avf_register_custom_backend_styles', '' );
+if( ! empty( $custom_path ) && file_exists( $custom_path ) )
+{
+	include_once $custom_path;
+}
+
 
 
 
@@ -96,6 +108,7 @@ $avia_elements[] = array(
 $avia_elements[] = array(	"slug"	=> "builder", "type" => "visual_group_end", "id" => "avia_lock_alb_close", "nodescription" => true);		
 
 
+$avia_elements[] = array(	"slug"	=> "builder", "type" => "visual_group_start", "id" => "avia_markup", "nodescription" => true);
 
 $avia_elements[] =	array(
 					"slug"	=> "builder",
@@ -110,12 +123,7 @@ $avia_elements[] =	array(
 										));
 	
 
-
-
-
-
-
-
+$avia_elements[] = array(	"slug"	=> "builder", "type" => "visual_group_end", "id" => "avia_markup_close", "nodescription" => true);
 
 
 
@@ -316,12 +324,12 @@ $avia_elements[] =	array(
 $avia_elements[] =	array(
 					"slug"	=> "menu",
 					"name" 	=> __("Clone title menu items to submenu", 'avia_framework'),
-					"desc" 	=> __("Since you selected to display submenu items on click, the parent menu item does no longer navigate to the URL it contains, but toggles the visibility of its submenu items. If you want users to be able to open the parent menu URL the theme can create a clone of that item in the submenu", 'avia_framework'),
+					"desc" 	=> __("Since you selected to display submenu items on click or on hover, the parent menu item does no longer navigate to the URL it contains, but toggles the visibility of its submenu items. If you want users to be able to open the parent menu URL the theme can create a clone of that item in the submenu", 'avia_framework'),
 					"id" 	=> "submenu_clone",
 					"type" 	=> "select",
 					"std" 	=> "",
 					"no_first"=>true,
-					"required" => array('submenu_visibility','av-submenu-hidden av-submenu-display-click'),
+					"required" => array('submenu_visibility','{contains_array}av-submenu-display-click;av-submenu-display-hover'),
 					"subtype" => array( __('Do not create a clone', 'avia_framework') =>'av-submenu-noclone',
 										__('Create a clone for the title menu item', 'avia_framework') =>'av-submenu-clone',
 										));
@@ -468,7 +476,7 @@ $avia_elements[] = array("slug"	=> "google", "type" => "visual_group_start", "id
 
 
 $google_link = "https://console.developers.google.com/flows/enableapi?apiid=maps_backend,geocoding_backend,directions_backend,distance_matrix_backend,elevation_backend,places_backend&keyType=CLIENT_SIDE&reusekey=true";
-$tutorial_link = "http://www.kriesi.at/documentation/enfold/how-to-register-a-google-maps-api-key/";
+$tutorial_link = "https://kriesi.at/documentation/enfold/how-to-register-a-google-maps-api-key/";
 
 
 $avia_elements[] = array(	"name" => 	__("Google Maps", 'avia_framework'),
@@ -1176,7 +1184,7 @@ $avia_elements[] =	array(
 					"desc" 		=> __("If a value is left empty or set to default then it will not be changed from the value defined in your CSS files", 'avia_framework')."<br/><br/><strong>".
 									__("Attention", 'avia_framework').": </strong>".
 									__("This feature is in active BETA! We will constantly add new elements to customize and need your help: If you got any suggestions on what to add please post them here:", 'avia_framework').
-									" <a target='_blank' href='http://www.kriesi.at/support/enfold-feature-requests/'>".
+									" <a target='_blank' href='https://kriesi.at/support/enfold-feature-requests/'>".
 									__("Enfold Feature Requests", 'avia_framework').
 									"</a><br/><br/>"
 									,
@@ -1677,7 +1685,7 @@ $avia_elements[] =	array(	"name" 	=> __("Defines the Font for your body text", '
 				            "class" => "av_2columns av_col_2",
 				            "onchange" => "avia_add_google_font",
 				            "std" 	=> "Helvetica-Neue,Helvetica-websave",
-				            "subtype" => apply_filters('avf_google_content_font', array( __('Web save fonts', 'avia_framework') => array(
+				            "subtype" => apply_filters('avf_google_content_font', array( __('Web safe fonts', 'avia_framework') => array(
 				            					'Arial'=>'Arial-websave',
 				            					'Georgia'=>'Georgia-websave',
 				            					'Verdana'=>'Verdana-websave',
@@ -1737,7 +1745,7 @@ $avia_elements[] =	array(
 					"slug"	=> "styling",
 					"name" 	=> __("Quick CSS", 'avia_framework'),
 					"desc" 	=> __("Just want to do some quick CSS changes? Enter them here, they will be applied to the theme. If you need to change major portions of the theme please use the custom.css file", 'avia_framework').
-					" <a target='_blank' href='http://www.kriesi.at/documentation/enfold/using-a-child-theme/'>".
+					" <a target='_blank' href='https://kriesi.at/documentation/enfold/using-a-child-theme/'>".
 					__("or the Enfold Child theme.","avia_framework").
 					"</a>"
 					,
@@ -2724,7 +2732,7 @@ $online_demo 	= __("Online Demo", 'avia_framework');
 $avia_elements[] =	array(
 					"slug"	=> "demo",
 					"name" 	=> __("Import: Default Demo", 'avia_framework'),
-					"desc" 	=> 	 "<p><strong>{$what_get} <a href='http://www.kriesi.at/themes/enfold/' target='_blank'>{$online_demo}</a></strong></p>"
+					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold/' target='_blank'>{$online_demo}</a></strong></p>"
 								."<h4 class='av-before-plugins'>".__("Recommended Plugins:", 'avia_framework')."</h4><ul>"
 								."<li><a href='http://woocommerce.com/?ref=84' target='_blank'>WooCommerce</a> ".__("(for shop functionality)", 'avia_framework')."</li>"
 								."<li><a href='https://wordpress.org/plugins/bbpress/' target='_blank'>BBPress</a> ".__("(for forum functionality)", 'avia_framework')."</li>"
@@ -2741,7 +2749,7 @@ $avia_elements[] =	array(
 $avia_elements[] =	array(
 					"slug"	=> "demo",
 					"name" 	=> __("Import: Enfold 2017", 'avia_framework'),
-					"desc" 	=> 	 "<p><strong>{$what_get} <a href='http://www.kriesi.at/themes/enfold-2017/' target='_blank'>{$online_demo}</a></strong></p>"
+					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-2017/' target='_blank'>{$online_demo}</a></strong></p>"
 								."<h4 class='av-before-plugins'>".__("Recommended Plugins:", 'avia_framework')."</h4><ul>"
 								."<li><a href='http://woocommerce.com/?ref=84' target='_blank'>WooCommerce</a> ".__("(for shop functionality)", 'avia_framework')."</li>"
 								."<li><a href='https://wordpress.org/plugins/bbpress/' target='_blank'>BBPress</a> ".__("(for forum functionality)", 'avia_framework')."</li>"
@@ -2759,7 +2767,7 @@ $avia_elements[] =	array(
 $avia_elements[] =	array(
 					"slug"	=> "demo",
 					"name" 	=> __("Import: Small Business - Flat Demo", 'avia_framework'),
-					"desc" 	=> 	 "<p><strong>{$what_get} <a href='http://www.kriesi.at/themes/enfold-business-flat/' target='_blank'>{$online_demo}</a></strong></p>"
+					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-business-flat/' target='_blank'>{$online_demo}</a></strong></p>"
 								."<h4 class='av-before-plugins'>".__("Recommended Plugins:", 'avia_framework')."</h4><ul>"
 								."<li>".__("None", 'avia_framework')."</li>"
 								."</ul>"
@@ -2775,7 +2783,7 @@ $avia_elements[] =	array(
 $avia_elements[] =	array(
 					"slug"	=> "demo",
 					"name" 	=> __("Import: Startup Business Demo", 'avia_framework'),
-					"desc" 	=> 	 "<p><strong>{$what_get} <a href='http://www.kriesi.at/themes/enfold-startup/' target='_blank'>{$online_demo}</a></strong></p>"
+					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-startup/' target='_blank'>{$online_demo}</a></strong></p>"
 								."<h4 class='av-before-plugins'>".__("Recommended Plugins:", 'avia_framework')."</h4><ul>"
 								."<li>".__("None", 'avia_framework')."</li>"
 								."</ul>"
@@ -2792,7 +2800,7 @@ $avia_elements[] =	array(
 $avia_elements[] =	array(
 					"slug"	=> "demo",
 					"name" 	=> __("Import: One Page Portfolio Demo", 'avia_framework'),
-					"desc" 	=> 	 "<p><strong>{$what_get} <a href='http://www.kriesi.at/themes/enfold-one-page-portfolio/' target='_blank'>{$online_demo}</a></strong></p>"
+					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-one-page-portfolio/' target='_blank'>{$online_demo}</a></strong></p>"
 								."<h4 class='av-before-plugins'>".__("Recommended Plugins:", 'avia_framework')."</h4><ul>"
 								."<li>".__("None", 'avia_framework')."</li>"
 								."</ul>"
@@ -2809,7 +2817,7 @@ $avia_elements[] =	array(
 $avia_elements[] =	array(
 					"slug"	=> "demo",
 					"name" 	=> __("Import: Minimal Portfolio Demo", 'avia_framework'),
-					"desc" 	=> 	 "<p><strong>{$what_get} <a href='http://www.kriesi.at/themes/enfold-minimal-portfolio/' target='_blank'>{$online_demo}</a></strong></p>"
+					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-minimal-portfolio/' target='_blank'>{$online_demo}</a></strong></p>"
 								."<h4 class='av-before-plugins'>".__("Recommended Plugins:", 'avia_framework')."</h4><ul>"
 								."<li>".__("None", 'avia_framework')."</li>"
 								."</ul>"
@@ -2828,7 +2836,7 @@ $avia_elements[] =	array(
 $avia_elements[] =	array(
 					"slug"	=> "demo",
 					"name" 	=> __("Import: Photography Portfolio Demo", 'avia_framework'),
-					"desc" 	=> 	 "<p><strong>{$what_get} <a href='http://www.kriesi.at/themes/enfold-photography/' target='_blank'>{$online_demo}</a></strong></p>"
+					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-photography/' target='_blank'>{$online_demo}</a></strong></p>"
 								."<h4 class='av-before-plugins'>".__("Recommended Plugins:", 'avia_framework')."</h4><ul>"
 								."<li><a href='http://woocommerce.com/?ref=84' target='_blank'>WooCommerce</a> ".__("(if you want to sell photos online)", 'avia_framework')."</li>"
 								."</ul>"
@@ -2844,7 +2852,7 @@ $avia_elements[] =	array(
 $avia_elements[] =	array(
 					"slug"	=> "demo",
 					"name" 	=> __("Import: Minimal Photography Demo", 'avia_framework'),
-					"desc" 	=> 	 "<p><strong>{$what_get} <a href='http://www.kriesi.at/themes/enfold-minimal-photography/' target='_blank'>{$online_demo}</a></strong></p>"
+					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-minimal-photography/' target='_blank'>{$online_demo}</a></strong></p>"
 								."<h4 class='av-before-plugins'>".__("Recommended Plugins:", 'avia_framework')."</h4><ul>"
 								."<li>".__("None", 'avia_framework')."</li>"
 								."</ul>"
@@ -2861,7 +2869,7 @@ $avia_elements[] =	array(
 $avia_elements[] =	array(
 					"slug"	=> "demo",
 					"name" 	=> __("Import: Dark Photography Demo", 'avia_framework'),
-					"desc" 	=> 	 "<p><strong>{$what_get} <a href='http://www.kriesi.at/themes/enfold-dark-photography/' target='_blank'>{$online_demo}</a></strong></p>"
+					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-dark-photography/' target='_blank'>{$online_demo}</a></strong></p>"
 								."<h4 class='av-before-plugins'>".__("Recommended Plugins:", 'avia_framework')."</h4><ul>"
 								."<li>".__("None", 'avia_framework')."</li>"
 								."</ul>"
@@ -2881,7 +2889,7 @@ $avia_elements[] =	array(
 $avia_elements[] =	array(
 					"slug"	=> "demo",
 					"name" 	=> __("Import: Creative Studio Demo", 'avia_framework'),
-					"desc" 	=> 	 "<p><strong>{$what_get} <a href='http://www.kriesi.at/themes/enfold-creative-studio/' target='_blank'>{$online_demo}</a></strong></p>"
+					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-creative-studio/' target='_blank'>{$online_demo}</a></strong></p>"
 								."<h4 class='av-before-plugins'>".__("Recommended Plugins:", 'avia_framework')."</h4><ul>"
 								."<li>".__("None", 'avia_framework')."</li>"
 								."</ul>"
@@ -2902,7 +2910,7 @@ $avia_elements[] =	array(
 $avia_elements[] =	array(
 					"slug"	=> "demo",
 					"name" 	=> __("Import: Medical Demo", 'avia_framework'),
-					"desc" 	=> 	 "<p><strong>{$what_get} <a href='http://www.kriesi.at/themes/enfold-medical/' target='_blank'>{$online_demo}</a></strong></p>"
+					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-medical/' target='_blank'>{$online_demo}</a></strong></p>"
 								."<h4 class='av-before-plugins'>".__("Recommended Plugins:", 'avia_framework')."</h4><ul>"
 								."<li>".__("None", 'avia_framework')."</li>"
 								."</ul>"
@@ -2920,7 +2928,7 @@ $avia_elements[] =	array(
 $avia_elements[] =	array(
 					"slug"	=> "demo",
 					"name" 	=> __("Import: Shop Demo", 'avia_framework'),
-					"desc" 	=> 	 "<p><strong>{$what_get} <a href='http://www.kriesi.at/themes/enfold-shop/' target='_blank'>{$online_demo}</a></strong></p>"
+					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-shop/' target='_blank'>{$online_demo}</a></strong></p>"
 								."<h4 class='av-before-plugins'>".__("Required Plugins:", 'avia_framework')."</h4><ul>"
 								."<li><a href='http://woocommerce.com/?ref=84' target='_blank'>WooCommerce</a> ".__("(needs to be active to install the demo)", 'avia_framework')."</li>"
 								."</ul>"
@@ -2942,7 +2950,7 @@ $avia_elements[] =	array(
 $avia_elements[] =	array(
 					"slug"	=> "demo",
 					"name" 	=> __("Import: Restaurant Demo", 'avia_framework'),
-					"desc" 	=> 	 "<p><strong>{$what_get} <a href='http://www.kriesi.at/themes/enfold-restaurant/' target='_blank'>{$online_demo}</a></strong></p>"
+					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-restaurant/' target='_blank'>{$online_demo}</a></strong></p>"
 								."<h4 class='av-before-plugins'>".__("Recommended Plugins:", 'avia_framework')."</h4><ul>"
 								."<li><a href='http://woocommerce.com/?ref=84' target='_blank'>WooCommerce</a> ".__("(if you want to provide online ordering and delivery)", 'avia_framework')."</li>"
 								."</ul>"
@@ -2958,7 +2966,7 @@ $avia_elements[] =	array(
 $avia_elements[] =	array(
 					"slug"	=> "demo",
 					"name" 	=> __("Import: Restaurant One Page Demo", 'avia_framework'),
-					"desc" 	=> 	 "<p><strong>{$what_get} <a href='http://www.kriesi.at/themes/enfold-restaurant-one-page/' target='_blank'>{$online_demo}</a></strong></p>"
+					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-restaurant-one-page/' target='_blank'>{$online_demo}</a></strong></p>"
 								."<h4 class='av-before-plugins'>".__("Recommended Plugins:", 'avia_framework')."</h4><ul>"
 								."<li><a href='http://woocommerce.com/?ref=84' target='_blank'>WooCommerce</a> ".__("(if you want to provide online ordering and delivery)", 'avia_framework')."</li>"
 								."</ul>"
@@ -2974,7 +2982,7 @@ $avia_elements[] =	array(
 $avia_elements[] =	array(
 					"slug"	=> "demo",
 					"name" 	=> __("Import: One Page Wedding Demo", 'avia_framework'),
-					"desc" 	=> 	 "<p><strong>{$what_get} <a href='http://www.kriesi.at/themes/enfold-wedding/' target='_blank'>{$online_demo}</a></strong></p>"
+					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-wedding/' target='_blank'>{$online_demo}</a></strong></p>"
 								."<h4 class='av-before-plugins'>".__("Recommended Plugins:", 'avia_framework')."</h4><ul>"
 								."<li>".__("None", 'avia_framework')."</li>"
 								."</ul>"
@@ -2990,7 +2998,7 @@ $avia_elements[] =	array(
 $avia_elements[] =	array(
 					"slug"	=> "demo",
 					"name" 	=> __("Import: Construction Demo", 'avia_framework'),
-					"desc" 	=> 	 "<p><strong>{$what_get} <a href='http://www.kriesi.at/themes/enfold-construction/' target='_blank'>{$online_demo}</a></strong></p>"
+					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-construction/' target='_blank'>{$online_demo}</a></strong></p>"
 								."<h4 class='av-before-plugins'>".__("Recommended Plugins:", 'avia_framework')."</h4><ul>"
 								."<li>".__("None", 'avia_framework')."</li>"
 								."</ul>"
@@ -3008,7 +3016,7 @@ $avia_elements[] =	array(
 $avia_elements[] =	array(
 					"slug"	=> "demo",
 					"name" 	=> __("Import: Church Demo", 'avia_framework'),
-					"desc" 	=> 	 "<p><strong>{$what_get} <a href='http://www.kriesi.at/themes/enfold-church/' target='_blank'>{$online_demo}</a></strong></p>"
+					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-church/' target='_blank'>{$online_demo}</a></strong></p>"
 								."<h4 class='av-before-plugins'>".__("Required Plugins:", 'avia_framework')."</h4><ul>"
 								."<li><a href='https://wordpress.org/plugins/the-events-calendar/' target='_blank'>The Events Calendar</a> "
 								.__("(needs to be active to install the demo)", 'avia_framework')."</li>"
@@ -3029,7 +3037,7 @@ $avia_elements[] =	array(
 $avia_elements[] =	array(
 					"slug"	=> "demo",
 					"name" 	=> __("Import: Simple Blog Demo", 'avia_framework'),
-					"desc" 	=> 	 "<p><strong>{$what_get} <a href='http://www.kriesi.at/themes/enfold-blog/' target='_blank'>{$online_demo}</a></strong></p>"
+					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-blog/' target='_blank'>{$online_demo}</a></strong></p>"
 								."<h4 class='av-before-plugins'>".__("Recommended Plugins:", 'avia_framework')."</h4><ul>"
 								."<li>".__("None", 'avia_framework')."</li>"
 								."</ul>"
@@ -3047,7 +3055,7 @@ $avia_elements[] =	array(
 $avia_elements[] =	array(
 					"slug"	=> "demo",
 					"name" 	=> __("Import: Lifestyle Blog Demo", 'avia_framework'),
-					"desc" 	=> 	 "<p><strong>{$what_get} <a href='http://www.kriesi.at/themes/enfold-lifestyle-blog/' target='_blank'>{$online_demo}</a></strong></p>"
+					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-lifestyle-blog/' target='_blank'>{$online_demo}</a></strong></p>"
 								."<h4 class='av-before-plugins'>".__("Recommended Plugins:", 'avia_framework')."</h4><ul>"
 								."<li>".__("None", 'avia_framework')."</li>"
 								."</ul>"
@@ -3064,7 +3072,7 @@ $avia_elements[] =	array(
 $avia_elements[] =	array(
 					"slug"	=> "demo",
 					"name" 	=> __("Import: 'Coming Soon' Demo", 'avia_framework'),
-					"desc" 	=> 	 "<p><strong>{$what_get} <a href='http://www.kriesi.at/themes/enfold-coming-soon/' target='_blank'>{$online_demo}</a></strong></p>"
+					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-coming-soon/' target='_blank'>{$online_demo}</a></strong></p>"
 								."<h4 class='av-before-plugins'>".__("Recommended Plugins:", 'avia_framework')."</h4><ul>"
 								."<li>".__("None", 'avia_framework')."</li>"
 								."</ul>"
@@ -3081,7 +3089,7 @@ $avia_elements[] =	array(
 $avia_elements[] =	array(
 					"slug"	=> "demo",
 					"name" 	=> __("Import: 'Landin Page' Demo", 'avia_framework'),
-					"desc" 	=> 	 "<p><strong>{$what_get} <a href='http://www.kriesi.at/themes/enfold-landing-page/' target='_blank'>{$online_demo}</a></strong></p>"
+					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-landing-page/' target='_blank'>{$online_demo}</a></strong></p>"
 								."<h4 class='av-before-plugins'>".__("Recommended Plugins:", 'avia_framework')."</h4><ul>"
 								."<li>".__("None", 'avia_framework')."</li>"
 								."</ul>"
@@ -3098,7 +3106,7 @@ $avia_elements[] =	array(
 $avia_elements[] =	array(
 					"slug"	=> "demo",
 					"name" 	=> __("Import: Travel Demo", 'avia_framework'),
-					"desc" 	=> 	 "<p><strong>{$what_get} <a href='http://www.kriesi.at/themes/enfold-travel/' target='_blank'>{$online_demo}</a></strong></p>"
+					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-travel/' target='_blank'>{$online_demo}</a></strong></p>"
 								."<h4 class='av-before-plugins'>".__("Required Plugins:", 'avia_framework')."</h4><ul>"
 								."<li><a href='http://woocommerce.com/?ref=84' target='_blank'>WooCommerce</a> ".__("(needs to be active to install the demo)", 'avia_framework')."</li>"
 								."</ul>"
@@ -3119,7 +3127,7 @@ $avia_elements[] =	array(
 $avia_elements[] =	array(
 					"slug"	=> "demo",
 					"name" 	=> __("Import: Hotel Demo", 'avia_framework'),
-					"desc" 	=> 	 "<p><strong>{$what_get} <a href='http://www.kriesi.at/themes/enfold-hotel/' target='_blank'>{$online_demo}</a></strong></p>"
+					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-hotel/' target='_blank'>{$online_demo}</a></strong></p>"
 								."<h4 class='av-before-plugins'>".__("Required Plugins:", 'avia_framework')."</h4><ul>"
 								."<li><a href='http://woocommerce.com/?ref=84' target='_blank'>WooCommerce</a> ".__("(needs to be active to install the demo)", 'avia_framework')."</li>"
 								."</ul>"
@@ -3140,7 +3148,7 @@ $avia_elements[] =	array(
 $avia_elements[] =	array(
 					"slug"	=> "demo",
 					"name" 	=> __("Import: Spa Demo", 'avia_framework'),
-					"desc" 	=> 	 "<p><strong>{$what_get} <a href='http://www.kriesi.at/themes/enfold-spa/' target='_blank'>{$online_demo}</a></strong></p>"
+					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-spa/' target='_blank'>{$online_demo}</a></strong></p>"
 								."<h4 class='av-before-plugins'>".__("Recommended Plugins:", 'avia_framework')."</h4><ul>"
 								."<li><a href='http://woocommerce.com/?ref=84' target='_blank'>WooCommerce</a></li>"
 								."<li><a href='https://woocommerce.com/products/woocommerce-bookings/?ref=84' target='_blank'>WooCommerce Bookings</a> ".__("(needs to be active to allow date based bookings)", 'avia_framework')."</li>"
@@ -3157,7 +3165,7 @@ $avia_elements[] =	array(
 $avia_elements[] =	array(
 					"slug"	=> "demo",
 					"name" 	=> __("Import: Consulting Demo", 'avia_framework'),
-					"desc" 	=> 	 "<p><strong>{$what_get} <a href='http://www.kriesi.at/themes/enfold-consulting/' target='_blank'>{$online_demo}</a></strong></p>"
+					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-consulting/' target='_blank'>{$online_demo}</a></strong></p>"
 								."<h4 class='av-before-plugins'>".__("Recommended Plugins:", 'avia_framework')."</h4><ul>"
 								."<li>".__("None", 'avia_framework')."</li>"
 								."</ul>"
@@ -3174,7 +3182,7 @@ $avia_elements[] =	array(
 $avia_elements[] =	array(
 					"slug"	=> "demo",
 					"name" 	=> __("Import: Résumé Demo", 'avia_framework'),
-					"desc" 	=> 	 "<p><strong>{$what_get} <a href='http://www.kriesi.at/themes/enfold-resume/' target='_blank'>{$online_demo}</a></strong></p>"
+					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-resume/' target='_blank'>{$online_demo}</a></strong></p>"
 								."<h4 class='av-before-plugins'>".__("Recommended Plugins:", 'avia_framework')."</h4><ul>"
 								."<li>".__("None", 'avia_framework')."</li>"
 								."</ul>"
@@ -3191,7 +3199,7 @@ $avia_elements[] =	array(
 $avia_elements[] =	array(
 					"slug"	=> "demo",
 					"name" 	=> __("Import: GYM Demo", 'avia_framework'),
-					"desc" 	=> 	 "<p><strong>{$what_get} <a href='http://www.kriesi.at/themes/enfold-gym/' target='_blank'>{$online_demo}</a></strong></p>"
+					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-gym/' target='_blank'>{$online_demo}</a></strong></p>"
 								."<h4 class='av-before-plugins'>".__("Recommended Plugins:", 'avia_framework')."</h4><ul>"
 								."<li>".__("None", 'avia_framework')."</li>"
 								."</ul>"
@@ -3208,7 +3216,7 @@ $avia_elements[] =	array(
 $avia_elements[] =	array(
 					"slug"	=> "demo",
 					"name" 	=> __("Import: Health Demo", 'avia_framework'),
-					"desc" 	=> 	 "<p><strong>{$what_get} <a href='http://www.kriesi.at/themes/enfold-health-coach/' target='_blank'>{$online_demo}</a></strong></p>"
+					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-health-coach/' target='_blank'>{$online_demo}</a></strong></p>"
 								."<h4 class='av-before-plugins'>".__("Recommended Plugins:", 'avia_framework')."</h4><ul>"
 								."<li>".__("None", 'avia_framework')."</li>"
 								."</ul>"
@@ -3224,7 +3232,7 @@ $avia_elements[] =	array(
 $avia_elements[] =	array(
 					"slug"	=> "demo",
 					"name" 	=> __("Import: App Demo", 'avia_framework'),
-					"desc" 	=> 	 "<p><strong>{$what_get} <a href='http://www.kriesi.at/themes/enfold-app/' target='_blank'>{$online_demo}</a></strong></p>"
+					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-app/' target='_blank'>{$online_demo}</a></strong></p>"
 								."<h4 class='av-before-plugins'>".__("Recommended Plugins:", 'avia_framework')."</h4><ul>"
 								."<li>".__("None", 'avia_framework')."</li>"
 								."</ul>"
@@ -3236,12 +3244,91 @@ $avia_elements[] =	array(
 					"type" 	=> "import",
 					"image"	=> "includes/admin/demo_files/demo_images/app.jpg"
 					);
+
+$avia_elements[] =	array(
+					"slug"	=> "demo",
+					"name" 	=> __("Import: Gaming Demo", 'avia_framework'),
+					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-gaming/' target='_blank'>{$online_demo}</a></strong></p>"
+								."<h4 class='av-before-plugins'>".__("Recommended Plugins:", 'avia_framework')."</h4><ul>"
+								."<li>".__("None", 'avia_framework')."</li>"
+								."</ul>"
+								."<h4 class='av-before-plugins'>".__("Demo Images included:", 'avia_framework')."</h4><ul>"
+								."<li>".__("All", 'avia_framework')."</li>"
+								."</ul>",
+					'files' => "/includes/admin/demo_files/gaming",
+					"id" 	=> "import",
+					"type" 	=> "import",
+					"image"	=> "includes/admin/demo_files/demo_images/gaming.jpg"
+					);
 					
-			
+$avia_elements[] =	array(
+					"slug"	=> "demo",
+					"name" 	=> __("Import: DJ Demo", 'avia_framework'),
+					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-dj/' target='_blank'>{$online_demo}</a></strong></p>"
+								."<h4 class='av-before-plugins'>".__("Recommended Plugins:", 'avia_framework')."</h4><ul>"
+								."<li>".__("None", 'avia_framework')."</li>"
+								."</ul>"
+								."<h4 class='av-before-plugins'>".__("Demo Images included:", 'avia_framework')."</h4><ul>"
+								."<li>".__("All", 'avia_framework')."</li>"
+								."</ul>",
+					'files' => "/includes/admin/demo_files/dj",
+					"id" 	=> "import",
+					"type" 	=> "import",
+					"image"	=> "includes/admin/demo_files/demo_images/dj.jpg"
+					);			
 					
+$avia_elements[] =	array(
+					"slug"	=> "demo",
+					"name" 	=> __("Import: Band Demo", 'avia_framework'),
+					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-band/' target='_blank'>{$online_demo}</a></strong></p>"
+								."<h4 class='av-before-plugins'>".__("Recommended Plugins:", 'avia_framework')."</h4><ul>"
+								."<li><a href='http://woocommerce.com/?ref=84' target='_blank'>WooCommerce</a></li>"
+								."</ul>"
+								."<h4 class='av-before-plugins'>".__("Demo Images included:", 'avia_framework')."</h4><ul>"
+								."<li>".__("All", 'avia_framework')."</li>"
+								."</ul>",
+					'files' => "/includes/admin/demo_files/band",
+					"id" 	=> "import",
+					"type" 	=> "import",
+					"image"	=> "includes/admin/demo_files/demo_images/band.jpg"
+					);		
 
 
+$avia_elements[] =	array(
+					"slug"	=> "demo",
+					"name" 	=> __("Import: Freelancer Demo", 'avia_framework'),
+					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-freelancer/' target='_blank'>{$online_demo}</a></strong></p>"
+								."<h4 class='av-before-plugins'>".__("Recommended Plugins:", 'avia_framework')."</h4><ul>"
+								."<li>".__("None", 'avia_framework')."</li>"
+								."</ul>"
+								."<h4 class='av-before-plugins'>".__("Demo Images included:", 'avia_framework')."</h4><ul>"
+								."<li>".__("All", 'avia_framework')."</li>"
+								."</ul>",
+					'files' => "/includes/admin/demo_files/freelancer",
+					"id" 	=> "import",
+					"type" 	=> "import",
+					"image"	=> "includes/admin/demo_files/demo_images/freelancer.jpg"
+					);	
 
+
+$avia_elements[] =	array(
+					"slug"	=> "demo",
+					"name" 	=> __("Import: Visual Artist Demo", 'avia_framework'),
+					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-visual-artist/' target='_blank'>{$online_demo}</a></strong></p>"
+								."<h4 class='av-before-plugins'>".__("Recommended Plugins:", 'avia_framework')."</h4><ul>"
+								."<li>".__("None", 'avia_framework')."</li>"
+								."</ul>"
+								."<h4 class='av-before-plugins'>".__("Demo Images included:", 'avia_framework')."</h4><ul>"
+								."<li>".__("All", 'avia_framework')."</li>"
+								."</ul>",
+					'files' => "/includes/admin/demo_files/visual-artist",
+					"id" 	=> "import",
+					"type" 	=> "import",
+					"image"	=> "includes/admin/demo_files/demo_images/visual-artist.jpg"
+					);	
+
+
+	
 }		
 		
 		

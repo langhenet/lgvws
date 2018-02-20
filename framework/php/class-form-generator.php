@@ -125,7 +125,7 @@ if( ! class_exists( 'avia_form' ) )
 			$extraClass  = isset($params['form_class']) ? $params['form_class'] : "";
 			$redirect    = isset($params['redirect']) ? "data-avia-redirect='".$params['redirect']."'" : "";
 			
-			$form_class  = apply_filters('avf_ajax_form_class', 'ajax_form', $this->formID, $this->form_params);
+			$form_class  = apply_filters( 'avf_ajax_form_class', 'avia_ajax_form', $this->formID, $this->form_params );
 			$form_class .= $this->placeholder ? " av-form-labels-hidden " : " av-form-labels-visible ";
 			$form_data   = "";
 			

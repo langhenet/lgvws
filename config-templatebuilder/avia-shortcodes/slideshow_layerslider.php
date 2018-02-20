@@ -1,6 +1,15 @@
 <?php
+/**
+ * Advanced Layerslider
+ * 
+ * Display a Layerslider Slideshow
+ */
+if ( ! defined( 'ABSPATH' ) ) {  exit;  }    // Exit if accessed directly
 
-if(current_theme_supports('deactivate_layerslider')) return;
+if( ! Avia_Config_LayerSlider()->is_active() )
+{
+	return;
+}
 
 if ( !class_exists( 'avia_sc_layerslider' )) 
 {
@@ -13,6 +22,8 @@ if ( !class_exists( 'avia_sc_layerslider' ))
 			 */
 			function shortcode_insert_button()
 			{
+				$this->config['self_closing']	=	'yes';
+				
 				$this->config['name']		= __('Advanced Layerslider', 'avia_framework' );
 				$this->config['tab']		= __('Media Elements', 'avia_framework' );
 				$this->config['icon']		= AviaBuilder::$path['imagesURL']."sc-slideshow-layer.png";
@@ -38,8 +49,9 @@ if ( !class_exists( 'avia_sc_layerslider' ))
 			function editor_element($params)
 			{	
 				//fetch all registered slides and save them to the slides array
-				$slides = avia_find_layersliders(true);
+				$slides = Avia_Config_LayerSlider()->find_layersliders( true );
 				if(empty($params['args']['id']) && is_array($slides)) $params['args']['id'] = reset($slides);				
+				if(empty($params['args']['id'])) $params['args']['id'] = "";				
 				
 				$element = array(
 					'subtype' => $slides, 
@@ -86,39 +98,62 @@ if ( !class_exists( 'avia_sc_layerslider' ))
 				$skipSecond = false;
 				avia_sc_layerslider::$slide_count++;
 				
+				if( empty( $params ) || ! is_array( $params ) )
+				{
+					$params = array();
+				}
+				
 				//check if we got a layerslider
 				global $wpdb;
+				
 				
 				// Table name
 				$table_name = $wpdb->prefix . "layerslider";
 				
-				// Get slider
-				$slider = $wpdb->get_row("SELECT * FROM $table_name
-										WHERE id = ".(int)$atts['id']." AND flag_hidden = '0'
-										AND flag_deleted = '0'
-										ORDER BY date_c DESC LIMIT 1" , ARRAY_A);
-										
-				//if the slider does not exist query the last slider
-				if(empty($slider))
-				{
+				
+				/**
+				 * Check if table exists to avoid SQL Errors.
+				 * Since 4.2.1 user may remove layerslider database entries with an option and reactivate it again
+				 * In this case we might not have all tables properly initialised.
+				 */
+				$result = $wpdb->query( "  SHOW TABLES LIKE '{$table_name}' " );
+		
+				if( ( false !== $result ) && ( $result > 0 ) )
+				{							
+					// Get slider
 					$slider = $wpdb->get_row("SELECT * FROM $table_name
-										WHERE flag_hidden = '0'
-										AND flag_deleted = '0'
-										ORDER BY date_c DESC LIMIT 1" , ARRAY_A);
-										
-					$atts['id'] = $slider['id'];
+											WHERE id = ".(int)$atts['id']." AND flag_hidden = '0'
+											AND flag_deleted = '0'
+											ORDER BY date_c DESC LIMIT 1" , ARRAY_A);
+
+					//if the slider does not exist query the last slider
+					if(empty($slider))
+					{
+						$slider = $wpdb->get_row("SELECT * FROM $table_name
+											WHERE flag_hidden = '0'
+											AND flag_deleted = '0'
+											ORDER BY date_c DESC LIMIT 1" , ARRAY_A);
+
+						$atts['id'] = ! empty( $slider ) ? $slider['id'] : 0;
+					}
+
+					if(!empty($slider))
+					{		
+						$slides = json_decode($slider['data'], true);	
+						$height = $slides['properties']['height'];	
+						$width  = $slides['properties']['width'];	
+						$responsive = !empty($slides['properties']['responsive']) ? $slides['properties']['responsive'] : '';
+						$responsiveunder = !empty($slides['properties']['responsiveunder']) ? $slides['properties']['responsiveunder'] : '';
+
+						$params['style'] = " style='height: ".($height+1)."px;' ";
+					}
 				}
-			
-										
-				if(!empty($slider))
-				{		
-					$slides = json_decode($slider['data'], true);	
-					$height = $slides['properties']['height'];	
-					$width  = $slides['properties']['width'];	
-					$responsive = !empty($slides['properties']['responsive']) ? $slides['properties']['responsive'] : '';
-					$responsiveunder = !empty($slides['properties']['responsiveunder']) ? $slides['properties']['responsiveunder'] : '';
-					
-					$params['style'] = " style='height: ".($height+1)."px;' ";
+				else
+				{
+					/**
+					 * Force an error message in frontend for admins
+					 */
+					$atts['id'] = 0;
 				}
 				
 				
@@ -167,46 +202,69 @@ if ( !class_exists( 'avia_sc_layerslider' ))
 				
 				return $output;
 			}
-	
-	}
-}
-
-
-if(!function_exists('post_has_layerslider'))
-{
-	function post_has_layerslider()
-	{
-		if(!is_singular()) return false;
-		
-		if(empty(ShortcodeHelper::$tree))
-		{
-			$id = @get_the_ID();
 			
-			if(!$id) return false;
-			ShortcodeHelper::$tree = get_post_meta($id, '_avia_builder_shortcode_tree', true);
-		}
-		
-		if(is_array(ShortcodeHelper::$tree))
-		{
-			foreach(ShortcodeHelper::$tree as $sc)
+			/**
+			 * Checks if a post has a layerslider element
+			 * 
+			 * @since 4.2.1
+			 * @return boolean
+			 */
+			static public function post_has_layerslider()
 			{
-				if($sc['tag'] == 'av_layerslider') return true;
+				global $post;
+				
+				if( ! is_singular() )
+				{
+					return false;
+				}
+				
+				if( empty( ShortcodeHelper::$tree ) )
+				{
+					$id = @get_the_ID();
+
+					if( ! $id ) 
+					{
+						return false;
+					}
+					
+					ShortcodeHelper::$tree = get_post_meta( $id, '_avia_builder_shortcode_tree', true );
+				}
+
+				/**
+				 * With 4.2.1 ShortcodeHelper::$tree is also generated for normal pages and saved as empty array
+				 * when no ALB shortcodes found.
+				 * 
+				 */
+				if( is_array( ShortcodeHelper::$tree ) )
+				{
+					foreach(ShortcodeHelper::$tree as $sc)
+					{
+						if($sc['tag'] == 'av_layerslider') 
+						{
+							return true;
+						}
+					}
+					
+					/**
+					 * To keep backwards compatibility for older pages we do not return
+					 */
+//					return false;
+				}
+
+				//script below excluded. creates to many layout errors
+
+				/**
+				 * If user tries to use the default layerslider shortcode also include the slider
+				 */
+				if( ! empty( $post->post_content ) && strpos( $post->post_content, "[layerslider" ) !== false )
+				{
+					return true;
+				}
+				
+				return false;
 			}
-		}
+
 		
-		//script below excluded. creates to many layout errors
-		
-		//is the user tries to use the default layerslider shortcode also include the slider
-		
-		global $post;
-		if(!empty($post->post_content) && strpos($post->post_content, "[layerslider") !== false )
-		{
-			return true;
-		}
-		/*
-		*/
-		
-		
-		return false;
 	}
 }
+

@@ -1,9 +1,12 @@
 <?php
 /**
- * Post/Page Content
+ * Magazine
  *
+ * Display entries in a magazine like fashion
  * Element is in Beta and by default disabled. Todo: test with layerslider elements. currently throws error bc layerslider is only included if layerslider element is detected which is not the case with the post/page element
  */
+if ( ! defined( 'ABSPATH' ) ) {  exit;  }    // Exit if accessed directly
+
 
 if ( !class_exists( 'avia_sc_magazine' ))
 {
@@ -15,6 +18,8 @@ if ( !class_exists( 'avia_sc_magazine' ))
 		 */
 		function shortcode_insert_button()
 		{
+			$this->config['self_closing']	=	'yes';
+			
 			$this->config['name']		= __('Magazine', 'avia_framework' );
 			$this->config['tab']		= __('Content Elements', 'avia_framework' );
 			$this->config['icon']		= AviaBuilder::$path['imagesURL']."sc-magazine.png";

@@ -14,14 +14,27 @@ if( !empty( $_GET['user'] ) ) {
 	$deleteLink = wp_nonce_url('users.php?action=delete&amp;user='.(int)$_GET['user'], 'bulk-users' );
 }
 
-$authorized 	= get_option('layerslider-authorized-site', false);
-$isAdmin 		= current_user_can('manage_options');
+$authorized = get_option('layerslider-authorized-site', false);
+$isAdmin 	= current_user_can('manage_options');
+
+$notifications = array(
+
+	'dbUpdateSuccess' => __('LayerSlider has attempted to update your database. Server restrictions may apply, please verify whether it was successful.', 'LayerSlider')
+);
 
 ?><div class="wrap">
 	<h2>
 		<?php _e('System Status', 'LayerSlider') ?>
-		<a href="<?php echo admin_url('?page=layerslider') ?>" class="add-new-h2"><?php _e('Back', 'LayerSlider') ?></a>
+		<a href="<?php echo admin_url('admin.php?page=layerslider-options') ?>" class="add-new-h2"><?php _e('&larr; Options', 'LayerSlider') ?></a>
 	</h2>
+
+	<div class="notice notice-info">
+		<p>
+			<?php _e('This page is intended to help you identifying possible issues and to display relevant debug information about your site.', 'LayerSlider') ?>
+			<?php _e('Whenever a potential issues is detected, it will be marked with red or orange text describing the nature of that issue.', 'LayerSlider') ?>
+			<strong><?php _e('Please keep in mind that in most cases only your web hosting company can change server settings, thus you should contact them with the messages provided (if any).', 'LayerSlider') ?></strong>
+		</p>
+	</div>
 
 	<!-- Error messages -->
 	<?php if(isset($_GET['message'])) : ?>
@@ -43,11 +56,6 @@ $isAdmin 		= current_user_can('manage_options');
 		$uploadB 	= str_replace(array('G', 'M', 'K'), array('000000000', '000000', '000'), ini_get('upload_max_filesize'));
 	?>
 	<div class="ls-system-status">
-		<ul>
-			<li><?php _e('This page is intended to help you identifying possible issues and to display relevant debug information about your site.', 'LayerSlider') ?></li>
-			<li><?php _e('Whenever a potential issues is detected, it will be marked with red or orange text describing the nature of that issue.', 'LayerSlider') ?></li>
-			<li><?php _e('Please keep in mind that in most cases only your web hosting company can change server settings, thus you should contact them with the messages provided (if any).', 'LayerSlider') ?></li>
-		</ul>
 		<div class="ls-box km-tabs-inner">
 			<table>
 				<thead>
@@ -62,7 +70,7 @@ $isAdmin 		= current_user_can('manage_options');
 						<td><?php echo ! empty($authorized) ? __('Activated', 'LayerSlider') : __('Not set', 'LayerSlider') ?></td>
 						<td>
 							<?php if( ! $authorized ) : ?>
-							<span><?php echo sprintf(__('Activate your copy of LayerSlider to receive updates, so you can always use the latest release with all the new features and bug fixes. %sClick here to learn more%s.', 'LayerSlider'), '<a href="https://support.kreaturamedia.com/docs/layersliderwp/documentation.html#updating" target="_blank">', '</a>') ?></span>
+							<span><?php echo sprintf(__('Activate your copy of LayerSlider for auto-updates, or ask new versions from the theme author, so you can always use the latest release with all the new features and bug fixes. %sClick here to learn more%s.', 'LayerSlider'), '<a href="https://support.kreaturamedia.com/docs/layersliderwp/documentation.html#updating" target="_blank">', '</a>') ?></span>
 							<?php endif ?>
 						</td>
 					</tr>
@@ -75,6 +83,20 @@ $isAdmin 		= current_user_can('manage_options');
 							<?php if( $test ) : ?>
 							<span><?php echo sprintf( __('Update to latest version (%1$s), as we are constantly working on new features, improvements and bug fixes.', 'LayerSlider'), $latest) ?></span>
 							<?php endif ?>
+						</td>
+					</tr>
+					<tr>
+						<?php $test = layerslider_verify_db_tables(); ?>
+						<td><?php _e('LayerSlider database:', 'LayerSlider') ?></td>
+						<td><span class="dashicons <?php echo ! empty($test) ? 'dashicons-yes' : 'dashicons-warning' ?>"></span></td>
+						<td><?php echo ! empty($test) ? __('OK', 'LayerSlider') : __('Error', 'LayerSlider') ?></td>
+						<td class="has-button">
+							<div>
+								<?php if( ! $test ) : ?>
+								<span><?php echo __('Your database needs an update in order for LayerSlider to work properly. Please press the ’Update Database’ button on the right. If this does not help, you need to contact your web server hosting company to fix any issue preventing plugins creating and updating database tables.', 'LayerSlider') ?></span>
+								<?php endif ?>
+								<a href="<?php echo wp_nonce_url('admin.php?page=layerslider-options&section=system-status&action=database_update', 'database_update') ?>" class="button button-small"><?php _e('Update Database', 'LayerSlider') ?></a>
+							</div>
 						</td>
 					</tr>
 					<tr>
@@ -95,6 +117,7 @@ $isAdmin 		= current_user_can('manage_options');
 
 						if( $authorized ) :
 						$test = strpos(LS_ROOT_FILE, '/wp-content/plugins/LayerSlider/');
+						if( ! $test ) { $test = strpos(LS_ROOT_FILE, '\\wp-content\\plugins\\LayerSlider\\'); }
 
 					?>
 					<tr>
@@ -190,7 +213,7 @@ $isAdmin 		= current_user_can('manage_options');
 						<td><?php echo phpversion() ?></td>
 						<td>
 							<?php if( ! empty( $test ) ) : ?>
-							<span><?php _e('LayerSlider requires PHP 5.3.0 or newer. Please contact your host and ask them to upgrade PHP on your web server.', 'LayerSlider') ?></span>
+							<span><?php _e('LayerSlider requires PHP 5.3.0 or newer. Please contact your host and ask them to upgrade PHP on your web server. Alternatively, they often offer a customer dashboard for their services, which might also provide an option to choose your preferred PHP version.', 'LayerSlider') ?></span>
 							<?php endif ?>
 						</td>
 					</tr>
@@ -306,17 +329,6 @@ $isAdmin 		= current_user_can('manage_options');
 						<td>
 							<?php if( ! $test ) : ?>
 							<span><?php _e('Failed to connect to our update server. This could cause issues with product activation, serving updates or downloading templates from the Template Store. It’s most likely a web server configuration issue. Please contact your web host and ask them to allow external connection to the following domain: <mark>repository.kreaturamedia.com</mark>', 'LayerSlider') ?></span>
-							<?php endif ?>
-						</td>
-					</tr>
-					<tr>
-						<?php $test = ! empty( $_SERVER['SERVER_NAME'] ); ?>
-						<td><?php _e('$_SERVER variables', 'LayerSlider') ?></td>
-						<td><span class="dashicons <?php echo ! empty($test) ? 'dashicons-yes' : 'dashicons-warning' ?>"></span></td>
-						<td><?php echo $test ? __('OK', 'LayerSlider') : __('Unavailable', 'LayerSlider') ?></td>
-						<td>
-							<?php if( ! $test ) : ?>
-							<span><?php _e('Product activation and some of the related features depend on the <mark>$_SERVER[\'SERVER_NAME\']</mark> PHP variable. It seems that this variable is not available on your installation due to the web server configuration. Please contact your hosting provider and show them this message, they will know what to change.', 'LayerSlider') ?></span>
 							<?php endif ?>
 						</td>
 					</tr>

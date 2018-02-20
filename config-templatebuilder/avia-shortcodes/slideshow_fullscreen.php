@@ -1,8 +1,11 @@
 <?php
 /**
- * Slider
- * Shortcode that allows to display a simple slideshow
+ * Fullscreen Slider
+ * 
+ * Shortcode that allows to display a fullscreen slideshow element
  */
+if ( ! defined( 'ABSPATH' ) ) {  exit;  }    // Exit if accessed directly
+
 
 if ( !class_exists( 'avia_sc_slider_fullscreen' ) ) 
 {
@@ -15,6 +18,8 @@ if ( !class_exists( 'avia_sc_slider_fullscreen' ) )
 			 */
 			function shortcode_insert_button()
 			{
+				$this->config['self_closing']	=	'no';
+				
 				$this->config['name']			= __('Fullscreen Slider', 'avia_framework' );
 				$this->config['tab']			= __('Media Elements', 'avia_framework' );
 				$this->config['icon']			= AviaBuilder::$path['imagesURL']."sc-fullscreen.png";
@@ -84,7 +89,7 @@ if ( !class_exists( 'avia_sc_slider_fullscreen' ) )
 										"name" 	=> __("Which type of slide is this?",'avia_framework' ),
 										"id" 	=> "slide_type",
 										"type" 	=> "select",
-										"std" 	=> "",
+										"std" 	=> "image",
 										"subtype" => array(   __('Image Slide','avia_framework' )	=>'image',
 										                      __('Video Slide','avia_framework' )	=>'video',
 										                      )
@@ -106,7 +111,7 @@ if ( !class_exists( 'avia_sc_slider_fullscreen' ) )
 										"name" 	=> __("Image Position",'avia_framework' ),
 										"id" 	=> "position",
 										"type" 	=> "select",
-										"std" 	=> "Center Center",
+										"std" 	=> "center center",
 										"required" => array('id','not',''),
 										"subtype" => array(   __('Top Left','avia_framework' )       =>'top left',
 										                      __('Top Center','avia_framework' )     =>'top center',
@@ -147,7 +152,14 @@ array(
 									"button" => __("Choose Image",'avia_framework' ),
 									"std" 	=> ""),
 									
-									
+									array(	
+									"name" 	=> __("Fallback Image Link", 'avia_framework' ),
+									"desc" 	=> __('You can enter a link to a video on youtube or vimeo that will open in a lightbox when the fallback image is clicked by the user. Links to self hosted videos will be opened in a new browser window on your mobile device or tablet', 'avia_framework' ), 
+									"required"=> array('mobile_image','not',''),
+									"id" 	=> "fallback_link",
+									"std" 	=> "http://",
+								    "type" 	=> "input",
+									),
 									
 									 array(	
 										"name" 	=> __("Video Display",'avia_framework' ),
@@ -568,19 +580,19 @@ array(
 									"description_class" => "av-builder-note av-neutral",
 									),
 										
-									array(	"name" 	=> __("Font Size for medium sized screens", 'avia_framework' ),
+									array(	"name" 	=> __("Font Size for medium sized screens (between 768px and 989px - eg: Tablet Landscape)", 'avia_framework' ),
 						            "id" 	=> "av-medium-font-size-title",
 						            "type" 	=> "select",
 						            "subtype" => AviaHtmlHelper::number_array(10,120,1, array( __("Default", 'avia_framework' )=>'' , __("Hidden", 'avia_framework' )=>'hidden' ), "px"),
 						            "std" => ""),
 						            
-						            array(	"name" 	=> __("Font Size for small screens", 'avia_framework' ),
+						            array(	"name" 	=> __("Font Size for small screens (between 480px and 767px - eg: Tablet Portrait)", 'avia_framework' ),
 						            "id" 	=> "av-small-font-size-title",
 						            "type" 	=> "select",
 						            "subtype" => AviaHtmlHelper::number_array(10,120,1, array( __("Default", 'avia_framework' )=>'', __("Hidden", 'avia_framework' )=>'hidden'), "px"),
 						            "std" => ""),
 						            
-									array(	"name" 	=> __("Font Size for very small screens", 'avia_framework' ),
+									array(	"name" 	=> __("Font Size for very small screens (smaller than 479px - eg: Smartphone Portrait)", 'avia_framework' ),
 						            "id" 	=> "av-mini-font-size-title",
 						            "type" 	=> "select",
 						            "subtype" => AviaHtmlHelper::number_array(10,120,1, array( __("Default", 'avia_framework' )=>'', __("Hidden", 'avia_framework' )=>'hidden'), "px"),
@@ -594,19 +606,19 @@ array(
 									"description_class" => "av-builder-note av-neutral",
 									),
 										
-									array(	"name" 	=> __("Font Size for medium sized screens", 'avia_framework' ),
+									array(	"name" 	=> __("Font Size for medium sized screens (between 768px and 989px - eg: Tablet Landscape)", 'avia_framework' ),
 						            "id" 	=> "av-medium-font-size",
 						            "type" 	=> "select",
 						            "subtype" => AviaHtmlHelper::number_array(10,120,1, array( __("Default", 'avia_framework' )=>'', __("Hidden", 'avia_framework' )=>'hidden'), "px"),
 						            "std" => ""),
 						            
-						            array(	"name" 	=> __("Font Size for small screens", 'avia_framework' ),
+						            array(	"name" 	=> __("Font Size for small screens (between 480px and 767px - eg: Tablet Portrait)", 'avia_framework' ),
 						            "id" 	=> "av-small-font-size",
 						            "type" 	=> "select",
 						            "subtype" => AviaHtmlHelper::number_array(10,120,1, array( __("Default", 'avia_framework' )=>'', __("Hidden", 'avia_framework' )=>'hidden'), "px"),
 						            "std" => ""),
 						            
-									array(	"name" 	=> __("Font Size for very small screens", 'avia_framework' ),
+									array(	"name" 	=> __("Font Size for very small screens (smaller than 479px - eg: Smartphone Portrait)", 'avia_framework' ),
 						            "id" 	=> "av-mini-font-size",
 						            "type" 	=> "select",
 						            "subtype" => AviaHtmlHelper::number_array(10,120,1, array( __("Default", 'avia_framework' )=>'', __("Hidden", 'avia_framework' )=>'hidden'), "px"),
@@ -874,7 +886,7 @@ array(
 			    
 			    
 				$skipSecond = false;
-				avia_sc_slider_full::$slide_count++;
+				avia_sc_slider_fullscreen::$slide_count++;
 				
 				$params['class'] = "avia-fullscreen-slider main_color {$av_display_classes} ".$meta['el_class'].$class;
 				$params['open_structure'] = false;

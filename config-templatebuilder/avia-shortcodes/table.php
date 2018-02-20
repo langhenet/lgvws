@@ -1,9 +1,12 @@
 <?php
 /**
- * Sidebar
- * Displays one of the registered Widget Areas of the theme
+ * Table
+ * 
+ * Creates a data or pricing table
  */
- 
+if ( ! defined( 'ABSPATH' ) ) {  exit;  }    // Exit if accessed directly
+
+
 if ( !class_exists( 'avia_sc_table' ) ) 
 {
 	class avia_sc_table extends aviaShortcodeTemplate
@@ -15,6 +18,9 @@ if ( !class_exists( 'avia_sc_table' ) )
 			 */
 			function shortcode_insert_button()
 			{
+				$this->config['self_closing']	=	'no';
+				$this->config['auto_repair']	=	'no';
+				
 				$this->config['name']		= __('Table', 'avia_framework' );
 				$this->config['tab']		= __('Content Elements', 'avia_framework' );
 				$this->config['icon']		= AviaBuilder::$path['imagesURL']."sc-table.png";
@@ -407,7 +413,7 @@ if ( !class_exists( 'avia_sc_table' ) )
 						if($row_attributes['row_style'] == 'avia-heading-row' && $cell_attributes['col_style'] == 'avia-desc-col')
 						{
 							//fixes issues like
-							//http://www.kriesi.at/support/topic/display-of-a-table-displays-wron-headlines-on-mobile/.
+							//https://kriesi.at/support/topic/display-of-a-table-displays-wron-headlines-on-mobile/.
 							
 							$responsive_style_nth_modifier = 0;
 						}

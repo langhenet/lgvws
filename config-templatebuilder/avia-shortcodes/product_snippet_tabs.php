@@ -1,4 +1,11 @@
 <?php
+/**
+ * Product Info Tab
+ * 
+ * Display the info and review tab for the current product
+ */
+if ( ! defined( 'ABSPATH' ) ) {  exit;  }    // Exit if accessed directly
+
 
 if( !class_exists( 'woocommerce' ) )
 {
@@ -15,6 +22,8 @@ if ( !class_exists( 'avia_sc_product_tabs' ) )
 		 */
 		function shortcode_insert_button()
 		{
+			$this->config['self_closing']	=	'yes';
+			
 			$this->config['name']		= __('Product Info Tab', 'avia_framework' );
 			$this->config['tab']		= __('Plugin Additions', 'avia_framework' );
 			$this->config['icon']		= AviaBuilder::$path['imagesURL']."sc-tabs.png";
@@ -41,7 +50,16 @@ if ( !class_exists( 'avia_sc_product_tabs' ) )
 		{
 			$params['innerHtml'] = "<img src='".$this->config['icon']."' title='".$this->config['name']."' />";
 			$params['innerHtml'].= "<div class='avia-element-label'>".$this->config['name']."</div>";
-			$params['content'] 	 = NULL; //remove to allow content elements
+			
+			$params['innerHtml'].= "<div class='avia-flex-element product-info-tabs'>"; 
+			$params['innerHtml'].= 		'<span>' . __( 'Display info tabs for this product:', 'avia_framework') . '</span>';
+			$params['innerHtml'].=		'<ul>';
+			$params['innerHtml'].=			'<li>' . __( '&quot;Additional information&quot; tab with product attributes', 'avia_framework') . '</li>';
+			$params['innerHtml'].=			'<li>' . __( '&quot;Reviews&quot; tab (needs to enable reviews in advanced tab)', 'avia_framework') . '</li>';
+			$params['innerHtml'].=			'<li>' . __( '.... possible 3rd party tabs', 'avia_framework') . '</li>';
+			$params['innerHtml'].=		'</ul>';
+			$params['innerHtml'].= "</div>";
+			
 			return $params;
 		}
 

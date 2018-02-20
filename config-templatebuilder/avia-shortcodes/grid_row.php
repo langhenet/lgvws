@@ -1,7 +1,8 @@
 <?php
 /**
- * COLUMNS
- * Shortcode which creates columns for better content separation
+ * Grid Row
+ * 
+ * Shortcode which adds multiple Grid Rows below each other to create advanced grid layouts. Cells can be styled individually
  */
 
  // Don't load directly
@@ -14,12 +15,30 @@ if ( !class_exists( 'avia_sc_grid_row' ) )
 	class avia_sc_grid_row extends aviaShortcodeTemplate{
 
 			static $count = 0;
+			
 
 			/**
-			 * Create the config array for the shortcode button
+			 * Create the config array for the shortcode grid row
 			 */
 			function shortcode_insert_button()
 			{
+				$this->config['type']				=	'layout';		
+				$this->config['self_closing']		=	'no';
+				$this->config['contains_text']		=	'no';
+				$this->config['layout_children']	=	array(  
+															'av_cell_one_full', 
+															'av_cell_one_half', 
+															'av_cell_one_third', 
+															'av_cell_one_fourth', 
+															'av_cell_one_fifth', 
+															'av_cell_two_third', 
+															'av_cell_three_fourth', 
+															'av_cell_two_fifth', 
+															'av_cell_three_fifth', 
+															'av_cell_four_fifth'
+														);
+				
+				
 				$this->config['name']		= __('Grid Row', 'avia_framework' );
 				$this->config['icon']		= AviaBuilder::$path['imagesURL']."sc-layout_row.png";
 				$this->config['tab']		= __('Layout Elements', 'avia_framework' );
@@ -82,7 +101,7 @@ if ( !class_exists( 'avia_sc_grid_row' ) )
 					$final_content  = "";
 					$final_content .= $cell->editor_element($params);
 					$final_content .= $cell->editor_element($params);
-					$text_area = ShortcodeHelper::create_shortcode_by_array($name, '[av_cell_one_half first][/av_cell_one_half] [av_cell_one_half][/av_cell_one_half]', $args);
+					$text_area = ShortcodeHelper::create_shortcode_by_array($name, '[av_cell_one_half][/av_cell_one_half] [av_cell_one_half][/av_cell_one_half]', $args);
 				
 				}
 				
@@ -361,9 +380,9 @@ if ( !class_exists( 'avia_sc_grid_row' ) )
 				avia_sc_cell::$attr = $atts;
 				$output .=  avia_new_section($params);
 				$output .=  ShortcodeHelper::avia_remove_autop($content,true) ;
-				$output .= avia_section_after_element_content( $meta , 'after_submenu', false);
+				$output .= avia_section_after_element_content( $meta , 'after_submenu_' . avia_sc_grid_row::$count, false);
 				
-				// added to fix http://www.kriesi.at/support/topic/footer-disseapearing/#post-427764
+				// added to fix https://kriesi.at/support/topic/footer-disseapearing/#post-427764
 				avia_sc_section::$close_overlay = "";
 				
 				

@@ -1,8 +1,11 @@
 <?php
 /**
- * Textblock
- * Shortcode which creates a text element wrapped in a div
+ * Social Share Buttons
+ * 
+ * Shortcode creates one or more social share buttons
  */
+if ( ! defined( 'ABSPATH' ) ) {  exit;  }    // Exit if accessed directly
+
 
 if ( !class_exists( 'avia_sc_social_share' ) )
 {
@@ -13,6 +16,9 @@ if ( !class_exists( 'avia_sc_social_share' ) )
 			 */
 			function shortcode_insert_button()
 			{
+
+				$this->config['self_closing']	=	'yes';
+				
 				$this->config['name']			= __('Social Share Buttons', 'avia_framework' );
 				$this->config['tab']			= __('Content Elements', 'avia_framework' );
 				$this->config['icon']			= AviaBuilder::$path['imagesURL']."sc-social.png";

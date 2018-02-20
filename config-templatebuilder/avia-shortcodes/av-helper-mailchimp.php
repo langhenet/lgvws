@@ -1,6 +1,10 @@
 <?php
+/**
+ * a very small and basic toolset for the for mailchimp 3.0 API, inspired by the mailchimp-for-wp-plugins 2.0 API
+ * 
+ */
+if ( ! defined( 'ABSPATH' ) ) {  exit;  }    // Exit if accessed directly
 
-/*a very small and basic toolset for the for mailchimp 3.0 API, inspired by the mailchimp-for-wp-plugins 2.0 API */
 
 if ( !class_exists( 'av_mailchimp_api' ) )
 {
@@ -84,7 +88,7 @@ if ( !class_exists( 'av_mailchimp_api' ) )
 					'timeout' 	=> 20,
 					'headers' 	=> $this->get_headers(),
 					'sslverify'	=> false 
-					// disable ssl verify: http://www.kriesi.at/support/topic/mailchimp-api-not-connecting/page/2/#post-596342
+					// disable ssl verify: https://kriesi.at/support/topic/mailchimp-api-not-connecting/page/2/#post-596342
 				)
 			);
 			

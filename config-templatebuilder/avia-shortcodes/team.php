@@ -1,8 +1,11 @@
 <?php
 /**
- * Sidebar
- * Displays one of the registered Widget Areas of the theme
+ * Team Member
+ * 
+ * Display a team members image with additional information
  */
+if ( ! defined( 'ABSPATH' ) ) {  exit;  }    // Exit if accessed directly
+
 
 if ( !class_exists( 'avia_sc_team' ) )
 {
@@ -13,6 +16,8 @@ if ( !class_exists( 'avia_sc_team' ) )
 			 */
 			function shortcode_insert_button()
 			{
+				$this->config['self_closing']	=	'no';
+				
 				$this->config['name']		= __('Team Member', 'avia_framework' );
 				$this->config['tab']		= __('Content Elements', 'avia_framework' );
 				$this->config['icon']		= AviaBuilder::$path['imagesURL']."sc-team.png";
@@ -318,7 +323,23 @@ if ( !class_exists( 'avia_sc_team' ) )
 				return $params;
 			}
 
+			/**
+			 * Returns false by default.
+			 * Override in a child class if you need to change this behaviour.
+			 * 
+			 * @since 4.2.1
+			 * @param string $shortcode
+			 * @return boolean
+			 */
+			public function is_nested_self_closing( $shortcode )
+			{
+				if( in_array( $shortcode, $this->config['shortcode_nested'] ) )
+				{
+					return true;
+				}
 
+				return false;
+			}
 
 			/**
 			 * Frontend Shortcode Handler

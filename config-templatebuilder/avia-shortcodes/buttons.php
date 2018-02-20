@@ -1,9 +1,12 @@
 <?php
 /**
  * Button
- * Displays a button that links to any url of your choice
+ * 
+ * Displays a colored button that links to any url of your choice
  */
- 
+if ( ! defined( 'ABSPATH' ) ) {  exit;  }    // Exit if accessed directly
+
+
 if ( !class_exists( 'avia_sc_button' ) ) 
 {
 	class avia_sc_button extends aviaShortcodeTemplate
@@ -13,6 +16,8 @@ if ( !class_exists( 'avia_sc_button' ) )
 			 */
 			function shortcode_insert_button()
 			{
+				$this->config['self_closing']	=	'yes';
+				
 				$this->config['name']		= __('Button', 'avia_framework' );
 				$this->config['tab']		= __('Content Elements', 'avia_framework' );
 				$this->config['icon']		= AviaBuilder::$path['imagesURL']."sc-button.png";

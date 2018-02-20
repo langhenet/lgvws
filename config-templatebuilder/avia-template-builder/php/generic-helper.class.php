@@ -366,14 +366,37 @@ if ( !class_exists( 'AviaHelper' ) ) {
     		
     		return stripslashes($string);
     	}
+		
+		/**
+		 * Create a lower case version of a string without spaces and special characters so we can use that string for a href anchor link.
+		 * Returns a default if the remaining string is empty.
+		 * 
+		 * @param string $link
+		 * @param string $replace
+		 * @param string $default
+		 * @return string
+		 */
+		static public function valid_href( $link, $replace = '_', $default = '-' )
+		{
+			$new_link = AviaHelper::save_string( $link, $replace );
+			if( '' == trim( $new_link ) )
+			{
+				$new_link = $default;
+			}
+			
+			return $new_link;
+		}
+		
     	
     	/**
 		 * Helper function that fetches the active value of the builder. also adds a filter
 		 *
+		 * @deprecated since version 4.2.1
 		 */
-		 
 		static function builder_status($post_ID)
 		{
+			_deprecated_function( 'builder_status', '4.2.1', 'AviaBuilder::get_alb_builder_status()');
+			
 			$status = get_post_meta($post_ID, '_aviaLayoutBuilder_active', true);
 			$status = apply_filters('avf_builder_active', $status, $post_ID);
 			

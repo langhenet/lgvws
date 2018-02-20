@@ -21,7 +21,7 @@ add_filter('avia_load_shortcodes','add_shortcode_folder');
 //set the folder that contains assets like js and imgs
 function avia_builder_plugins_url($url)
 {
-	$url = get_template_directory_uri()."/config-templatebuilder/avia-template-builder/";
+	$url = get_template_directory_uri()."/config-templatebuilder/";
 	return $url;
 }
 
@@ -36,7 +36,7 @@ if(!avia_builder_plugin_enabled())
 	
 	//define( 'AVIA_BUILDER_TEXTDOMAIN',  'avia_framework' );
 	
-	$builder = new AviaBuilder();
+	$builder = Avia_Builder(); 
 	
 	//activates the builder safe mode. this hides the shortcodes that are built with the content builder from the default wordpress content editor. 
 	//can also be set to "debug", to show shortcode content and extra shortcode container field

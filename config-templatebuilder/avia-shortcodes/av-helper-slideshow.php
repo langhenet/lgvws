@@ -1,5 +1,11 @@
 <?php
-	
+/**
+ * Helper for slideshows
+ * 
+ */	
+if ( ! defined( 'ABSPATH' ) ) {  exit;  }    // Exit if accessed directly
+
+
 if ( !class_exists( 'avia_slideshow' ) )
 {
 	class avia_slideshow
@@ -264,6 +270,7 @@ if ( !class_exists( 'avia_slideshow' ) )
 											'video_mobile_disabled'=>'',
 											'video_mobile'	=>'mobile-fallback-image',
 											'mobile_image'	=> '',
+											'fallback_link' => '',
 											'slide_type'	=>'',
 											'custom_markup' => '',
 											'custom_title_size' => '',
@@ -316,6 +323,10 @@ if ( !class_exists( 'avia_slideshow' ) )
 						if($mobile_image){
 							$fallback_img = wp_get_attachment_image_src($mobile_image, $this->config['size']);
 							$slider_data .= " data-mobile-img='".$fallback_img[0]."'";
+							
+							if($fallback_link){
+								$slider_data .= " data-fallback-link='".$fallback_link."'";
+							}
 						}
 						
 						//if we dont use a fullscreen slider pass the video ratio to the slider
@@ -484,7 +495,7 @@ if ( !class_exists( 'avia_slideshow' ) )
 					
 					
 					
-					// $img[0] = 'http://www.kriesi.at/themes/enfold-photography/files/2014/08/darkened_girl.jpg';
+					// $img[0] = 'https://kriesi.at/themes/enfold-photography/files/2014/08/darkened_girl.jpg';
 
 
 					$html .= "<li {$slider_data} class='{$extra_class} slide-{$counter} ' >";

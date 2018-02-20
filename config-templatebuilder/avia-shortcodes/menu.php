@@ -1,8 +1,11 @@
 <?php
 /**
- * Slider
- * Shortcode that allows to display a simple slideshow
+ * Fullwidth Sub Menu
+ * 
+ * Shortcode that allows to display a fullwidth Sub Menu
  */
+if ( ! defined( 'ABSPATH' ) ) {  exit;  }    // Exit if accessed directly
+
 
 if ( !class_exists( 'avia_sc_submenu' ) ) 
 {
@@ -16,6 +19,8 @@ if ( !class_exists( 'avia_sc_submenu' ) )
 			 */
 			function shortcode_insert_button()
 			{
+				$this->config['self_closing']	=	'no';
+				
 				$this->config['name']			= __('Fullwidth Sub Menu', 'avia_framework' );
 				$this->config['tab']			= __('Content Elements', 'avia_framework' );
 				$this->config['icon']			= AviaBuilder::$path['imagesURL']."sc-submenu.png";
@@ -229,6 +234,23 @@ if ( !class_exists( 'avia_sc_submenu' ) )
 			}
 			
 			
+			/**
+			 * Returns false by default.
+			 * Override in a child class if you need to change this behaviour.
+			 * 
+			 * @since 4.2.1
+			 * @param string $shortcode
+			 * @return boolean
+			 */
+			public function is_nested_self_closing( $shortcode )
+			{
+				if( in_array( $shortcode, $this->config['shortcode_nested'] ) )
+				{
+					return true;
+				}
+
+				return false;
+			}			
 			
 			
 			/**

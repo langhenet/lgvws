@@ -1,4 +1,9 @@
 <?php
+/**
+ * Tab Section
+ * 
+ * Add a fullwidth section with tabs that can contain columns and other elements
+ */
 
  // Don't load directly
 if ( !defined('ABSPATH') ) { die('-1'); }
@@ -16,15 +21,18 @@ if ( !class_exists( 'avia_sc_tab_section' ) )
 			static $tab_icons = array();
 			static $tab_images = array();
 			static $tab_atts = array();
-			
-			
-			
+
 			
 			/**
-			 * Create the config array for the shortcode button
+			 * Create the config array for the tab section
 			 */
 			function shortcode_insert_button()
 			{
+				$this->config['type']				=	'layout';
+				$this->config['self_closing']		=	'no';
+				$this->config['contains_text']		=	'no';
+				$this->config['layout_children']	=	array( 'av_tab_sub_section' );
+				
 				$this->config['name']		= __('Tab Section', 'avia_framework' );
 				$this->config['icon']		= AviaBuilder::$path['imagesURL']."sc-tabsection.png";
 				$this->config['tab']		= __('Layout Elements', 'avia_framework' );
@@ -448,11 +456,10 @@ if ( !class_exists( 'avia_sc_tab_section' ) )
 						$extraClass .= " av-tab-without-text ";
 					}
 					
-					$tab_link = AviaHelper::save_string($tab_title,'-');
+					$tab_link = AviaHelper::valid_href( $tab_title, '-', 'av-tab-section-' . avia_sc_tab_section::$count . '-' . $i );
 					$tabs  .= "<a href='#{$tab_link}' data-av-tab-section-title='{$i}' class='av-section-tab-title {$active_tab} {$extraClass} '>{$icon}{$image}<span class='av-outer-tab-title'><span class='av-inner-tab-title'>{$tab_title}</span></span>{$arrow}</a>";
 				}
-				
-				
+
 				
 				if(!empty($atts['bg_color']))
 				{
@@ -483,7 +490,7 @@ if ( !class_exists( 'avia_sc_tab_section' ) )
 				$output .=  "</div>";
 				$output .= avia_section_after_element_content( $meta , 'after_submenu', false);
 				
-				// added to fix http://www.kriesi.at/support/topic/footer-disseapearing/#post-427764
+				// added to fix https://kriesi.at/support/topic/footer-disseapearing/#post-427764
 				avia_sc_section::$close_overlay = "";
 				
 				

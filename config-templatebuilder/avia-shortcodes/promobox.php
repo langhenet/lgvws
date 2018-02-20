@@ -1,8 +1,11 @@
 <?php
 /**
- * Textblock
- * Shortcode which creates a text element wrapped in a div
+ * Promo Box
+ * 
+ * Creates a notification box with call to action button
  */
+if ( ! defined( 'ABSPATH' ) ) {  exit;  }    // Exit if accessed directly
+
 
 if ( !class_exists( 'avia_sc_promobox' ) )
 {
@@ -13,6 +16,8 @@ if ( !class_exists( 'avia_sc_promobox' ) )
 			 */
 			function shortcode_insert_button()
 			{
+				$this->config['self_closing']	=	'no';
+				
 				$this->config['name']			= __('Promo Box', 'avia_framework' );
 				$this->config['tab']			= __('Content Elements', 'avia_framework' );
 				$this->config['icon']			= AviaBuilder::$path['imagesURL']."sc-promobox.png";

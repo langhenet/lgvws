@@ -1,8 +1,11 @@
 <?php
 /**
- * Slider
- * Shortcode that allows to slide some content
+ * Content Slider
+ * 
+ * Shortcode that display a content slider element
  */
+if ( ! defined( 'ABSPATH' ) ) {  exit;  }    // Exit if accessed directly
+
 
 if ( !class_exists( 'avia_sc_content_slider' ) )
 {
@@ -13,6 +16,8 @@ if ( !class_exists( 'avia_sc_content_slider' ) )
 			 */
 			function shortcode_insert_button()
 			{
+				$this->config['self_closing']	=	'no';
+				
 				$this->config['name']			= __('Content Slider', 'avia_framework' );
 				$this->config['tab']			= __('Content Elements', 'avia_framework' );
 				$this->config['icon']			= AviaBuilder::$path['imagesURL']."sc-contentslider.png";

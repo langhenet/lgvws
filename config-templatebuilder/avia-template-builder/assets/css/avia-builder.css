@@ -19,11 +19,14 @@ background: transparent url(../../images/tiny-button.png) center center no-repea
 
 .postbox-container .postbox{clear:both;}
 
-#avia_builder{
+#avia_builder,
+#avia_sc_parser{
 float:left;
 width:100%;
 display: block !important;
 }
+
+
 
 #avia_builder.avia-hidden{
 display: none !important;
@@ -84,6 +87,49 @@ background-color: #2EA2CC;
 .av-builder-note a{color:#fff; text-decoration: underline; }
 .av-builder-note.av-only-active{ display:none; }
 .avia-advanced-editor-enabled .av-builder-note.av-only-active{ display:block; }
+
+
+#poststuff .avia-builder-parser-section{
+	width: 100%;
+	display: inline-block;
+	margin: 10px 0;
+}
+
+#poststuff .avia-builder-parser-section .avia-builder-parser-label{
+	padding: 15px;
+	width: auto;
+	font-weight: bold;
+	float: left;
+}
+
+#poststuff .avia-builder-parser-section .avia-builder-parser-select{
+	padding: 15px;
+	width: 50%;
+	float: left;
+}
+
+#poststuff .avia-builder-parser-section .avia-builder-parser-info-button{
+	margin: 15px 0;
+}
+
+#poststuff .avia-builder-parser-section .avia-builder-parser-message{
+	width: 100%;
+	float: left;
+}
+
+#poststuff .avia-builder-parser-section .avia-builder-parser-message .avia-parser-valid{
+	color: #008c00;
+}
+
+#poststuff .avia-builder-parser-section .avia-builder-parser-message .avia-parser-invalid{
+	color: #ea002b;
+	font-weight: 600;
+}
+
+#poststuff .avia-builder-parser-section .avia-builder-parser-message .avia-parser-undefined{
+	color: #0330f5;
+}
+
 
 
 .av-no-drag-drop .avia-expand-button,
@@ -2492,10 +2538,33 @@ span.av-tab-title-text-wrap-full {
     text-overflow: ellipsis;
 }
 
+/*	Avia Player	*/
+.avia_inner_shortcode .av-player{
+	margin-bottom: 5px;
+	display: inline-block;
+}
+
+.avia_inner_shortcode .av-player .av-player-manual .av-play-manual,
+.avia_inner_shortcode .av-player .av-player-autoplay .av-play-autoplay{
+	display: inline-block;
+}
+
+.avia_inner_shortcode .av-player .av-player-manual  .av-play-autoplay,
+.avia_inner_shortcode .av-player .av-player-autoplay .av-play-manual{
+	display: none;
+}
+
+.avia_inner_shortcode .av-player .av-player-autoplay .av-play-autoplay{
+	color: #0085ba;
+}
 
 
-
-
+/*	Product Info Tab		*/
+.avia_inner_shortcode .avia-flex-element.product-info-tabs ul{
+	list-style: disc; 
+	text-align: left;
+	padding: 0 0 0 10px;
+}
 
 
 

@@ -1,6 +1,7 @@
 <?php
 /**
  * COLUMNS
+ * 
  * Shortcode which creates columns for better content separation
  */
 
@@ -15,6 +16,76 @@ if ( !class_exists( 'avia_sc_cell' ) )
 
 			static $extraClass = "";
 			static $attr = array();
+			
+			/**
+			 * All available column width sizes
+			 * 
+			 * @since 4.2.1
+			 * @var array 
+			 */
+			static private $size_array = array(
+										'av_cell_one_full' => '1/1', 
+										'av_cell_one_half' => '1/2', 
+										'av_cell_one_third' => '1/3', 
+										'av_cell_one_fourth' => '1/4', 
+										'av_cell_one_fifth' => '1/5', 
+										'av_cell_two_third' => '2/3', 
+										'av_cell_three_fourth' => '3/4', 
+										'av_cell_two_fifth' => '2/5', 
+										'av_cell_three_fifth' => '3/5', 
+										'av_cell_four_fifth' => '4/5'
+									);
+			
+			/**
+			 * Define the width for a cell
+			 * 
+			 * @since 4.2.1
+			 * @var array 
+			 */
+			static $size_width = array(	
+										'av_cell_one_full' 		=> 1.0, 
+										'av_cell_one_half' 		=> 0.5, 
+										'av_cell_one_third' 	=> 0.33, 
+										'av_cell_one_fourth' 	=> 0.25, 
+										'av_cell_one_fifth' 	=> 0.2, 
+										'av_cell_two_third' 	=> 0.66, 
+										'av_cell_three_fourth' 	=> 0.75, 
+										'av_cell_two_fifth' 	=> 0.4, 
+										'av_cell_three_fifth' 	=> 0.6, 
+										'av_cell_four_fifth' 	=> 0.8
+									);
+			
+			/**
+			 * This constructor is implicity called by all derived classes
+			 * To avoid duplicating code we put this in the constructor
+			 * 
+			 * @since 4.2.1
+			 * @param AviaBuilder $builder
+			 */
+			public function __construct( $builder ) 
+			{
+				parent::__construct( $builder );
+				
+				$this->config['type']				=	'layout';		
+				$this->config['self_closing']		=	'no';
+				$this->config['contains_text']		=	'no';
+				$this->config['contains_layout']	=	'yes';
+				$this->config['contains_content']	=	'yes';
+//				$this->config['first_in_row']		=	'first';
+				
+			}
+
+			
+			/**
+			 * Returns the width of the cells. As this is the base class for all cells we only need to implement it here.
+			 * 
+			 * @since 4.2.1
+			 * @return float
+			 */
+			public function get_element_width()
+			{
+				return isset( avia_sc_cell::$size_width[ $this->config['shortcode'] ] ) ? avia_sc_cell::$size_width[ $this->config['shortcode'] ] : 1.0;
+			}
 
 			/**
 			 * Create the config array for the shortcode button
@@ -56,19 +127,6 @@ if ( !class_exists( 'avia_sc_cell' ) )
 				$name 		= $this->config['shortcode'];
 				$drag 		= $this->config['drag-level'];
 				$drop 		= $this->config['drop-level'];
-
-				$size = array(	'av_cell_one_full' => '1/1', 
-								'av_cell_one_half' => '1/2', 
-								'av_cell_one_third' => '1/3', 
-								'av_cell_one_fourth' => '1/4', 
-								'av_cell_one_fifth' => '1/5', 
-								'av_cell_two_third' => '2/3', 
-								'av_cell_three_fourth' => '3/4', 
-								'av_cell_two_fifth' => '2/5', 
-								'av_cell_three_fifth' => '3/5', 
-								'av_cell_four_fifth' => '4/5'
-								
-							);
 				
 				$data['shortcodehandler'] 	= $this->config['shortcode'];
 				$data['modal_title'] 		= __('Edit Cell','avia_framework' );
@@ -90,7 +148,7 @@ if ( !class_exists( 'avia_sc_cell' ) )
 				$output  = "<div class='avia_layout_column avia_layout_cell avia_pop_class avia-no-visual-updates ".$name." av_drag' {$dataString} data-width='{$name}'>";
 				$output .= "<div class='avia_sorthandle'>";
 
-				$output .= "<span class='avia-col-size'><span class='avia-element-bg-color' ".$el_bg."></span>".$size[$name]."</span>";
+				$output .= "<span class='avia-col-size'><span class='avia-element-bg-color' ".$el_bg."></span>".avia_sc_cell::$size_array[$name]."</span>";
 				$output .= "<a class='avia-delete'  href='#delete' title='".__('Delete Cell','avia_framework' )."'>x</a>";
 				$output .= "<a class='avia-clone'  href='#clone' title='".__('Clone Cell','avia_framework' )."' >".__('Clone Cell','avia_framework' )."</a>";
 				

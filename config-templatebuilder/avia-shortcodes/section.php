@@ -1,7 +1,8 @@
 <?php
 /**
- * COLUMNS
- * Shortcode which creates columns for better content separation
+ * Color Section
+ * 
+ * Shortcode creates a section with unique background image and colors for better content sepearation
  */
 
  // Don't load directly
@@ -16,12 +17,17 @@ if ( !class_exists( 'avia_sc_section' ) )
 			static $section_count = 0;
 			static $add_to_closing = "";
 			static $close_overlay = "";
+			
 
 			/**
 			 * Create the config array for the shortcode button
 			 */
 			function shortcode_insert_button()
 			{
+				$this->config['type']			=	'layout';
+				$this->config['self_closing']	=	'no';
+				$this->config['contains_text']	=	'no';
+				
 				$this->config['name']		= __('Color Section', 'avia_framework' );
 				$this->config['icon']		= AviaBuilder::$path['imagesURL']."sc-section.png";
 				$this->config['tab']		= __('Layout Elements', 'avia_framework' );
@@ -213,7 +219,7 @@ if ( !class_exists( 'avia_sc_section' ) )
 				   array(
 						"name" 	=> __("Section Top Border Styling",'avia_framework' ),
 						"id" 	=> "shadow",
-						"desc"  => __("Chose a border styling for the top of your section",'avia_framework' ),
+						"desc"  => __("Choose a border styling for the top of your section",'avia_framework' ),
 						"type" 	=> "select",
 						"std" 	=> "no-shadow",
 						"subtype" => array( __('Display a simple 1px top border','avia_framework' )	=>'no-shadow',  
@@ -226,7 +232,7 @@ if ( !class_exists( 'avia_sc_section' ) )
 				    array(
 						"name" 	=> __("Section Bottom Border Styling",'avia_framework' ),
 						"id" 	=> "bottom_border",
-						"desc"  => __("Chose a border styling for the bottom of your section",'avia_framework' ),
+						"desc"  => __("Choose a border styling for the bottom of your section",'avia_framework' ),
 						"type" 	=> "select",
 						"std" 	=> "no-border-styling",
 						"subtype" => array(   
@@ -286,6 +292,18 @@ if ( !class_exists( 'avia_sc_section' ) )
 						"id" 	=> "scroll_down",
 						"std" 	=> "",
 						"type" 	=> "checkbox"),
+						
+					
+					array(
+							"name" 	=> __("Custom Arrow Color", 'avia_framework' ),
+							"desc" 	=> __("Select a custom arrow color. Leave empty if you want to use the default arrow color and style", 'avia_framework' ),
+							"id" 	=> "custom_arrow_bg",
+							"type" 	=> "colorpicker",
+							"std" 	=> "",
+							"required" => array('scroll_down','not',''),
+						),
+					
+					
 
 
 				  array(	"name" 	=> __("For Developers: Section ID", 'avia_framework' ),
@@ -404,7 +422,7 @@ if ( !class_exists( 'avia_sc_section' ) )
 					
 					array(	
 							"name" 	=> __("Hide video on Mobile Devices?", 'avia_framework' ),
-							"desc" 	=> __("You can chose to hide the video entirely on Mobile devices and instead display the Section Background image", 'avia_framework' )."<br/><small>".__("Most mobile devices can't autoplay videos to prevent bandwidth problems for the user", 'avia_framework' ) ."</small>" ,
+							"desc" 	=> __("You can choose to hide the video entirely on Mobile devices and instead display the Section Background image", 'avia_framework' )."<br/><small>".__("Most mobile devices can't autoplay videos to prevent bandwidth problems for the user", 'avia_framework' ) ."</small>" ,
 							"id" 	=> "video_mobile_disabled",
 							"required"=> array('video','not',''),
 							"std" 	=> "",
@@ -597,7 +615,8 @@ array(
 			    								'scroll_down' => '',
 			    								'bottom_border_diagonal_color' => '',
 			    								'bottom_border_diagonal_direction' => '',
-			    								'bottom_border_style'=>''
+			    								'bottom_border_style'=>'',
+			    								'custom_arrow_bg' => ''
 			    								
 			    								), 
 			    							$atts, $this->config['shortcode']);
@@ -730,11 +749,21 @@ array(
 				
 				if(!empty($scroll_down))
 				{	
+					$arrow_style = "";
+					$arrow_class = "";
+					
 					if(!$overlay)
 					{
-					$params['attach'] .= $pre_wrap;	
+						$params['attach'] .= $pre_wrap;	
 					}
-					$params['attach'] .= "<a href='#next-section' title='' class='scroll-down-link' ". av_icon_string( 'scrolldown' ). "></a>";
+					
+					if(!empty($custom_arrow_bg))
+					{
+						$arrow_style = "style='color: {$custom_arrow_bg};'";
+						$arrow_class = " av-custom-scroll-down-color";
+					}
+					
+					$params['attach'] .= "<a href='#next-section' title='' class='scroll-down-link {$arrow_class}' {$arrow_style} ". av_icon_string( 'scrolldown' ). "></a>";
 				}
 			    
 			    
@@ -760,6 +789,12 @@ array(
 			    		$params['close'] = false;
 			    	}
 			    }
+			    
+			    if($bottom_border == 'border-extra-arrow-down')
+			    {
+				    $params['class'] .= " av-arrow-down-section";
+			    }
+			    
 		
 				
 				$avia_config['layout_container'] = "section";

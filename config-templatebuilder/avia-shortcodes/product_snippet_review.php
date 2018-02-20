@@ -1,4 +1,11 @@
 <?php
+/**
+ * Product Reviews
+ * 
+ * Display the reviews and review form for the current product
+ */
+if ( ! defined( 'ABSPATH' ) ) {  exit;  }    // Exit if accessed directly
+
 
 if( !class_exists( 'woocommerce' ) )
 {
@@ -15,6 +22,8 @@ if ( !class_exists( 'avia_sc_product_review' ) )
 		 */
 		function shortcode_insert_button()
 		{
+			$this->config['self_closing']	=	'yes';
+			
 			$this->config['name']		= __('Product Reviews', 'avia_framework' );
 			$this->config['tab']		= __('Plugin Additions', 'avia_framework' );
 			$this->config['icon']		= AviaBuilder::$path['imagesURL']."sc-comments.png";
@@ -41,7 +50,11 @@ if ( !class_exists( 'avia_sc_product_review' ) )
 		{
 			$params['innerHtml'] = "<img src='".$this->config['icon']."' title='".$this->config['name']."' />";
 			$params['innerHtml'].= "<div class='avia-element-label'>".$this->config['name']."</div>";
-			$params['content'] 	 = NULL; //remove to allow content elements
+			
+			$params['innerHtml'].= "<div class='avia-flex-element'>"; 
+			$params['innerHtml'].= 		__( 'Display and allow reviews for this product. Needs to enable reviews in advanced tab.', 'avia_framework' );
+			$params['innerHtml'].= "</div>";
+			
 			return $params;
 		}
 

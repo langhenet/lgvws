@@ -214,6 +214,8 @@ if(!function_exists('avia_permalink_settings_save'))
 { 
 	function avia_permalink_settings_save()
 	{
+		if (defined('DOING_AJAX') && DOING_AJAX) return;
+		
 		global $avia_config;
 		$permalinks = get_option('avia_permalink_settings');
 		if(!$permalinks) $permalinks = array();

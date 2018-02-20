@@ -1,5 +1,8 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) ) {  exit;  }    // Exit if accessed directly
+
+
 //if either calendar plugin or modified version of the plugin that is included in the theme is available we can make use of it, otherwise return
 
 if ( !class_exists( 'Tribe__Events__Main' ) ) return false;

@@ -1,279 +1,14 @@
 jQuery(function($) {
 
-	var LS_GoogleFontsAPI = {
 
-		results : 0,
-		fontName : null,
-		fontIndex : null,
+	var importModalWindowTimeline = null,
+		importModalWindowTransition = null,
+		importModalThumbnailsTransition = null;
 
-		init : function() {
-
-			// Prefetch fonts
-			$('.ls-font-search input').focus(function() {
-				LS_GoogleFontsAPI.getFonts();
-			});
-
-			// Search
-			$('.ls-font-search > button').click(function(e) {
-				e.preventDefault();
-				var input = $(this).prev()[0];
-				LS_GoogleFontsAPI.timeout = setTimeout(function() {
-					LS_GoogleFontsAPI.search(input);
-				}, 500);
-			});
-
-			$('.ls-font-search input').keydown(function(e) {
-				if(e.which === 13) {
-					e.preventDefault();
-					var input = this;
-					LS_GoogleFontsAPI.timeout = setTimeout(function() {
-						LS_GoogleFontsAPI.search(input);
-					}, 500);
-				}
-			});
-
-			// Form save
-			$('form.ls-google-fonts').submit(function() {
-				$('ul.ls-font-list li', this).each(function(idx) {
-					$('input', this).each(function() {
-						$(this).attr('name', 'fontsData['+idx+']['+$(this).data('name')+']');
-					});
-				});
-
-				return true;
-			});
-
-			// Select font
-			$('.ls-google-fonts .fonts').on('click', 'li:not(.unselectable)', function() {
-				LS_GoogleFontsAPI.showVariants(this);
-			});
-
-			// Add font event
-			$('.ls-font-search').on('click', 'button.add-font', function(e) {
-				e.preventDefault();
-				LS_GoogleFontsAPI.addFonts(this);
-			});
-
-			// Back to results event
-			$('.ls-google-fonts .variants').on('click', 'button:last', function(e) {
-				e.preventDefault();
-				LS_GoogleFontsAPI.showFonts(this);
-			});
-
-			// Close event
-			$(document).on( 'click', '.ls-overlay', function() {
-
-				if($(this).data('manualclose')) {
-					return false;
-				}
-
-				if($('.ls-pointer').length) {
-					$(this).remove();
-					$('.ls-pointer').children('div.fonts').show().next().hide();
-					$('.ls-pointer').animate({ marginTop : 40, opacity : 0 }, 150, function() {
-						this.style.display = 'none';
-					});
-				}
-			});
-
-			// Remove font
-			$('.ls-font-list').on('click', 'a.remove', function(e) {
-				e.preventDefault();
-				$(this).parent().animate({ height : 0, opacity : 0 }, 300, function() {
-
-					// Add notice if needed
-					if($(this).siblings().length < 2) {
-						$(this).parent().append(
-							$('<li>', { 'class' : 'ls-notice', 'text' : LS_l10n.GFEmptyList })
-						);
-					}
-
-					$(this).remove();
-				});
-			});
-
-			// Add script
-			$('.ls-google-fonts .footer select').change(function() {
-
-				// Prevent adding the placeholder option tag
-				if($('option:selected', this).index() !== 0) {
-
-					// Selected item
-					var item = $('option:selected', this);
-					var hasDuplicate = false;
-
-					// Prevent adding duplicates
-					$('.ls-google-font-scripts input').each(function() {
-						if($(this).val() === item.val()) {
-							hasDuplicate = true;
-							return false;
-						}
-					});
-
-					// Add item
-					if(!hasDuplicate) {
-						var clone = $('.ls-google-font-scripts li:first').clone();
-							clone.find('span').text( item.text() );
-							clone.find('input').val( item.val() );
-							clone.removeClass('ls-hidden').appendTo('.ls-google-font-scripts');
-					}
-
-					// Show the placeholder option tag
-					$('option:first', this).prop('selected', true);
-				}
-			});
-
-			// Remove script
-			$('.ls-google-font-scripts').on('click', 'li a', function(event) {
-				event.preventDefault();
-
-				if($('.ls-google-font-scripts li').length > 2) {
-					$(this).closest('li').remove();
-				} else {
-					alert(LS_l10n.GFEmptyCharset);
-				}
-			});
-		},
-
-		getFonts : function() {
-
-			if(LS_GoogleFontsAPI.results == 0) {
-				var API_KEY = 'AIzaSyC_iL-1h1jz_StV_vMbVtVfh3h2QjVUZ8c';
-				$.getJSON('https://www.googleapis.com/webfonts/v1/webfonts?key=' + API_KEY, function(data) {
-					LS_GoogleFontsAPI.results = data;
-				});
-			}
-		},
-
-		search : function(input) {
-
-			// Hide overlay if any
-			$('.ls-overlay').remove();
-
-			// Get search field
-			var searchValue = $(input).val().toLowerCase();
-
-			// Wait until fonts being fetched
-			if(LS_GoogleFontsAPI.results != 0 && searchValue.length > 2 ) {
-
-				// Search
-				var indexes = [];
-				var found = $.grep(LS_GoogleFontsAPI.results.items, function(obj, index) {
-					if(obj.family.toLowerCase().indexOf(searchValue) !== -1) {
-						indexes.push(index);
-						return true;
-					}
-				});
-
-				// Get list
-				var list = $('.ls-font-search .ls-pointer .fonts ul');
-
-				// Remove previous contents and append new ones
-				list.empty();
-				if(found.length) {
-					for(c = 0; c < found.length; c++) {
-						list.append( $('<li>', { 'data-key' : indexes[c], 'text' : found[c]['family'] }));
-					}
-				} else {
-					list.append($('<li>', { 'class' : 'unselectable' })
-						.append( $('<h4>', { 'text' : 'No results were found' }))
-					);
-				}
-
-				// Show pointer and append overlay
-				$('.ls-font-search .ls-pointer').show().animate({ marginTop : 15, opacity : 1 }, 150);
-				$('<div>', { 'class' : 'ls-overlay dim'}).prependTo('body');
-			}
-		},
-
-		showVariants : function(li) {
-
-			// Get selected font
-			var fontName = $(li).text();
-			var fontIndex = $(li).data('key');
-			var fontObject = LS_GoogleFontsAPI.results.items[fontIndex]['variants'];
-			LS_GoogleFontsAPI.fontName = fontName;
-			LS_GoogleFontsAPI.fontIndex = fontIndex;
-
-			// Get and empty list
-			var list = $(li).closest('div').next().children('ul');
-				list.empty();
-
-
-			// Change header
-			var title = LS_l10n.GFFontVariant.replace('%s', fontName);
-			$(li).closest('.ls-box').children('.header').text(title);
-
-			// Append variants
-			for(c = 0; c < fontObject.length; c++) {
-				list.append( $('<li>', { 'class' : 'unselectable' })
-					.append( $('<input>', { 'type' : 'checkbox'} ))
-					.append( $('<span>', { 'text' : ucFirst(fontObject[c]) }))
-				);
-			}
-
-			// Init checkboxes
-			list.find(':checkbox').customCheckbox();
-
-			// Show variants
-			$(li).closest('.fonts').hide().next().show();
-		},
-
-		showFonts : function(button) {
-			$(button).closest('.ls-box').children('.header').text(LS_l10n.GFFontFamily);
-			$(button).closest('.variants').hide().prev().show();
-		},
-
-		addFonts: function(button) {
-
-			// Get variants
-			var variants = $(button).parent().prev().find('input:checked');
-
-			var apiUrl = [];
-			var urlVariants = [];
-			apiUrl.push(LS_GoogleFontsAPI.fontName.replace(/ /g, '+'));
-
-			if(variants.length) {
-				apiUrl.push(':');
-				variants.each(function() {
-					urlVariants.push( $(this).siblings('span').text().toLowerCase() );
-				});
-				apiUrl.push(urlVariants.join(','));
-			}
-
-			LS_GoogleFontsAPI.appendToFontList( apiUrl.join('') );
-		},
-
-		appendToFontList : function(url) {
-
-			// Empty notice if any
-			$('ul.ls-font-list li.ls-notice').remove();
-
-			var index = $('ul.ls-font-list li').length - 1;
-
-			// Append list item
-			var item = $('ul.ls-font-list li.ls-hidden').clone();
-				item.children('input:text').val(url);
-				item.appendTo('ul.ls-font-list').attr('class', '');
-
-			// Reset search field
-			$('.ls-font-search input').val('');
-
-			// Close pointer
-			$('.ls-overlay').click();
-		}
-	};
-
-
-	// Checkboxes
-	$('.ls-global-settings :checkbox').customCheckbox();
-	$('.ls-google-fonts :checkbox').customCheckbox();
 
 	// Tabs
 	$('.km-tabs').kmTabs();
 
-	// Google Fonts API
-	LS_GoogleFontsAPI.init();
 
 	$('.ls-sliders-grid').on('click', '.slider-actions', function() {
 
@@ -412,27 +147,38 @@ jQuery(function($) {
 
 		event.preventDefault();
 
-		var	$modal,
-			width = jQuery( window ).width(),
-			tl;
+		var	$modal;
+
+		// If the Template Store was previously opened on the current page,
+		// just grab the element, do not bother re-appending and setting
+		// up events, etc.
+
+		// Append dark overlay
+		if( !jQuery( '#ls-import-modal-overlay' ).length ){
+			jQuery( '<div id="ls-import-modal-overlay">' ).appendTo( '#wpwrap' );
+		}
 
 		if( jQuery( '#ls-import-modal-window' ).length ){
 
 			$modal = jQuery( '#ls-import-modal-window' );
 
-		}else{
+		// First time open on the current page. Set up the UI and others.
+		} else {
 
+			// Append the template & setup the live logo
 			$modal = jQuery( jQuery('#tmpl-import-sliders').text() ).hide().prependTo('body');
+			lsLogo.append( '#ls-import-modal-window .layerslider-logo', true );
 
 			// Update last store view date
 			if( $modal.hasClass('has-updates') ) {
 				jQuery.get( window.ajaxurl, { action: 'ls_store_opened' });
 			}
 
-			lsLogo.append( '#ls-import-modal-window .layerslider-logo', true );
 
+			// Setup Shuffle. Use setTimeout to avoid timing issues.
 			setTimeout(function(){
 
+				// Init Shuffle
 				var	Shuffle = window.shuffle,
 					element = jQuery( '#ls-import-modal-window .inner .items' )[0];
 					shuffle = new Shuffle(element, {
@@ -443,95 +189,103 @@ jQuery(function($) {
 					}),
 					$comingSoon = jQuery( '.coming-soon' );
 
-				jQuery( '#ls-import-modal-window .inner nav li' ).on( 'click', function(){
+				// Setup category switcher sidebar.
+				jQuery( '#ls-import-modal-window' ).on( 'click', '.inner nav li', function(){
+
+					// Highlight and filter new category
 					jQuery(this).addClass('active').siblings().removeClass('active');
 					shuffle.filter( jQuery(this).data( 'group' ) );
-					if( !jQuery( '.shuffle .shuffle-item--visible' ).length ){
-						$comingSoon.addClass( 'visible' );
-					}else{
-						$comingSoon.removeClass( 'visible' );
-					}
+
+					// Display the Coming Soon tile if the category
+					// has no entries at all.
+					var $tiles = jQuery( '.shuffle .shuffle-item--visible' );
+					$comingSoon[ $tiles.length ? 'removeClass' : 'addClass' ]('visible');
 				});
 
 			}, 100 );
+
+			// Hide all template items temporarily for faster animations
+			jQuery( '#ls-import-modal-window .items' ).hide();
+
+			importModalWindowTimeline = new TimelineMax({
+				onStart: function(){
+					jQuery( '#ls-import-modal-overlay' ).show();
+					jQuery( 'html, body' ).addClass( 'ls-no-overflow' );
+					jQuery(document).on( 'keyup.LS', function( e ) {
+						if( e.keyCode === 27 ){
+							jQuery( '#ls-import-samples-button' ).data( 'lsModalTimeline' ).reverse().timeScale(1.5);
+						}
+					});
+				},
+				onComplete: function(){
+					importModalWindowTimeline.remove( importModalThumbnailsTransition );
+				},
+				onReverseComplete: function(){
+					jQuery( 'html, body' ).removeClass( 'ls-no-overflow' );
+					jQuery(document).off( 'keyup.LS' );
+					jQuery( '#ls-import-modal-overlay' ).hide();
+					TweenMax.set( jQuery( '#ls-import-modal-window' )[0], { css: { y: -100000 } });
+				},
+				paused: true
+			});
+
+			$(this).data( 'lsModalTimeline', importModalWindowTimeline );
+
+			importModalWindowTimeline.fromTo( $('#ls-import-modal-overlay')[0], 0.75, {
+				autoCSS: false,
+				css: {
+					opacity: 0
+				}
+			},{
+				autoCSS: false,
+				css: {
+					opacity: 0.75
+				},
+				ease: Quart.easeInOut
+			}, 0 );
+
+			importModalThumbnailsTransition = TweenMax.fromTo( $( '#ls-import-modal-window .items' )[0], 0.5, {
+				autoCSS: false,
+				css: {
+					opacity: 0,
+					display: 'block'
+				}
+			},{
+				autoCSS: false,
+				css: {
+					opacity: 1
+				},
+			ease: Quart.easeInOut
+			});
+
+			importModalWindowTimeline.add( importModalThumbnailsTransition, 0.75 );
+
+			importModalWindowTimeline.add( function(){
+				shuffle.update();
+			}, 0.25 );
 		}
 
-		tl = new TimelineMax({
-			onStart: function(){
-				jQuery( 'html, body' ).addClass( 'ls-body-black' );
-				jQuery( '<div>' ).addClass( 'ls-overlay-transparent' ).css({
-					position: 'fixed',
-					left: 0,
-					top: 0,
-					right: 0,
-					bottom: 0
-				}).appendTo( '#wpwrap' );
-				jQuery( '#wpwrap' ).addClass( 'ls-wp-wrap-white' );
-				jQuery(document).on( 'keyup.LS', function( e ) {
-					if( e.keyCode === 27 ){
-						jQuery( '#ls-import-samples-button' ).data( 'lsModalTimeline' ).reverse();
-					}
-				});
-			},
-			onReverseComplete: function(){
-				jQuery( 'html, body' ).removeClass( 'ls-body-black' );
-				jQuery( '#wpwrap' ).removeClass( 'ls-wp-wrap-white' );
-				jQuery( '#wpwrap' ).attr( 'style', '' );
-				jQuery( '#ls-import-samples-button' ).data( 'lsModalTimeline' ).clear().kill();
-				jQuery( '#ls-import-samples-button' ).removeData( 'lsModalTimeline' );
-				jQuery(document).off( 'keyup.LS' );
-				jQuery( '#ls-import-modal-window' ).css({
-					display: 'none'
-				});
-				jQuery( '.ls-overlay-transparent' ).remove();
-			},
-			paused: true
-		});
+		importModalWindowTimeline.remove( importModalWindowTransition );
 
-		$(this).data( 'lsModalTimeline', tl );
-
-		tl.fromTo( $modal[0], 1, {
+		importModalWindowTransition = TweenMax.fromTo( $modal[0], 0.75, {
 			autoCSS: false,
 			css: {
 				position: 'fixed',
 				display: 'block',
-				x: width,
-				rotationY: 45,
-				opacity: .4,
-				transformPerspective: width,
-				transformOrigin: '0% 50%'
+				y: 0,
+				x: jQuery( window ).width()
 			}
 		},{
 			autoCSS: false,
 			css: {
-				x: 0,
-				opacity: 1,
-				rotationY: 0
+				x: 0
 			},
-			ease: Quint.easeInOut
+			ease: Quart.easeInOut
 		}, 0 );
 
-		tl.fromTo( $( '#wpwrap' )[0], 1, {
-			autoCSS: false,
-			css: {
-				transformPerspective: width,
-				transformOrigin: '100% 50%'
-			}
-		},{
-			autoCSS: false,
-			css: {
-				x: -width,
-				rotationY: -45,
-				opacity: .4
-			},
-			ease: Quint.easeInOut
-		}, 0 );
+		importModalWindowTimeline.add( importModalWindowTransition, 0 );
 
-		tl.add( function(){
-			shuffle.update();
-		}, 0.15 );
-
-		tl.play();
+		importModalWindowTimeline.play();
 	});
 
 	$( document ).on( 'click', '#ls-import-modal-window > header b', function(){
@@ -556,6 +310,8 @@ jQuery(function($) {
 		jQuery('.button', this).text(LS_l10n.SLUploadSlider).addClass('saving');
 
 	}).on('click', '.ls-open-template-store', function(e) {
+
+		e.preventDefault();
 
 		kmUI.modal.close();
 		kmUI.overlay.close();
@@ -693,27 +449,6 @@ jQuery(function($) {
 			});
 	});
 
-	// Permission form
-	$('#ls-permission-form').submit(function(e) {
-		e.preventDefault();
-		if(confirm(LS_l10n.SLPermissions)) {
-			this.submit();
-		}
-	});
-
-
-	// Google CDN version warning
-	$('#ls_use_custom_jquery').on('click', '.ls-checkbox', function(e) {
-		if( $(this).hasClass('off') ) {
-			if( ! confirm(LS_l10n.SLJQueryConfirm) ) {
-				e.preventDefault();
-				return false;
-
-			}
-
-			alert(LS_l10n.SLJQueryReminder);
-		}
-	});
 
 
 	// News filters
@@ -756,7 +491,7 @@ jQuery(function($) {
 				into: '#ls-import-modal-window',
 				title: LS_l10n.TSImportWarningTitle,
 				content: LS_l10n.TSImportWarningContent,
-				width: 700,
+				width: 800,
 				height: 200,
 				overlayAnimate: 'fade'
 			});
@@ -790,13 +525,16 @@ jQuery(function($) {
 				security: window.lsImportNonce
 			},
 			success: function(data, textStatus, jqXHR) {
-				data = JSON.parse( data );
-				if( data && data.success ) {
+
+				data = data ? JSON.parse( data ) : {};
+
+				if( data.success ) {
 					document.location.href = data.url;
 
-				} else if(data.message) {
+				} else {
+
 					setTimeout(function() {
-						alert(data.message);
+						alert( data.message ? data.message : LS_l10n.SLImportError);
 						setTimeout(function() {
 							kmUI.modal.close();
 							kmUI.overlay.close();
@@ -806,15 +544,6 @@ jQuery(function($) {
 					if( data.reload ) {
 						window.location.reload( true );
 					}
-
-				} else {
-					setTimeout(function() {
-						alert(LS_l10n.SLImportError);
-						setTimeout(function() {
-							kmUI.modal.close();
-							kmUI.overlay.close();
-						}, 1000);
-					}, 600);
 				}
 			},
 			error: function(jqXHR, textStatus, errorThrown) {
@@ -833,6 +562,12 @@ jQuery(function($) {
 			}
 		});
 	});
+
+	if( document.location.hash === '#open-template-store' ) {
+		setTimeout( function() {
+			$('#ls-import-samples-button').click();
+		}, 500);
+	}
 
 });
 

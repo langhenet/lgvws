@@ -1,9 +1,12 @@
 <?php
 /**
- * Sidebar
- * Displays one of the registered Widget Areas of the theme
+ * Notification box
+ * 
+ * Creates a notification box to inform visitors
  */
- 
+if ( ! defined( 'ABSPATH' ) ) {  exit;  }    // Exit if accessed directly
+
+
 if ( !class_exists( 'avia_sc_notification' ) ) 
 {
 	class avia_sc_notification extends aviaShortcodeTemplate
@@ -13,6 +16,8 @@ if ( !class_exists( 'avia_sc_notification' ) )
 			 */
 			function shortcode_insert_button()
 			{
+				$this->config['self_closing']	=	'no';
+				
 				$this->config['name']		= __('Notification', 'avia_framework' );
 				$this->config['tab']		= __('Content Elements', 'avia_framework' );
 				$this->config['icon']		= AviaBuilder::$path['imagesURL']."sc-notification.png";
