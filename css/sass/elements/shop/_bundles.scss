@@ -29,7 +29,7 @@
   }
 
   .bundled_product_title_link {
-    display: none;
+    //display: none;
   }
 
   .bundled_product_images {
@@ -38,8 +38,8 @@
   }
 
   .bundled_product_excerpt  {
-    @include font(small);
-    line-height: 1.25em;
+    @include font(p);
+//    line-height: 1.25em;
 
     p:last-child {
       margin-bottom: 0;
