@@ -14,11 +14,11 @@
   @include breakpoint-min(lg) {
     .bundled_product_images {
       float: left;
-      width: 30%;
+      width: 17%;
     }
 
     .details {
-      float: left;
+      float: right;
       width: 70%;
       padding-left: $line-height;
     }
