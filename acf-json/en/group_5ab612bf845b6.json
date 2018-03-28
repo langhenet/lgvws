@@ -1,0 +1,241 @@
+{
+    "key": "group_5ab612bf845b6",
+    "title": "Business - Camere",
+    "location": [
+        [
+            {
+                "param": "post_type",
+                "operator": "==",
+                "value": "lgbusiness"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": 0,
+    "description": "",
+    "fields": [
+        {
+            "key": "field_5ab612bfd796d",
+            "label": "Testi Camere",
+            "name": "rooms",
+            "type": "clone",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "clone": [
+                "field_5a267730d52b1",
+                "field_5a2673177a692",
+                "field_5a26784ad52b3",
+                "field_5a2672d86b065"
+            ],
+            "display": "seamless",
+            "layout": "block",
+            "prefix_label": 0,
+            "prefix_name": 1
+        },
+        {
+            "key": "field_5ab612bfd7b63",
+            "label": "Numero di Camere",
+            "name": "rooms-number",
+            "type": "number",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "25",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "min": "",
+            "max": "",
+            "step": ""
+        },
+        {
+            "key": "field_5ab612bfd7d64",
+            "label": "Numero di Suite",
+            "name": "suites-number",
+            "type": "number",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "30",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "min": "",
+            "max": "",
+            "step": ""
+        },
+        {
+            "key": "field_5ab612bfd7f49",
+            "label": "Numero di Appartamenti",
+            "name": "apartments-number",
+            "type": "number",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "25",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "min": "",
+            "max": "",
+            "step": ""
+        },
+        {
+            "key": "field_5ab612bfd813f",
+            "label": "Prezzo Camera Singola",
+            "name": "single-price",
+            "type": "number",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "25",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "min": "",
+            "max": "",
+            "step": ""
+        },
+        {
+            "key": "field_5ab612bfd8333",
+            "label": "Prezzo Camera Doppia",
+            "name": "double-price",
+            "type": "number",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "25",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "min": "",
+            "max": "",
+            "step": ""
+        },
+        {
+            "key": "field_5ab612bfd8526",
+            "label": "Prezzo Letto Aggiuntivo",
+            "name": "bed-price",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "30",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "maxlength": ""
+        },
+        {
+            "key": "field_5ab612bfd871a",
+            "label": "Ora Check-in",
+            "name": "checkin",
+            "type": "time_picker",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "25",
+                "class": "",
+                "id": ""
+            },
+            "display_format": "H:i",
+            "return_format": "H:i"
+        },
+        {
+            "key": "field_5ab612bfd890f",
+            "label": "Ora Check-out",
+            "name": "checkout",
+            "type": "time_picker",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "25",
+                "class": "",
+                "id": ""
+            },
+            "display_format": "H:i",
+            "return_format": "H:i"
+        },
+        {
+            "key": "field_5ab612bfd8b02",
+            "label": "Servizi Aggiuntivi",
+            "name": "lodging-services",
+            "type": "checkbox",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "choices": {
+                "elevator": "Elevator",
+                "minibar": "Minibar",
+                "shuttle": "Shuttle",
+                "Bar": "Bar",
+                "Custodia Valori": "Custodia Valori",
+                "Garage": "Garage",
+                "Ristorante": "Ristorante",
+                "Piscina": "Piscina",
+                "Nursery": "Nursery",
+                "Servizio Lavanderia": "Servizio Lavanderia",
+                "Servizio in camera": "Servizio in camera",
+                "Cassaforte in camera": "Cassaforte in camera",
+                "TV in camera": "TV in camera",
+                "Affitto Bici": "Affitto Bici",
+                "SPA \/ Centro Benessere": "SPA \/ Centro Benessere"
+            },
+            "allow_custom": 0,
+            "save_custom": 0,
+            "default_value": [],
+            "layout": "horizontal",
+            "toggle": 0,
+            "return_format": "value"
+        }
+    ],
+    "modified": 1521883239
+}

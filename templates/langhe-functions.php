@@ -225,3 +225,28 @@ add_filter( 'avf_load_google_map_api', '__return_false' );
 
 //SHORTCODE BREADCRUMBS
 add_shortcode('lg-breadcrumbs', 'avia_breadcrumbs');
+
+/**
+ * Disable ACF on Frontend
+ *
+ */
+function ea_disable_acf_on_frontend( $plugins ) {
+	if( is_admin() )
+		return $plugins;
+	foreach( $plugins as $i => $plugin )
+		if( 'advanced-custom-fields-pro/acf.php' == $plugin )
+			unset( $plugins[$i] );
+	return $plugins;
+}
+add_filter( 'option_active_plugins', 'ea_disable_acf_on_frontend' );
+
+
+/*
+ * Updates Google API Key
+ * https://www.advancedcustomfields.com/resources/google-map/
+ */
+ function my_acf_google_map_api( $api ){
+ 	$api['key'] = 'AIzaSyBj1koD1ZVP71YxMZeMLzIpOPxvu4v_v0U';
+ 	return $api;
+ }
+ add_filter('acf/fields/google_map/api', 'my_acf_google_map_api');
