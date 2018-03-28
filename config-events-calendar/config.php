@@ -299,3 +299,47 @@ remove_action( 'tribe_events_single_event_after_the_meta', array( $tec, 'registe
 add_action( 'tribe_events_single_event_after_the_content', array( $tec, 'register_related_events_view' ) );
 
 
+if( ! function_exists( 'avia_events_modify_recurring_event_query' ) )
+{
+	/**
+	 * Selecting checkbox Recurring event instances in Events -> Settings -> General might might break our queries because of GROUP BY clause.
+	 * Reason is probably if multiple posttypes are part of the query.
+	 * 
+	 * @added_by Günter
+	 * @since 4.2.4
+	 * @param array $query
+	 * @param array $params
+	 * @return array
+	 */
+	function avia_events_modify_recurring_event_query( array $query, array $params )
+	{
+		remove_filter( 'posts_request', array( 'Tribe__Events__Pro__Recurrence__Queries', 'collapse_sql' ), 10, 2 );
+
+		return $query;
+	}
+}
+
+if( ! function_exists( 'avia_events_reset_recurring_event_query' ) )
+{
+	/**
+	 * Add the previously removed filter again
+	 * 
+	 * @added_by Günter
+	 * @since 4.2.4
+	 */
+	function avia_events_reset_recurring_event_query()
+	{
+		if( false === has_filter( 'posts_request', array( 'Tribe__Events__Pro__Recurrence__Queries', 'collapse_sql' ) ) )
+		{
+			add_filter( 'posts_request', array( 'Tribe__Events__Pro__Recurrence__Queries', 'collapse_sql' ), 10, 2 );
+		}
+	}
+}
+	
+add_filter( 'avia_masonry_entries_query', 'avia_events_modify_recurring_event_query', 10, 2 );
+add_action( 'ava_after_masonry_entries_query', 'avia_events_reset_recurring_event_query', 10 );
+	
+
+
+
+

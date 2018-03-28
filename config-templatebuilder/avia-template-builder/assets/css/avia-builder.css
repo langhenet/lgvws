@@ -19,19 +19,20 @@ background: transparent url(../../images/tiny-button.png) center center no-repea
 
 .postbox-container .postbox{clear:both;}
 
-#avia_builder,
-#avia_sc_parser{
+#avia_builder{
 float:left;
 width:100%;
 display: block !important;
 }
 
-
+#avia_sc_parser{
+float:left;
+width:100%;
+}
 
 #avia_builder.avia-hidden{
 display: none !important;
 }
-
 
 #aviaLayoutBuilder.preloading{
 background: #fff url(../../images/loading.gif) center center no-repeat;

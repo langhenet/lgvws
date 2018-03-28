@@ -255,8 +255,14 @@ if ( !class_exists( 'MetaBoxBuilder' ) ) {
 				return $data;
 			}
 		
-		    // don't run the saving if the nonce field was not submitted
-			check_ajax_referer( 'avia_nonce_save', 'avia-save-nonce' );
+			/**
+			 * Don't continue if the nonce field was not submitted - content of post is nothing we have to deal with
+			 */
+			if( false === check_ajax_referer( 'avia_nonce_save', 'avia-save-nonce', false ) )
+			{
+				return $data;
+			}
+			
 			
 			/**
 			 * Provide a hook for some additional data manipulation where users can modify the $data array or save additional information

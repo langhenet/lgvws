@@ -369,19 +369,43 @@ if ( !class_exists( 'AviaHelper' ) ) {
 		
 		/**
 		 * Create a lower case version of a string without spaces and special characters so we can use that string for a href anchor link.
-		 * Returns a default if the remaining string is empty.
+		 * Returns the default if the remaining string is empty or invalid (not at least one a-z, 0-9).
 		 * 
 		 * @param string $link
 		 * @param string $replace
 		 * @param string $default
 		 * @return string
 		 */
-		static public function valid_href( $link, $replace = '_', $default = '-' )
+		static public function valid_href( $link, $replace = '_', $default = '' )
 		{
+			/**
+			 * Create a unique default value for the link if none provided
+			 */
+			if( '' == trim( $default ) )
+			{
+				$default = uniqid( '', true );
+				$default = strtolower( str_replace( '.', '-', $default ) );
+			}
+			
 			$new_link = AviaHelper::save_string( $link, $replace );
+			
 			if( '' == trim( $new_link ) )
 			{
 				$new_link = $default;
+			}
+			else
+			{
+				/**
+				 * non latin letters in $link might return an invalid link from AviaHelper::save_string (e.g. ---)
+				 * Also make sure link starts with [a-z0-9]
+				 */
+				$sc_found = array();
+				preg_match_all( "/[a-z0-9]/s", $new_link, $sc_found, PREG_OFFSET_CAPTURE );
+
+				if( empty( $sc_found ) || ! is_array( $sc_found ) || empty( $sc_found[0]) || ( $sc_found[0][0][1] != 0 ) )
+				{
+					$new_link = $default;
+				}
 			}
 			
 			return $new_link;

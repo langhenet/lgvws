@@ -348,7 +348,6 @@ if ( !class_exists( 'aviaShortcodeTemplate' ) ) {
 
             $content = $this->shortcode_handler($atts, $content, $shortcodename, $meta);
 
-
             return $content;
 		}
 
@@ -544,7 +543,6 @@ if ( !class_exists( 'aviaShortcodeTemplate' ) ) {
 			{
 				$params['content'] = null;
 			}
-
 
 			// pass the parameters to the create_sortable_editor_element unless a different function for execution was set.
 			// if the function is set to "false" we asume that the output is final

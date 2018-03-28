@@ -425,6 +425,14 @@ if ( !class_exists( 'avia_product_slider' ) )
 
 			if($paginate == "yes" && $avia_pagination = avia_pagination('', 'nav')) $output .= "<div class='pagination-wrap pagination-slider {$av_display_classes}'>{$avia_pagination}</div>";
 
+			/**
+			 * @since WC 3.3.0 we have to reset WC loop counter otherwise layout might break
+			 */
+			if( function_exists( 'wc_reset_loop' ) )
+			{
+				wc_reset_loop();
+			}
+			
 			wp_reset_query();
 			return $output;
 		}
@@ -538,6 +546,14 @@ if ( !class_exists( 'avia_product_slider' ) )
 
 			if($paginate == "yes" && $avia_pagination = avia_pagination('', 'nav')) $output .= "<div class='pagination-wrap pagination-slider {$av_display_classes} '>{$avia_pagination}</div>";
 
+			/**
+			 * @since WC 3.3.0 we have to reset WC loop counter otherwise layout might break
+			 */
+			if( function_exists( 'wc_reset_loop' ) )
+			{
+				wc_reset_loop();
+			}
+			
 			wp_reset_query();
 			return $output;
 		}

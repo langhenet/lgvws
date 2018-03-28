@@ -753,7 +753,7 @@ if ( !class_exists( 'aviaccordion' ) )
 				// check if taxonomy are set to product or product attributes
 				$tax = get_taxonomy( $params['taxonomy'] );
 				
-				if( is_object( $tax ) && isset( $tax->object_type ) && in_array( 'product', (array) $tax->object_type ) )
+				if( class_exists( 'WooCommerce' ) && is_object( $tax ) && isset( $tax->object_type ) && in_array( 'product', (array) $tax->object_type ) )
 				{
 					$avia_config['woocommerce']['disable_sorting_options'] = true;
 					

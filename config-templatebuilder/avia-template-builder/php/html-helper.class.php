@@ -297,7 +297,13 @@ if ( !class_exists( 'AviaHtmlHelper' ) ) {
 			return $output;
 		}
 		
-		
+		/**
+		 * 
+		 * @param array						$element
+		 * @param aviaShortcodeTemplate		$parent_class
+		 * @param int|false					$i					false, if we need a new empty template to clone if user clicks "Add New"
+		 * @return string
+		 */
 		static function modal_group_sub($element, $parent_class, $i = false)
 		{
 			$output = "";
@@ -305,16 +311,20 @@ if ( !class_exists( 'AviaHtmlHelper' ) ) {
 			$args = array();
 			$content = NULL;
 			
-			//iterate over the subelements and set the default values
+			//iterate over the subelements and set user selected values or leave the predefined default values
 			foreach($element['subelements'] as $key => $subelement)
 			{
-				if(isset($element['std']) && isset($subelement['id']) && is_array($element['std']) && isset($element['std'][$i][$subelement['id']]))
+				/**
+				 * New WP way: we add an "empty" template filled with predefined default values that we can clone if user wants to add a new item,
+				 * if we have already existing items overwrite default values with user selected values
+				 */
+				if( false !== $i )
 				{
-					$subelement['std'] = $element['std'][$i][$subelement['id']];
+					if(isset($element['std']) && isset($subelement['id']) && is_array($element['std']) && isset($element['std'][$i][$subelement['id']]))
+					{
+						$subelement['std'] = $element['std'][$i][$subelement['id']];
+					}
 				}
-				
-				//if $i is not set, meaning we need a totaly empty template reset the std values
-				if($i === false) $subelement['std'] = "";
 				
 				if(isset($subelement['id']))
 				{

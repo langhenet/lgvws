@@ -74,18 +74,48 @@ if ( !class_exists( 'avia_sc_produc_button' ) )
 			$meta['el_class'];
 			
 			global $woocommerce, $product;
-			if(!is_object($woocommerce) || !is_object($woocommerce->query) || empty($product)) return;
+			if(!is_object($woocommerce) || !is_object($woocommerce->query) || empty($product) || is_admin() ) return;
+
+			/**
+			 *	Remove default WC actions
+			 */
+			remove_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_title', 5 );
+			remove_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_rating', 10 );
+			remove_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_price', 10 );
+			remove_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_excerpt', 20 );
+			remove_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_meta', 40 );
+			remove_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_sharing', 50 );
 
 			// $product = wc_get_product();
 			$output .= "<div class='av-woo-purchase-button ".$meta['el_class']."'>";
-			$output .= '<p class="price">' . $product->get_price_html() . '</p>';
+			
+			/**
+			 * Fix for plugin German Market that outputs the price (not a clean solution but easier to maintain). Can alos be placed in shortcode.css.
+			 */
+			$output .= '<style>';
+			$output .=		'#top .av-woo-purchase-button > div > p.price {display: none;}';
+			$output .= '</style>';
+			
+			$output .=		'<p class="price">' . $product->get_price_html() . '</p>';
 			
 			ob_start();
 			wc_clear_notices();
-			woocommerce_template_single_add_to_cart();
+			
+			/**
+			 * hooked by: add_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_add_to_cart', 30 );
+			 */
+			do_action( 'woocommerce_single_product_summary' );
+			
 			$output .= ob_get_clean();
 			
 			$output .= "</div>";
+			
+			add_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_title', 5 );
+			add_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_rating', 10 );
+			add_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_price', 10 );
+			add_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_excerpt', 20 );
+			add_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_meta', 40 );
+			add_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_sharing', 50 );
 			
 			return $output;
 		}
