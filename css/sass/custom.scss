@@ -915,6 +915,17 @@ border-style:solid;
 line-height:0px;
 }
 
+#top .avia-button > .avia-button {
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  display: none;
+}
+
+#top .avia-button > .av-button-description-below > p {
+  margin-bottom: 0.75em;
+}
+
 /**
  * Dimensioni dei bottoni e dei loro font
  */
@@ -936,6 +947,24 @@ font-size:1em;
   border-left-width: 1px;
 }
 
+// BUTTON
+.avia_button_icon_left {
+  padding-right: 0.5em;
+}
+
+
+.avia_button_icon_right {
+  padding-left: 0.5em;
+}
+
+.avia-button-right {
+  text-align: right;
+}
+.avia-button-center {
+  text-align: center;
+}
+
+
 /* Bottoni MEDI */
 .avia-button.avia-size-medium, #top form.cart .button, #top table.shop_table .actions .button, #affwp-generate-ref-url input, .affwp-form input.button, .loginform p.loginsubmit input[type='submit'] {
   font-size: 1em;
@@ -945,6 +974,8 @@ font-size:1em;
   margin-bottom: 1.5em;
   border-bottom-width:2px;
   border-top-width:2px;
+  border-right-width: 2px;
+  border-left-width: 2px;
   font-weight:600;
 }
 
@@ -959,6 +990,10 @@ font-size:1em;
   margin-bottom: 1.5em !important;
 }
 
+.avia-button.avia-color-light {
+  color: white !important;
+}
+
 /* Bottoni GRANDI */
 .avia-button.avia-size-large, #top .gform_wrapper .gform_footer input.button, .cart-collaterals .cart_totals a.button.alt, #top #payment #place_order {
   font-size: 1.6em;
@@ -969,6 +1004,8 @@ font-size:1em;
   border-top-width:4px;
   border-bottom-width:4px;
   border-radius:4px;
+  border-right-width: 4px;
+  border-left-width: 4px;
   white-space: inherit;
   font-weight:600;
 }
@@ -982,6 +1019,11 @@ border-width:4px;
   border-left-width:2px;
 }
 
+#top .avia-button.avia-button-fullwidth.avia-color-theme-color-subtle {
+  border-left-width: 4px;
+  border-right-width: 4px;
+}
+
 /* Bottoni X-TRA LARGE */
 .avia-button.avia-size-x-large {
   font-size: 2.55em;
@@ -991,12 +1033,19 @@ border-width:4px;
   margin-bottom: 0.58823529em;
   border-top-width: 6px;
   border-bottom-width: 6px;
+  border-left-width: 6px;
+  border-right-width: 6px;
   border-radius:5px;
   font-weight:700;
 }
 
-#top .avia-button.avia-color-dark.avia-size-x-large, #top .avia-button.avia-color-light.avia-size-x-large { /*questo fixa i bordi dei bottoni scheletrici*/
-border-width:6px;
+#top .avia-button.avia-color-dark.avia-size-x-large,
+#top .avia-button.avia-button-fullwidth.avia-color-dark,
+#top .avia-button.avia-color-light.avia-size-x-large { /*questo fixa i bordi dei bottoni scheletrici*/
+  border-left-width: 6px;
+  border-right-width: 6px;
+  border-top-width: 6px;
+  border-bottom-width: 6px;
 }
 
 .avia-button.avia-color-theme-color-subtle.avia-size-x-large { /*questo fixa i bordi dei bottoni subtle*/
@@ -3415,10 +3464,39 @@ font-size: 1.1em;
 /*
  * 2. ICOLINST
  */
+ .entry-content-wrapper .avia-icon-list {
+  list-style: none;
+ }
 
 ul.avia-icon-list {
   margin-left: 0;
 }
+
+.avia-icon-list li {
+  margin-left: 0;
+}
+
+.avia-icon-list .iconlist_icon {
+text-align: center;
+}
+
+.avia-icon-list-left .iconlist_icon {
+  margin-left: 0;
+  margin-right: 1em;
+  float: left;
+}
+
+.avia-icon-list-right * {
+  text-align: right;
+}
+
+.avia-icon-list-right .iconlist_icon {
+  margin-right: 0;
+  margin-left: 1em; // CHECK
+  float: right;
+}
+
+
 
 .avia-icon-list .iconlist_content_wrap {
 padding-bottom:0px;
@@ -3428,18 +3506,29 @@ padding-bottom:0px;
   margin-top: 0px;
   top:0px;
   font-weight:600;
+  text-transform: uppercase;
 }
+
+.iconlist_content_wrap {
+  overflow: auto;
+}
+
 
 .iconlist_content {
 margin-bottom:3em;
 }
 
 .header_color .avia-icon-list .iconlist_icon {
-  background-color: #fff;
+background-color: transparent;
 }
 
 .header_color span.iconlist-char {
-  color: #ce484f;
+  color: #fff;
+
+  &::before {
+    font-size: 2em;
+  }
+
 }
 
 .main_color .avia-icon-list .iconlist-timeline {
@@ -3448,7 +3537,15 @@ border-color:#ce484f;
 
 .alternate_color .avia-icon-list .iconlist_icon,
 .main_color .avia-icon-list .iconlist_icon {
-  background-color: #ce484f;
+  background-color: transparent;
+
+  span.iconlist-char {
+    color: #ce484f;
+
+    &::before {
+      font-size: 2em;
+    }
+  }
 }
 
 .main_color.wine_accent .avia-icon-list .iconlist_icon {
@@ -3460,6 +3557,8 @@ border-color:#ce484f;
 }
 
 /***** ICON LIST SUI TERZI ***/
+
+
 
 .lg-activities-grid {
   margin-top: 4.5em;
@@ -3570,6 +3669,32 @@ font-weight: bold;
   padding: 60px 24px 30px 24px;
 }
 
+.iconbox_top  {
+
+  .entry-content-header {
+    text-align: center;
+  }
+
+  .iconbox_icon {
+      height: 4.5em;
+      width: 4.5em;
+      display: inline-block;
+      border-radius: 100%;
+      position: relative;
+      padding: 1.3em;
+
+    &::before {
+      // position: absolute;
+      // top: 20%;
+      // /* bottom: 0; */
+      // transform: 50%;
+      // /* transform: translate(-58%, -50%); */
+      // left: 30%;
+      font-size: 1.5em;
+    }
+  }
+}
+
 .iconbox .iconbox_content h2.iconbox_content_title {
   font-size: 1.600000000em;
   line-height: 1.875000000em;
@@ -3615,6 +3740,25 @@ margin-top:0px;
 
 .alternate_color .iconbox_icon { /*Icon box con icona a lato: setta il colore del bordo*/
   border-color: #666;
+}
+
+
+.iconbox.iconbox_left_content {
+  .iconbox_icon {
+    float: left;
+    margin-right: 1em;
+  }
+
+  .iconbox_content {
+    float: left;
+    width: 90%;
+  }
+
+  .iconbox_content_title  {
+    margin-top: 0;
+    margin-bottom: 0;
+    text-transform: uppercase;
+  }
 }
 
 /******************************************************************************
@@ -3701,12 +3845,41 @@ margin-top:0px;
 margin:1.5em 10px;
 }
 
+.pricing-table-wrap {
+  width: 50%;
+  border-right: 2px solid #eaeaea;
+  float: left;
+
+  &:last-child {
+    border-right: 0;
+  }
+}
+
+.entry-content-wrapper .pricing-table {
+  list-style: none;
+  margin: 0;
+  float: left;
+
+
+  li {
+    margin: 0;
+  }
+
+  .avia-heading-row {
+    text-transform: uppercase;
+    font-weight: bold;
+    text-align: center;
+  }
+}
 .pricing-table>li {
   padding: 0.725em 14px;
 }
 
 .pricing-table li.avia-pricing-row {
-font-size:1.6em;
+font-size:1em;
+background: #fefefe !important;
+color: #888 !important;
+text-align: center;
 }
 
 .pricing-table li.avia-pricing-row .currency-symbol {
@@ -3718,6 +3891,7 @@ top: 0;
 .avia_pricing_default .pricing-table li.avia-pricing-row .currency-symbol {
 color:#fff;
 opacity:1;
+
 }
 
 /**************************************
