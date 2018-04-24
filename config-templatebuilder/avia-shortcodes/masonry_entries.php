@@ -553,7 +553,15 @@ if ( !class_exists( 'avia_sc_masonry_entries' ) )
 				if($meta['index'] != 0) $params['class'] .= " masonry-not-first";
 				if($meta['index'] == 0 && get_post_meta(get_the_ID(), 'header', true) != "no") $params['class'] .= " masonry-not-first";
 				
-				$masonry  = new avia_masonry($atts);
+				/**
+				 * Remove custom CSS from element if it is top level (otherwise added twice - $meta['el_class'] )
+				 */
+				if( ShortcodeHelper::is_top_level() )
+				{
+					$atts['custom_class'] = '';
+				}
+				
+		                $masonry  = new avia_masonry($atts);
 				$masonry->extract_terms();
 				$masonry->query_entries();
 				$masonry_html = $masonry->html();

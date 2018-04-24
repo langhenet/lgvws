@@ -478,7 +478,7 @@ background-color: $meta;
 
 
 //pricing table
-$stripe = avia_backend_calculate_similar_color($primary, 'lighter', 2);
+$stripe  = avia_backend_calculate_similar_color($primary, 'lighter', 2);
 $stripe2 = avia_backend_calculate_similar_color($primary, 'lighter', 1);
 
 $output.= "

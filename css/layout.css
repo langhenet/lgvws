@@ -470,7 +470,7 @@ transition: bottom 0.1s ease-out, transform 0.3s 0.14s cubic-bezier(0.215, 0.61,
 .html_burger_menu #top #wrap_all .menu-item-search-dropdown > a{font-size:24px;}
 html.av-burger-overlay-active #top .menu-item-search-dropdown > a{color:#fff;}
 
-.html_burger_menu_active .menu-item{display: none;}
+.html_burger_menu_active #header .avia-menu .menu-item{display: none;}
 .html_burger_menu_active .menu-item-avia-special{ display:block; }
 .html_burger_menu_active #top #wrap_all .menu-item-search-dropdown > a {font-size: 24px;}
 .html_header_sidebar #top div .av-burger-menu-main{display:none;}
@@ -4047,6 +4047,7 @@ animation:         avia_pop_small 0.5s 1 cubic-bezier(0.175, 0.885, 0.320, 1.275
 		.responsive #top .av_mobile_menu_tablet .av-main-nav .menu-item-avia-special{display:block;}
 		.responsive #top #wrap_all .av_mobile_menu_tablet .menu-item-search-dropdown > a { font-size: 24px; }
 		.responsive #top .av_mobile_menu_tablet #header_main_alternate{display:none;}
+		.responsive.html_mobile_menu_tablet #top #wrap_all #header {position: relative; width:100%; float:none; height:auto; margin:0 !important; opacity: 1; min-height:0;}
 		.responsive.html_mobile_menu_tablet #top #header #header_meta .social_bookmarks{display:none;}
 		.responsive.html_mobile_menu_tablet .phone-info{float:none; width:100%; clear:both; text-align: center;}
 		.responsive.html_mobile_menu_tablet #top .av-logo-container .social_bookmarks{display:none}
@@ -4055,6 +4056,7 @@ animation:         avia_pop_small 0.5s 1 cubic-bezier(0.175, 0.885, 0.320, 1.275
 		.responsive.html_mobile_menu_tablet #top #wrap_all .menu-item-search-dropdown > a { font-size: 24px; }
 		.responsive.html_mobile_menu_tablet #top #main .av-logo-container .main_menu{display:block;}
 		.responsive.html_mobile_menu_tablet.html_header_top.html_header_sticky #top #wrap_all #main{padding-top: 88px;}
+		.responsive.html_mobile_menu_tablet.html_header_top #top #main {padding-top: 0 !important; margin: 0;}
 		.responsive.html_mobile_menu_tablet.html_top_nav_header.html_header_sticky #top #wrap_all #main{padding-top:0;}
 		.responsive.html_mobile_menu_tablet #top #header_main > .container .main_menu  .av-main-nav > li > a,
 		.responsive.html_mobile_menu_tablet #top #wrap_all .av-logo-container {height:90px; line-height:90px;}

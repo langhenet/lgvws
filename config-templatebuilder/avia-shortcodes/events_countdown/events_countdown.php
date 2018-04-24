@@ -77,6 +77,15 @@ if ( !class_exists( 'avia_sc_events_countdown' ) )
 				
 			}
 			
+			function extra_assets()
+			{
+				//load css
+				wp_enqueue_style( 'avia-module-countdown' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/countdown/countdown.css' , array('avia-layout'), false );
+				
+				//load js
+				wp_enqueue_script( 'avia-module-countdown' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/countdown/countdown.js' , array('avia-shortcodes'), false, TRUE );
+			}
+			
 			function fetch_upcoming($offset = 0)
 			{
 				$query 		= array('paged'=> false, 'posts_per_page' => 1, 'eventDisplay' => 'list', 'offset'=> $offset);

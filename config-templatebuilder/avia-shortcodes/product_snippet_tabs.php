@@ -81,7 +81,7 @@ if ( !class_exists( 'avia_sc_product_tabs' ) )
 			$meta['el_class'];
 			
 			global $woocommerce, $product;
-			if(!is_object($woocommerce) || !is_object($woocommerce->query) || empty($product)) return;
+			if(!is_object($woocommerce) || !is_object($woocommerce->query) || empty($product) || is_admin() ) return;
 			
 			//$temp = get_post( $product->get_id() )->post_content;
 			//$product->post->post_content = "";

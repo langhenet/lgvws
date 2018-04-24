@@ -136,6 +136,24 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 
 		
 		/**
+		 * Flag if the ALB magic wand button had been added to tinyMCE buttons
+		 * 
+		 * @since 4.2.4
+		 * @var boolean 
+		 */
+		protected $alb_magic_wand_button;
+
+
+		/**
+		 * Flag to add the nonce input field on non alb supported pages that provide the ALB magic wand shortcode button
+		 * 
+		 * @since 4.2.4
+		 * @var boolean 
+		 */
+		protected $alb_nonce_added;
+		
+		
+		/**
 		 * Return the instance of this class
 		 * 
 		 * @since 4.2.1
@@ -172,6 +190,8 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 			$this->alb_builder_status = 'unknown';
 			$this->post_content = '';
 			$this->revision_id = 0;
+			$this->alb_magic_wand_button = false;
+			$this->alb_nonce_added = false;
 			
 			$this->paths['pluginPath'] 	= trailingslashit( dirname( dirname(__FILE__) ) );
 			$this->paths['pluginDir'] 	= trailingslashit( basename( $this->paths['pluginPath'] ) );
@@ -201,10 +221,15 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 			add_action('init', array(&$this, 'init') , 10 );
 			
 			//save and restore meta information if user restores a revision
+			add_action('wp_creating_autosave', array( $this, 'avia_builder_creating_autosave'), 10, 1 );
 			add_action('_wp_put_post_revision', array( $this, 'avia_builder_put_revision'), 10, 1 );
 	        add_action('wp_restore_post_revision', array(&$this, 'avia_builder_restore_revision'), 10, 2);
 
 			add_filter( 'avia_builder_metabox_filter', array( $this, 'handler_alb_metabox_filter'), 10, 1 );
+			
+			
+			add_action('dbx_post_sidebar', array( $this, 'handler_wp_dbx_post_sidebar'), 10, 1 );
+
 		}
 		
 		/**
@@ -223,12 +248,38 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 			unset( $this->builderTemplate );
 		}
 		
+				
+		/**
+		 * After all metaboxes have been added we check if hidden input field avia_nonce_loader had been set.
+		 * If not we have to add it. If user adds a shortcode (like tabs) with magic wand that need to call backend 
+		 * check_ajax_referrer cannot proceed in backend because this value is missing
+		 * 
+		 * @added_by Günter
+		 * @since 4.2.4
+		 * @param WP_Post $post
+		 */
+		public function handler_wp_dbx_post_sidebar( WP_Post $post )
+		{
+			if( ! $this->alb_magic_wand_button )
+			{
+				return;
+			}
+			
+			if( ! $this->alb_nonce_added )
+			{
+				$nonce =	wp_create_nonce ('avia_nonce_loader');
+				echo		'<input type="hidden" name="avia-loader-nonce" id="avia-loader-nonce" value="' . $nonce . '" />';
+				
+				$this->alb_nonce_added = true;
+			}
+		}
+
+		
 		/**
 		 *Load all functions that are needed for both front and backend
 		 **/
 		public function init()
 	 	{
-		 	
 	 		if(isset($_GET['avia_mode']))
 			{
 				AviaBuilder::$mode = esc_attr($_GET['avia_mode']);
@@ -248,7 +299,10 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 				if(empty( $_POST['avia_request'] )) return;
                 $this->admin_init();
 	 	    } 
-
+	 		
+	 		//activate asset manager
+			$this->asset_manager();
+	 		
 	 	}
 		
 		
@@ -466,24 +520,48 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 				}
 	        }
 	        
-			
+			//if no user defined css is available load all the default frontend css
 			if(empty($css))
 			{
 				$css = array(
+					
+					includes_url('/js/mediaelement/mediaelementplayer-legacy.min.css') => 1, 
+					includes_url('/js/mediaelement/wp-mediaelement.css?ver=4.9.4') => 1, 
+					
 					$template_url."/css/grid.css" => 1,
 					$template_url."/css/base.css" => 1,
 					$template_url."/css/layout.css" => 1,
 					$template_url."/css/shortcodes.css" => 1,
 					$template_url."/js/aviapopup/magnific-popup.css" => 1,
-					$template_url."/js/mediaelement/skin-1/mediaelementplayer.css" => 1,
 					$template_url."/css/rtl.css" => is_rtl(),
-					$template_url."/css/custom.css" => 1,
-					$avia_dyn_stylesheet_url => $avia_dyn_stylesheet_url,
 					$child_theme_url."/style.css" => $template_url != $child_theme_url,
-					$template_url."/css/admin-preview.css" => 1,
 				);
+				
+				// iterate over template builder modules and load the default css in there as well. 
+				// hakish approach that might need refinement if we improve the backend preview
+				$path = trailingslashit (dirname( $this->paths['pluginPath'])) . "avia-shortcodes/";
+				
+				foreach(glob($path.'*', GLOB_ONLYDIR) as $folder)
+				{
+					$css_file 	= trailingslashit($folder) . basename($folder) . ".css";
+					$css_url	= trailingslashit($this->paths['pluginUrlRoot']) . "avia-shortcodes/" . basename($folder) ."/". basename($folder) . ".css";
+					
+					if(file_exists( $css_file ))
+					{
+						$css[ $css_url ] = 1;
+					}
+				}
+
+				
+				//custom user css, overwriting our styles
+				$css[$template_url."/css/custom.css"] = 1;
+				$css[$avia_dyn_stylesheet_url] = $avia_dyn_stylesheet_url;
+				$css[$template_url."/css/admin-preview.css"] = 1;
+				
+				$css = apply_filters('avf_preview_window_css_files' , $css );
 			}
 			
+			//module css
 			if(is_array($css))
 			{
 				foreach($css as $url => $load)
@@ -491,8 +569,6 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 					if($load) $output .= "<link rel='stylesheet' href='".$url."?ver=".$ver."' type='text/css' media='all' />";
 				}
 			}
-			
-			
 			
 			$output .= "<script type='text/javascript' src='".includes_url('/js/jquery/jquery.js')."?ver=".$ver."'></script>";
 			$output .= "<script type='text/javascript' src='".$template_url."/js/avia-admin-preview.js?ver=".$ver."'></script>";
@@ -743,10 +819,11 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 			}
 
 			new avia_tinyMCE_button($tiny);
+			$this->alb_magic_wand_button = true;
 			
 			//activate iconfont manager
 			new avia_font_manager();
-			
+						
 		    //fetch all Wordpress pointers that help the user to use the builder
 			include($this->paths['configPath']."pointers.php");
 			$myPointers = new AviaPointer($pointers);
@@ -1341,10 +1418,13 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 			$clean_data = get_post_meta($post_ID, '_aviaLayoutBuilderCleanData', true);
 			// $clean_data = htmlentities($clean_data, ENT_QUOTES, get_bloginfo( 'charset' )); //entity-test: added htmlentities
 			
+			
 			$output .= "	<textarea id='_aviaLayoutBuilderCleanData' name='_aviaLayoutBuilderCleanData'>".$clean_data."</textarea>"; 
 			$nonce	= 			wp_create_nonce ('avia_nonce_loader');
 			$output .= '		<input type="hidden" name="avia-loader-nonce" id="avia-loader-nonce" value="'.$nonce.'" />';
 			$output .= "</div>";
+			
+			$this->alb_nonce_added = true;
 			
 			return $output;
 		}	
@@ -1570,12 +1650,14 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 		
 		/**
 		 * Return the postmeta metakey names
+		 * 
 		 * @since 4.2.1
 		 * @return array
 		 */
 		public function get_alb_meta_key_names()
 		{
 			$meta_keys = array(
+							'_aviaLayoutBuilder_active',
 							'_aviaLayoutBuilderCleanData', 
 							'_avia_builder_shortcode_tree',
 							'_alb_shortcode_status_content',
@@ -1600,43 +1682,99 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 
 				
 		/**
-	         * Helper function that restores the post meta if user restores a revision
-	         * see: https://lud.icro.us/post-meta-revisions-wordpress
-	         */
-	        public function avia_builder_restore_revision( $post_id, $revision_id )
-	        {
-	            //$post     = get_post($post_id);
-	            $revision = get_post($revision_id);
-	            $meta_fields = $this->get_alb_meta_key_names();
-	
-	            foreach($meta_fields as $meta_field)
-	            {
-	                $builder_meta_data  = get_metadata( 'post', $revision->ID, $meta_field, true );
-	
-	                if (!empty($builder_meta_data))
-	                {
-	                    update_post_meta($post_id, $meta_field, $builder_meta_data);
-	                }
-	                else
-	                {
-	                    delete_post_meta($post_id, $meta_field);
-	                }
-	            }
-	        }
+		 * Helper function that restores the post meta if user restores a revision
+		 * see: https://lud.icro.us/post-meta-revisions-wordpress
+		 */
+		public function avia_builder_restore_revision( $post_id, $revision_id )
+		{
 			
+			$meta_fields = $this->get_alb_meta_key_names();
+
+			foreach( $meta_fields as $meta_field )
+			{
+				$builder_meta_data  = get_metadata( 'post', $revision_id, $meta_field, true );
+
+				if ( ! empty( $builder_meta_data ) )
+				{
+					update_post_meta( $post_id, $meta_field, $builder_meta_data );
+				}
+				else
+				{
+					delete_post_meta( $post_id, $meta_field );
+				}
+			}
+		}
+
+			
+		/**
+		 * An autosave post is being updated
+		 * 
+		 * @since 4.2.5
+		 * @added_by Günter
+		 * @param array $post
+		 */
+		public function avia_builder_creating_autosave( array $post )
+		{
+			if( ! isset( $_REQUEST['aviaLayoutBuilder_active'] ) )
+			{
+				return;
+			}
+			
+			$this->revision_id = $post['ID'];
+			
+			$this->do_alb_autosave( stripslashes( $post['post_content'] ) );
+		}
 
 		/**
-		 * A revision had been saved - save id so we can update our meta data
+		 * A revision or a new autosave is created
 		 * 
 		 * @since 4.2.1
+		 * @added_by Günter
 		 * @param int $revision_id
 		 */
 		public function avia_builder_put_revision( $revision_id )
 		{
+			if( ! isset( $_REQUEST['aviaLayoutBuilder_active'] ) )
+			{
+				return;
+			}
+			
 			$this->revision_id = $revision_id;
+			
+			if( isset( $_POST['content'] ) )
+			{
+				$this->do_alb_autosave( $_POST['content'] );
+			}
 		}
 		
+		/**
+		 * Create default revision entries for autosave or preview 
+		 * 
+		 * @since 4.2.5
+		 * @added_by Günter
+		 * @param string $content
+		 */
+		protected function do_alb_autosave( $content )
+		{
+			/**
+			 * Copy all metadata from original post
+			 */
+			$this->save_alb_revision_data();
+			
+			
+			/**
+			 * Now we need to update the internal data to reflect new situation as we are in an autosave
+			 * or preview (which saves the content to the only autosave post)
+			 */
+			$tree = ShortcodeHelper::build_shortcode_tree( $content );
+			
+			update_metadata( 'post', $this->revision_id, '_aviaLayoutBuilder_active', $_REQUEST['aviaLayoutBuilder_active'] );
+			update_metadata( 'post', $this->revision_id, '_aviaLayoutBuilderCleanData', $content );
+			update_metadata( 'post', $this->revision_id, '_avia_builder_shortcode_tree', $tree );
+		}
+
 		
+
 		/**
 		 * A revision had been saved and we have updated our internal data - 
 		 * now save our meta data to restore when user reverts to a revision
@@ -1665,7 +1803,7 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 				
 				if ( ! empty( $builder_meta_data ) )
 				{
-					add_metadata( 'post', $this->revision_id, $meta_field, $builder_meta_data );
+					update_metadata( 'post', $this->revision_id, $meta_field, $builder_meta_data );
 				}
 			}
 		}

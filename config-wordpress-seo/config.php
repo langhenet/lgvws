@@ -151,7 +151,7 @@ if(!function_exists('avia_filter_wpseo_sitemap_urlimages'))
 					'source' => 'sid'
 				)
 				*/
-			), $elements, $post_id);
+			), $post_id);
 
 			$ids = avia_extract_shortcodes_attachment_ids($elements, $content);
 

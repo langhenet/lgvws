@@ -1,12 +1,24 @@
 <?php
-	if ( !defined('ABSPATH') ){ die(); }
+	if ( ! defined('ABSPATH') ){ die(); }
 
 	global $avia_config;
+
+	$avia_config['use_standard_lightbox'] = empty( avia_get_option( 'lightbox_active' ) ) || ( 'lightbox_active' == avia_get_option( 'lightbox_active' ) ) ? 'lightbox_active' : 'disabled';
+	/**
+	 * Allow to overwrite the option setting for using the standard lightbox
+	 * Make sure to return 'disabled' to deactivate the standard lightbox - all checks are done against this string
+	 *
+	 * @added_by Günter
+	 * @since 4.2.6
+	 * @param string $use_standard_lightbox				'lightbox_active' | 'disabled'
+	 * @return string									'lightbox_active' | 'disabled'
+	 */
+	$avia_config['use_standard_lightbox'] = apply_filters( 'avf_use_standard_lightbox', $avia_config['use_standard_lightbox'] );
 
 	$style 					= $avia_config['box_class'];
 	$responsive				= avia_get_option('responsive_active') != "disabled" ? "responsive" : "fixed_layout";
 	$blank 					= isset($avia_config['template']) ? $avia_config['template'] : "";
-	$av_lightbox			= avia_get_option('lightbox_active') != "disabled" ? 'av-default-lightbox' : 'av-custom-lightbox';
+	$av_lightbox			= $avia_config['use_standard_lightbox'] != "disabled" ? 'av-default-lightbox' : 'av-custom-lightbox';
 	$preloader				= avia_get_option('preloader') == "preloader" ? 'av-preloader-active av-preloader-enabled' : 'av-preloader-disabled';
 	$sidebar_styling 		= avia_get_option('sidebar_styling');
 	$filterable_classes 	= avia_header_class_filter( avia_header_class_string() );
@@ -16,8 +28,8 @@
 ?><!DOCTYPE html>
 <html <?php language_attributes(); ?> class="<?php echo "html_{$style} ".$responsive." ".$preloader." ".$av_lightbox." ".$filterable_classes." ".$av_classes_manually ?> ">
 <head>
-<meta charset="<?php bloginfo( 'charset' ); ?>" />
 <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,400,600,300' rel='stylesheet' type='text/css'>
+<meta charset="<?php bloginfo( 'charset' ); ?>" />
 <?php
 /*
  * outputs a rel=follow or nofollow tag to circumvent google duplicate content for archives

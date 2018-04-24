@@ -452,7 +452,7 @@ jQuery(function($) {
 								
 								var resultcontainer = $('.avia_import_result', me.container);
 								//resultcontainer.css('display','none').html(response).slideDown();
-								$('body').avia_alert({text: 'Alright sparky!<br/>Import worked out, no problems whatsoever. <br/>The page will now be reloaded to reflect the changes'}, function()
+								$('body').avia_alert({text: 'Alright!<br/>Import worked out, no problems whatsoever. <br/>The page will now be reloaded to reflect the changes'}, function()
 								{
 									window.location.hash = "#wpwrap";
 						 			window.location.reload(true);
@@ -571,7 +571,7 @@ jQuery(function($) {
 		var defaults = 
 		{
 			the_class: 'success',		//success, alert
-			text:  'Alright sparky!<br/>All Options saved, no problems whatsoever.',
+			text:  'Alright!<br/>All Options saved, no problems whatsoever.',
 			show:	2200
 		};
 		

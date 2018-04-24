@@ -6,19 +6,54 @@
 if ( ! defined( 'ABSPATH' ) ) {  exit;  }    // Exit if accessed directly
 
 
-if ( !class_exists( 'avia_masonry' ) )
+if ( ! class_exists( 'avia_masonry' ) )
 {
 	class avia_masonry
 	{
+		/**
+		 *
+		 * @var int
+		 */
 		static  $element = 0;
+		
+		/**
+		 *
+		 * @var array 
+		 */
 		protected $atts;
+		
+		/**
+		 * 
+		 * @var WP_Query 
+		 */
 		protected $entries;
+		
+		/**
+		 *
+		 * @var array 
+		 */
+		protected $screen_options;
+		
+		
+		/**
+		 *
+		 * @since 4.2.4
+		 * @var array 
+		 */
+		protected $loop;
 
-		function __construct($atts = array())
+		
+		/**
+		 * 
+		 */
+		public function __construct($atts = array())
 		{
 			self::$element += 1;
 			
-			$this->screen_options = AviaHelper::av_mobile_sizes($atts);
+			$this->entries = null;
+			$this->loop = array();
+			$this->screen_options = AviaHelper::av_mobile_sizes( $atts );
+			
 			$this->atts = shortcode_atts(array(	'ids'	=> false,
 												'action'=> false,
 												'link' 	=> 'category',
@@ -46,6 +81,7 @@ if ( !class_exists( 'avia_masonry' ) )
 		                                 		'query_order' 		=> 'DESC',
 		                                 		'color'				=> '',
 		                                 		'custom_bg'			=> '',
+                                                'custom_class'	    => '',
 		                                 		'orientation'		=> '',
 		                                 		), $atts, 'av_masonry_entries');
 		 	
@@ -57,6 +93,19 @@ if ( !class_exists( 'avia_masonry' ) )
 		 	                                		
 		  	$this->atts = apply_filters('avf_masonry_settings', $this->atts, self::$element);
 		}
+		
+		/**
+		 * 
+		 * @since 4.2.4
+		 */
+		public function __destruct() 
+		{
+			unset( $this->atts );
+			unset( $this->entries );
+			unset( $this->loop );
+			unset( $this->screen_options );
+		}
+		
 		
 		//ajax function to load additional items
 		static function load_more()
@@ -245,8 +294,12 @@ if ( !class_exists( 'avia_masonry' ) )
 			}
 			
 			$orientation = $this->atts['size'] == "fixed" ? $this->atts['orientation'] : ""; 
+            $custom_class = "";
+            if(isset($this->atts['custom_class'])) {
+                $custom_class = $this->atts['custom_class'];
+            }
 			
-			$output .= "<div id='av-masonry-".self::$element."' class='av-masonry noHover av-{$size}-size av-{$this->atts['gap']}-gap av-hover-overlay-{$this->atts['overlay_fx']} av-masonry-col-{$this->atts['columns']} av-caption-{$this->atts['caption_display']} av-caption-style-{$this->atts['caption_styling']} {$this->atts['container_class']} {$orientation} {$av_display_classes} {$av_column_classes}' {$style} >";
+			$output .= "<div id='av-masonry-".self::$element."' class='av-masonry {$custom_class} noHover av-{$size}-size av-{$this->atts['gap']}-gap av-hover-overlay-{$this->atts['overlay_fx']} av-masonry-col-{$this->atts['columns']} av-caption-{$this->atts['caption_display']} av-caption-style-{$this->atts['caption_styling']} {$this->atts['container_class']} {$orientation} {$av_display_classes} {$av_column_classes}' {$style} >";
 			
 			$output .= $this->atts['sort'] != "no" ? $this->sort_buttons() : "";
 			
@@ -365,7 +418,7 @@ if ( !class_exists( 'avia_masonry' ) )
 			{
 				$output .= "<div class='av-masonry-pagination av-masonry-pagination-{$this->atts['paginate']}'>{$avia_pagination}</div>";
 			}
-			else if($this->atts['paginate'] == "load_more" && $this->entries->max_num_pages > count($this->entries))
+			else if($this->atts['paginate'] == "load_more" && $this->entries->max_num_pages > 1 )
 			{
 				$output .= $this->load_more_button();
 			}
@@ -684,7 +737,7 @@ if ( !class_exists( 'avia_masonry' ) )
 				// check if taxonomy are set to product or product attributes
 				$tax = get_taxonomy( $params['taxonomy'] );
 				
-				if( is_object( $tax ) && isset( $tax->object_type ) && in_array( 'product', (array) $tax->object_type ) )
+				if( class_exists( 'WooCommerce' ) && is_object( $tax ) && isset( $tax->object_type ) && in_array( 'product', (array) $tax->object_type ) )
 				{
 					$avia_config['woocommerce']['disable_sorting_options'] = true;
 					
@@ -733,9 +786,23 @@ if ( !class_exists( 'avia_masonry' ) )
 			}
 
 
+			/**
+			 * @used_by			avia_remove_bbpress_post_type_from_query		10		(bbPress)
+			 *					avia_translate_ids_from_query					10		(WPML)
+			 *					avia_events_modify_recurring_event_query		10		(Tribe Events Pro)
+			 */
 			$query = apply_filters('avia_masonry_entries_query', $query, $params);
 
 			$this->entries = new WP_Query( $query );
+			
+			/**
+			 * @used_by			avia_events_modify_recurring_event_query		10		(Tribe Events Pro)
+			 * 
+			 * @added_by Günter
+			 * @since 4.2.4
+			 */
+			do_action( 'ava_after_masonry_entries_query' );
+			
 			$this->prepare_loop_from_entries( $ajax );
 			
 			if( function_exists( 'WC' ) )
@@ -775,10 +842,23 @@ if ( !class_exists( 'avia_masonry' ) )
 				'orderby' => 'post__in'
 			);
 			
-			
+			/**
+			 * @used_by			avia_remove_bbpress_post_type_from_query		10		(bbPress)
+			 *					avia_translate_ids_from_query					10		(WPML)
+			 *					avia_events_modify_recurring_event_query		10		(Tribe Events Pro)
+			 */
 			$query = apply_filters('avia_masonry_entries_query', $query, $params);
 
 			$this->entries = new WP_Query( $query );
+			
+			/**
+			 * @used_by			avia_events_modify_recurring_event_query		10		(Tribe Events Pro)
+			 * 
+			 * @added_by Günter
+			 * @since 4.2.4
+			 */
+			do_action( 'ava_after_masonry_entries_query' );
+			
 			$this->prepare_loop_from_entries( $ajax );
 			
 			

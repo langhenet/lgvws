@@ -1044,8 +1044,7 @@ if(!function_exists('avia_which_archive'))
 		}
 		elseif (is_tag())
 		{
-      $output = single_tag_title('',false);
-
+			$output = single_tag_title('',false);
 		}
 		elseif(is_tax())
 		{

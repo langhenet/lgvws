@@ -97,7 +97,7 @@ body .unit.alpha, body .units.alpha {
 
 .responsive #top #wrap_all .flex_column.av-break-at-tablet, .responsive #top #wrap_all .av-break-at-tablet .flex_cell {
     margin: 0;
-    margin-bottom: 30px;
+    margin-bottom: 20px;
     width: 100%;
     display: block;
   }
@@ -136,7 +136,7 @@ body .unit.alpha, body .units.alpha {
 
   .responsive #top .container .av-content-small, .responsive #top #wrap_all .flex_column, .responsive #top #wrap_all .av-flex-cells .no_margin {
     margin: 0;
-    margin-bottom: 30px;
+    margin-bottom: 1.5em;
     width: 100%;
   }
 
@@ -232,7 +232,7 @@ div .av_one_fourth {
 }
 div .av_one_third {
   margin-left: 2.5625%;
-width: 31.625%;
+  width: 31.625%;
 }
 div .av_two_fifth {
   margin-left: 2.565%;
@@ -262,12 +262,6 @@ div .av_one_sixth {
   width:14.53%;
   margin-left: 2.565%;
 }
-
-div .av_four_sixth {
-  width: 65.812%;
-  margin-left: 2.565%;
-}
-
 div .av_one_seventh {
   margin-left: 6%;
   width: 9.142857142857142%;
@@ -284,6 +278,12 @@ div .av_one_tenth {
   margin-left: 6%;
   width: 4.6%;
 }
+
+div .av_four_sixth {
+  width: 65.812%;
+  margin-left: 2.565%;
+}
+
 /* Columns for better content separation (no margin)
 ================================================== */
 #top div .no_margin {

@@ -35,7 +35,7 @@ if ( !class_exists( 'avia_sc_hr' ) )
 			
 			function extra_assets()
 			{
-				// $this->builder->asset_manager()->register_asset( 'css' , array('path' => "auto", 'file' => 'hr/hr.css', 'name' => 'avia-hr') );
+				wp_enqueue_style( 'avia-module-hr' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/hr/hr.css' , array('avia-layout'), false );
 			}
 			
 			

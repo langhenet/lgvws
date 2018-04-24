@@ -152,21 +152,19 @@ require_once( 'framework/avia_framework.php' );
  * or use the thumbnail regeneration plugin: http://wordpress.org/extend/plugins/regenerate-thumbnails/
  */
 
-$avia_config['imgSize']['widget'] 			 	= array('width'=>36,  'height'=>36);						// small preview pics eg sidebar news
-$avia_config['imgSize']['square'] 		 	    = array('width'=>180, 'height'=>180);		                 // small image for blogs
-$avia_config['imgSize']['featured'] 		 	= array('width'=>1500, 'height'=>430 );						// images for fullsize pages and fullsize slider
-$avia_config['imgSize']['featured_large'] 		= array('width'=>1500, 'height'=>630 );						// images for fullsize pages and fullsize slider
-$avia_config['imgSize']['extra_large'] 		 	= array('width'=>1500, 'height'=>1500 , 'crop' => false);	// images for fullscrren slider
-$avia_config['imgSize']['portfolio'] = array('width'=>814, 'height'=>462 );                              // images for portfolio entries (2,3 column)
-$avia_config['imgSize']['portfolio_small'] 		= array('width'=>260, 'height'=>185 );						// images for portfolio 4 columns
-$avia_config['imgSize']['gallery'] 		 		= array('width'=>845, 'height'=>684 );						// images for portfolio entries (2,3 column)
-$avia_config['imgSize']['magazine'] = array('width'=>555, 'height'=>315 );                              // images for magazines
-
-$avia_config['imgSize']['masonry']   = array('width'=>855, 'height'=>495 );          // images for fullscreen masonry
-
-$avia_config['imgSize']['entry_with_sidebar']  = array('width'=>870, 'height'=>480);                           // big images for blog and page entries
-$avia_config['imgSize']['entry_without_sidebar']= array('width'=>1210, 'height'=>423 );						// images for fullsize pages and fullsize slider
-$avia_config['imgSize'] = apply_filters('avf_modify_thumb_size', $avia_config['imgSize']);
+ $avia_config['imgSize']['widget'] 			 	= array('width'=>36,  'height'=>36);						// small preview pics eg sidebar news
+ $avia_config['imgSize']['square'] 		 	    = array('width'=>180, 'height'=>180);		                 // small image for blogs
+ $avia_config['imgSize']['featured'] 		 	= array('width'=>1500, 'height'=>430 );						// images for fullsize pages and fullsize slider
+ $avia_config['imgSize']['featured_large'] 		= array('width'=>1500, 'height'=>630 );						// images for fullsize pages and fullsize slider
+ $avia_config['imgSize']['extra_large'] 		 	= array('width'=>1500, 'height'=>1500 , 'crop' => false);	// images for fullscrren slider
+ $avia_config['imgSize']['portfolio'] = array('width'=>814, 'height'=>462 );                              // images for portfolio entries (2,3 column)
+ $avia_config['imgSize']['portfolio_small'] 		= array('width'=>260, 'height'=>185 );						// images for portfolio 4 columns
+ $avia_config['imgSize']['gallery'] 		 		= array('width'=>845, 'height'=>684 );						// images for portfolio entries (2,3 column)
+ $avia_config['imgSize']['magazine'] = array('width'=>555, 'height'=>315 );                              // images for magazines
+ $avia_config['imgSize']['masonry']   = array('width'=>855, 'height'=>495 );          // images for fullscreen masonry
+ $avia_config['imgSize']['entry_with_sidebar']  = array('width'=>870, 'height'=>480);                           // big images for blog and page entries
+ $avia_config['imgSize']['entry_without_sidebar']= array('width'=>1210, 'height'=>423 );						// images for fullsize pages and fullsize slider
+ $avia_config['imgSize'] = apply_filters('avf_modify_thumb_size', $avia_config['imgSize']);
 
 
 $avia_config['selectableImgSize'] = array(
@@ -309,6 +307,8 @@ if(!function_exists('avia_register_frontend_scripts'))
 
 	function avia_register_frontend_scripts()
 	{
+		global $avia_config;
+
 		$theme = wp_get_theme();
 		if( false !== $theme->parent() )
 		{
@@ -326,7 +326,7 @@ if(!function_exists('avia_register_frontend_scripts'))
 		wp_enqueue_script( 'avia-default', $template_url.'/js/avia.js', array('jquery'), $vn, true );
 		wp_enqueue_script( 'avia-shortcodes', $template_url.'/js/shortcodes.js', array('jquery'), $vn, true );
 
-		if( empty( $options['lightbox_active'] ) || ( 'lightbox_active' == $options['lightbox_active'] ) )
+		if( 'disabled' != $avia_config['use_standard_lightbox'] )
 		{
 			wp_enqueue_script( 'avia-popup',  $template_url.'/js/aviapopup/jquery.magnific-popup.min.js', array('jquery'), $vn, true);
 		}
@@ -351,13 +351,13 @@ if(!function_exists('avia_register_frontend_scripts'))
 		wp_register_style( 'avia-custom',  $template_url."/css/custom.css", array(), 	$vn, 'all' );
 
 		wp_enqueue_style( 'avia-grid' ,   $template_url."/css/grid.css", array(), 		$vn, 'all' );
-		wp_enqueue_style( 'avia-base' ,   $template_url."/css/base.css", array(), 		$vn, 'all' );
-		wp_enqueue_style( 'avia-layout',  $template_url."/css/layout.css", array(), 	$vn, 'all' );
-		wp_enqueue_style( 'avia-scs',     $template_url."/css/shortcodes.css", array(), $vn, 'all' );
+		wp_enqueue_style( 'avia-base' ,   $template_url."/css/base.css", array('avia-grid'), 		$vn, 'all' );
+		wp_enqueue_style( 'avia-layout',  $template_url."/css/layout.css", array('avia-base'), 	$vn, 'all' );
+		wp_enqueue_style( 'avia-scs',     $template_url."/css/shortcodes.css", array('avia-layout'), $vn, 'all' );
 
-		if( empty( $options['lightbox_active'] ) || ( 'lightbox_active' == $options['lightbox_active'] ) )
+		if( 'disabled' != $avia_config['use_standard_lightbox'] )
 		{
-			wp_enqueue_style( 'avia-popup-css', $template_url."/js/aviapopup/magnific-popup.css", array(), $vn, 'screen' );
+			wp_enqueue_style( 'avia-popup-css', $template_url."/js/aviapopup/magnific-popup.css", array('avia-layout'), $vn, 'screen' );
 		}
 
 		wp_enqueue_style( 'avia-print' ,  $template_url."/css/print.css", array(), $vn, 'print' );

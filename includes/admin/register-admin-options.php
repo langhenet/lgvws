@@ -1403,7 +1403,7 @@ foreach($colorsets as $set_key => $set_value)
 						"id" 	=> "colorset-$set_key-color",
 						"type" 	=> "colorpicker",
 						"class" => "av_2columns av_col_1",
-						"std" 	=> "#719430",
+						"std" 	=> "#000000",
 						"target" => array("default_slideshow_target::.live-$set_key::color"),
 						);
 
@@ -1413,7 +1413,7 @@ foreach($colorsets as $set_key => $set_value)
 						"id" 	=> "colorset-$set_key-meta",
 						"type" 	=> "colorpicker",
 						"class" => "av_2columns av_col_2",
-						"std" 	=> "#719430",
+						"std" 	=> "#969696",
 						"target" => array("default_slideshow_target::.live-$set_key .meta::color"),
 						);
 	
@@ -1423,7 +1423,7 @@ foreach($colorsets as $set_key => $set_value)
 						"id" 	=> "colorset-$set_key-heading",
 						"type" 	=> "colorpicker",
 						"class" => "av_2columns av_col_1",
-						"std" 	=> "#666666",
+						"std" 	=> "#000000",
 						"target" => array("default_slideshow_target::.live-$set_key .heading::color"),
 						);
 
@@ -1434,7 +1434,7 @@ foreach($colorsets as $set_key => $set_value)
 					"id" 	=> "colorset-$set_key-border",
 					"type" 	=> "colorpicker",
 					"class" => "av_2columns av_col_2",
-					"std" 	=> "#e1e1e1",
+					"std" 	=> "#ebebeb",
 					"target" => array("default_slideshow_target::.live-$set_key.border, .live-$set_key .bg2::border-color"),
 					);
 

@@ -389,7 +389,7 @@
 				if( pre_wrap.is('.av-transition-enabled') )
 				{
 					var comp = new RegExp(location.host), 
-						exclude = " .no-transition, .mfp-iframe, .lightbox-added, .grid-links-ajax a, #menu-item-search a";
+						exclude = " .no-transition, .mfp-iframe, .lightbox-added, a.avianolink, .grid-links-ajax a, #menu-item-search a";
 					
 					preloader_active.on('click', 'a:not('+exclude+')',function(e)
 					{	
@@ -835,11 +835,11 @@
 				{
 					if(src.indexOf('?') !== -1)
 					{
-						src += "&wmode=opaque";
+						src += "&wmode=opaque&rel=0";
 					}
 					else
 					{
-						src += "?wmode=opaque";
+						src += "?wmode=opaque&rel=0";
 					}
 
 					current.attr('src', src);

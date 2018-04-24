@@ -8,20 +8,20 @@
 	 */
 	 get_header();
 
-	$title  = __('Blog - Latest News', 'avia_framework'); //default blog title
-	$t_link = get_category_link( $cats[0] );
-	$t_sub = "";
+  $cats = get_the_category(); //-> ovvero una variabile cats che salva le categorie
+
+  $title  = __('Blog - Latest News', 'avia_framework'); //default blog title
+  $t_link = get_category_link( $cats[0] );
+  $t_sub = "";
 
 	if(avia_get_option('frontpage') && $new = avia_get_option('blogpage'))
 	{
-    $cats = get_the_category();
-    $title  = __('Blog - Latest News', 'avia_framework'); //default blog title
-    $t_link = get_category_link( $cats[0] );
-    $t_sub = "";
+		$title 	= get_the_title($new); //if the blog is attached to a page use this title
+		$t_link = get_category_link( $cats[0] );
+		$t_sub =  avia_post_meta($new, 'subtitle');
 	}
 
-	if( get_post_meta(get_the_ID(), 'header', true) != 'no') echo avia_title(array('heading'=>'strong', 'title' => $cats[0]->cat_name
-, 'link' => $t_link, 'subtitle' => $t_sub));
+	if( get_post_meta(get_the_ID(), 'header', true) != 'no') echo avia_title(array('heading'=>'strong', 'title' => $cats[0]->cat_name, 'link' => $t_link, 'subtitle' => $t_sub));
 
 	do_action( 'ava_after_main_title' );
 

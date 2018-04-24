@@ -62,6 +62,8 @@ if( ! class_exists( 'Avia_Config_LayerSlider' ) )
 			add_action( 'after_setup_theme', array( $this, 'handler_after_setup_theme' ), 10 );
 			
 			add_filter( 'avf_option_page_data_init', array( $this, 'handler_option_page_data_init' ), 10, 1 );
+			add_filter( 'ls_meta_generator', "__return_false");
+			
 			add_action( 'layerslider_installed', array( $this, 'handler_layerslider_installed'), 10, 0 );
 			add_action( 'layerslider_deactivated', array( $this, 'handler_layerslider_deactivated'), 10, 0 );
 			add_action( 'layerslider_uninstalled', array( $this, 'handler_layerslider_uninstalled'), 10, 0 );

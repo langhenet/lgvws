@@ -171,11 +171,11 @@ if(!class_exists('avia_breadcrumb'))
 
 
 function avia_breadcrumbs( $args = array() ) {
-
   //ouptutta yoast!
-    $langhe_breadcrumb = yoast_breadcrumb('<p class="breadcrumb"><span class="breadcrumb_info">','</span></p>',false);
+  $langhe_breadcrumb = yoast_breadcrumb('<p class="breadcrumb"><span class="breadcrumb_info">','</span></p>',false);
 
-     return $langhe_breadcrumb;
+  return $langhe_breadcrumb;
+
 } // End avia_breadcrumbs()
 
 /*-----------------------------------------------------------------------------------*/
