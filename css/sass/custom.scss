@@ -709,6 +709,27 @@ content:"\e80b";
 content:"\f153";
 }
 
+.lg-icon.lg-event-icon {
+  display: block;
+
+  &.avia-icon-pos-left {
+    float: left;
+    margin-right: 0.5em;
+  }
+  &.avia-icon-pos-right {
+    float: right;
+    margin-left: 0.5em;
+
+    & + span {
+      margin-top: 20px;
+    }
+  }
+
+  .av-icon-char.lg-big {
+    height: 1.5em;
+    width: 1.5em;
+  }
+}
 /** freccoa giù ***/
 .lg-arrow-down::after {
   width: 0;
@@ -874,8 +895,8 @@ margin-right: auto;
 }
 
 .header_color.lg-full-header .lg-icon.av-icon-style-border.lg-piena .av-icon-char {
-background:#fff;
-color:#111;
+background:transparent;
+color:#fff;
 }
 
 /**********************
@@ -1729,12 +1750,14 @@ margin-top:1.5em;
 text-align:right;
 }
 
-.event-details.lg-left span.av-icon-char.lg-url {
-margin-left: 1.65em;
+.event-details.lg-left span.av-icon-char.lg-url,
+.event-details.lg-left span.av-icon-char.lg-phone,
+.event-details.lg-left span.av-icon-char.lg-mail {
+margin-right: 0.25em;
 }
 
 .event-details.lg-right span.av-icon-char.lg-map {
-margin-right: 1.65em;
+margin-right: 0.5em;
 }
 
 .event-details p{
