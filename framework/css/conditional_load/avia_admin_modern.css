@@ -20,7 +20,7 @@
 
 #avia_options_page *{
 -webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing: border-box;
-font-size:13px;
+font-size:14px;
 line-height: 1.5em;
 }
 
@@ -520,6 +520,10 @@ right:28px;
 .av-verification-result .av-text-notice.av-notice-error{
 	    background: #23282d;
 	    border:none;
+}
+
+.av-prev-el-notice{
+	margin-top: -25px;
 }
 
 .av-verification-cell{

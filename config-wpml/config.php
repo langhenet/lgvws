@@ -791,3 +791,43 @@ if(!function_exists('avia_portfolio_compat') && defined('ICL_SITEPRESS_VERSION')
 }
 
 
+
+/**
+ * Error 404 - Custom Page
+ * Hooks into 'the_posts' filter and display the defined 404 page - compatible with WPML
+ * @author tinabillinger
+ * @since 4.3
+ */
+if( ! function_exists( 'av_error404_wpml' ) )
+{
+    function av_error404_wpml($posts)
+    {
+        if( defined('ICL_SITEPRESS_VERSION') && defined('ICL_LANGUAGE_CODE')) {
+            if (avia_get_option('error404_custom') == "error404_custom") {
+                // prevent endless loop
+                remove_filter( 'the_posts', 'av_error404_wpml', 999 );
+                if ( empty( $posts ) &&
+                    is_main_query() &&
+                    !is_robots() &&
+                    !is_home() &&
+                    !is_feed() &&
+                    !is_search() &&
+                    !is_archive() &&
+                    ( !defined('DOING_AJAX') || !DOING_AJAX ) ) {
+                    global $wp_query;
+                    $error404_page = avia_get_option('error404_page');
+                    $wp_query = null;
+                    $wp_query = new WP_Query();
+                    $wp_query->query( 'page_id=' . $error404_page );
+                    $wp_query->the_post();
+                    $template = get_page_template();
+                    $posts = $wp_query->posts;
+                    $wp_query->rewind_posts();
+                    return $posts;
+                }
+            }
+        }
+        return $posts;
+    }
+    add_filter( 'the_posts', 'av_error404_wpml', 999 );
+}

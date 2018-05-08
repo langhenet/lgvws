@@ -119,14 +119,15 @@ var lsLogo = {
 
 			// Add data-* params to replacement element
 			$.each( $el.data(), function( key, val ) {
+				key = key.replace(/([a-zA-Z])(?=[A-Z])/g, '$1-').toLowerCase()
 				$rep.attr('data-'+key, val);
 			});
 
 			// Set default state
-			if($el.prop('checked')) {
-				$rep.addClass('on');
+			if( $el.prop( 'checked' ) ) {
+				$rep.addClass( 'on' );
 			} else {
-				$rep.addClass('off');
+				$rep.addClass( 'off' );
 			}
 		});
 	};

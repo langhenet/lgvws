@@ -1,7 +1,10 @@
 <?php
 
-//activate the update script
-add_action('admin_init', array(new avia_update_helper(), 'update_version'));
+if ( ! defined( 'ABSPATH' ) ) {  exit;  }    // Exit if accessed directly
+
+
+//activate the update script. temp: let it always run, also in frontend. change hook to admin_init after a few versions 
+add_action('wp_loaded', array(new avia_update_helper(), 'update_version'));
 
 /*all the functions that keep compatibility between theme versions: */
 
@@ -294,6 +297,7 @@ function avia_update_layerslider_data_structure($prev_version, $new_version)
 	//if the previous theme version is equal or bigger to 3.0 we don't need to update
 	if(version_compare($prev_version, 4.0, ">=")) return; 
 	
+	
 	// Get WPDB Object
     global $wpdb;
  
@@ -544,10 +548,39 @@ function avia_update_menu_icon_advanced($prev_version, $new_version)
 	
 }
 
+ /*
+ *
+ * update for version 4.3: set caching and file merging to be deactivated for installations that get updated. new installations will have it enabled by default
+ * will reduce errors with legacy installs
+ */
  
- 
- 
- 
- 
+add_action('ava_trigger_updates', 'avia_update_performance',16,2);
+
+function avia_update_performance($prev_version, $new_version)
+{	
+	//if the previous theme version is equal or bigger to 4.3 we don't need to update
+	if(version_compare($prev_version, '4.3', ">=")) return; 
+	
+	//set global options
+	global $avia;
+	$theme_options = $avia->options['avia'];
+
+	if(!empty($theme_options))
+	{
+		if(!isset($theme_options['merge_css'])) $theme_options['merge_css'] = "none";
+		if(!isset($theme_options['merge_js']))  $theme_options['merge_js'] = "none";
+		if(!isset($theme_options['disable_alb_elements']))  $theme_options['disable_alb_elements'] = "load_all";
+		
+		//replace existing options with the new options
+		$avia->options['avia'] = $theme_options;
+		update_option($avia->option_prefix, $avia->options);
+		
+		//set admin notice
+		update_option('avia_admin_notice', 'performance_update');
+	}
+	
+	Avia_Builder()->element_manager()->handler_after_import_demo();
+}
+
  
 

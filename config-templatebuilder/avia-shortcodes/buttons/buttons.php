@@ -109,6 +109,18 @@ if ( !class_exists( 'avia_sc_button' ) )
 								__('Align Center',  'avia_framework' ) =>'center',
 								__('Align Right',   'avia_framework' ) =>'right',
 							)),		
+					
+					array(	
+							"name" 	=> __("Button Label display", 'avia_framework' ),
+							"desc" 	=> __("Select how to display the label", 'avia_framework' ),
+							"id" 	=> "label_display",
+							"type" 	=> "select",
+							"std" 	=> "",
+							"subtype" => array(
+								__('Always display',  'avia_framework' ) => '' ,	
+								__('Display on hover',  'avia_framework' ) =>'av-button-label-on-hover',
+								)),
+					
 					array(	
 							"name" 	=> __("Button Icon", 'avia_framework' ),
 							"desc" 	=> __("Should an icon be displayed at the left side of the button", 'avia_framework' ),
@@ -175,6 +187,7 @@ if ( !class_exists( 'avia_sc_button' ) )
 												__('Grey', 'avia_framework' )=>'grey',
 												__('Black', 'avia_framework' )=>'black',
 												__('Custom Color', 'avia_framework' )=>'custom',
+												
 												)),
 								),
 
@@ -323,6 +336,7 @@ if ( !class_exists( 'avia_sc_button' ) )
 			                                 'icon' => '', 
 			                                 'font' =>'',
 			                                 'icon_hover' => '',
+			                                 'label_display'=>'',
 			                                 ), $atts, $this->config['shortcode']);
 											 
 				$display_char 	= av_icon($atts['icon'], $atts['font']);
@@ -335,7 +349,18 @@ if ( !class_exists( 'avia_sc_button' ) )
 				{
 					$style .= "style='background-color:".$atts['custom_bg']."; border-color:".$atts['custom_bg']."; color:".$atts['custom_font']."; '";
 				}
-
+				
+				
+				$data = "";
+				if(!empty($atts['label_display']) && $atts['label_display'] == "av-button-label-on-hover") 
+				{
+					$extraClass .= " av-button-label-on-hover ";
+					$data = "data-avia-tooltip='".htmlspecialchars($atts['label'])."'";
+					$atts['label'] = "";
+				}
+				
+				if(empty($atts['label'])) $extraClass .= " av-button-notext ";
+				
 				
 			    $blank = strpos($atts['link_target'], '_blank') !== false ? ' target="_blank" ' : "";
 			    $blank .= strpos($atts['link_target'], 'nofollow') !== false ? ' rel="nofollow" ' : "";
@@ -349,7 +374,7 @@ if ( !class_exists( 'avia_sc_button' ) )
 			    if('yes-right-icon' == $atts['icon_select']) $content_html .= "<span class='avia_button_icon avia_button_icon_right' {$display_char}></span>";
 			    
 			    $output  = "";
-				$output .= "<a href='{$link}' class='avia-button {$extraClass} {$av_display_classes} ".$this->class_by_arguments('icon_select, color, size, position' , $atts, true)."' {$blank} {$style} >";
+				$output .= "<a href='{$link}' {$data} class='avia-button {$extraClass} {$av_display_classes} ".$this->class_by_arguments('icon_select, color, size, position' , $atts, true)."' {$blank} {$style} >";
 				$output .= $content_html;
 				$output .= "</a>";
 				

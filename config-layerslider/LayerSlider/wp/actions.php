@@ -42,6 +42,13 @@ function ls_register_form_actions() {
 			}
 		}
 
+		// Export as HTML
+		if(isset($_GET['page']) && $_GET['page'] == 'layerslider' && isset($_GET['action']) && $_GET['action'] == 'export-html') {
+			if( check_admin_referer('export-sliders') ) {
+				ls_export_as_html( (int) $_GET['id'] );
+			}
+		}
+
 		// Empty caches
 		if(isset($_GET['page']) && $_GET['page'] == 'layerslider' && isset($_GET['action']) && $_GET['action'] == 'empty_caches') {
 			if(check_admin_referer('empty_caches')) {
@@ -243,7 +250,8 @@ function layerslider_delete_caches() {
 
 function layerslider_empty_caches() {
 	layerslider_delete_caches();
-	wp_redirect('admin.php?page=layerslider&message=cacheEmpty');
+	wp_redirect( admin_url('admin.php?page=layerslider-options&message=cacheEmpty') );
+	die();
 }
 
 
@@ -363,9 +371,11 @@ function ls_save_advanced_settings() {
 		'include_at_footer',
 		'conditional_script_loading',
 		'concatenate_output',
+		'load_all_js_files',
 		'use_custom_jquery',
-		'put_js_to_body',
-		'gsap_sandboxing'
+		'gsap_sandboxing',
+		'defer_scripts',
+		'rocketscript_ignore'
 	);
 
 	foreach($options as $item) {
@@ -373,6 +383,8 @@ function ls_save_advanced_settings() {
 	}
 
 	update_option('ls_scripts_priority', (int)$_POST['scripts_priority']);
+
+	layerslider_delete_caches();
 
 	wp_redirect( admin_url('admin.php?page=layerslider-options&message=generalUpdated') );
 	die();
@@ -423,6 +435,7 @@ function ls_get_mce_slides() {
 
 		if( ! empty( $slide['properties']['thumbnailId'] ) ) {
 			$slides[ $slideKey ]['properties'][ 'thumbnail' ] = apply_filters('ls_get_image', $slide['properties']['thumbnailId'], $slide['properties']['thumbnail']);
+			$slides[ $slideKey ]['properties'][ 'thumbnailThumb' ] = apply_filters('ls_get_image', $slide['properties']['thumbnailId'], $slide['properties']['thumbnail']);
 		}
 
 		$slides[ $slideKey ]['properties']['title'] = ! empty( $slide['properties']['title'] ) ? stripslashes( $slide['properties']['title'] ) : 'Slide #'.($slideKey+1);
@@ -1435,4 +1448,13 @@ function layerslider_register_wpml_strings( $sliderID, $data ) {
 			}
 		}
 	}
+}
+
+
+function ls_export_as_html( $sliderID ) {
+
+	// Markup export uses PHP 5.3 features (namespaces, callbacks, etc),
+	// thus we cannot use the code directly on the global scope in order
+	// to avoid parsing errors on pre 5.3 PHP versions.
+	include LS_ROOT_PATH . '/includes/slider_markup_export.php';
 }

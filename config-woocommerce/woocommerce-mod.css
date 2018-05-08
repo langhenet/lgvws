@@ -2703,6 +2703,10 @@ margin:0;
 
 
 
+/*enfold 4.3*/
+#top .woocommerce-terms-and-conditions-link{text-decoration: underline;}
+
+
 
 /* #Media Queries
 ================================================== */

@@ -2,7 +2,9 @@
 
 class LS_Config {
 
-	public static $config = array();
+	public static $config 	= array();
+	public static $forced 	= array();
+	public static $forcedBy = array();
 
 	private function __construct() {}
 
@@ -13,7 +15,8 @@ class LS_Config {
 			'theme_bundle' => false,
 			'autoupdate' => true,
 			'notices' => true,
-			'purchase_url' => get_option('ls-p-url', 'https://codecanyon.net/cart/add_items?ref=kreatura&amp;item_ids=1362246')
+			'promotions' => true,
+			'purchase_url' => get_option('ls-p-url', 'https://kreaturamedia.com/cart/ls-wp/')
 		);
 	}
 
@@ -61,6 +64,26 @@ class LS_Config {
 
 		if( isset( $GLOBALS['lsAutoUpdateBox'] ) && $GLOBALS['lsAutoUpdateBox'] === false ) {
 			self::set('autoupdate', false);
+		}
+	}
+
+
+	public static function forceSettings( $name = 'Unknown', $keys, $value = null ) {
+
+		if( is_string( $keys ) ) {
+			$keys = array( "$keys" => $value );
+		}
+
+		if( is_array( $keys) ) {
+			foreach( $keys as $key => $val ) {
+
+				if( get_option( 'ls_'.$key ) != $val ) {
+					update_option( 'ls_'.$key, $val );
+				}
+
+				self::$forced[ $key ] = $val;
+				self::$forcedBy[ $key ] = $name;
+			}
 		}
 	}
 }

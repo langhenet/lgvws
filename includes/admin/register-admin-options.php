@@ -15,6 +15,8 @@ $avia_pages = array(
 	array( 'slug' => 'builder', 	'parent'=>'avia', 'icon'=>"new/window-three-7@3x.png", 			'title' =>  __('Layout Builder', 'avia_framework')),
 	array( 'slug' => 'blog', 		'parent'=>'avia', 'icon'=>"new/note-write-7@3x.png", 			'title' =>  __('Blog Layout', 'avia_framework')),
 	array( 'slug' => 'social', 		'parent'=>'avia', 'icon'=>"new/circle-user-7@3x.png", 			'title' =>  __('Social Profiles', 'avia_framework')),
+    array( 'slug' => 'performance', 'parent'=>'avia', 'icon'=>"new/performance-7@3x.png", 			'title' =>  __('Performance', 'avia_framework')),
+    array( 'slug' => 'cookie', 		'parent'=>'avia', 'icon'=>"new/cookie-7@3x.png", 				'title' =>  __('Cookie Consent', 'avia_framework')),
 	array( 'slug' => 'newsletter', 	'parent'=>'avia', 'icon'=>"new/newspaper-7@3x.png", 			'title' =>  __('Newsletter', 'avia_framework')),
 	array( 'slug' => 'google', 		'parent'=>'avia', 'icon'=>"new/paper-map-7@3x.png", 			'title' =>  __('Google Services', 'avia_framework')),
 );
@@ -54,6 +56,345 @@ include('register-backend-google-fonts.php');
 
 //required for the advanced styling wizard
 include('register-backend-advanced-styles.php');
+
+
+
+/*Performance*/
+$avia_elements[] =	array(	"name" => __("Website performance and optimization",'avia_framework'),
+							"desc" => 
+							__("The options here allow you to  fine tune and speed up your theme depending on your needs.", 'avia_framework')."<br>",
+							
+							"id" => "performance_header",
+							"std" => "",
+							"slug"	=> "performance",
+							"type" => "heading",
+							"nodescription"=>true);
+
+
+$avia_elements[] = array(	"slug"	=> "performance", "type" => "visual_group_start", "id" => "avia_performance_compression_start", "nodescription" => true);
+
+
+$avia_elements[] =	array(	"name" => __("File Compression",'avia_framework'),
+							"desc" => 
+							__("In order to increase the speed of your website you can activate file merging and compression for your CSS and Javascript files. This will reduce and optimize the amount of code loaded.", 'avia_framework')."<br><br>"."<strong>".__("Please note:", 'avia_framework')." </strong>".
+__("By default compression is enabled. It is recommended to only disable the feature when you encounter errors (some server environments might cause trouble with active compression) or while you are actively developing your website and are adding new CSS rules or Javascript functions.", 'avia_framework'),
+							"id" => "performance_header",
+							"std" => "",
+							"slug"	=> "performance",
+							"type" => "heading",
+							"nodescription"=>true);
+
+
+$avia_elements[] =	array(
+					"slug"	=> "performance",
+					"name" 	=> __("CSS file merging and compression", 'avia_framework'),
+					"desc" 	=> 
+					__("Select which level of file merging and compression you want to apply to your CSS files", 'avia_framework'),
+					"id" 	=> "merge_css",
+					"type" 	=> "select",
+					"std" 	=> "avia",
+					"no_first"=>true,
+					"subtype" => array( __('Disable - no CSS file merging and compression', 'avia_framework') => 'none',
+										/*__('Compress advanced template builder CSS files (level 1)', 'avia_framework') =>'avia-module',*/
+										__('Enable - merge and compress all theme CSS files', 'avia_framework') => 'avia',
+										/*__('Compress all theme and plugin CSS files (level 3)', 'avia_framework') => "all",*/
+										));
+
+
+$avia_elements[] =	array(
+					"slug"	=> "performance",
+					"name" 	=> __("Javascript file merging and compression", 'avia_framework'),
+					"desc" 	=> 
+							   __("Select which level of file merging and compression you want to apply to your Javascript files.", 'avia_framework'),
+
+					"id" 	=> "merge_js",
+					"type" 	=> "select",
+					"std" 	=> "avia",
+					"no_first"=>true,
+					"subtype" => array( __('Disable - no Javascript file merging and compression', 'avia_framework') => 'none',
+										/*__('Compress advanced template builder javascript files (level 1)', 'avia_framework') =>'avia-module',*/
+										__('Enable - merge and compress all theme javascript files', 'avia_framework') => 'avia',
+										/* __('Compress all theme and plugin files (level 3)', 'avia_framework') => "all", */
+										));
+
+
+
+$avia_elements[] = array(	"slug"	=> "performance", "type" => "visual_group_end",   "id" => "avia_compression_close", "nodescription" => true);
+
+$avia_elements[] = array(	"slug"	=> "performance", "type" => "visual_group_start", "id" => "avia_performance_compression_start4", "nodescription" => true);
+
+
+$avia_elements[] =	array(	"name" => __("Disable Template Builder Elements",'avia_framework'),
+							"desc" => 
+							__("The theme allows you to disable template builder elements that you do not need. This reduces the amount of Javascript and CSS loaded in your frontend", 'avia_framework')."<br>",
+							
+							"id" => "performance_header_3",
+							"std" => "",
+							"slug"	=> "performance",
+							"type" => "heading",
+							"nodescription"=>true);
+
+
+
+$avia_elements[] =	array(
+					"slug"	=> "performance",
+					"name" 	=> __("Disabling of template builder elements", 'avia_framework'),
+					"desc" 	=> __("By default the theme will only load elements that are used on your posts and pages. You can disable the feature or manually manage loaded elements if you run into trouble", 'avia_framework'),
+					"id" 	=> "disable_alb_elements",
+					"type" 	=> "select",
+					"std" 	=> "auto",
+					"no_first"=>true,
+					"subtype" => array( __('Always load all elements', 'avia_framework') =>'load_all',
+										__('Load only used elements (recommended)', 'avia_framework') =>'auto',
+										__('Manually manage loaded elements', 'avia_framework') =>'manually',
+										));
+
+
+$avia_elements[] = array(
+		"id" 	=> "alb_disabled",
+		"type" 	=> "template_builder_element_loader",
+		"std"	=> "",
+		"required" => array('disable_alb_elements','manually'),
+		"nodescription"=>true,
+		"slug"	=> "performance");
+		
+
+		
+
+$avia_elements[] = array(	"slug"	=> "performance", "type" => "visual_group_end", "id" => "avia_compression_close4", "nodescription" => true);
+
+$avia_elements[] = array(	"slug"	=> "performance", "type" => "visual_group_start", "id" => "avia_performance_compression_start2", "nodescription" => true);
+
+
+
+$avia_elements[] =	array(	"name" => __("Disable Features",'avia_framework'),
+							"desc" => 
+							__("Here you can disable theme features that are not used by every website", 'avia_framework')."<br>",
+							
+							"id" => "performance_header_2",
+							"std" => "",
+							"slug"	=> "performance",
+							"type" => "heading",
+							"nodescription"=>true);
+
+$avia_elements[] = array(
+		"name" 	=> __("Disable self hosted video and audio features", 'avia_framework'),
+		"desc" 	=> __("Check if you do not use self hosted video or audio files on your site.", 'avia_framework'),
+		"id" 	=> "disable_mediaelement",
+		"type" 	=> "checkbox",
+		"std"	=> "",
+		"slug"	=> "performance");
+		
+$avia_elements[] = array(
+		"name" 	=> __("Disable external video features", 'avia_framework'),
+		"desc" 	=> __("Check if you do not use Youtube or Vimeo video features.", 'avia_framework'),
+		"id" 	=> "disable_video",
+		"type" 	=> "checkbox",
+		"std"	=> "",
+		"slug"	=> "performance");
+
+
+$avia_elements[] = array(
+		"name" 	=> __("Disable the blog", 'avia_framework'),
+		"desc" 	=> __("Check if you do not use the blog. This will disable the blog page as well as the blog template builder element, the comments template builder element and category pages that are based on the default categories (if any plugin post types use these overview styles please keep this feature enabled)", 'avia_framework'),
+		"id" 	=> "disable_blog",
+		"type" 	=> "checkbox",
+		"std"	=> "",
+		"slug"	=> "performance");
+		
+
+$avia_elements[] = array(	"slug"	=> "performance", "type" => "visual_group_end", "id" => "avia_compression_close2", "nodescription" => true);
+
+
+
+
+
+$avia_elements[] = array(	"slug"	=> "performance", "type" => "visual_group_start", "id" => "avia_performance_compression_start3", "nodescription" => true);
+
+
+$avia_elements[] =	array(	"name" => __("Change WordPress defaults",'avia_framework'),
+							"desc" => 
+							__("Here you can disable WordPress default scripts and styles that are not necessary for most websites", 'avia_framework')."<br>",
+							
+							"id" => "performance_header_2",
+							"std" => "",
+							"slug"	=> "performance",
+							"type" => "heading",
+							"nodescription"=>true);
+							
+							
+
+$avia_elements[] = array(
+		"name" 	=> __("Disable Emoji/Smiley Support", 'avia_framework'),
+		"desc" 	=> __("Check to disable Emoji/Smiley Support. (Emojis are used by WordPress by default but most websites do not use them)", 'avia_framework'),
+		"id" 	=> "disable_emoji",
+		"type" 	=> "checkbox",
+		"std"	=> "",
+		"slug"	=> "performance");
+
+if(avia_count_active_plugins() > 0)
+{	
+	
+$avia_elements[] = array(
+		"name" 	=> __("Disable jQuery Migrate", 'avia_framework'),
+		"desc" 	=> __("Check to disable 'jQuery Migrate'. It is an old backward compatibility library for jQuery that is required by some plugins. Make sure that none of your active plugins require it before disabling it!", 'avia_framework'),
+		"id" 	=> "disable_jq_migrate",
+		"type" 	=> "checkbox",
+		"std"	=> "",
+		"slug"	=> "performance");	
+		
+$avia_elements[] = array(
+		"name" 	=> __("Load jQuery in your footer", 'avia_framework'),
+		"desc" 	=> __("Loading jQuery in your footer will speed up site rendering but may cause problems with plugins. Only use if you know what you are doing ;)", 'avia_framework'),
+		"id" 	=> "jquery_in_footer",
+		"type" 	=> "checkbox",
+		"std"	=> "",
+		"slug"	=> "performance");
+}
+
+
+$avia_elements[] = array(
+		"name" 	=> __("Load google fonts in footer", 'avia_framework'),
+		"desc" 	=> __("Loading the fonts in your footer will speed up the site rendering, but also cause a small flicker of text on page load", 'avia_framework'),
+		"id" 	=> "gfonts_in_footer",
+		"type" 	=> "checkbox",
+		"std"	=> "",
+		"slug"	=> "performance");
+
+
+
+$avia_elements[] = array(	"slug"	=> "performance", "type" => "visual_group_end", "id" => "avia_compression_close2", "nodescription" => true);
+
+
+$avia_elements[] = array(
+		"name" 	=> __("Image Optimization", 'avia_framework'),
+		"desc" 	=> __("Enfold checks if it can detect an image optimization plugin and if it can't find a familiar one recommends a few that are known to work great with the theme", 'avia_framework')."<br>".
+		 __("(If you are running an image optimization plugin that is not detected just ignore this message)", 'avia_framework'),
+		"id" 	=> "image_optimisation_check",
+		"type" 	=> "plugin_check",
+		"slug"	=> "performance",
+		"nodescription"=>true,
+		"no_found"	=>__("We were not able to detect an active image optimization plugin. It is recommended to use one to speed up your site. Here are a few suggestions:",'avia_framework'),
+		"found"		=>__("We were able to detect an image optimization plugin. Great! Nothing left to do here ;)",'avia_framework'),
+		"too_many"	=>__("We were able to detect multiple active image optimization plugins. It is recommended to use only one!",'avia_framework'),
+		
+		"plugins"=> array(
+            'Optimus - WordPress Image Optimizer' 	=> array('download'=>'optimus', 					'file'=>'optimus/optimus.php', 'desc' => 
+            "<ul>
+            	<li>Simple to use with only a few options</li>
+            	<li>Good size reduction while keeping images pretty</li>
+            	<li>Very good google pagespeed scores</li>
+            	<li>Free version works already good, premium version is even better and also rather cheap</li>
+            </ul>"
+            ),
+            
+            
+            'ShortPixel Image Optimizer' 			=> array('download'=>'shortpixel-image-optimiser', 	'file'=>'shortpixel-image-optimiser/wp-shortpixel.php', 'desc' => 
+            "<ul>
+            	<li>Fine tuning possible due to more options</li>
+            	<li>Allows you to heavily reduce file size if image quality is not a concern</li>
+            	<li>Good google pagespeed scores</li>
+            	<li>Free version will be sufficient for most smaller sites.</li>
+            </ul>"
+            ),
+            
+            'WP Smush - Image Optimization' 		=> array('download'=>'resmushit-image-optimizer', 	'file'=>'wp-smushit/wp-smush.php'),
+            'Imagify Image Optimizer' 				=> array('download'=>'imagify', 					'file'=>'imagify/imagify.php'),
+            'Compress JPEG & PNG images (TinyPNG)' 	=> array('download'=>'tiny-compress-images', 		'file'=>'tiny-compress-images/tiny-compress-images.php'),
+            'Kraken.io Image Optimizer' 			=> array('download'=>'kraken-image-optimizer', 		'file'=>'kraken-image-optimizer/kraken.php'),
+            'EWWW Image Optimizer' 					=> array('download'=>'ewww-image-optimizer', 		'file'=>'ewww-image-optimizer/ewww-image-optimizer.php'),
+            'EWWW Image Optimizer Cloud' 			=> array('download'=>'ewww-image-optimizer-cloud', 'file'=>'ewww-image-optimizer-cloud/ewww-image-optimizer-cloud.php'),
+            'CheetahO Image Optimizer' 				=> array('download'=>'cheetaho-image-optimizer', 	'file'=>'cheetaho-image-optimizer/cheetaho.php'),
+            'Zara 4 Image Compression' 				=> array('download'=>'zara-4', 						'file'=>'zara-4/zara-4.php'),
+            'ImageRecycle pdf & image compression' 	=> array('download'=>'imagerecycle-pdf-image-compression', 'file'=>'imagerecycle-pdf-image-compression/wp-image-recycle.php'),
+            'Prizm Image' 							=> array('download'=> false, 						'file'=>'prizm-image/wp-prizmimage.php'),
+            'CW Image Optimizer' 					=> array('download'=> false, 						'file'=>'cw-image-optimizer/cw-image-optimizer.php'),
+			'Imsanity' 								=> array('download'=> 'imsanity', 					'file'=>'imsanity/imsanity.php'),   
+            'Way2enjoy Image Optimizer and Resize Image – WordPress Image Compression' 	=> 
+            										   array('download'=> 'way2enjoy-compress-images', 	'file'=>'way2enjoy-compress-images/way2enjoy.php'), 
+            'JPG, PNG Compression and Optimization' => array('download'=> 'wp-image-compression',		'file'=>'wp-image-compression/wp-image-compression.php'), 
+            'Highcompress Image Compressor' 		=> array('download'=> 'high-compress', 				'file'=>'high-compress/highcompress.php'),  
+            'Image Optimizer by 10web – Image Optimizer and Compression plugin'
+            										=> array('download'=> 'image-optimizer-wd', 		'file'=>'image-optimizer-wd/io-wd.php'), 
+            'Ultimate Image Optimization Helpers' 	=> array('download'=> 'ultimate-image-optimization-helpers', 'file'=>'ultimate-image-optimization-helpers/ultimate-image-optimization-helpers.php'),   
+            'Pixpie – Intelligent Image Compression'=> array('download'=> 'wp-pixpie', 	'file'=>'wp-pixpie/wp-pixpie-plugin.php'),
+            'Resize Image After Upload' 			=> array('download'=> 'resize-image-after-upload', 	'file'=>'resize-image-after-upload/resize-image-after-upload.php'),
+            'TP Image Optimizer' 					=> array('download'=> 'tp-image-optimizer', 		'file'=>'tp-image-optimizer/tp-image-optimizer.php'),
+        )
+
+		);
+
+
+
+$avia_elements[] = array(
+		"name" 	=> __("Caching Plugins", 'avia_framework'),
+		"desc" 	=> __("Enfold checks if it can detect a website caching plugin and if it can't find a familiar one recommends a few that are known to work great with the theme", 'avia_framework')."<br>"
+		.__("(If you are running a caching plugin that is not detected or your webhost has built in caching ignore this message)", 'avia_framework'),
+		"id" 	=> "image_optimisation_check",
+		"type" 	=> "plugin_check",
+		"slug"	=> "performance",
+		"nodescription"=>true,
+		"no_found"	=>__("We were not able to detect an active caching plugin. It is recommended to use one to speed up your site. Here are a few suggestions:",'avia_framework'),
+		"found"		=>__("We were able to detect a caching plugin. Great! Nothing left to do here ;)",'avia_framework'),
+		"too_many"	=>__("We were able to detect multiple active caching plugins. It is recommended to use only one!",'avia_framework'),
+		
+		
+		"plugins"=> array(
+			
+			'WP Super Cache' => array('download'=>'wp-super-cache', 	'file'=>'wp-super-cache/wp-cache.php', 'desc' => 
+            "<ul>
+            	<li>Great all around caching plugin</li>
+            	<li>Easy setup (usually no need to change the default settings)</li>
+            </ul>"
+            ),
+            
+            
+			'Comet Cache' => array('download'=>'comet-cache', 'file'=>'comet-cache/comet-cache.php', 'desc' => 
+            "<ul>
+            	<li>Plug and Play, no setup necessary</li>
+            	<li>Premium version available</li>
+            </ul>"
+            ),
+            
+            'W3 Total Cache' => array('download'=>'w3-total-cache', 'file'=>'w3-total-cache/w3-total-cache.php', 'desc' => 
+            "<ul>
+            	<li>Fast</li>
+            	<li>Easy to use</li>
+            </ul>"
+            ),
+
+            
+            'Comet Cache Pro' 	=> array('download'=>'comet-cache', 		'file'=>'comet-cache-pro/comet-cache-pro.php'),
+            'Wot Cache' 		=> array('download'=>false, 				'file'=>'wot-cache/wot-cache.php'),
+            'WP Rocket' 		=> array('download'=>false, 				'file'=>'wp-rocket/wp-rocket.php'),
+            'WP Fastest Cache' 	=> array('download'=>'wp-fastest-cache', 	'file'=>'wp-fastest-cache/wpFastestCache.php'),
+            'Simple Cache' 		=> array('download'=>'simple-cache', 		'file'=>'simple-cache/simple-cache.php'),
+            'Cachify' 			=> array('download'=>'cachify', 			'file'=>'cachify/cachify.php'),
+            'Hyper Cache' 		=> array('download'=>'hyper-cache', 		'file'=>'hyper-cache/plugin.php'), 
+            'Cache Enabler' 	=> array('download'=>'cache-enabler', 		'file'=>'cache-enabler/cache-enabler.php'),
+            'Autoptimize' 		=> array('download'=>'autoptimize', 		'file'=>'autoptimize/autoptimize.php'),
+            'Cache Control' 	=> array('download'=>'cache-control', 		'file'=>'cache-control/cache-control.php'), 
+            'Fast Velocity Minify'=> array('download'=>'fast-velocity-minify', 	'file'=>'fast-velocity-minify/fvm.php'), 
+            'Gator Cache' 		=> array('download'=>'gator-cache', 		'file'=>'gator-cache/gator-cache.php'), 
+            'Breeze' 			=> array('download'=>'breeze', 				'file'=>'breeze/breeze.php'),  
+            'Super Static Cache'=> array('download'=>'super-static-cache', 	'file'=>'super-static-cache/super-static-cache.php'),  
+            'YASAKANI Cache' 	=> array('download'=>'yasakani-cache', 		'file'=>'yasakani-cache/yasakani-cache.php.php'),  
+            'Lite Speed Cache' 	=> array('download'=>'litespeed-cache', 	'file'=>'litespeed-cache/litespeed-cache.php'), 
+            'Hummingbird Page Speed Optimization'  => array('download'=>'hummingbird-performance', 	'file'=>'hummingbird-performance/wp-hummingbird.php'),   
+            'Powered Cache' 	=> array('download'=>'powered-cache', 		'file'=>'powered-cache/powered-cache.php'),         
+            'Page Speed Optimization' => array('download'=>'above-the-fold-optimization', 	'file'=>'above-the-fold-optimization/abovethefold.php'),  
+            'Varnish Caching' 	=> array('download'=>'vcaching', 			'file'=>'vcaching/vcaching.php'),
+			'Borlabs Cache' 	=> array('download'=>false, 				'file'=>'borlabs-cache/borlabs-cache.php'),
+        )
+
+		);
+$avia_elements[] = array(
+		"name" 	=> __("Delete old CSS and JS files?", 'avia_framework'),
+		"desc" 	=> __("Check if you want to delete expired CSS and JS files generated by the theme. Only recommended if you are NOT using a caching plugin (since a cached page might still use those files)", 'avia_framework'),
+		"id" 	=> "delete_assets_after_save",
+		"type" 	=> "checkbox",
+		"std"	=> "",
+		"slug"	=> "performance");
 
 
 /*builder*/
@@ -504,6 +845,112 @@ $avia_elements[] =	array(
 
 $avia_elements[] = array("slug"	=> "google", "type" => "visual_group_end", "id" => "avia_google_maps_group_end", "nodescription" => true);
 
+
+/**
+ * Cookie Consent section
+ *
+ * @author tinabillinger
+ * @since 4.3
+ */
+
+
+$avia_elements[] =	array(
+    "name" => __("Cookie Consent Message",'avia_framework'),
+    "desc" => __("Make your site comply with the <a target='_blank' href='http://ec.europa.eu/ipg/basics/legal/cookies/index_en.htm'>EU cookie law</a> by informing users that your site uses cookies. <br><br> You can also use the field to display a one time message not related to cookies if you are using a plugin for this purpose or do not need to inform your customers about the use of cookies.",'avia_framework')." ".__("Colors and styling for the message can be edited in").
+							" <a href='#goto_customizer'>".
+							__("Advanced Styling",'avia_framework').
+							"</a>",
+    "id" => "overlay_description",
+    "std" => "",
+    "slug"	=> "cookie",
+    "type" => "heading",
+    "nodescription"=>true);
+
+$avia_elements[] =	array(
+    "slug"	=> "cookie",
+    "desc" 	=> __("Enable cookie consent message bar", 'avia_framework'),
+    "id" 	=> "cookie_consent",
+    "type" 	=> "checkbox",
+    "std"	=> false,
+);
+
+$avia_elements[] =	array(
+    "slug"	=> "cookie",
+    "name" 	=> __("Message", 'avia_framework'),
+    "desc" 	=> __("Provide a message which indicates that your site uses cookies.", 'avia_framework'),
+    "id" 	=> "cookie_content",
+    "required" => array("cookie_consent",'cookie_consent'),
+    "type" 	=> "textarea",
+    "std"   => "This site uses cookies. By continuing to browse the site, you are agreeing to our use of cookies."
+);
+
+
+$avia_elements[] =	array(
+    "slug"	=> "cookie",
+    "name" 	=> __("Button Text", 'avia_framework'),
+    "desc" 	=> __("The button text to dismiss the message.", 'avia_framework'),
+    "id" 	=> "cookie_buttontext",
+    "required" => array("cookie_consent",'cookie_consent'),
+    "type" 	=> "text",
+    "std" 	=> "OK",
+);
+
+$avia_elements[] =	array(
+    "slug"	=> "cookie",
+    "name" 	=> __("Message Bar Position", 'avia_framework'),
+    "desc" 	=> __("Where on the page should the message bar appear?", 'avia_framework'),
+    "id" 	=> "cookie_position",
+    "type" 	=> "select",
+    "required" => array("cookie_consent",'cookie_consent'),
+    "std" 	=> "bottom",
+    "no_first"=>true,
+    "subtype" => array(
+        __('Top', 'avia_framework') =>'top',
+        __('Bottom', 'avia_framework') =>'bottom',
+        __('Top Left Corner', 'avia_framework') =>'top-left',
+        __('Top Right Corner', 'avia_framework') =>'top-right',
+        __('Bottom Left Corner', 'avia_framework') =>'bottom-left',
+        __('Bottom Right Corner', 'avia_framework') =>'bottom-right',
+    ));
+
+
+$avia_elements[] = array("slug"	=> "cookie", "type" => "visual_group_start", "id" => "avia_cookielink_group_start", "nodescription" => true, "required" => array("cookie_consent",'cookie_consent'));
+
+$avia_elements[] =	array(
+    "slug"	=> "cookie",
+    "name" 	=> __("Learn more link", 'avia_framework'),
+    "desc" 	=> __("Provide a link for further information on cookies or your privacy policy.", 'avia_framework'),
+    "id" 	=> "cookie_infolink",
+    "required" => array("cookie_consent",'cookie_consent'),
+    "type" 	=> "checkbox",
+    "std"	=> false,
+);
+
+$avia_elements[] =	array(
+    "slug"	=> "cookie",
+    "name" 	=> __("Link text", 'avia_framework'),
+    "id" 	=> "cookie_linktext",
+    "class" => "av_2columns av_col_1",
+    "required" => array("cookie_infolink",'cookie_infolink'),
+    "type" 	=> "text",
+    "std" 	=> "Learn more",
+);
+
+
+$avia_elements[] =	array(
+    "slug"	=> "cookie",
+    "name" 	=> __("Link", 'avia_framework'),
+    "id" 	=> "cookie_linksource",
+    "class" => "av_2columns av_col_2",
+    "required" => array("cookie_infolink",'cookie_infolink'),
+    "type" 	=> "text",
+    "std" 	=> 'http://ec.europa.eu/ipg/basics/legal/cookies/index_en.htm',
+);
+$avia_elements[] = array("slug"	=> "cookie", "type" => "visual_group_end", "id" => "avia_cookielink_group_end", "nodescription" => true, "required" => array("cookie_consent",'cookie_consent'));
+
+
+
+
 /*newsletter*/
 
 $avia_elements[] = array(	"name" => 	__("Newsletter via Mailchimp", 'avia_framework'),
@@ -525,6 +972,9 @@ $avia_elements[] =	array(
 						"button-label" => __('Check API Key', 'avia_framework'),
 						"button-relabel" => __('Check Key again & renew Lists', 'avia_framework')
 						);	
+
+
+
 
 
 /*shop*/
@@ -1076,7 +1526,12 @@ $avia_elements[] =	array(
 					"desc" 	=> __("Select which page to display on your Frontpage. If left blank the Blog will be displayed", 'avia_framework'),
 					"id" 	=> "frontpage",
 					"type" 	=> "select",
-					"subtype" => 'page');
+					"subtype" => 'page'
+					);
+
+
+
+
 
 $avia_elements[] =	array(
 					"slug"	=> "avia",
@@ -1087,6 +1542,17 @@ $avia_elements[] =	array(
 					"subtype" => 'page',
 					"required" => array('frontpage','{true}')
 					);
+
+$avia_elements[] =	array(	
+							"desc" => "<strong class='av-text-notice av-prev-el-notice'>".__("Notice: Your blog is currently disabled. You can enable it", 'avia_framework').' <a target="_blank" href="'.admin_url('admin.php?page=avia#goto_performance').'">'.__("here", 'avia_framework').'</a></strong>',
+							"id" => "widgetdescription",
+							"std" => "",
+							"slug"	=> "avia",
+							"type" => "heading",
+							"required" => array('disable_blog','{true}'),
+							"nodescription"=>true);	
+
+
 
 $avia_elements[] =	array(
 					"slug"	=> "avia",
@@ -1146,6 +1612,7 @@ $avia_elements[] = array(	"slug"	=> "avia", "type" => "visual_group_end", "id" =
 
 
 
+$avia_elements[] = array(	"slug"	=> "avia", "type" => "visual_group_start", "id" => "avia_lightbox", "nodescription" => true);
 
 
 
@@ -1158,10 +1625,68 @@ $avia_elements[] = array(
 		"std"	=> "true",
 		"slug"	=> "avia");	
 		
+$avia_elements[] = array(	"slug"	=> "avia", "type" => "visual_group_end", "id" => "avia_lightbox_end", "nodescription" => true);
 
 
+$avia_elements[] = array(	"slug"	=> "avia", "type" => "visual_group_start", "id" => "avia_404_start", "nodescription" => true);
+
+/**
+ * Error 404 page section
+ *
+ * @author tinabillinger
+ * @since 4.3
+ */
+    
+$avia_elements[] =	array(
+    "slug"	=> "avia",
+    "name" => __("Error 404 Page",'avia_framework'),
+    "desc" 	=> __("Click to use any page as your custom Error 404 Page", 'avia_framework'),
+    "id" 	=> "error404_custom",
+    "type" 	=> "checkbox",
+    "std"	=> false,
+);
+
+$avia_elements[] =	array(
+    "slug"	=> "avia",
+    "name" 	=> __("Custom Error 404 Page", 'avia_framework'),
+    "desc" 	=> __("If you are using a caching plugin, make sure to exclude this page from caching.", 'avia_framework'),
+    "required" => array("error404_custom",'error404_custom'),
+    "id" 	=> "error404_page",
+    "type" 	=> "select",
+    "subtype" => 'page'
+);
+
+$avia_elements[] = array(	"slug"	=> "avia", "type" => "visual_group_end", "id" => "avia_404_end", "nodescription" => true);
 
 
+/**
+ * Maintenance mode section
+ *
+ * @author tinabillinger
+ * @since 4.3
+ */
+ 
+$avia_elements[] = array(	"slug"	=> "avia", "type" => "visual_group_start", "id" => "avia_maintain_start", "nodescription" => true);
+
+$avia_elements[] =	array(
+    "name" => __("Maintenance Mode",'avia_framework'),
+    "slug"	=> "avia",
+    "desc" 	=> __("Check to enable maintenance mode and redirect all page requests to a maintenance page of your choice", 'avia_framework'),
+    "id" 	=> "maintenance_mode",
+    "type" 	=> "checkbox",
+    "std"	=> false,
+);
+$avia_elements[] =	array(
+    "slug"	=> "avia",
+    "name" 	=> __("Redirect all users to this page", 'avia_framework'),
+    "desc" 	=> __("Please note that logged in Administrators, Editors and Authors will still be able to access the site", 'avia_framework'),
+    "required" => array("maintenance_mode",'maintenance_mode'),
+    "id" 	=> "maintenance_page",
+    "type" 	=> "select",
+    "subtype" => 'page'
+);
+
+$avia_elements[] = array(	"slug"	=> "avia", "type" => "visual_group_end", "id" => "avia_maintain_end", "nodescription" => true);
 
 
 
@@ -1695,6 +2220,7 @@ $avia_elements[] =	array(	"name" 	=> __("Defines the Font for your body text", '
 				            					
 				            					__('Google fonts', 'avia_framework') => array(
 				            					'Arimo'=>'Arimo',
+				            					'Barlow' => 'Barlow',
 				            					'Cardo'=>'Cardo',
 				            					'Droid Sans'=>'Droid Sans',
 				            					'Droid Serif'=>'Droid Serif',
@@ -2387,21 +2913,39 @@ $avia_elements[] =	array(
 
 $avia_elements[] =	array(
 					"slug"	=> "footer",
-					"name" 	=> __("Default Footer Widgets & Socket Settings", 'avia_framework'),
-					"desc" 	=> __("Do you want to display the footer widgets & footer socket?", 'avia_framework'),
+					"name" 	=> __("Default Footer &amp; Socket Settings", 'avia_framework'),
+					"desc" 	=> __("Do you want to display the footer widgets &amp; footer socket or a page content as footer? This default setting can be changed individually for each page.", 'avia_framework'),
 					"id" 	=> "display_widgets_socket",
 					"type" 	=> "select",
 					"std" 	=> "all",
 					"no_first" => true,
 					"subtype" => array(
-				                    __('Display the footer widgets & socket', 'avia_framework') =>'all',
-				                    __('Display only the footer widgets (no socket)', 'avia_framework') =>'nosocket',
-				                    __('Display only the socket (no footer widgets)', 'avia_framework') =>'nofooterwidgets',
-				                    __("Don't display the socket & footer widgets", 'avia_framework') =>'nofooterarea'
+										__('Widget based footer options', 'avia_framework') => array(
+											__('Display the footer widgets & socket', 'avia_framework')					=> 'all',
+											__('Display only the footer widgets (no socket)', 'avia_framework')			=> 'nosocket',
+											__('Display only the socket (no footer widgets)', 'avia_framework')			=> 'nofooterwidgets',
+											__("Don't display the socket & footer widgets", 'avia_framework')			=> 'nofooterarea',
+										),
+										
+										__('Page based Footer options', 'avia_framework') => array(
+											__('Select a page to display as footer and socket','avia_framework')		=> 'page_in_footer_socket',
+											__('Select a page to display as footer (no socket)','avia_framework')		=> 'page_in_footer',
+										)									
 									)
 					);
 
-
+$avia_elements[] =	array(
+					"slug"			=> "footer",
+					"name"			=> __( "Select page", 'avia_framework' ),
+					"desc"			=> __( "Select a page to display the content of this page in the footer area. You may also use pages created with the advanced layout builder.", 'avia_framework' ),
+					"id"			=> "footer_page",
+					"type"			=> "select",
+					"subtype"		=> 'page',
+					"with_first"	=> true,
+					"required"		=> array( 'display_widgets_socket', '{contains_array}page_in_footer_socket;page_in_footer' ),
+					"std"			=> "",
+					"class"			=> "avia-style",
+					);
 
 
 $avia_elements[] =	array(
@@ -2409,6 +2953,7 @@ $avia_elements[] =	array(
 					"name" 	=> __("Footer Columns", 'avia_framework'),
 					"desc" 	=> __("How many columns should be displayed in your footer", 'avia_framework'),
 					"id" 	=> "footer_columns",
+					"required"	=> array( 'display_widgets_socket', '{contains_array}all;nosocket' ),
 					"type" 	=> "select",
 					"std" 	=> "4",
 					"subtype" => array(
@@ -2419,27 +2964,30 @@ $avia_elements[] =	array(
 						__('5', 'avia_framework') =>'5'));
 
 $avia_elements[] =	array(
-					"slug"	=> "footer",
-					"name" 	=> __("Copyright", 'avia_framework'),
-					"desc" 	=> __("Add a custom copyright text at the bottom of your site. eg:", 'avia_framework')."<br/><strong>&copy; ".__('Copyright','avia_framework')."  - ".get_bloginfo('name')."</strong>",
-					"id" 	=> "copyright",
-					"type" 	=> "text",
-					"std" 	=> ""
+					"slug"		=> "footer",
+					"name"		=> __("Copyright", 'avia_framework'),
+					"desc"		=> __("Add a custom copyright text at the bottom of your site. eg:", 'avia_framework')."<br/><strong>&copy; ".__('Copyright','avia_framework')."  - ".get_bloginfo('name')."</strong>",
+					"id"		=> "copyright",
+					"required"	=> array( 'display_widgets_socket', '{contains_array}all;nofooterwidgets;page_in_footer_socket' ),
+					"type"		=> "text",
+					"std"		=> ""
 
 					);
 
 
 $avia_elements[] = array(
-		"name" 	=> __("Social Icons", 'avia_framework'),
-		"desc" 	=> __("Check to display the social icons defined in", 'avia_framework').
-				" <a href='#goto_social'>".
-				__("Social Profiles", 'avia_framework').
-				"</a> ".
-				 __("in your socket", 'avia_framework'),
-		"id" 	=> "footer_social",
-		"type" 	=> "checkbox",
-		"std"	=> "",
-		"slug"	=> "footer");	
+					"name"		=> __("Social Icons", 'avia_framework'),
+					"desc"		=> __("Check to display the social icons defined in", 'avia_framework').
+										" <a href='#goto_social'>".
+										__("Social Profiles", 'avia_framework').
+										"</a> ".
+										 __("in your socket", 'avia_framework'),
+					"id"		=> "footer_social",
+					"required"	=> array( 'display_widgets_socket', '{contains_array}all;nofooterwidgets;page_in_footer_socket' ),
+					"type"		=> "checkbox",
+					"std"		=> "",
+					"slug"		=> "footer" 
+				);	
 
 
 
@@ -2830,6 +3378,23 @@ $avia_elements[] =	array(
 					"image"	=> "includes/admin/demo_files/demo_images/portfolio-minimal.jpg"
 					);
 
+$avia_elements[] =	array(
+					"slug"	=> "demo",
+					"name" 	=> __("Import: Elegant Portfolio Demo", 'avia_framework'),
+					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-elegant-portfolio/' target='_blank'>{$online_demo}</a></strong></p>"
+								."<h4 class='av-before-plugins'>".__("Recommended Plugins:", 'avia_framework')."</h4><ul>"
+								."<li>".__("None", 'avia_framework')."</li>"
+								."</ul>"
+								."<h4 class='av-before-plugins'>".__("Demo Images included:", 'avia_framework')."</h4><ul>"
+								."<li>".__("All", 'avia_framework')."</li>"
+								."</ul>",
+					'files' => "/includes/admin/demo_files/elegant-portfolio",
+					"id" 	=> "import",
+					"type" 	=> "import",
+					"image"	=> "includes/admin/demo_files/demo_images/elegant-portfolio.jpg"
+					);
+
+
 
 
 
@@ -3088,7 +3653,7 @@ $avia_elements[] =	array(
 
 $avia_elements[] =	array(
 					"slug"	=> "demo",
-					"name" 	=> __("Import: 'Landin Page' Demo", 'avia_framework'),
+					"name" 	=> __("Import: 'Landing Page' Demo", 'avia_framework'),
 					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-landing-page/' target='_blank'>{$online_demo}</a></strong></p>"
 								."<h4 class='av-before-plugins'>".__("Recommended Plugins:", 'avia_framework')."</h4><ul>"
 								."<li>".__("None", 'avia_framework')."</li>"

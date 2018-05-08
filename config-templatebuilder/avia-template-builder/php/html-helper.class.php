@@ -6,7 +6,8 @@
 // Don't load directly
 if ( !defined('ABSPATH') ) { die('-1'); }
 
-if ( !class_exists( 'AviaHtmlHelper' ) ) {
+if ( ! class_exists( 'AviaHtmlHelper' ) ) 
+{
 
 	class AviaHtmlHelper 
 	{
@@ -203,17 +204,17 @@ if ( !class_exists( 'AviaHtmlHelper' ) ) {
 							case 'doesnt_contain': 	if(strpos($value1,$value2) === false) $return = true; break;
 							case 'is_empty_or': 	if(empty($value1) || $value1 == $value2) $return = true; break;
 							case 'not_empty_and': 	if(!empty($value1) && $value1 != $value2) $return = true; break;
-							case 'parent_in_array':			//	$value1 = "value,id"
+							case 'parent_in_array':			//	$value1 = "value,id" or "value"
 										$sep = strpos( $value1, ',' );
-										$val = ( false !== $sep ) ? substr( $value1, 0, $sep ) : '';
+										$val = ( false !== $sep ) ? substr( $value1, 0, $sep ) : $value1;
 										if( ! empty( $val ) )
 										{
 											$return = in_array( $val, explode( ' ', $value2 ) );
 										}
 										break;
-							case 'parent_not_in_array';		//	$value1 = "value,id"
+							case 'parent_not_in_array';		//	$value1 = "value,id" or "value"
 										$sep = strpos( $value1, ',' );
-										$val = ( false !== $sep ) ? substr( $value1, 0, $sep ) : '';
+										$val = ( false !== $sep ) ? substr( $value1, 0, $sep ) : $value1;
 										if( ! empty( $val ) )
 										{
 											$return = ! in_array( $val, explode( ' ', $value2 ) );
@@ -551,7 +552,7 @@ if ( !class_exists( 'AviaHtmlHelper' ) ) {
 		{
 			$output = "";
 			$count = 0;
-			$element['std'] = explode(",", $element['std']);
+			$element['std'] = explode(",", $element['std'] );
 			$value = "";
 			$checked = count(array_unique($element['std'], SORT_STRING));
 			
@@ -571,7 +572,7 @@ if ( !class_exists( 'AviaHtmlHelper' ) ) {
 			}
 			$output .= "</div>";
 			
-			if(!empty($element['sync']))
+			if(isset($element['sync']))
 			{
 				$checked = $checked === 1 ? "checked='checked'" : "";
 				$label	 = __('Apply the same value to all?','avia_framework');
@@ -766,16 +767,28 @@ if ( !class_exists( 'AviaHtmlHelper' ) ) {
 			$allowed_pts = isset($original['posttype']) ? $original['posttype'] : $pt;
 			$allowed_tas = isset($original['taxtype']) ? $original['taxtype'] : $ta;
 			
-			if(in_array('single', $element['subtype']))
+			if( in_array('single', $element['subtype'] ) )
 			{
-				foreach($pt as $key => $type)
+				foreach( $pt as $key => $type )
 				{
-					if(in_array($type, $allowed_pts))
+					if( in_array( $type, $allowed_pts ) )
 					{
-						$original['subtype'] = $type;
-						$html = self::select($original); 
+						$html = AviaHtmlHelper::select_hierarchical_post_types( $element, $type );
 						
-						if( $html ) { AviaHelper::register_template($original['id'].'-'.$type, $html); } else { unset($pt[$key] ); }
+						if( false === $html )
+						{
+							$original['subtype'] = $type;
+							$html = self::select( $original ); 
+						}
+						
+						if( ! empty( $html ) )
+						{ 
+							AviaHelper::register_template( $original['id'] . '-' . $type, $html ); 
+						} 
+						else 
+						{ 
+							unset($pt[$key] ); 
+						}
 					}
 					else
 					{
@@ -790,11 +803,24 @@ if ( !class_exists( 'AviaHtmlHelper' ) ) {
 				{
 					if(in_array($type, $allowed_tas))
 					{
-						$original['subtype'] = 'cat';
-						$original['taxonomy'] = $type;
-					
-						$html = self::select($original); 
-						if( $html ) {AviaHelper::register_template($original['id'].'-'.$type, $html); } else { unset($ta[$key] ); }
+						$html = AviaHtmlHelper::select_hierarchical_taxonomy( $element, $type );
+
+						if( false === $html )
+						{
+							$original['subtype'] = 'cat';
+							$original['taxonomy'] = $type;
+
+							$html = self::select( $original ); 
+						}
+						
+						if( ! empty( $html ) )
+						{
+							AviaHelper::register_template( $original['id'] . '-' . $type, $html ); 
+						} 
+						else 
+						{ 
+							unset( $ta[ $key ] ); 
+						}
 					}
 					else
 					{
@@ -1075,11 +1101,252 @@ if ( !class_exists( 'AviaHtmlHelper' ) ) {
 		}
 		
 		
+		/**
+		 * Return an indented dropdown list for hierarchical post types
+		 * 
+		 * @since 4.2.7
+		 * @added_by Günter
+		 * @param array $element
+		 * @param string $post_type
+		 * @return string|false
+		 */
+		static public function select_hierarchical_post_types( array $element, $post_type = 'page' )
+		{
+			$defaults = array(
+								'id'				=> '',
+								'std'				=> array( '', 0 ),
+								'label'				=> false,			//	for option group
+								'class'				=> '',
+								'hierarchical'		=> 'yes',			//	'yes' | 'no'
+								'post_status'		=> 'publish',		//	array or seperated by comma
+								'option_none_text'	=> '',				//	text to display for "Nothing selected"
+								'option_none_value'	=> '',				//	value for 'option_none_text'
+								'option_no_change'	=> ''				//	value for 'no change' - set to -1 by WP default
+							);
+
+			$element = array_merge( $defaults, $element );
+
+			
+			/**
+			 * return, if element should not display a hierarchical structure
+			 */
+			if( 'no' == $element['hierarchical'] )
+			{
+				return false;
+			}
+			
+			/**
+			 * wp_dropdown_pages() does not support multiple selection by default.
+			 * Would need to overwrite Walker_PageDropdown to add this feature.
+			 * 
+			 * Can be done in future if necessary.
+			 */
+			if( isset( $element['multiple'] ) )
+			{
+				return false;
+			}
+
+			$post_type_object = get_post_type_object( $post_type );
+
+			if ( ! ( $post_type_object instanceof WP_Post_Type && $post_type_object->hierarchical ) )
+			{
+				return false;
+			}
+			
+			/**
+			 * If too many entries limit output and only show non hierarchical
+			 * 
+			 * @since 4.2.7
+			 */
+			$limit = apply_filters( 'avf_dropdown_post_number', 4000, $post_type, $element, 'alb_select_hierarchical' );
+			$count = wp_count_posts( $post_type );
+			if( ! isset( $count->publish ) || ( $count->publish > $limit ) )
+			{
+				return false;
+			}
+			
+			/**
+			 * Make sure we have no spaces
+			 */
+			$post_status = is_array( $element['post_status'] ) ? $element['post_status'] : explode( ',', (string) $element['post_status'] );
+			$element['post_status'] = array_map( function( $value ) { $value = trim($value); return $value;}, $post_status );
+			
+			
+			$new_std = explode( ',', $element['std'], 2 );
+			$selected = ( ( $new_std[0] == $post_type ) && isset( $new_std[1] ) ) ? $new_std[1] : 0;
+			
+			$data_string = "";
+			if( isset( $element['data'] ) ) 
+			{
+				foreach( $element['data'] as $key => $data )
+				{
+					$data_string .= " data-" . $key . "='" . $data . "'";
+				}
+			}
+			
+			$multi = $multi_class = '';
+			if( isset( $element['multiple'] ) ) 
+			{
+				$multi_class = " avia_multiple_select";
+				$multi = ' multiple="multiple" size="' . $element['multiple'] . '" ';
+			}
+
+			$dropdown_args = array(
+							'post_type'				=> $post_type,
+							'exclude_tree'			=> false,
+							'selected'				=> $selected,
+							'name'					=> $element['id'],
+							'id'					=> $element['id'],
+							'show_option_none'		=> $element['option_none_text'],
+							'option_none_value'		=> $element['option_none_value'],
+							'show_option_no_change' => $element['option_no_change'],
+							'sort_column'			=> 'post_title',
+							'echo'					=> 0,
+							'class'					=> $element['class'] . $multi_class,	
+							'post_status'			=> $element['post_status']
+					//		'depth'					=> 0, 
+					//		'child_of'				=> 0,
+					//		'value_field'			=> 'ID',	
+							);
+			
+			/**
+			 * Allow to add info for non public post status
+			 */
+			add_filter( 'list_pages', __CLASS__ . '::handler_wp_list_pages', 10, 2 );
+			
+			$html = wp_dropdown_pages( $dropdown_args );
+			
+			remove_filter( 'list_pages', __CLASS__ . '::handler_wp_list_pages', 10, 2 );
+
+			$html = str_replace( '<select', '<select ' . $multi . $data_string, $html );
+			
+			return $html;
+		}		
 		
 		
-		
-		
-		
+		/**
+		 * Add post status in case of non public 
+		 * 
+		 * @since 4.2.7
+		 * @added_by Günter
+		 * @param string $title
+		 * @param object $page
+		 * @return string
+		 */
+		static public function handler_wp_list_pages( $title, $page )
+		{
+			if( $page instanceof WP_Post || ( isset( $page->ID ) && isset( $page->post_status ) ) )
+			{
+				if( 'publish' != $page->post_status )
+				{
+					$title .= ' (' . ucfirst( get_post_status( $page->ID ) ) . ')';
+				}
+			}
+			
+			return $title;
+		}
+
+		/**
+		 * Return an indented dropdown list of terms for hierarchical $taxonomy
+		 * 
+		 * @since 4.2.7
+		 * @added_by Günter
+		 * @param array $element
+		 * @param string $taxonomy
+		 * @return string|false
+		 */
+		static public function select_hierarchical_taxonomy( array $element, $taxonomy = 'category' )
+		{
+			$defaults = array(
+								'id'				=> '',
+								'std'				=> array( '', 0 ),
+								'label'				=> false,			//	for option group
+								'class'				=> '',
+								'hierarchical'		=> 'yes',			//	'yes' | 'no'
+								'option_none_text'	=> '',				//	text to display for "Nothing selected"
+								'option_none_value'	=> '',				//	value for 'option_none_text'
+								'option_no_change'	=> ''				//	value for 'no change' - set to -1 by WP default
+							);
+
+			$element = array_merge( $defaults, $element );
+			
+			/**
+			 * return, if element should not display a hierarchical structure
+			 */
+			if( 'no' == $element['hierarchical'] )
+			{
+				return false;
+			}
+			
+			/**
+			 * wp_dropdown_pages() does not support multiple selection by default.
+			 * Would need to overwrite Walker_CategoryDropdown to add this feature.
+			 * 
+			 * Can be done in future if necessary.
+			 */
+			if( isset( $element['multiple'] ) )
+			{
+				return false;
+			}
+			
+			$obj_ta = get_taxonomy( $taxonomy );
+			
+			if ( ! $obj_ta instanceof WP_Taxonomy )
+			{
+				return false;
+			}
+			
+			$new_std = explode( ',', $element['std'], 2 );
+			$selected = ( ( $new_std[0] == $taxonomy ) && isset( $new_std[1] ) ) ? $new_std[1] : 0;
+			
+			$data_string = "";
+			if( isset( $element['data'] ) ) 
+			{
+				foreach( $element['data'] as $key => $data )
+				{
+					$data_string .= " data-" . $key . "='" . $data . "'";
+				}
+			}
+			
+			$multi = $multi_class = '';
+			if( isset( $element['multiple'] ) ) 
+			{
+				$multi_class = " avia_multiple_select";
+				$multi = ' multiple="multiple" size="' . $element['multiple'] . '" ';
+			}
+			
+			$args = array(
+						'taxonomy'				=> $taxonomy,
+						'hierarchical'			=> true,
+						'depth'					=> 20,
+						'selected'				=> $selected,
+						'name'					=> $element['id'],
+						'id'					=> $element['id'],
+						'show_option_none'		=> $element['option_none_text'],
+						'option_none_value'		=> $element['option_none_value'],
+						'show_option_no_change' => $element['option_no_change'],
+						'orderby'				=> 'name',
+						'order'					=> 'ASC',
+						'echo'					=> false,
+						'class'					=> $element['class'] . $multi_class,
+						'hide_empty'			=> false,
+						'show_count'			=> true,
+						'hide_if_empty'			=> false,
+//						'child_of'				=> 0,
+//						'exclude'				=> '',
+//						'include'				=> '',
+//						'tab_index'				=> 0,
+//						'value_field'			=> 'term_id',
+					);
+			
+			$html = wp_dropdown_categories( $args );
+
+			$html = str_replace( '<select', '<select ' . $multi . $data_string, $html );
+			
+			return $html;
+		}
+
+
 		/**
          * 
          * The select method renders a single select element: it either lists custom values, all wordpress pages or all wordpress categories
@@ -1092,6 +1359,7 @@ if ( !class_exists( 'AviaHtmlHelper' ) ) {
 			$select 	= __('Select','avia_framework' );
 			$parents 	= array();
 			$fake_val 	= "";
+			$entries	= array();
 			
 			if($element['subtype'] == 'cat')
 			{
@@ -1116,7 +1384,7 @@ if ( !class_exists( 'AviaHtmlHelper' ) ) {
 			{
 				global $wpdb;
 				$table_name = $wpdb->prefix . "posts";
-	 			$limit 		= apply_filters( 'avf_dropdown_post_number', 4000 );
+	 			$limit 		= apply_filters( 'avf_dropdown_post_number', 4000, $element['subtype'], $element, 'alb_select' );
 	    		
 	    		if( isset( AviaHtmlHelper::$cache['entry_' . $limit] ) && isset( AviaHtmlHelper::$cache['entry_' . $limit][$element['subtype']] ) )
 	    		{
@@ -1124,9 +1392,29 @@ if ( !class_exists( 'AviaHtmlHelper' ) ) {
 	    		}
 	    		else
 	    		{	
-					$prepare_sql = "SELECT distinct ID, post_title FROM {$table_name} WHERE post_status = 'publish' AND post_type = '".$element['subtype']."' ORDER BY post_title ASC LIMIT {$limit}";
+					$post_status = ( ! empty( $element['post_status'] ) ) ? $element['post_status'] : 'publish';
+					$post_status = explode( ',', $post_status );
+					$post_status = array_map( function( $value ) { $value = trim($value); return "'{$value}'";}, $post_status );
+					$post_status = implode( ', ',$post_status );
+					
+					$prepare_sql = "SELECT distinct ID, post_title, post_status FROM {$table_name} WHERE post_status IN ( {$post_status} ) AND post_type = '".$element['subtype']."' ORDER BY post_title ASC LIMIT {$limit}";
 					$prepare_sql = apply_filters('avf_dropdown_post_query', $prepare_sql, $table_name, $limit, $element);
 					$entries 	= $wpdb->get_results($prepare_sql);
+					
+					/**
+					 * Allow to filter the page titles
+					 * 
+					 * @since 4.2.7
+					 */
+					add_filter( 'list_pages', __CLASS__ . '::handler_wp_list_pages', 10, 2 );
+			
+					foreach ( $entries as &$entry ) 
+					{
+						$entry->post_title = apply_filters( 'list_pages', $entry->post_title, $entry );
+					}
+					
+					remove_filter( 'list_pages', __CLASS__ . '::handler_wp_list_pages', 10, 2 );
+					
 					AviaHtmlHelper::$cache['entry_' . $limit][$element['subtype']] = $entries;
 	    		}	
 	    		//$entries 	= $wpdb->get_results( "SELECT ID, post_title FROM {$table_name} WHERE post_status = 'publish' AND post_type = '".$element['subtype']."' ORDER BY post_title ASC LIMIT {$limit}" );
@@ -1174,6 +1462,11 @@ if ( !class_exists( 'AviaHtmlHelper' ) ) {
 				}
 			}
 			
+			if( empty( $entries ) ) 
+			{
+				return;
+			}
+			
 			$data_string = "";
 			if(isset($element['data'])) 
 			{
@@ -1182,8 +1475,6 @@ if ( !class_exists( 'AviaHtmlHelper' ) ) {
 					$data_string .= "data-".$key."='".$data."'";
 				}
 			}
-			
-			if(empty($entries)) return;
 			
 			$multi = $multi_class = "";
 			if(isset($element['multiple'])) 
@@ -1628,10 +1919,10 @@ if ( !class_exists( 'AviaHtmlHelper' ) ) {
 		
 		
 		
-		static function number_array($from = 0, $to = 100, $steps = 1, $array = array(), $label = "", $value_prefix = "")
+		static function number_array($from = 0, $to = 100, $steps = 1, $array = array(), $label = "", $value_prefix = "", $value_postfix = "")
 		{
 			for ($i = $from; $i <= $to; $i += $steps) {
-			    $array[$i.$label] = $value_prefix.$i;
+			    $array[$i.$label] = $value_prefix.$i.$value_postfix;
 			}
 		
 			return $array;

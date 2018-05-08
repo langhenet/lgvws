@@ -27,6 +27,7 @@ if ( !class_exists( 'avia_sc_animated_numbers' ) )
 				$this->config['shortcode'] 	= 'av_animated_numbers';
 				$this->config['tooltip'] 	= __('Display an animated Number with subtitle', 'avia_framework' );
 				$this->config['preview'] 	= true;
+				$this->config['disabling_allowed'] = true;
 			}
 		
 		

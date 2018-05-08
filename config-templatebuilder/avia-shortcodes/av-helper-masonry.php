@@ -323,11 +323,11 @@ if ( ! class_exists( 'avia_masonry' ) )
                     $alt = get_post_meta($thumb_ID, '_wp_attachment_image_alt', true);
                     $alt = !empty($alt) ? esc_attr($alt) : '';
                     $title = esc_attr(get_the_title($thumb_ID));
-
+					
 					if(isset($attachment[0]))
 					{
-						$img_html  = '<img src="'.$attachment[0].'" title="'.$title.'" alt="'.$alt.'" />';
-						$img_style = 'style="background-image: url('.$attachment[0].');"';
+						if($size == 'flex')  $img_html  = '<img src="'.$attachment[0].'" title="'.$title.'" alt="'.$alt.'" />';
+						if($size == 'fixed') $img_style = 'style="background-image: url('.$attachment[0].');"';
 						$class_string .= " av-masonry-item-with-image";
 					}
 					

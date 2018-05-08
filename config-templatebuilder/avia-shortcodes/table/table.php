@@ -33,18 +33,19 @@ if ( !class_exists( 'avia_sc_table' ) )
 				$this->config['shortcode_nested'] = array('av_row', 'av_cell','av_button');
 				$this->config['tooltip'] 	= __('Creates a data or pricing table', 'avia_framework' );
 				$this->config['preview'] 	= false;
+				$this->config['disabling_allowed'] = true;
+			}
+			
+			
+			function admin_assets()
+			{
+				$ver = AviaBuilder::VERSION;
+				wp_enqueue_script('avia_table_js' , AviaBuilder::$path['assetsURL'].'js/avia-table.js' , array('avia_modal_js'), $ver, TRUE );
 			}
 			
 			
 			function extra_assets()
 			{
-				if(is_admin())
-				{
-					$ver = AviaBuilder::VERSION;
-					wp_enqueue_script('avia_table_js' , AviaBuilder::$path['assetsURL'].'js/avia-table.js' , array('avia_modal_js'), $ver, TRUE );
-					//wp_enqueue_style( 'avia-table-style' , $this->$builder->assetsURL.'css/avia-table.css');
-				}
-				
 				//load css
 				wp_enqueue_style( 'avia-module-table' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/table/table.css' , array('avia-layout'), false );
 			}

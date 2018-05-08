@@ -45,7 +45,8 @@ if ( !class_exists( 'aviaShortcodeTemplate' ) ) {
 			 * layout_children:		shortcodes that must be included to have a valid element when we need to repair the content of a page. 
 			 *						Nested shortcodes must be added, if they are part of the empty element. 
 			 *						E.g. tab_section need tab_sub_sections but these are not nested !
-			 * 
+			 * forced_load_objects	array of string: e.g. layerslider must be loaded right after init hook, but when we cannot know if we need it because an element is loaded dynamically
+			 *						(e.g. postcontent) we can add a unique string to tell layerslider to load, when this shortcode is found in content
 			 */
 			$this->config = array(
 							'type'					=>	'content',		//		'layout' | 'content'   needed in syntax error correction
@@ -56,12 +57,25 @@ if ( !class_exists( 'aviaShortcodeTemplate' ) ) {
 							'first_in_row'			=>	'',				//		'' | attribute to add/remove if first element in a layout line
 							'auto_repair'			=>	'yes',			//		'yes' | 'no'	disable for nested parent element if structure of element complex (more than 1 subelement and nested again like av_table)
 							'layout_children'		=>	array(),		
-							'shortcode_nested'		=>	array()
+							'shortcode_nested'		=>	array(),
+							'forced_load_objects'	=>	array()			//		"name" of external objects that must be included when we find this shortcode in content
 						);
 			
 			
 			$this->shortcode_insert_button();
 			$this->extra_config();
+			
+			/**
+			 * Add the unique ID field
+			 */
+			$this->elements[] = array(	
+							"name" 	=> __("Unique ID for ALB element",'avia_framework' ),
+							"desc" 	=> __("stores the unique ID for the element",'avia_framework' ),
+							"id" 	=> aviaElementManager::ELEMENT_UID,
+							"type" 	=> "hidden",
+							"std" 	=> ""
+						);
+		
 		}
 		
 		/**
@@ -79,9 +93,16 @@ if ( !class_exists( 'aviaShortcodeTemplate' ) ) {
 		{
 			$this->create_asset_array();
 			$this->actions_and_filters();
-			$this->extra_assets();
+			
+			if(is_admin() || AviaHelper::is_ajax())
+			{
+				$this->admin_assets();
+			}
+			
 			$this->register_shortcodes(); 
 			
+			//set up loading of assets. wait until post id is known
+			add_action('wp', array(&$this, 'extra_asset_check') , 10 );
 		}
 
 
@@ -141,7 +162,28 @@ if ( !class_exists( 'aviaShortcodeTemplate' ) ) {
 
 
 
+		/**
+		* function that gets executed if the shortcode is allowed. allows shortcode to load extra assets like css or javascript files in the admin area
+		*/
 
+		public function admin_assets(){}
+		
+		
+		/**
+		* function that checks if an asset is disabled and if not loads all extra assets
+		*/
+
+		public function extra_asset_check()
+		{
+			//generic check if the assets for this element should be loaded
+			if(!is_admin() && ( empty( $this->builder->disabled_assets[ $this->config['shortcode'] ]) || empty( $this->config['disabling_allowed'] ) ) )
+			{
+				$this->extra_assets();
+			}
+		}
+		
+		
+		
 		/**
 		* function that gets executed if the shortcode is allowed. allows shortcode to load extra assets like css or javascript files
 		*/
@@ -220,7 +262,12 @@ if ( !class_exists( 'aviaShortcodeTemplate' ) ) {
 		public function popup_editor($var)
 		{
 
-			if(empty($this->elements)) die();
+			if( empty( $this->elements ) )	{ die(); }
+			
+			if( ( 1 == count( $this->elements ) ) && isset( $this->elements[0]['id'] ) && ( aviaElementManager::ELEMENT_UID == $this->elements[0]['id'] ) )
+			{
+				die();
+			}
 			
 			if(current_theme_supports('avia_template_builder_custom_css'))
 			{
@@ -345,8 +392,29 @@ if ( !class_exists( 'aviaShortcodeTemplate' ) ) {
 			
 			
 			$meta = apply_filters('avf_template_builder_shortcode_meta', $meta, $atts, $content, $shortcodename);
-
-            $content = $this->shortcode_handler($atts, $content, $shortcodename, $meta);
+			
+			
+			//if the element is disabled do load a notice for admins but do not show the info for other visitors)
+			
+			if(empty( $this->builder->disabled_assets[ $this->config['shortcode'] ]) || empty( $this->config['disabling_allowed'] ) )
+			{
+				$content = $this->shortcode_handler($atts, $content, $shortcodename, $meta);
+			}
+			else if (current_user_can('edit_posts'))
+			{
+				$content = "";
+				$default_msg = 	'<strong>'.__('Admin notice for:' )."</strong><br>".
+								$this->config['name']."<br><br>".
+								__('This element was disabled in your theme settings. You can activate it here:' )."<br>".
+							   '<a target="_blank" href="'.admin_url('admin.php?page=avia#goto_performance').'">'.__("Performance Settings",'avia_framework' )."</a>";
+				
+				$msg 		= isset($this->config['shortcode_disabled_msg']) ? $this->config['shortcode_disabled_msg'] : $default_msg;
+				$content 	= "<span class='av-shortcode-disabled-notice'>{$msg}</span>";
+			}
+			else
+			{
+				$content 	= "";
+			}
 
             return $content;
 		}

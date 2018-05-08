@@ -87,7 +87,24 @@ if ( ! class_exists( 'avia_sc_audio_player' ) )
 			$this->config['tinyMCE'] 		= array( 'disable' => "true" );
 			$this->config['drag-level'] 	= 3;
 			$this->config['preview']		= false;
-		}		
+			$this->config['disabling_allowed'] = true;
+			$this->config['disabled']		= array(
+			'condition' =>( avia_get_option('disable_mediaelement') == 'disable_mediaelement' ), 
+			'text'   => __( 'This element is disabled in your theme options. You can enable it in Enfold &raquo; Performance', 'avia_framework' ));
+													
+													
+			
+		}
+		
+		function extra_assets()
+		{
+			//load css
+			wp_enqueue_style( 'avia-module-audioplayer' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/audio-player/audio-player.css' , array('avia-layout'), false );
+			
+				//load js
+			wp_enqueue_script( 'avia-module-audioplayer' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/audio-player/audio-player.js' , array('avia-shortcodes'), false, TRUE );
+
+		}
 		
 		
 		/**
@@ -101,6 +118,24 @@ if ( ! class_exists( 'avia_sc_audio_player' ) )
 		*/
 		public function popup_elements()
 		{
+			//if the element is disabled
+			if($this->config['disabled']['condition'] == true)
+			{
+				$this->elements = array(
+					
+					array(
+							"name" 	=> __("Element disabled",'avia_framework' ),
+							"desc" 	=> $this->config['disabled']['text'].
+							'<br/><br/><a target="_blank" href="'.admin_url('admin.php?page=avia#goto_performance').'">'.__("Enable it here",'avia_framework' )."</a>",
+							"type" 	=> "heading",
+							"description_class" => "av-builder-note av-error",
+							)
+						);
+				
+				return;
+			}
+			
+			
 			$this->elements = array(
 
 					array(

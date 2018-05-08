@@ -13,6 +13,7 @@ $google_fonts = apply_filters('avf_google_heading_font', array(	__('Default', 'a
 						'Bad Script'=>'Bad Script',
 						'Baumans'=>'Baumans',
 						'Bangers'=>'Bangers',
+						'Barlow' => 'Barlow:400,500,600,700',
 						'Bitter'=>'Bitter',
 	
 						'Cabin'=>'Cabin',
@@ -21,6 +22,7 @@ $google_fonts = apply_filters('avf_google_heading_font', array(	__('Default', 'a
 						'Caveat'=>'Caveat:400,700',
 						'Coda'=>'Coda',
 						'Codystar'=>'Codystar:300,400',
+						'Cormorant Garamond'=>'Cormorant Garamond:300,400,700',
 						'Comfortaa'=>'Comfortaa:300,400,700',
 						'Coustard'=>'Coustard',
 						'Gruppo'=>'Gruppo',
@@ -45,7 +47,7 @@ $google_fonts = apply_filters('avf_google_heading_font', array(	__('Default', 'a
 						'Heebo' => 'Heebo:100,400,700',
 						'Herr Von Muellerhoff' => 'Herr Von Muellerhoff',
 						
-						
+						'IBM Plex Serif'=>'IBM Plex Serif:300,400,700',
 						'Inconsolata'=>'Inconsolata',
 	
 						'Josefin Sans' => 'Josefin Sans',

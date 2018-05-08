@@ -5,6 +5,8 @@ if( ! defined( 'LS_ROOT_FILE' ) ) {
 	exit;
 }
 
+include LS_ROOT_PATH . '/helpers/admin.ui.tools.php';
+
 // Custom capability
 $custom_capability = $custom_role = get_option('layerslider_custom_capability', 'manage_options');
 
@@ -33,7 +35,7 @@ $notifications = array(
 	'permissionError' => __('Your account does not have the necessary permission you have chosen, and your settings have not been saved in order to prevent locking yourself out of the plugin.', 'LayerSlider'),
 	'permissionSuccess' => __('Permission changes has been updated.', 'LayerSlider'),
 	'googleFontsUpdated' => __('Your Google Fonts library has been updated.', 'LayerSlider'),
-	'generalUpdated' => __('Your settings has been updated.', 'LayerSlider')
+	'generalUpdated' => __('Your settings have been updated.', 'LayerSlider')
 );
 ?>
 
@@ -225,17 +227,21 @@ $notifications = array(
 		<!-- Advanced -->
 		<div class="ls-global-settings">
 			<figure>
-				<?php _e('Troubleshooting &amp; Advanced Settings', 'LayerSlider') ?>
-				<span class="warning"><?php _e('Don’t change these options without experience, incorrect settings might break your site.', 'LayerSlider') ?></span>
+				<?php _e('These options can help to increase performance and avoid 3rd party issues.', 'LayerSlider') ?>
+				<span class="warning"><?php _e('Be careful with these options as incorrect settings might break your site.', 'LayerSlider') ?></span>
 			</figure>
 			<form method="post" class="ls-box km-tabs-inner">
 				<?php wp_nonce_field('save-advanced-settings'); ?>
 				<input type="hidden" name="ls-save-advanced-settings">
-
+				<figure class="ls-first">
+					<?php _e('Performance Related Options') ?>
+				</figure>
 				<table>
 					<tr class="ls-cache-options">
 						<td><?php _e('Use slider markup caching', 'LayerSlider') ?></td>
-						<td><input type="checkbox" name="use_cache" <?php echo get_option('ls_use_cache', true) ? 'checked="checked"' : '' ?>></td>
+						<td>
+							<?php echo lsGetOptionField('checkbox', 'use_cache', true) ?>
+						</td>
 						<td class="desc">
 							<?php _e('Enabled caching can drastically increase the plugin performance and spare your server from unnecessary load. LayerSlider will serve fresh, non-cached versions for admins and anyone who can manage sliders.', 'LayerSlider') ?>
 							<a href="<?php echo wp_nonce_url('?page=layerslider&action=empty_caches', 'empty_caches') ?>" class="button button-small"><?php _e('Empty caches', 'LayerSlider') ?></a>
@@ -243,37 +249,70 @@ $notifications = array(
 					</tr>
 					<tr>
 						<td><?php _e('Include scripts in the footer', 'LayerSlider') ?></td>
-						<td><input type="checkbox" name="include_at_footer" <?php echo get_option('ls_include_at_footer', false) ? 'checked="checked"' : '' ?>></td>
+						<td>
+							<?php echo lsGetOptionField('checkbox', 'include_at_footer', false) ?>
 						<td class="desc"><?php _e('Including resources in the footer can improve load times and solve other type of issues. Outdated themes might not support this method.', 'LayerSlider') ?></td>
 					</tr>
 					<tr>
 						<td><?php _e('Conditional script loading', 'LayerSlider') ?></td>
-						<td><input type="checkbox" name="conditional_script_loading" <?php echo get_option('ls_conditional_script_loading', false) ? 'checked="checked"' : '' ?>></td>
+						<td>
+							<?php echo lsGetOptionField('checkbox', 'conditional_script_loading', false) ?>
+						</td>
 						<td class="desc"><?php _e('Increase your site’s performance by loading resources only when necessary. Outdated themes might not support this method.', 'LayerSlider') ?></td>
 					</tr>
 					<tr>
 						<td><?php _e('Concatenate output', 'LayerSlider') ?></td>
-						<td><input type="checkbox" name="concatenate_output" <?php echo get_option('ls_concatenate_output', false) ? 'checked="checked"' : '' ?>></td>
+						<td>
+							<?php echo lsGetOptionField('checkbox', 'concatenate_output', false) ?>
+						</td>
 						<td class="desc"><?php _e('Concatenating the plugin’s output could solve issues caused by custom filters your theme might use.', 'LayerSlider') ?></td>
 					</tr>
-					<tr id="ls_use_custom_jquery">
-						<td><?php _e('Use Google CDN version of jQuery', 'LayerSlider') ?></td>
-						<td><input type="checkbox" name="use_custom_jquery" <?php echo get_option('ls_use_custom_jquery', false) ? 'checked="checked"' : '' ?>></td>
-						<td class="desc"><?php _e('This option will likely solve “Old jQuery” issues, but can easily have other side effects. Use it only when it is necessary.', 'LayerSlider') ?></td>
+					<tr>
+						<td><?php _e('Defer JavaScript loading', 'LayerSlider') ?></td>
+						<td>
+							<?php echo lsGetOptionField('checkbox', 'defer_scripts', false) ?>
+						</td>
+						<td class="desc"><?php _e('Eliminates render-blocking JavaScript files, but might also delay a bit displaying sliders above the fold.', 'LayerSlider') ?></td>
+					</tr>
+				</table>
+				<figure>
+					<?php _e('Troubleshooting &amp; Advanced Settings', 'LayerSlider') ?>
+				</figure>
+				<table>
+					<tr>
+						<td><?php _e('RocketScript compatibility', 'LayerSlider') ?></td>
+						<td>
+							<?php echo lsGetOptionField('checkbox', 'rocketscript_ignore', false) ?>
+						</td>
+						<td class="desc"><?php _e('Enable this option to ignore LayerSlider files by CloudFront’s Rocket Loader, which can help overcoming potential issues.', 'LayerSlider') ?></td>
+
 					</tr>
 					<tr>
-						<td><?php _e('Put JS includes to body', 'LayerSlider') ?></td>
-						<td><input type="checkbox" name="put_js_to_body" <?php echo get_option('ls_put_js_to_body', false) ? 'checked="checked"' : '' ?>></td>
-						<td class="desc"><?php _e('This is the most common workaround for jQuery related issues, and is recommended when you experience problems with jQuery.', 'LayerSlider') ?></td>
+						<td><?php _e('Always load all JavaScript files', 'LayerSlider') ?></td>
+						<td>
+							<?php echo lsGetOptionField('checkbox', 'load_all_js_files', false) ?>
+						</td>
+						<td class="desc"><?php _e('Enabling this option will likely help if you’re experiencing issues with CDN services or JavaScript minify/combine features in a 3rd party plugin. However, it can also negatively impact performance since resources will not be loaded conditionally.', 'LayerSlider' ) ?></td>
 					</tr>
 					<tr>
 						<td><?php _e('Use GreenSock (GSAP) sandboxing', 'LayerSlider') ?></td>
-						<td><input type="checkbox" name="gsap_sandboxing" <?php echo get_option('ls_gsap_sandboxing', false) ? 'checked="checked"' : '' ?>></td>
+						<td>
+							<?php echo lsGetOptionField('checkbox', 'gsap_sandboxing', false) ?>
+						</td>
 						<td class="desc"><?php _e('Enabling GreenSock sandboxing can solve issues when other plugins are using multiple/outdated versions of this library.', 'LayerSlider') ?></td>
+					</tr>
+					<tr id="ls_use_custom_jquery">
+						<td><?php _e('Use Google CDN version of jQuery', 'LayerSlider') ?></td>
+						<td>
+							<?php echo lsGetOptionField('checkbox', 'use_custom_jquery', false) ?>
+						</td>
+						<td class="desc"><?php _e('This option will likely solve “Old jQuery” issues, but can easily have other side effects. Use it only when it is necessary.', 'LayerSlider') ?></td>
 					</tr>
 					<tr>
 						<td><?php _e('Scripts priority', 'LayerSlider') ?></td>
-						<td><input name="scripts_priority" value="<?php echo get_option('ls_scripts_priority', 3) ?>" placeholder="3"></td>
+						<td>
+							<?php echo lsGetOptionField('text', 'scripts_priority', 3, array( 'placeholder' => 3 ) ) ?>
+						</td>
 						<td class="desc"><?php _e('Used to specify the order in which scripts are loaded. Lower numbers correspond with earlier execution.', 'LayerSlider') ?></td>
 					</tr>
 				</table>

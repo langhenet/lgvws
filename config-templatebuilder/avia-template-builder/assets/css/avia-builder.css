@@ -68,6 +68,7 @@ background-color: #D54E21;
 color:#fff;
 padding:10px;
 margin-top:10px;
+display:block;
 }
 
 .av-builder-note.avia-name-description{
@@ -2146,6 +2147,10 @@ height: auto;
 .av_catalogue .avia-element-label, .av_productlist .avia-element-label{display:block;}
 .avia-disabled-aviaTBaviaTBdisabled span, .avia-disabled-true span{  color: #D54E21; }
 
+/*button row*/
+
+.av_buttonrow .avia_inner_shortcode img, .av_productlist .avia_inner_shortcode img{margin:0;}
+.av_buttonrow .avia-element-label, .av_productlist .avia-element-label{display:block;}
 
 
 /* All Mobile Sizes (devices and browser) */
@@ -2568,12 +2573,15 @@ span.av-tab-title-text-wrap-full {
 }
 
 
-
-
-
-
-
-
+/* Search Element */
+.avia-sc-search-fakeinput {
+	padding: 4px;
+	border: 1px solid #ccc;
+	margin-right: 3px;
+	width: 140px;
+	height: 19px;
+	text-align: left;
+}
 
 
 

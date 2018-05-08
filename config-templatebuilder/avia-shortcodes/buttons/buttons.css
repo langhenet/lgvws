@@ -88,3 +88,16 @@ min-width: 200px;
 
 .av-icon-on-hover .avia_button_icon{ width: 0px; overflow: hidden; display: inline-block; height: 1em;  -webkit-transition: all 0.2s ease-in-out; transition:all 0.2s ease-in-out; opacity: 0; }
 .av-icon-on-hover:hover .avia_button_icon{ width: 1.5em; opacity: 1;}
+
+#top .av-button-notext{min-width: 0;}
+#top .av-button-notext .avia_button_icon{left:0;}
+
+.av-button-label-on-hover{
+-moz-box-sizing: content-box;
+-webkit-box-sizing: content-box;
+box-sizing: content-box;
+}        
+.av-button-label-on-hover.avia-button.avia-size-small{padding:0; line-height: 30px; width: 32px;}
+.av-button-label-on-hover.avia-button.avia-size-medium{padding:0; line-height: 36px; width: 38px;}
+.av-button-label-on-hover.avia-button.avia-size-large{padding:0; line-height: 42px; width: 44px;}
+.av-button-label-on-hover.avia-button.avia-size-x-large{padding:0; line-height: 66px; width: 68px;}

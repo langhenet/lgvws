@@ -1512,11 +1512,11 @@ class avia_instagram_widget extends WP_Widget {
 					$media_array = array_filter( $media_array, array( $this, 'images_only' ) );
 
 				// filters for custom classes
-				$ulclass = esc_attr( apply_filters( 'aviw_list_class', 'av-instagram-pics av-instagram-size-' . $size ) );
-				$rowclass = esc_attr( apply_filters( 'aviw_row_class', 'av-instagram-row' ) );
-				$liclass = esc_attr( apply_filters( 'aviw_item_class', 'av-instagram-item' ) );
-				$aclass = esc_attr( apply_filters( 'aviw_a_class', '' ) );
-				$imgclass = esc_attr( apply_filters( 'aviw_img_class', '' ) );
+				$ulclass 	= esc_attr( apply_filters( 'aviw_list_class', 'av-instagram-pics av-instagram-size-' . $size ) );
+				$rowclass 	= esc_attr( apply_filters( 'aviw_row_class', 'av-instagram-row' ) );
+				$liclass 	= esc_attr( apply_filters( 'aviw_item_class', 'av-instagram-item' ) );
+				$aclass 	= esc_attr( apply_filters( 'aviw_a_class', '' ) );
+				$imgclass 	= esc_attr( apply_filters( 'aviw_img_class', '' ) );
 
 				?><div class="<?php echo esc_attr( $ulclass ); ?>"><?php
 				
@@ -1538,10 +1538,9 @@ class avia_instagram_widget extends WP_Widget {
 						$targeting = "";
 						$item['link'] = $item['original'];
 					}
-	
+
 					echo '<div class="'. $liclass .'">';
-					echo '<a href="'. esc_url( $item['link'] ) .'" target="'. esc_attr( $targeting ) .'"  class="'. $aclass .'">';
-					echo '<img src="'. esc_url( $item[$size] ) .'"  alt="'. esc_attr( $item['description'] ) .'" title="'. esc_attr( $item['description'] ).'"  class="'. $imgclass .'"/>';
+					echo '<a href="'. esc_url( $item['link'] ) .'" target="'. esc_attr( $targeting ) .'"  class="'. $aclass .' '. $imgclass .'" title="'. esc_attr( $item['description'] ).'" style="background-image:url('.esc_url( $item[$size] ).');">';
 					echo '</a></div>';
 					
 					if($rowcount % $columns == 0 || $last_id == $item['id'])
@@ -1573,7 +1572,7 @@ class avia_instagram_widget extends WP_Widget {
 		$instance = wp_parse_args( (array) $instance, array( 
 			'title' => __( 'Instagram', 'avia_framework' ), 
 			'username' => '', 
-			'size' => 'large', 
+			'size' => 'thumbnail', 
 			'link' => __( 'Follow Me!', 'avia_framework' ), 
 			'number' => 9, 
 			'target' => 'lightbox' , 
@@ -1593,7 +1592,7 @@ class avia_instagram_widget extends WP_Widget {
 		<p><label for="<?php echo $this->get_field_id( 'username' ); ?>"><?php _e( 'Username', 'avia_framework' ); ?>: <input class="widefat" id="<?php echo $this->get_field_id( 'username' ); ?>" name="<?php echo $this->get_field_name( 'username' ); ?>" type="text" value="<?php echo $username; ?>" /></label></p>
 		<p><label for="<?php echo $this->get_field_id( 'number' ); ?>"><?php _e( 'Number of photos (maximum 12)', 'avia_framework' ); ?>: <input class="widefat" id="<?php echo $this->get_field_id( 'number' ); ?>" name="<?php echo $this->get_field_name( 'number' ); ?>" type="text" value="<?php echo $number; ?>" /></label></p>
 		<p><label for="<?php echo $this->get_field_id( 'columns' ); ?>"><?php _e( 'Number of columns', 'avia_framework' ); ?>: <input class="widefat" id="<?php echo $this->get_field_id( 'columns' ); ?>" name="<?php echo $this->get_field_name( 'columns' ); ?>" type="text" value="<?php echo $columns; ?>" /></label></p>
-		<p><label for="<?php echo $this->get_field_id( 'size' ); ?>"><?php _e( 'Photo size', 'avia_framework' ); ?>:</label>
+		<p><label for="<?php echo $this->get_field_id( 'size' ); ?>"><?php _e( 'Thumbnail size', 'avia_framework' ); ?>:</label>
 			<select id="<?php echo $this->get_field_id( 'size' ); ?>" name="<?php echo $this->get_field_name( 'size' ); ?>" class="widefat">
 				<option value="thumbnail" <?php selected( 'thumbnail', $size ) ?>><?php _e( 'Thumbnail', 'avia_framework' ); ?></option>
 				<option value="small" <?php selected( 'small', $size ) ?>><?php _e( 'Small', 'avia_framework' ); ?></option>
@@ -1634,8 +1633,9 @@ class avia_instagram_widget extends WP_Widget {
 
 		$username = strtolower( $username );
 		$username = str_replace( '@', '', $username );
+        $transient_prefix = "u";
 
-		if ( false === ( $instagram = get_transient( 'av_insta1-'.sanitize_title_with_dashes( $username ) ) ) ) {
+        if ( false === ( $instagram = get_transient( 'av_insta2-' . $transient_prefix . '-' . sanitize_title_with_dashes( $username ) ) ) ) {
 
 			//$remote = wp_remote_get( 'http://instagram.com/'.trim( $username ) );
 			$remote = wp_remote_get( 'https://www.instagram.com/'.trim( $username ), array( 'sslverify' => false, 'timeout' => 60 ) );
@@ -1653,8 +1653,8 @@ class avia_instagram_widget extends WP_Widget {
 			if ( ! $insta_array )
 				return new WP_Error( 'bad_json', __( 'Instagram has returned invalid data.', 'avia_framework' ) );
 
-			if ( isset( $insta_array['entry_data']['ProfilePage'][0]['user']['media']['nodes'] ) ) {
-				$images = $insta_array['entry_data']['ProfilePage'][0]['user']['media']['nodes'];
+			if ( isset( $insta_array['entry_data']['ProfilePage'][0]['graphql']['user']['edge_owner_to_timeline_media']['edges'] ) ) {
+				$images = $insta_array['entry_data']['ProfilePage'][0]['graphql']['user']['edge_owner_to_timeline_media']['edges'];
 			} else {
 				return new WP_Error( 'bad_json_2', __( 'Instagram has returned invalid data.', 'avia_framework' ) );
 			}
@@ -1667,42 +1667,42 @@ class avia_instagram_widget extends WP_Widget {
 			foreach ( $images as $image ) {
 
 				// see https://github.com/stevenschobert/instafeed.js/issues/549
-				$image['thumbnail_src'] = preg_replace( "/^https:/i", "", $image['thumbnail_src'] );
-				$image['thumbnail'] = $image['thumbnail_src'];
-				$image['small'] = $image['thumbnail_src'];
-				$image['large'] = $image['thumbnail_src'];
-				$image['display_src'] = preg_replace( "/^https:/i", "", $image['display_src'] );
+				//$image['thumbnail_src'] = preg_replace( "/^https:/i", "", $image['thumbnail_src'] );
+				$image['thumbnail'] = preg_replace( '/^https?\:/i', '', $image['node']['thumbnail_resources'][0]['src'] );
+				$image['small'] = preg_replace( '/^https?\:/i', '', $image['node']['thumbnail_resources'][2]['src'] );
+				$image['large'] = preg_replace( '/^https?\:/i', '', $image['node']['thumbnail_resources'][4]['src'] );
+				$image['display_src'] = preg_replace( '/^https?\:/i', '', $image['node']['display_url'] );
 
-				if ( $image['is_video'] == true ) {
+				if ( $image['node']['is_video'] == true ) {
 					$type = 'video';
 				} else {
 					$type = 'image';
 				}
 
 				$caption = __( 'Instagram Image', 'avia_framework' );
-				if ( ! empty( $image['caption'] ) ) {
-					$caption = $image['caption'];
+				if ( ! empty( $image['node']['edge_media_to_caption']['edges'][0]['node']['text'] ) ) {
+					$caption = wp_kses( $image['node']['edge_media_to_caption']['edges'][0]['node']['text'], array() );
 				}
 
 				$instagram[] = array(
 					'description'   => $caption,
-					'link'		  	=> '//instagram.com/p/' . $image['code'],
-					'time'		  	=> $image['date'],
-					'comments'	  	=> $image['comments']['count'],
-					'likes'		 	=> $image['likes']['count'],
-					'thumbnail'	 	=> $image['thumbnail'],
-					'small'			=> $image['small'],
-					'large'			=> $image['large'],
-					'original'		=> $image['display_src'],
+					'link'		  	=> trailingslashit( '//instagram.com/p/' . $image['node']['shortcode'] ),
+					'time'		  	=> $image['node']['taken_at_timestamp'],
+					'comments'	  	=> $image['node']['edge_media_to_comment']['count'],
+					'likes'		 	=> $image['node']['edge_liked_by']['count'],
+					'thumbnail'	 	=> preg_replace( '/^https?\:/i', '', $image['node']['thumbnail_resources'][0]['src'] ),
+					'small'			=> preg_replace( '/^https?\:/i', '', $image['node']['thumbnail_resources'][2]['src'] ),
+					'large'			=> preg_replace( '/^https?\:/i', '', $image['node']['thumbnail_resources'][4]['src'] ),
+					'original'		=> preg_replace( '/^https?\:/i', '', $image['node']['display_url'] ),
 					'type'		  	=> $type,
-					'id'			=> $image['id']
+					'id'			=> $image['node']['id']
 				);
 			}
 
 			// do not set an empty transient - should help catch private or empty accounts
 			if ( ! empty( $instagram ) ) {
 				$instagram = base64_encode( serialize( $instagram ) );
-				set_transient( 'av_insta1-'.sanitize_title_with_dashes( $username ), $instagram, apply_filters( 'null_instagram_cache_time', HOUR_IN_SECONDS*2 ) );
+                set_transient( 'av_insta2-' . $transient_prefix . '-' . sanitize_title_with_dashes( $username ), $instagram, apply_filters( 'null_instagram_cache_time', HOUR_IN_SECONDS * 2 ) );
 			}
 		}
 

@@ -13562,7 +13562,7 @@ msgstr "Wähle hier eine benutzerdefinierte Schriftfarbe für Ihren Button"
 # @ LayerSlider
 #: enfold/config-templatebuilder/avia-shortcodes/buttons_fullwidth.php:23
 msgid "Fullwidth Button"
-msgstr "Button über die voller Breite"
+msgstr "Button über die volle Breite"
 
 #: enfold/config-templatebuilder/avia-shortcodes/buttons_fullwidth.php:29
 msgid "Creates a colored button that stretches across the full width"

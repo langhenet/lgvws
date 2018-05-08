@@ -35,7 +35,22 @@ if(!function_exists('avia_events_tempalte_paths'))
 		
 		if(in_array($template, $redirect))
 		{
-			$file = AVIA_EVENT_PATH . "views/".$template;
+			$file = AVIA_EVENT_PATH . "views/" . $template;
+			
+			/**
+			 * https://github.com/KriesiMedia/wp-themes/issues/1676
+			 * 
+			 * with 4.2.5 we added a better support for mobile view, which broke output of this plugin. We revert to old style.
+			 * 
+			 * @since 4.2.7
+			 */
+			if( class_exists( 'Tribe__Tickets_Plus__Main' ) )
+			{
+				if( 'single-event.php' == $template )
+				{
+					$file = AVIA_EVENT_PATH . 'views/single-event-no-mobile.php';
+				}
+			}
 		}
 		
 		return $file;

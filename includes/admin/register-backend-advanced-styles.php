@@ -80,7 +80,7 @@ $advanced['underline'] = array(
 	"name"			=> "&lt;u&gt;",
 	"group" 		=> __("HTML Tags",'avia_framework'),
 	"description"	=> __("Change the styling for all &lt;u&gt; (underline) tags",'avia_framework'),
-	"selector"		=> array("#top [sections] u, #top [sections] span[style*='text-decoration: underline;'], #top [sections] span[style*='text-decoration:underline;']"=> ""),
+	"selector"		=> array("#top [sections] u, #top [sections] span[style*='underline;']"=> ""),
 	"sections"		=> true,
 	"hover"			=> false,
 	"edit"			=> array(	'color' 			=> array('type' => 'colorpicker', 'name'=> __("Font Color",'avia_framework')), 
@@ -257,17 +257,18 @@ $advanced['main_menu'] = array(
 	"description"	=> __("Change the styling for your main menu links",'avia_framework'),
 	"selector"		=> array(
 		/*trick: hover is used inside the selector to prevent it from beeing applied when :hover is checked*/
-		"#top #header[hover]_main_alternate" => array(  "background_color" => "background-color: %background_color%;" ),
-		"#top #header .av-main-nav > li[hover] " => array(  "font_family" => "font-family: %font_family%;" ),
-		"#top #header .av-main-nav > li[hover] > a" => "",
-		".av_seperator_small_border .av-main-nav > li[hover] > a > .avia-menu-text,
-		#top #wrap_all #header #menu-item-search[hover]>a
+		"#top #header[hover]_main_alternate [active]" => array(  "background_color" => "background-color: %background_color%;" ),
+		"#top #header .av-main-nav > li[active][hover] " => array(  "font_family" => "font-family: %font_family%;" ),
+		"#top #header .av-main-nav > li[active][hover] > a" => "",
+		".av_seperator_small_border .av-main-nav > li[active][hover] > a > .avia-menu-text,
+		#top #wrap_all #header #menu-item-search[active][hover]>a
 		
 		"=> array(  "border_color" => "border-color: %border_color%;" ),
-		"#top #header .av-main-nav > li[hover] > a .avia-menu-text, #top #header .av-main-nav > li[hover] > a .avia-menu-subtext"=> array(  "color" => "color: %color%;" )
+		"#top #header .av-main-nav > li[active][hover] > a .avia-menu-text, #top #header .av-main-nav > li[active][hover] > a .avia-menu-subtext"=> array(  "color" => "color: %color%;" )
 	),
 	"sections"		=> false,
 	"hover"			=> true,
+	"active"		=> ".current-menu-item",
 	"edit"			=> array(	'color' 			=> array('type' => 'colorpicker', 'name'=> __("Font Color",'avia_framework')), 
 								'background_color' 	=> array('type' => 'colorpicker', 'name'=> __("Background Color",'avia_framework')),
 								'border_color' 		=> array('type' => 'colorpicker', 'name'=> __("Border Color",'avia_framework')),
@@ -556,6 +557,41 @@ $advanced['slideshow_button'] = array(
 							)
 );
 
+$advanced['cookie_consent'] = array(
+    "id"			=> "cookie_consent", //needs to match array key
+    "name"			=> "Cookie Consent Message Bar",
+    "group" 		=> __("Misc",'avia_framework'),
+    "description"	=> __("Change the styling for your cookie consent message bar",'avia_framework'),
+    "selector"		=> array(".avia-cookie-consent"=> ""),
+    "sections"		=> false,
+    "hover"			=> false,
+    "edit"			=> array(
+        'background_color' 	=> array('type' => 'colorpicker', 'name'=> __("Background Color",'avia_framework')),
+        'color' 			=> array('type' => 'colorpicker', 'name'=> __("Font Color",'avia_framework')),
+        'font_size' 		=> array('type' => 'size', 'range' => '8-80', 'name'=> __("Font Size",'avia_framework')),
+        'font_weight' 		=> array('type' => 'select', 'name'=> __("Font Weight",'avia_framework'), 'options' => $weight),
+        'line_height' 		=> array('type' => 'size', 'range' => '0.7-2', 'increment' => 0.1, 'unit' => 'em',  'name'=> __("Line Height",'avia_framework')),
+        'letter_spacing' 	=> array('type' => 'size', 'range' => array(-10,20), 'increment' => 1, 'unit' => 'px',  'name'=> __("Letter Spacing",'avia_framework')),
+        'text_transform' 	=> array('type' => 'select', 'name'=> __("Text Transform",'avia_framework'), 'options' => $transform )
+    )
+);
+
+$advanced['cookie_consent_button'] = array(
+    "id"			=> "cookie_consent_button", //needs to match array key
+    "name"			=> "Cookie Consent Button",
+    "group" 		=> __("Misc",'avia_framework'),
+    "description"	=> __("Change the styling for your cookie consent button",'avia_framework'),
+    "selector"		=> array(".avia-cookie-consent #avia_cookie_consent"=> ""),
+    "sections"		=> false,
+    "hover"			=> false,
+    "edit"			=> array(
+        'background_color' 	=> array('type' => 'colorpicker', 'name'=> __("Button Background Color",'avia_framework')),
+        'color' 			=> array('type' => 'colorpicker', 'name'=> __("Button Font Color",'avia_framework')),
+        'font_size' 		=> array('type' => 'size', 'range' => '8-80', 'name'=> __("Font Size",'avia_framework')),
+        'font_weight' 		=> array('type' => 'select', 'name'=> __("Font Weight",'avia_framework'), 'options' => $weight),
+        'text_transform' 	=> array('type' => 'select', 'name'=> __("Text Transform",'avia_framework'), 'options' => $transform )
+    )
+);
 
 //body font size
 //dropdown menu

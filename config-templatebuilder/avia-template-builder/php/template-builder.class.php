@@ -33,6 +33,14 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 		public static $full_el_no_section = array();
 		
 		/**
+		 * Define all supported post types
+		 * 
+		 * @since 4.3
+		 * @var array 
+		 */
+		protected $supported_post_types;
+		
+		/**
 		 *
 		 * @var array 
 		 */
@@ -80,7 +88,22 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 		 */
 		protected $posts_shortcode_parser_state;
 
+		
+		/**
+		 *
+		 * @since 4.3
+		 * @var aviaElementManager 
+		 */
+		protected $element_manager;
 
+		/**
+		 *
+		 * @since 4.3
+		 * @var aviaAssetManager 
+		 */
+		protected $asset_manager_class;
+		
+		
 		/**
 		 * Tabs in backend for categorizing shortcode buttons in ALB
 		 * 
@@ -152,6 +175,23 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 		 */
 		protected $alb_nonce_added;
 		
+		/**
+		 * Array that contains all the names of shortcodes that can be dissabled automatically
+		 * 
+		 * @kriesi
+		 * @since 4.3
+		 * @var boolean 
+		 */
+		public $may_be_disabled_automatically = array();
+		
+		/**
+		 * Array that contains all the names of shortcodes with disabled assets that should not be loaded on the frontend
+		 * 
+		 * @kriesi
+		 * @since 4.3
+		 * @var boolean 
+		 */
+		public $disabled_assets = array();
 		
 		/**
 		 * Return the instance of this class
@@ -183,6 +223,8 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 			$this->shortcode_parents = array();
 			$this->shortcode_parser = null;
 			$this->posts_shortcode_parser_state = '';
+			$this->element_manager = null;
+			$this->asset_manager_class = null;
 			$this->tabs = array();
 			$this->shortcode_buttons = array();
 			$this->builderTemplate = null;
@@ -192,6 +234,7 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 			$this->revision_id = 0;
 			$this->alb_magic_wand_button = false;
 			$this->alb_nonce_added = false;
+			$this->supported_post_types = array( 'post', 'portfolio', 'page', 'product' );
 			
 			$this->paths['pluginPath'] 	= trailingslashit( dirname( dirname(__FILE__) ) );
 			$this->paths['pluginDir'] 	= trailingslashit( basename( $this->paths['pluginPath'] ) );
@@ -205,7 +248,7 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 			AviaBuilder::$path = $this->paths;
 			AviaBuilder::$default_iconfont = apply_filters('avf_default_iconfont', array( 'entypo-fontello' => 
 																						array(
-																						'append'	=> '?v=3',
+																						'append'	=> '',
 																						'include' 	=> $this->paths['assetsPath'].'fonts',
 																						'folder'  	=> $this->paths['assetsURL'].'fonts',
 																						'config'	=> 'charmap.php',
@@ -219,6 +262,8 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 			
 			add_action('init', array(&$this, 'loadLibraries') , 5 ); 
 			add_action('init', array(&$this, 'init') , 10 );
+			add_action('wp', array(&$this, 'frontend_asset_check') , 5 );
+			
 			
 			//save and restore meta information if user restores a revision
 			add_action('wp_creating_autosave', array( $this, 'avia_builder_creating_autosave'), 10, 1 );
@@ -243,9 +288,12 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 			unset( $this->shortcode );
 			unset( $this->shortcode_parents );
 			unset( $this->shortcode_parser );
+			unset( $this->element_manager );
+			unset( $this->asset_manager_class );
 			unset( $this->tabs );
 			unset( $this->shortcode_buttons );
 			unset( $this->builderTemplate );
+			unset( $this->supported_post_types );
 		}
 		
 				
@@ -285,6 +333,9 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 				AviaBuilder::$mode = esc_attr($_GET['avia_mode']);
 			}
 			
+	 		//activate the element manager
+			$this->element_manager();
+			
 			$this->createShortcode();
 			
 			$this->addActions();
@@ -303,6 +354,7 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 	 		//activate asset manager
 			$this->asset_manager();
 	 		
+
 	 	}
 		
 		
@@ -326,6 +378,7 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 			require_once( $this->paths['pluginPath'].'php/pointer.class.php' );
 			require_once( $this->paths['pluginPath'].'php/shortcode-helper.class.php' ); 
 			require_once( $this->paths['pluginPath'].'php/shortcode-parser.class.php' ); 
+			require_once( $this->paths['pluginPath'].'php/element-manager.class.php' );
 			require_once( $this->paths['pluginPath'].'php/generic-helper.class.php' );
 			require_once( $this->paths['pluginPath'].'php/html-helper.class.php' );
 			require_once( $this->paths['pluginPath'].'php/meta-box.class.php' );
@@ -351,12 +404,6 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 		{
 			foreach ($paths as $path)
 			{
-				//include single files
-				foreach(glob($path.'*.php') as $file)
-				{
-					require_once( $file ); 
-				}
-				
 				//include modules (eg files within folders with the same name)
 				foreach(glob($path.'*', GLOB_ONLYDIR) as $folder)
 				{
@@ -366,6 +413,12 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 					{
 						include( $php_file );
 					}
+				}
+				
+				//include single files
+				foreach(glob($path.'*.php') as $file)
+				{
+					require_once( $file ); 
 				}
 			}
 		}
@@ -461,7 +514,10 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 			wp_enqueue_style( 'avia-builder-style' , $this->paths['assetsURL'].'css/avia-builder.css');
 			wp_enqueue_style( 'wp-color-picker' );
 			
-			if( is_rtl() )
+			/**
+			 * @since 4.2.3 we support columns in rtl order (before they were ltr only). To be backward comp. with old sites use this filter.
+			 */
+			if( is_rtl() && ( 'yes' == apply_filters( 'avf_rtl_column_support', 'yes' ) ) )
 			{
 				wp_enqueue_style( 'avia-builder-rtl-style' , $this->paths['assetsURL'].'css/avia-builder-rtl.css');
 			}
@@ -613,6 +669,17 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 			}
 			
 			return $this->shortcode_parser;
+		}
+		
+		/**
+		 * Returns a filtered array of supported post types
+		 * 
+		 * @since 4.3
+		 * @return array
+		 */
+		public function get_supported_post_types()
+		{
+			return apply_filters( 'avf_alb_supported_post_types', $this->supported_post_types );
 		}
 
 		/**
@@ -774,6 +841,90 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 			return true;
 		}
 		
+		
+		/**
+		 * Returns the ALB shortcodes for the requested post
+		 * 
+		 * @since 4.2.3
+		 * @param int $post_id
+		 * @return string
+		 */
+		public function get_posts_alb_content( $post_id )
+		{
+			return get_post_meta( $post_id, '_aviaLayoutBuilderCleanData', true );
+		}
+		
+		/**
+		 * Returns the correct content for a page/post/...
+		 * ALB content, post content (or in future releases any ALB structure)
+		 * 
+		 * @since 4.3
+		 * @param int $post_id
+		 * @param WP_Post $post 
+		 * @return string|false
+		 */
+		public function get_post_content( $post_id, $post = null )
+		{
+			$builder_stat = $this->get_alb_builder_status( $post_id );
+						
+			if( 'active' == $builder_stat )
+			{
+				return $this->get_posts_alb_content( $post_id );
+			}
+			
+			if( is_null( $post ) || ( ! $post instanceof WP_Post ) )
+			{
+				$post = get_post( $post_id );
+			}
+			
+			if( $post instanceof WP_Post )
+			{
+				return $post->post_content;
+			}
+			
+			return false;
+		}
+
+		/**
+		 * Updates the ALB or normal post content depending on ALB status
+		 * 
+		 * @since 4.3
+		 * @param int $post_id
+		 * @param string $content
+		 */
+		public function update_post_content( $post_id, $content )
+		{
+			$builder_stat = $this->get_alb_builder_status( $post_id );
+						
+			if( 'active' == $builder_stat )
+			{
+				$this->save_posts_alb_content( $post_id, $content );
+			}
+			else
+			{
+				$new_data = array(
+								'ID'           => $post_id,
+								'post_content' => $content
+							);
+
+				wp_update_post( $new_data );
+			}
+		}
+
+		/**
+		 * Save the ALB shortcodes for the given post in the post meta field
+		 * 
+		 * @since 4.2.3
+		 * @param int $post_id
+		 * @param string $content
+		 * @return boolean
+		 */
+		public function save_posts_alb_content( $post_id, $content )
+		{
+			return update_post_meta( $post_id, '_aviaLayoutBuilderCleanData', $content );
+		}
+		
+		
 		/**
 		 *set fullwidth elements that need to interact with section shortcode
 		 **/
@@ -829,7 +980,11 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 			$myPointers = new AviaPointer($pointers);
 		}
 		
-		
+		/**
+		 * 
+		 * @since 4.2.3
+		 * @return aviaAssetManager
+		 */
 		public function asset_manager()
 		{
 			if(empty($this->asset_manager_class))
@@ -841,6 +996,36 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 			return $this->asset_manager_class;
 		}
 		
+		/**
+		 * Get instance of the element manager
+		 * 
+		 * @since 4.3
+		 * @return aviaElementManager
+		 */
+		public function element_manager()
+		{
+			if( empty( $this->element_manager ) )
+			{
+				//activate element_manager
+				$this->element_manager = new aviaElementManager();
+			}
+			
+			return $this->element_manager;
+		}
+		
+		
+		/**
+		 * allows to filter which shortcode assets to display in the frontend. waits for the "wp" hook so the post id is already available
+		 * 
+		 * @since 4.3
+		 */
+		public function frontend_asset_check()
+		{
+		 	//before creating shortcodes allow to filter the assets that are loaded in the frontend
+		 	//pass shortcode names like "av_video" or "av_audio" in an array
+		 	$this->disabled_assets = apply_filters( 'avf_disable_frontend_assets', $this->disabled_assets );
+		}
+
 		
 		/**
 		 *array mapping helper that returns the config arrays of a shortcode
@@ -868,7 +1053,10 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 		        $classes .= ' av-no-drag-drop ';
 	        }
 			
-			if( is_rtl() )
+			/**
+			 * @since 4.2.3 we support columns in rtl order (before they were ltr only). To be backward comp. with old sites use this filter.
+			 */
+			if( is_rtl() && ( 'yes' == apply_filters( 'avf_rtl_column_support', 'yes' ) ) )
 	        {
 				$classes .= ' rtl ';
 			}
@@ -883,6 +1071,7 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 		 **/
 	 	public function createShortcode()
 	 	{
+		 			 	
 	 		$children  = array();
 			foreach(get_declared_classes() as $class)
 			{
@@ -903,6 +1092,13 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 			    	 {
 			    	 	$this->shortcode_class[$class]->init(); 
 			    	 	$this->shortcode[$this->shortcode_class[$class]->config['shortcode']] = $class;
+			    	 	
+			    	 	
+			    	 	//save if the asset may be disabled automatically
+			    	 	if(!empty( $this->shortcode_class[$class]->config['disabling_allowed']) && $this->shortcode_class[$class]->config['disabling_allowed'] !== "manually") 
+			    	 	{
+				    	 	$this->may_be_disabled_automatically[] = $this->shortcode_class[$class]->config['shortcode'] ;
+			    	 	}
 			    	 	
 			    	 	//save shortcode as allowed by default. if we only want to display the shortcode in tinymce remove it from the list but keep the class instance alive
 			    	 	if(empty($this->shortcode_class[$class]->config['tinyMCE']['tiny_only']))
@@ -1045,7 +1241,8 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 		
 		
 		/**
-		 * Balance the shortcode in the post content of a non ALB page
+		 * Balance the shortcode in the post content of a non ALB page.
+		 * @since 4.3: Also check page content for ALB shortcodes and add a unique id to shortcodes
 		 * 
 		 * @since 4.2.1
 		 * @param array $data
@@ -1062,8 +1259,19 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 			
 			$parser_state = isset( $_POST['_avia_sc_parser_state'] ) ?  $_POST['_avia_sc_parser_state'] : '';
 			$parser_state = $this->set_posts_shortcode_parser_state( $parser_state );
-				
 			
+			$post_id = (int)$postarr['ID'];
+			
+			/**
+			 * Check the hidden container, balance the shortcodes and add missing id's
+			 */
+			if( isset( $_POST['_aviaLayoutBuilderCleanData'] ) ) 
+			{
+				$this->get_shortcode_parser()->set_builder_save_location( 'clean_data' );
+				$_POST['_aviaLayoutBuilderCleanData'] = ShortcodeHelper::clean_up_shortcode( $_POST['_aviaLayoutBuilderCleanData'], 'balance_only' );
+				$_POST['_aviaLayoutBuilderCleanData'] = $this->element_manager->set_element_ids_in_content( $_POST['_aviaLayoutBuilderCleanData'], $post_id );
+			}				
+				
 			if( 'active' == $builder_stat )
 			{
 				return $data;
@@ -1075,6 +1283,12 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 			$this->post_content = isset( $data['post_content'] ) ? trim( $data['post_content'] ) : '';
 			$this->get_shortcode_parser()->set_builder_save_location( 'content' );
 			$this->post_content = ShortcodeHelper::clean_up_shortcode( $this->post_content, 'balance_only' );
+			
+			/**
+			 * Scan content and add missing unique id'S
+			 */
+			$this->post_content = $this->element_manager->set_element_ids_in_content( $this->post_content, $post_id );
+			
 			$data['post_content'] = $this->post_content;
 			
 			return $data;
@@ -1089,8 +1303,6 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 		 */
 		public function handler_alb_metabox_filter( array $boxes )
 		{
-			$s = AviaBuilder::$mode;
-			
 			if( 'debug' == AviaBuilder::$mode )
 			{
 				return $boxes;
@@ -1125,6 +1337,16 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 				 */
 				$builder_stat = $this->get_alb_builder_status();
 				$parser_state = $this->get_posts_shortcode_parser_state();
+				$post_id = (int) $_POST['post_ID'];
+				
+				
+				/**
+				 * Save the hidden container already checked and updated in handler_before_save_alb_post_data
+				 */
+                if( isset( $_POST['_aviaLayoutBuilderCleanData'] ) ) 
+                {
+					$this->save_posts_alb_content( $post_id, $_POST['_aviaLayoutBuilderCleanData'] );
+                }				
 				
 				/**
 				 * Copy balanced shortcodes to content field so the shortcode tree can be built
@@ -1149,16 +1371,7 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 				{
 					$_POST['content'] = $this->post_content;
 				}
-                
-				/**
-				 * Save the hidden container and balance the shortcodes
-				 */
-                if(isset($_POST['_aviaLayoutBuilderCleanData'])) 
-                {
-					$this->get_shortcode_parser()->set_builder_save_location( 'clean_data' );
-                	update_post_meta( (int)$_POST['post_ID'], '_aviaLayoutBuilderCleanData', ShortcodeHelper::clean_up_shortcode( $_POST['_aviaLayoutBuilderCleanData'], 'balance_only' ) );
-                }
-                
+
 				
                 //extract all ALB shortcodes from the post array and store them so we know what we are dealing with when the user opens a page. 
                 //usesfull for special elements that we might need to render outside of the default loop like fullscreen slideshows
@@ -1173,7 +1386,9 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 				 * We always save this tree so we can be sure to have the correct state of the page when we load this post meta.
 				 */
 				$tree = ShortcodeHelper::build_shortcode_tree( $_POST['content'] );
-				update_post_meta( (int) $_POST['post_ID'], '_avia_builder_shortcode_tree', $tree );
+				update_post_meta( $post_id, '_avia_builder_shortcode_tree', $tree );
+				
+				$this->element_manager->update_usage_from_post_content( $_POST['content'], $post_id );
 				
 				/**
 				 * Now we can save the postmeta data to revision post
@@ -1415,7 +1630,7 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 			$output .= "	</div>";
 			
 			
-			$clean_data = get_post_meta($post_ID, '_aviaLayoutBuilderCleanData', true);
+			$clean_data = $this->get_posts_alb_content( $post_ID );
 			// $clean_data = htmlentities($clean_data, ENT_QUOTES, get_bloginfo( 'charset' )); //entity-test: added htmlentities
 			
 			
@@ -1478,12 +1693,23 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 		protected function create_shortcode_button($shortcode)
 		{
 			$class  = "";
+			$shortcode = apply_filters('avf_shortcode_insert_button_backend', $shortcode);
 			
+			//disable element based on post type
 			if(!empty($shortcode['posttype']) && $shortcode['posttype'][0] != AviaHelper::backend_post_type())
 			{
 				$shortcode['tooltip'] = $shortcode['posttype'][1];
 				$class .= "av-shortcode-disabled ";
 			}
+			
+			//disable element based on condition
+			if(!empty($shortcode['disabled']) && $shortcode['disabled']['condition'] === true)
+			{
+				$shortcode['tooltip'] = $shortcode['disabled']['text'];
+				$class .= "av-shortcode-disabled ";
+			}
+			
+			
 			
 			
 			$icon   = isset($shortcode['icon']) ? '<img src="'.$shortcode['icon'].'" alt="'.$shortcode['name'].'" />' : "";
@@ -1568,6 +1794,14 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 			if(isset($_POST['text'])) $text = stripslashes( $_POST['text'] ); 
 	        
 			$text = do_shortcode($text);
+			
+			/**
+			 * Allow third party to modify content
+			 * 
+			 * @since 4.3.1
+			 */
+			$text = apply_filters( 'avf_text_to_preview', $text );
+			
 			echo $text;
 			exit();
 			
@@ -1806,6 +2040,102 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 					update_metadata( 'post', $this->revision_id, $meta_field, $builder_meta_data );
 				}
 			}
+		}
+		
+		/**
+		 * Gets a post, executes shortcodes and returns the content
+		 * This function is intended to be called from elements that render post content during output of a page
+		 * It is important, that this function returns the complete HTML as needed on a blank page
+		 * e.g. displaying a page as footer
+		 * 
+		 * The content of this function is based on enfold\template-builder.php
+		 * 
+		 * @since 4.2.3
+		 * @param WP_Post $wp_post
+		 * @return string
+		 */
+		public function compile_post_content( WP_Post $wp_post )
+		{
+			
+			/**
+			 * Save values to be able to restore in case we have recursive calls
+			 */
+			$old_tree = ShortcodeHelper::$tree;
+			$old_shortcode_index = ShortcodeHelper::$shortcode_index;
+			
+			
+			$out = '';
+			
+			$builder_stat = $this->get_alb_builder_status( $wp_post->ID );
+			
+			if( ( 'active' == $builder_stat ) && ! is_preview() )
+			{
+				/**
+				 * Filter the content for content builder elements
+				 */
+				$content = apply_filters( 'avia_builder_precompile', $this->get_posts_alb_content( $wp_post->ID ) );
+				ShortcodeHelper::$tree = get_post_meta( $wp_post->ID, '_avia_builder_shortcode_tree', true );
+			}
+			else
+			{
+				/**
+				 * Non ALB page and
+				 * also if user views a preview we must use the content because WordPress doesn't update the post meta field
+				 */
+				$content = apply_filters( 'avia_builder_precompile', $wp_post->post_content );
+
+				
+				/**
+				 * Update the shortcode tree to reflect the current page structure.
+				 * Prior make sure that shortcodes are balanced.
+				 */
+				$this->get_shortcode_parser()->set_builder_save_location( 'none' );
+				$content = ShortcodeHelper::clean_up_shortcode( $content, 'balance_only' );
+				ShortcodeHelper::$tree = ShortcodeHelper::build_shortcode_tree( $content );
+			}
+			
+			ShortcodeHelper::$shortcode_index = 0;
+			
+			/**
+			 * check first builder element. if its a section or a fullwidth slider we dont need to create the default opening divs here
+			 */
+			$first_el = isset(ShortcodeHelper::$tree[0]) ? ShortcodeHelper::$tree[0] : false;
+			$last_el  = ! empty( ShortcodeHelper::$tree )   ? end( ShortcodeHelper::$tree ) : false;
+			
+			if( ! $first_el || ! in_array( $first_el['tag'], AviaBuilder::$full_el ) )
+			{
+			   $out .= avia_new_section( array( 'close' => false, 'main_container' => true, 'class' => 'main_color container_wrap_first' ) );
+			}
+	
+			$content = apply_filters( 'the_content', $content );
+			$content = apply_filters( 'avf_template_builder_content', $content );
+			
+			$out .= $content;
+			
+			//only close divs if the user didnt add fullwidth slider elements at the end. also skip sidebar if the last element is a slider
+			if( ! $last_el || ! in_array( $last_el['tag'], AviaBuilder::$full_el_no_section ) )
+			{
+				$cm = avia_section_close_markup();
+
+				$out .=		"</div>";
+				$out .=	"</div>$cm <!-- section close by builder template -->";
+			}
+			
+			// global fix for https://kriesi.at/support/topic/footer-disseapearing/#post-427764
+			if( in_array( $last_el['tag'], AviaBuilder::$full_el_no_section ) )
+			{
+				avia_sc_section::$close_overlay = "";
+			}
+
+			$out .= avia_sc_section::$close_overlay;
+			
+			$out .= '		</div><!--end builder template-->';
+			$out .= '</div><!-- close default .container_wrap element -->';
+
+			ShortcodeHelper::$tree = $old_tree;
+			ShortcodeHelper::$shortcode_index = $old_shortcode_index;
+			
+			return $out;
 		}
 	
 	} // end class

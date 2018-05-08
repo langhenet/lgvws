@@ -265,6 +265,7 @@ jQuery(function($) {
 	};
 
 
+	kmUI.popover.init();
 
 	// Tabs
 	$('.km-tabs').kmTabs();

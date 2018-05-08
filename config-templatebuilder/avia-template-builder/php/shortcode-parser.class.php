@@ -231,10 +231,23 @@ if( ! class_exists( 'ShortcodeParser' ) )
 			
 			$messages = get_post_meta( $post_id, $key, true );
 			
+			/**
+			 * Clear all messages if parser has been disabled or debug mode is disabled
+			 */
+			if( ( 'debug' != AviaBuilder::$mode ) || ( 'disabled' == $this->get_parser_state() ) )
+			{
+				if( is_array( $messages ) || ! empty( $messages ) )
+				{
+					delete_post_meta( $post_id, $key );
+				}
+				return;
+			}
+			
 			if( ! is_array( $messages ) )
 			{
 				$messages = array();
 			}
+			
 			
 			$now = new DateTime();
 			
@@ -2866,6 +2879,8 @@ if( ! class_exists( 'ShortcodeParser' ) )
 			$out .=				'</code></pre>';
 			
 			$out .=			"[/av_tab]";
+			
+			$out .=			Avia_Builder()->element_manager()->debug_element_usage_info();
 			
 			$out .=		"[/av_tab_container]";
 			

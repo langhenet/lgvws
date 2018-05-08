@@ -4,6 +4,7 @@
  * Supports an option to deactivate the plugin and removes the plugin code automatically on updates
  * 
  * @since 4.2.1
+ * @added_by Günter
  */
 if ( ! defined( 'ABSPATH' ) ) {  exit;  }    // Exit if accessed directly
 
@@ -48,6 +49,14 @@ if( ! class_exists( 'Avia_Config_LayerSlider' ) )
 		 * @var tystringpe 
 		 */
 		protected $theme_nice_name;
+		
+		
+		/**
+		 *
+		 * @since 4.2.4
+		 * @var string|null			'yes' | 'no' | null  
+		 */
+		protected $datatable_exists;
 
 		/**
 		 * 
@@ -58,6 +67,7 @@ if( ! class_exists( 'Avia_Config_LayerSlider' ) )
 			$this->theme_plugin_path = '';
 			$this->theme_plugin_file = '';
 			$this->theme_nice_name	 = '';
+			$this->datatable_exists	 = null;
 			
 			add_action( 'after_setup_theme', array( $this, 'handler_after_setup_theme' ), 10 );
 			
@@ -67,6 +77,7 @@ if( ! class_exists( 'Avia_Config_LayerSlider' ) )
 			add_action( 'layerslider_installed', array( $this, 'handler_layerslider_installed'), 10, 0 );
 			add_action( 'layerslider_deactivated', array( $this, 'handler_layerslider_deactivated'), 10, 0 );
 			add_action( 'layerslider_uninstalled', array( $this, 'handler_layerslider_uninstalled'), 10, 0 );
+			add_action( 'init', array( $this, 'force_settings'), 10, 0 );
 			
 			
 			/**************************/
@@ -93,7 +104,10 @@ if( ! class_exists( 'Avia_Config_LayerSlider' ) )
 			{	
 				add_action( 'wp', array( $this, 'handler_include_layerslider' ), 45 );
 			}
+
 		}
+		
+
 		
 		
 		/**
@@ -310,7 +324,11 @@ if( ! class_exists( 'Avia_Config_LayerSlider' ) )
 
 		
 		/**
-		 * Include our bundled plugin files
+		 * Include our bundled plugin files.
+		 * Make sure the correct shortcode tree is in static member ShortcodeHelper::$tree or in database of the post
+		 * 
+		 * This handler must ensure that layerslider is loaded also when used in dynamically added elements 
+		 * like in footer or postcontent element.
 		 * 
 		 * @since 4.2.1
 		 */
@@ -324,7 +342,7 @@ if( ! class_exists( 'Avia_Config_LayerSlider' ) )
 				/**
 				 * Check if we need to load our plugin at all
 				 */
-			   if( ! ( class_exists( 'avia_sc_layerslider' ) && avia_sc_layerslider::post_has_layerslider() ) )
+			   if( ! $this->current_post_needs_layerslider() )
 			   {
 				   return;
 			   }
@@ -364,7 +382,7 @@ if( ! class_exists( 'Avia_Config_LayerSlider' ) )
 			{
 				/**
 				 * User deactivated bundled plugin - we can return
-				 * For other achtions like removing data we take care in wp_loaded hook 
+				 * For other actions like removing data we take care in wp_loaded hook 
 				 */
 				return;
 			}
@@ -611,7 +629,133 @@ if( ! class_exists( 'Avia_Config_LayerSlider' ) )
 
 		
 		/**
-		 * Select all layersliders from database
+		 * Checks if a post has a layerslider element and we need to activate the layerslider.
+		 * As Layersliders needs to be loaded right after init or wp hook we also need to check
+		 * a possible footer page and if page contains elements that need a forced loading of layerslider 
+		 * 
+		 * @since 4.2.4
+		 * @return boolean
+		 */
+		public function current_post_needs_layerslider()
+		{
+			global $post;
+			
+			if( is_404() || ! ( $post instanceof WP_Post ) )
+			{
+				return false;
+			}
+
+			/**
+			 * Check current post content
+			 */
+			if( $this->post_needs_layerslider( $post ) )
+			{
+				return true;
+			}
+			
+			$footer_page = get_post( avia_get_option( 'footer_page', 0 ) );
+			
+			if( $footer_page instanceof WP_Post )
+			{
+				if( $this->post_needs_layerslider( $footer_page ) )
+				{
+					return true;
+				}
+			}
+			
+			return false;
+		}
+		
+		/**
+		 * Scan post content for layerslider shortcode or elements that force to load layerslider
+		 * 
+		 * @since 4.2.4
+		 * @param WP_Post $post
+		 * @return boolean
+		 */
+		protected function post_needs_layerslider( WP_Post $post )
+		{
+			$content = trim( $post->post_content );
+			
+			if( empty( $content ) )
+			{
+				return false;
+			}
+			
+			if( false !== strpos( $content, '[av_layerslider ' ) )
+			{
+				return true;
+			}
+			
+			$matches = array();
+			preg_match_all( "/" . ShortcodeHelper::get_fake_pattern() . "/s", $content, $matches );
+			if( is_array( $matches ) && is_array( $matches[0] ) && ( ! empty( $matches[0] ) ) )
+			{
+				$matches = $matches[0];
+			}
+			else
+			{
+				return false;
+			}
+
+			$matches = explode( ',', str_replace( ']', '', implode( ',', $matches ) ) );
+			
+			foreach ( $matches as $match ) 
+			{
+				$class = Avia_Builder()->get_sc_class_from_tag( $match );
+				if( false !== $class )
+				{
+					if( isset( $class->config['forced_load_objects'] ) && in_array( 'layerslider', $class->config['forced_load_objects'] ) )
+					{
+						return true;
+					}
+				}
+			}
+
+			return false;
+		}
+		
+		
+		/**
+		 * Returns the datatable name for the layerslides
+		 * 
+		 * @since 4.2.4
+		 * @return string
+		 */
+		protected function get_ls_table_name()
+		{
+			global $wpdb;
+			
+			return $wpdb->prefix . "layerslider";
+		}
+
+		/**
+		 * CHecks if layerslider datatable exists to avoid SQL Errors.
+		 * 
+		 * Since 4.2.1 user may remove layerslider database entries with an option and reactivate it again
+		 * In this case we might not have all tables properly initialised.
+		 * 
+		 * @since 4.2.4
+		 * @return string		'yes' : 'no'
+		 */
+		public function datatable_exists()
+		{
+			global $wpdb;
+			
+			if( is_null( $this->datatable_exists ) )
+			{
+				$table_name = $this->get_ls_table_name();
+				
+				$result = $wpdb->query( "  SHOW TABLES LIKE '{$table_name}' " );
+				$this->datatable_exists = ( ( false !== $result ) && ( $result > 0 ) ) ? 'yes' : 'no';
+			}
+			
+			return $this->datatable_exists;
+		}
+		
+		
+		/**
+		 * Select all layersliders from database. Returns empty array when nothing found
 		 * 
 		 * @since 4.2.1
 		 * @param boolean $names_only
@@ -621,16 +765,21 @@ if( ! class_exists( 'Avia_Config_LayerSlider' ) )
 		{
 			// Get WPDB Object
 			global $wpdb;
+			
+			if( $this->datatable_exists() != 'yes' )
+			{
+				return array();
+			}
 
 			// Table name
-			$table_name = $wpdb->prefix . "layerslider";
+			$table_name = $this->get_ls_table_name();
 
 			// Get sliders
 			$sliders = $wpdb->get_results( "SELECT * FROM $table_name WHERE flag_hidden = '0' AND flag_deleted = '0' ORDER BY date_c ASC LIMIT 300" );
 
 			if( empty( $sliders ) ) 
 			{
-				return;
+				return array();
 			}
 
 			if( $names_only )
@@ -640,7 +789,7 @@ if( ! class_exists( 'Avia_Config_LayerSlider' ) )
 				{
 					if( empty( $item->name ) ) 
 					{
-						$item->name = __( "(Unnamed Slider)", "avia_framework" );
+						$item->name = sprintf( __( "(Unnamed Slider - #%d)", "avia_framework" ), $item->id );
 					}
 					$new[ $item->name ] = $item->id;
 				}
@@ -652,6 +801,46 @@ if( ! class_exists( 'Avia_Config_LayerSlider' ) )
 		}
 		
 		
+		/**
+		 * Returns the requested slider or the last slider.
+		 * @since 4.2.4
+		 * @param int $id
+		 * @return array
+		 */
+		public function get_default_slider( $id = 0 )
+		{
+			global $wpdb;
+			
+			if( $this->datatable_exists() != 'yes' )
+			{
+				return array();
+			}
+			
+			$table_name = $this->get_ls_table_name();
+			
+			$id = ( is_numeric( $id ) ) ? (int) $id : 0;
+			$slider = array();
+			
+			if( $id > 0 )
+			{
+				$slider = $wpdb->get_row("SELECT * FROM $table_name
+									WHERE id = $id  AND flag_hidden = '0'
+									AND flag_deleted = '0'
+									ORDER BY date_c DESC LIMIT 1", ARRAY_A );
+			}
+			
+			//if the slider does not exist query the last slider
+			if( empty( $slider ) )
+			{
+				$slider = $wpdb->get_row("SELECT * FROM $table_name
+									WHERE flag_hidden = '0'
+									AND flag_deleted = '0'
+									ORDER BY date_c DESC LIMIT 1", ARRAY_A );
+			}
+
+			return $slider;
+		}
+
 		/**
 		 * This is a copy/paste of the content of:
 		 * enfold\config-layerslider\LayerSlider\wp\actions.php  function ls_do_erase_plugin_data()
@@ -778,6 +967,34 @@ if( ! class_exists( 'Avia_Config_LayerSlider' ) )
 //			deactivate_plugins( LS_PLUGIN_BASE, false, false );
 
 		}
+		
+		
+		
+		
+		/**
+		 *
+		 * Function that allows us to force a setting for the layerslider
+		 *
+		 * @since 4.3
+		 * @added_by Kriesi
+		 */
+		public function force_settings()
+		{
+			//set default options
+			if( method_exists( 'LS_Config', 'forceSettings' ) ) {
+
+				LS_Config::forceSettings( 'Enfold', array(
+			
+					'include_at_footer' 			=> true,
+					'conditional_script_loading' 	=> true
+				));
+			}
+		}
+		
+		
+		
+		
+		
 
 		
 	}		//	end class Avia_Config_LayerSlider
