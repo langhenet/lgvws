@@ -1,10 +1,10 @@
 		<?php
-		
+
 		if ( ! defined( 'ABSPATH' ) ) {  exit;  }    // Exit if accessed directly
-			
-		
-		do_action( 'ava_before_footer' );	
-			
+
+
+		do_action( 'ava_before_footer' );
+
 		global $avia_config;
 		$blank = isset($avia_config['template']) ? $avia_config['template'] : "";
 
@@ -16,7 +16,7 @@
 		$the_id 				= avia_get_the_id(); //use avia get the id instead of default get id. prevents notice on 404 pages
 		$footer 				= get_post_meta( $the_id, 'footer', true );
 		$footer_options			= avia_get_option( 'display_widgets_socket', 'all' );
-		
+
 
 		/**
 		 * Reset individual page override to defaults if widget or page settings are different (user might have changed theme options)
@@ -27,7 +27,7 @@
 			/**
 			 * User selected a page as footer in main options
 			 */
-			if( ! in_array( $footer, array( 'page_in_footer_socket', 'page_in_footer', 'nofooterarea' ) ) ) 
+			if( ! in_array( $footer, array( 'page_in_footer_socket', 'page_in_footer', 'nofooterarea' ) ) )
 			{
 				$footer = '';
 			}
@@ -37,12 +37,12 @@
 			/**
 			 * User selected a widget based footer in main options
 			 */
-			if( in_array( $footer, array( 'page_in_footer_socket', 'page_in_footer' ) ) ) 
+			if( in_array( $footer, array( 'page_in_footer_socket', 'page_in_footer' ) ) )
 			{
 				$footer = '';
 			}
 		}
-		
+
 		$footer_widget_setting 	= ! empty( $footer ) ? $footer : $footer_options;
 
 		/*
@@ -51,18 +51,18 @@
 		if( ! $blank && in_array( $footer_widget_setting, array( 'page_in_footer_socket', 'page_in_footer' ) ) )
 		{
 			$post = get_post( avia_get_option( 'footer_page', 0 ) );
-			
+
 			if( ( $post instanceof WP_Post ) && ( $post->ID != $the_id ) )
 			{
 				$content = Avia_Builder()->compile_post_content( $post );
-				
+
 				/* was removed in 4.2.7 before rollout - should not break the output - can be removed completly when no errors are reported !
 				 *		<div class='container_wrap footer_color footer-page-content' id='footer'>
 				 */
 				echo $content;
 			}
 		}
-		
+
 		/**
 		 * Check if we should display a footer
 		 */
@@ -82,7 +82,7 @@
 
 						//create the footer columns by iterating
 
-						
+
 				        switch($columns)
 				        {
 				        	case 1: $class = ''; break;
@@ -92,7 +92,7 @@
 				        	case 5: $class = 'av_one_fifth'; break;
 				        	case 6: $class = 'av_one_sixth'; break;
 				        }
-				        
+
 				        $firstCol = "first el_before_{$class}";
 
 						//display the footer widget that was defined at appearenace->widgets in the wordpress backend
@@ -122,7 +122,7 @@
 
 
 
-			
+
 
 			<?php
 
@@ -136,7 +136,7 @@
 			$kriesi_at_backlink = kriesi_backlink(get_option(THEMENAMECLEAN."_initial_version"), 'Enfold');
 
 
-			
+
 			if($copyright && strpos($copyright, '[nolink]') !== false)
 			{
 				$kriesi_at_backlink = "";
@@ -159,8 +159,8 @@
                             	$social_args 	= array('outside'=>'ul', 'inside'=>'li', 'append' => '');
 								echo avia_social_media_icons($social_args, false);
                             }
-                        
-                            
+
+
                                 $avia_theme_location = 'avia3';
                                 $avia_menu_class = $avia_theme_location . '-menu';
 
@@ -175,8 +175,8 @@
                                 );
 
                             $menu = wp_nav_menu($args);
-                            
-                            if($menu){ 
+
+                            if($menu){
                             echo "<nav class='sub_menu_socket' ".avia_markup_helper(array('context' => 'nav', 'echo' => false)).">";
                             echo $menu;
                             echo "</nav>";
@@ -193,21 +193,21 @@
 			} //end nosocket check - array( 'all', 'nofooterwidgets', 'page_in_footer_socket' )
 
 
-		
-		
+
+
 		} //end blank & nofooterarea check
 		?>
 		<!-- end main -->
 		</div>
-		
+
 		<?php
-		
+
 		if(avia_get_option('disable_post_nav') != "disable_post_nav")
 		{
 			//display link to previous and next portfolio entry
 			echo avia_post_nav();
 		}
-		
+
 		echo "<!-- end wrap_all --></div>";
 
 
