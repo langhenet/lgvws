@@ -25,17 +25,19 @@ if ( !class_exists( 'avia_sc_portfolio' ) )
 				$this->config['target']		= 'avia-target-insert';
 				$this->config['shortcode'] 	= 'av_portfolio';
 				$this->config['tooltip'] 	= __('Creates a grid of portfolio excerpts', 'avia_framework' );
+				$this->config['disabling_allowed'] = true;
 			}
 
 			function extra_assets()
 			{
-				//start sessions
+				//start sessions - only necessary for correct breadcrumb nav on single portfolio pages
 				if(!is_admin() && !current_theme_supports('avia_no_session_support') && !session_id()) session_start();
 				
 				//load css
 				wp_enqueue_style( 'avia-module-portfolio' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/portfolio/portfolio.css' , array('avia-layout'), false );
 				
 				//load js
+				wp_enqueue_script( 'avia-module-isotope' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/portfolio/isotope.js' , array('avia-shortcodes'), false , TRUE);
 				wp_enqueue_script( 'avia-module-portfolio' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/portfolio/portfolio.js' , array('avia-shortcodes'), false , TRUE);
 			}
 

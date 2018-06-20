@@ -87,7 +87,24 @@ if ( ! class_exists( 'avia_sc_audio_player' ) )
 			$this->config['tinyMCE'] 		= array( 'disable' => "true" );
 			$this->config['drag-level'] 	= 3;
 			$this->config['preview']		= false;
-		}		
+			$this->config['disabling_allowed'] = true;
+			$this->config['disabled']		= array(
+			'condition' =>( avia_get_option('disable_mediaelement') == 'disable_mediaelement' ), 
+			'text'   => __( 'This element is disabled in your theme options. You can enable it in Enfold &raquo; Performance', 'avia_framework' ));
+													
+													
+			
+		}
+		
+		function extra_assets()
+		{
+			//load css
+			wp_enqueue_style( 'avia-module-audioplayer' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/audio-player/audio-player.css' , array('avia-layout'), false );
+			
+				//load js
+			wp_enqueue_script( 'avia-module-audioplayer' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/audio-player/audio-player.js' , array('avia-shortcodes'), false, TRUE );
+
+		}
 		
 		
 		/**
@@ -101,6 +118,24 @@ if ( ! class_exists( 'avia_sc_audio_player' ) )
 		*/
 		public function popup_elements()
 		{
+			//if the element is disabled
+			if($this->config['disabled']['condition'] == true)
+			{
+				$this->elements = array(
+					
+					array(
+							"name" 	=> __("Element disabled",'avia_framework' ),
+							"desc" 	=> $this->config['disabled']['text'].
+							'<br/><br/><a target="_blank" href="'.admin_url('admin.php?page=avia#goto_performance').'">'.__("Enable it here",'avia_framework' )."</a>",
+							"type" 	=> "heading",
+							"description_class" => "av-builder-note av-error",
+							)
+						);
+				
+				return;
+			}
+			
+			
 			$this->elements = array(
 
 					array(
@@ -123,6 +158,18 @@ if ( ! class_exists( 'avia_sc_audio_player' ) )
 							"subtype"		=> array(
 													__( 'Start manually','avia_framework' )		=> 'manual',
 													__( 'Start on pageload','avia_framework' )	=> 'autoplay'
+												)
+						),
+				
+						array(	
+							"name"			=> __( "Loop playlist", 'avia_framework' ),
+							"desc"			=> __( "Choose if you want to stop after playing the list once or if you want to continue from beginning again", 'avia_framework' ),
+							"id"			=> "loop",
+							"type"			=> "select",
+							"std"			=> '',
+							"subtype"		=> array(
+													__( 'Start from beginning again','avia_framework' )		=> '',
+													__( 'Stop after playing last song','avia_framework' )	=> 'avia-playlist-no-loop'
 												)
 						),
 				
@@ -493,8 +540,16 @@ if ( ! class_exists( 'avia_sc_audio_player' ) )
 		 */
 		public function editor_element( $params )
 		{	
-			
 			$element = $this->get_popup_element_by_id( 'autoplay' );
+			
+			/**
+			 * Element has been disabled with option "Disable self hosted video and audio features"
+			 */
+			if( false === $element )
+			{
+				return $params;
+			}
+			
 			$playmodes = $element['subtype'];
 			
 			$update_template =	'<span class="av-player-{{autoplay}}">';
@@ -619,6 +674,7 @@ if ( ! class_exists( 'avia_sc_audio_player' ) )
 								'handle'			=> $shortcodename,
 								'id'				=> '',
 								'autoplay'			=> 'manual',
+								'loop'				=> '',
 								'playorder'			=> 'normal',
 								'player_style'		=> 'classic',
 								'cover_id'			=> '',
@@ -725,6 +781,11 @@ if ( ! class_exists( 'avia_sc_audio_player' ) )
 			if( 1 == avia_sc_audio_player::$instance )
 			{
 				$outer_cls[] = 'first';
+			}
+			
+			if( ! empty( $loop ) )
+			{
+				$outer_cls[] = $loop;
 			}
 			
 			$outer_styles = array();

@@ -27,6 +27,7 @@ if ( !class_exists( 'avia_sc_countdown' ) )
 				$this->config['shortcode'] 	= 'av_countdown';
 				$this->config['tooltip'] 	= __('Display a countdown to a specific date', 'avia_framework' );
 				$this->config['preview'] 	= "xlarge";
+				$this->config['disabling_allowed'] = true;
 				$this->time_array = array(
 								__('Second',  	'avia_framework' ) 	=>'1',
 								__('Minute',  	'avia_framework' ) 	=>'2',	

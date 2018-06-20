@@ -7,6 +7,93 @@
 	"use strict";
 	$.avia_utilities = $.avia_utilities || {};
 	
+	
+	// -------------------------------------------------------------------------------------------
+	//Portfolio sorting
+	// -------------------------------------------------------------------------------------------
+
+    $.fn.avia_iso_sort = function(options)
+	{
+		return this.each(function()
+		{
+			var the_body		= $('body'),
+				container		= $(this),
+				portfolio_id	= container.data('portfolio-id'),
+				parentContainer	= container.parents('.entry-content-wrapper, .avia-fullwidth-portfolio'),
+				filter			= parentContainer.find('.sort_width_container[data-portfolio-id="' + portfolio_id + '"]').find('#js_sort_items').css({visibility:"visible", opacity:0}),
+				links			= filter.find('a'),
+				imgParent		= container.find('.grid-image'),
+				isoActive		= false,
+				items			= $('.post-entry', container);
+
+			function applyIso()
+			{
+				container.addClass('isotope_activated').isotope({
+					layoutMode : 'fitRows', itemSelector : '.flex_column'
+				});
+				
+				container.isotope( 'on', 'layoutComplete', function()
+				{
+					container.css({overflow:'visible'});
+					the_body.trigger('av_resize_finished');
+				}); 
+				
+				isoActive = true;
+				setTimeout(function(){ parentContainer.addClass('avia_sortable_active'); }, 0);
+			};
+
+			links.bind('click',function()
+			{
+				var current		= $(this),
+			  		selector	= current.data('filter'),
+			  		linktext	= current.html(),
+			  		activeCat	= parentContainer.find('.av-current-sort-title');
+
+			  		if(activeCat.length) activeCat.html(linktext);
+			  		
+					links.removeClass('active_sort');
+					current.addClass('active_sort');
+					container.attr('id', 'grid_id_'+selector);
+
+					parentContainer.find('.open_container .ajax_controlls .avia_close').trigger('click');
+					//container.css({overflow:'hidden'})
+					container.isotope({ layoutMode : 'fitRows', itemSelector : '.flex_column' , filter: '.'+selector});
+
+					return false;
+			});
+
+			// update columnWidth on window resize
+			$(window).on( 'debouncedresize', function()
+			{
+			  	applyIso();
+			});
+
+			$.avia_utilities.preload({container: container, single_callback:  function()
+				{
+					filter.animate({opacity:1}, 400); applyIso();
+
+					//call a second time to for the initial resizing
+					setTimeout(function(){ applyIso(); });
+
+					imgParent.css({height:'auto'}).each(function(i)
+					{
+						var currentLink = $(this);
+
+						setTimeout(function()
+						{
+							currentLink.animate({opacity:1},1500);
+						}, (100 * i));
+					});
+				}
+			});
+
+		});
+	};
+	
+	
+	
+	
+	
 	$.fn.avia_portfolio_preview = function(passed_options) 
 	{	
 		var win  = $(window),

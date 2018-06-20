@@ -7,7 +7,6 @@ function layerslider_check_notices() {
 
 	if(strpos($_SERVER['REQUEST_URI'], '?page=layerslider') !== false) {
 		add_action('admin_notices', 'layerslider_update_notice');
-		add_action('admin_notices', 'layerslider_unauthorized_update_notice');
 		add_action('admin_notices', 'layerslider_dependency_notice');
 
 		if( LS_Config::get('notices') && ! get_option('layerslider-authorized-site', null) ) {
@@ -97,18 +96,36 @@ function layerslider_important_notice() {
 
 function layerslider_update_notice() {
 
-	if(get_option('layerslider-authorized-site', false)) {
+	$activated 	= get_option( 'layerslider-authorized-site', false );
+	$updates 	= get_plugin_updates();
 
-		// Get plugin updates
-		$updates = get_plugin_updates();
+	if( ! empty( $updates[ LS_PLUGIN_BASE ]->update->_update_banner )  ) { ?>
+		<div class="layerslider_notice_img" style="background-image: url(<?php echo $updates[ LS_PLUGIN_BASE ]->update->_update_banner ?>);">
+
+			<a href="<?php echo wp_nonce_url('?page=layerslider&action=hide-update-notice', 'hide-update-notice') ?>" class="dashicons dashicons-dismiss" data-help="<?php _e('Hide this banner', 'LayerSlider') ?>"></a>
+
+			<?php if( $activated ) : ?>
+			<a href="<?php echo wp_nonce_url(self_admin_url('update.php?action=upgrade-plugin&plugin='.LS_PLUGIN_BASE), 'upgrade-plugin_'.LS_PLUGIN_BASE) ?>" class="button button-install" title="<?php _e('Install now', 'LayerSlider') ?>">
+					<?php _e('Install now', 'LayerSlider') ?>
+			</a>
+			<?php endif; ?>
+		</div>
+
+		<?php if( ! $activated ) : ?>
+		<div class="ls-theme-notice ls-show-activation-box">
+			<?php echo sprintf(__('Set up auto-updates to upgrade to this new version, or request it from the author of your theme if you’ve received LayerSlider from them. %sClick here%s to learn more.', 'LayerSlider'), '<a href="https://support.kreaturamedia.com/docs/layersliderwp/documentation.html#updating" target="_blank">', '</a>') ?>
+		</div>
+		<?php endif;
+
+	} elseif( $activated ) {
 
 		// Check for update
-		if(isset($updates[LS_PLUGIN_BASE]) && isset($updates[LS_PLUGIN_BASE]->update)) {
-			$update 		= $updates[LS_PLUGIN_BASE];
+		if( isset( $updates[ LS_PLUGIN_BASE ] ) && isset( $updates[ LS_PLUGIN_BASE ]->update ) ) {
+			$update 		= $updates[ LS_PLUGIN_BASE ];
 			$currentVersion = $update->Version;
 			$newVersion 	= $update->update->new_version;
 
-			if( version_compare($newVersion, $currentVersion, '>') ) {
+			if( version_compare( $newVersion, $currentVersion, '>' ) ) {
 			add_thickbox();
 			?>
 			<div class="layerslider_notice">
@@ -126,17 +143,12 @@ function layerslider_update_notice() {
 			<?php
 			}
 		}
-	}
-}
+	} elseif( ! $activated ) {
 
-function layerslider_unauthorized_update_notice() {
-
-	if(!get_option('layerslider-authorized-site', false)) {
-
-		$latest = get_option('ls-latest-version', false);
-		if($latest && version_compare(LS_PLUGIN_VERSION, $latest, '<')) {
-			$last_notification = get_option('ls-last-update-notification', LS_PLUGIN_VERSION);
-			if(version_compare($last_notification, $latest, '<')) {
+		$latest = get_option( 'ls-latest-version', false );
+		if( $latest && version_compare( LS_PLUGIN_VERSION, $latest, '<' ) ) {
+			$last_notification = get_option( 'ls-last-update-notification', LS_PLUGIN_VERSION );
+			if( version_compare( $last_notification, $latest, '<' ) ) {
 			?>
 			<div class="layerslider_notice">
 				<img src="<?php echo LS_ROOT_URL.'/static/admin/img/ls_80x80.png' ?>" alt="LayerSlider icon">
@@ -152,6 +164,7 @@ function layerslider_unauthorized_update_notice() {
 			}
 		}
 	}
+
 }
 
 

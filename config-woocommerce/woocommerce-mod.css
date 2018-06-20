@@ -2703,6 +2703,12 @@ margin:0;
 
 
 
+/*enfold 4.3*/
+#top .woocommerce-terms-and-conditions-link{text-decoration: underline;}
+#top .template-page .product_meta { margin-bottom: 7px; }
+#top .template-page .product_meta > span { margin-right: 5px; font-size: 11px; }
+
+
 
 /* #Media Queries
 ================================================== */

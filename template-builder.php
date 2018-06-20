@@ -7,6 +7,16 @@
     {
 		get_template_part( 'page' ); exit();
     }
+	
+	/**
+	 * Temporary: Get all used elements for this post. Creates the option entries if they do not exist for this post
+	 * ==========
+	 * 
+	 * Also hooked in 'get_header' 10 - can then be used in every page
+	 * fires add_action( 'ava_current_post_element_info_available', $this ); in 'get_header'
+	 */
+	$used_elements = Avia_Builder()->element_manager()->get_current_post_elements();
+	
 
 	/*
 	 * get_header is a basic wordpress function, used to retrieve the header.php file in your theme directory.
@@ -74,14 +84,18 @@
 		ShortcodeHelper::$tree = ShortcodeHelper::build_shortcode_tree( $content );
 	}
 	
-	 //check first builder element. if its a section or a fullwidth slider we dont need to create the default openeing divs here
+	/**
+	 * @since 4.4.1
+	 */
+	do_action( 'ava_before_content_templatebuilder_page' );
 
-	 $first_el = isset(ShortcodeHelper::$tree[0]) ? ShortcodeHelper::$tree[0] : false;
-	 $last_el  = !empty(ShortcodeHelper::$tree)   ? end(ShortcodeHelper::$tree) : false;
-	 if(!$first_el || !in_array($first_el['tag'], AviaBuilder::$full_el ) )
-	 {
+	//check first builder element. if its a section or a fullwidth slider we dont need to create the default openeing divs here
+	$first_el = isset(ShortcodeHelper::$tree[0]) ? ShortcodeHelper::$tree[0] : false;
+	$last_el  = !empty(ShortcodeHelper::$tree)   ? end(ShortcodeHelper::$tree) : false;
+	if(!$first_el || !in_array($first_el['tag'], AviaBuilder::$full_el ) )
+	{
         echo avia_new_section(array('close'=>false,'main_container'=>true, 'class'=>'main_color container_wrap_first'));
-	 }
+	}
 	
 	$content = apply_filters('the_content', $content);
 	$content = apply_filters('avf_template_builder_content', $content);
@@ -134,5 +148,9 @@ echo avia_sc_section::$close_overlay;
 echo '		</div><!--end builder template-->';
 echo '</div><!-- close default .container_wrap element -->';
 
+/**
+ * @since 4.4.1
+ */
+do_action( 'ava_after_content_templatebuilder_page' );
 
 get_footer();

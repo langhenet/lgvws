@@ -262,6 +262,11 @@ div .av_one_sixth {
   width:14.53%;
   margin-left: 2.565%;
 }
+
+div .av_four_sixth {
+  width: 65.812%;
+  margin-left: 2.565%;
+}
 div .av_one_seventh {
   margin-left: 6%;
   width: 9.142857142857142%;
@@ -278,12 +283,6 @@ div .av_one_tenth {
   margin-left: 6%;
   width: 4.6%;
 }
-
-div .av_four_sixth {
-  width: 65.812%;
-  margin-left: 2.565%;
-}
-
 /* Columns for better content separation (no margin)
 ================================================== */
 #top div .no_margin {

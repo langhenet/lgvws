@@ -8,17 +8,17 @@
 	 */
 	 get_header();
 
-  $cats = get_the_category(); //-> ovvero una variabile cats che salva le categorie
-
-  $title  = __('Blog - Latest News', 'avia_framework'); //default blog title
-  $t_link = get_category_link( $cats[0] );
-  $t_sub = "";
+   $title 	= get_the_category(); //if the blog is attached to a page use this title
+   $cats = get_the_category();
+   $t_link = get_category_link( $cats[0] );
+   $t_sub =  '';
 
 	if(avia_get_option('frontpage') && $new = avia_get_option('blogpage'))
 	{
-		$title 	= get_the_title($new); //if the blog is attached to a page use this title
+		$title 	= get_the_category(); //if the blog is attached to a page use this title
+    $cats = get_the_category();
 		$t_link = get_category_link( $cats[0] );
-		$t_sub =  avia_post_meta($new, 'subtitle');
+		$t_sub =  '';
 	}
 
 	if( get_post_meta(get_the_ID(), 'header', true) != 'no') echo avia_title(array('heading'=>'strong', 'title' => $cats[0]->cat_name, 'link' => $t_link, 'subtitle' => $t_sub));
@@ -39,17 +39,19 @@
                     * called loop-index.php and that will be used instead.
                     *
                     */
-
                         get_template_part( 'includes/loop', 'index' );
 
-                        get_template_part( 'includes/loop', 'about-author' );
+						$blog_disabled = ( avia_get_option('disable_blog') == 'disable_blog' ) ? true : false;
 
-                        //show related posts based on tags if there are any
-                        get_template_part( 'includes/related-posts');
+						if(!$blog_disabled)
+						{
+                          get_template_part( 'includes/loop', 'about-author' );
+	                        //show related posts based on tags if there are any
+	                        get_template_part( 'includes/related-posts');
 
-                        //wordpress function that loads the comments template "comments.php"
-                        comments_template();
-
+	                        //wordpress function that loads the comments template "comments.php"
+	                        comments_template();
+						}
                     ?>
 
 				<!--end content-->

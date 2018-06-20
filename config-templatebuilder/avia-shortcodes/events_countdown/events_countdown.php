@@ -9,12 +9,16 @@ if ( ! defined( 'ABSPATH' ) ) {  exit;  }    // Exit if accessed directly
 
 if( !class_exists( 'Tribe__Events__Main' ) )
 {
-	function av_countdown_events_fallback()
+	if(!function_exists('av_countdown_events_fallback'))
 	{
-		return "<p>Please install the <a href='https://wordpress.org/plugins/the-events-calendar/'>The Events Calendar</a> or <a href='http://mbsy.co/6cr37'>The Events Calendar Pro</a> Plugin to display the countdown</p>";
+		function av_countdown_events_fallback()
+		{
+			return "<p>Please install the <a href='https://wordpress.org/plugins/the-events-calendar/'>The Events Calendar</a> or <a href='http://mbsy.co/6cr37'>The Events Calendar Pro</a> Plugin to display the countdown</p>";
+		}
+		
+		add_shortcode('av_events_countdown', 'av_countdown_events_fallback');
 	}
 	
-	add_shortcode('av_events_countdown', 'av_countdown_events_fallback');
 	return;
 }
 
@@ -61,6 +65,7 @@ if ( !class_exists( 'avia_sc_events_countdown' ) )
 				$this->config['target']		= 'avia-target-insert';
 				$this->config['shortcode'] 	= 'av_events_countdown';
 				$this->config['tooltip'] 	= __('Display a countdown to the next upcoming event', 'avia_framework' );
+				$this->config['disabling_allowed'] = true;
 				
 				$this->time_array = array(
 								__('Second',  	'avia_framework' ) 	=>'1',

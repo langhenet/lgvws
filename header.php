@@ -3,7 +3,8 @@
 
 	global $avia_config;
 
-	$avia_config['use_standard_lightbox'] = empty( avia_get_option( 'lightbox_active' ) ) || ( 'lightbox_active' == avia_get_option( 'lightbox_active' ) ) ? 'lightbox_active' : 'disabled';
+	$lightbox_option = avia_get_option( 'lightbox_active' );
+	$avia_config['use_standard_lightbox'] = empty( $lightbox_option ) || ( 'lightbox_active' == $lightbox_option ) ? 'lightbox_active' : 'disabled';
 	/**
 	 * Allow to overwrite the option setting for using the standard lightbox
 	 * Make sure to return 'disabled' to deactivate the standard lightbox - all checks are done against this string
@@ -24,6 +25,11 @@
 	$filterable_classes 	= avia_header_class_filter( avia_header_class_string() );
 	$av_classes_manually	= "av-no-preview"; /*required for live previews*/
 	$av_classes_manually   .= avia_is_burger_menu() ? " html_burger_menu_active" : " html_text_menu_active";
+
+	/**
+	 * @since 4.2.3 we support columns in rtl order (before they were ltr only). To be backward comp. with old sites use this filter.
+	 */
+	$rtl_support			= 'yes' == apply_filters( 'avf_rtl_column_support', 'yes' ) ? ' rtl_columns ' : '';
 
 ?><!DOCTYPE html>
 <html <?php language_attributes(); ?> class="<?php echo "html_{$style} ".$responsive." ".$preloader." ".$av_lightbox." ".$filterable_classes." ".$av_classes_manually ?> ">
@@ -64,9 +70,11 @@ wp_head();
 
 
 
-<body id="top" <?php body_class($style." ".$avia_config['font_stack']." ".$blank." ".$sidebar_styling); avia_markup_helper(array('context' => 'body')); ?>>
+<body id="top" <?php body_class( $rtl_support . $style." ".$avia_config['font_stack']." ".$blank." ".$sidebar_styling); avia_markup_helper(array('context' => 'body')); ?>>
 
 	<?php
+
+	do_action( 'ava_after_body_opening_tag' );
 
 	if("av-preloader-active av-preloader-enabled" === $preloader)
 	{

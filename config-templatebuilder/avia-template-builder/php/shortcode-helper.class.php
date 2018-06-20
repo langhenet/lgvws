@@ -126,7 +126,7 @@ if ( !class_exists( 'ShortcodeHelper' ) ) {
 		 * 
 		 * @param boolean $nested 
 		 * @param array|false $shortcode_tags
-		 * @param string $return					'fake' | 'complete'  (added with 4.1.2)
+		 * @param string $return					'fake' | 'tags' (added with 4.3) | 'complete'  (added with 4.1.2)
 		 * @return string 
 		 **/
 		static function get_fake_pattern( $nested = false, $shortcode_tags = false, $return = 'fake' )
@@ -163,8 +163,11 @@ if ( !class_exists( 'ShortcodeHelper' ) ) {
 					 * 
 					 * (?=\[) includes everything up to next [ (but not including [)
 					 */
-					$arr_patt[] = '\[{1,2}[\/]?' . $shortcode_tag . '[^\]]*?(?=\[)';
-					
+					if( 'complete' == $return )
+					{
+						$arr_patt[] = '\[{1,2}[\/]?' . $shortcode_tag . '[^\]]*?(?=\[)';
+					}
+
 					//	captures complete opening and closing shortcode tags
 					$arr_patt[] = '\[{1,2}[\/]?' . $shortcode_tag . '[^\]]*\]{1,2}';
 					

@@ -40,7 +40,14 @@ if ( !class_exists( 'avia_sc_upcoming_events' ) )
 			$this->config['shortcode'] 	= 'av_upcoming_events';
 			$this->config['tooltip'] 	= __('Show a list of upcoming events', 'avia_framework' );
 			$this->config['drag-level'] = 3;
+			$this->config['disabling_allowed'] = true;
 		}
+		
+		function extra_assets()
+			{
+				//load css
+				wp_enqueue_style( 'avia-module-events-upcoming' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/events_upcoming/events_upcoming.css' , array('avia-layout'), false );
+			}
 
 		/**
 		 * Popup Elements

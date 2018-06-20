@@ -323,10 +323,11 @@ class LS_Shortcode {
 			$GLOBALS['lsLoadFonts'] = array_merge($GLOBALS['lsLoadFonts'], $output['fonts']);
 		}
 
-		if($footer) {
+		if( $footer ) {
 			$GLOBALS['lsSliderInit'][] = $output['init'];
 			return $output['markup'];
 		} else {
+			$output['init'] = '<script type="text/javascript">'.$output['init'].'</script>';
 			return $output['init'].$output['markup'];
 		}
 	}

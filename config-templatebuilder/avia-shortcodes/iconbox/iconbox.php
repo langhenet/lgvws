@@ -26,6 +26,7 @@ if ( !class_exists( 'avia_sc_icon_box' ) )
 				$this->config['shortcode'] 		= 'av_icon_box';
 				$this->config['tooltip'] 	    = __('Creates a content block with icon to the left or above', 'avia_framework' );
 				$this->config['preview'] 	= 1;
+				$this->config['disabling_allowed'] = true;
 			}
 			
 			function extra_assets()

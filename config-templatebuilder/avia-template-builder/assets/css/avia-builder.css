@@ -68,6 +68,7 @@ background-color: #D54E21;
 color:#fff;
 padding:10px;
 margin-top:10px;
+display:block;
 }
 
 .av-builder-note.avia-name-description{
@@ -272,7 +273,7 @@ visibility: hidden;
 position: fixed;
 top: 0px;
 left: 0;
-right: 0;
+right: 16px;
 background: #F8F8F8;
 padding: 41px 10px 10px;
 z-index: 120;
@@ -2146,6 +2147,10 @@ height: auto;
 .av_catalogue .avia-element-label, .av_productlist .avia-element-label{display:block;}
 .avia-disabled-aviaTBaviaTBdisabled span, .avia-disabled-true span{  color: #D54E21; }
 
+/*button row*/
+
+.av_buttonrow .avia_inner_shortcode img, .av_productlist .avia_inner_shortcode img{margin:0;}
+.av_buttonrow .avia-element-label, .av_productlist .avia-element-label{display:block;}
 
 
 /* All Mobile Sizes (devices and browser) */
@@ -2285,7 +2290,7 @@ border-bottom:1px solid #fff;
 
 .avia-conditional-elements{position: relative; clear: both; overflow: hidden;}
 .av_option_hidden .av_conditional_overlay, .av-builder-active-overlay{opacity: 0.6; background: #fff; position: absolute; top:0; left:0; bottom:0; right:0; z-index: 2; border:1px solid #e1e1e1;}
-.av_option_hidden .av_conditional_overlay_content, .av-builder-active-overlay-content{z-index: 2; position: absolute; color:#333; background: #fff; border-radius: 2px; width:60%; margin-left:10%; padding:10%; top:25%; border: 1px solid #E1E1E1; }
+.av_option_hidden .av_conditional_overlay_content, .av-builder-active-overlay-content{z-index: 20; position: absolute; color:#333; background: #fff; border-radius: 2px; width:60%; margin-left:10%; padding:10%; top:25%; border: 1px solid #E1E1E1; }
 .av_option_hidden .av_conditional_overlay_content a{color:#2EA2CC;}
 
 .av-builder-active-overlay-content{width:72%; padding:3%; top:10%;}
@@ -2568,13 +2573,36 @@ span.av-tab-title-text-wrap-full {
 }
 
 
+/* Search Element */
+.avia-sc-search-fakeinput {
+	padding: 4px;
+	border: 1px solid #ccc;
+	margin-right: 3px;
+	min-width: 140px;
+	height: 19px;
+	text-align: left;
+}
 
+/*	Google Maps	*/
+.avia_inner_shortcode .av-google-maps{
+	margin-bottom: 5px;
+	display: inline-block;
+}
 
+.avia_inner_shortcode .av-google-maps .av-gmap- .av-gmap-link-,
+.avia_inner_shortcode .av-google-maps .av-gmap-confirm_link .av-gmap-link-confirm_link,
+.avia_inner_shortcode .av-google-maps .av-gmap-page_only .av-gmap-link-page_only{
+	display: inline-block;
+}
 
-
-
-
-
+.avia_inner_shortcode .av-google-maps .av-gmap- .av-gmap-link-confirm_link,
+.avia_inner_shortcode .av-google-maps .av-gmap- .av-gmap-link-page_only,
+.avia_inner_shortcode .av-google-maps .av-gmap-confirm_link .av-gmap-link-,
+.avia_inner_shortcode .av-google-maps .av-gmap-confirm_link .av-gmap-link-page_only,
+.avia_inner_shortcode .av-google-maps .av-gmap-page_only .av-gmap-link-,
+.avia_inner_shortcode .av-google-maps .av-gmap-page_only .av-gmap-link-confirm_link{
+	display: none;
+}
 
 
 

@@ -5,6 +5,7 @@ $lsPriority = ! empty($lsPriority) ? $lsPriority : 3;
 
 add_action('wp_enqueue_scripts', 'layerslider_enqueue_content_res', $lsPriority);
 add_action('wp_footer', 'layerslider_footer_scripts', ($lsPriority+1));
+
 add_action('admin_enqueue_scripts', 'layerslider_enqueue_admin_res', $lsPriority);
 add_action('admin_enqueue_scripts', 'ls_load_google_fonts', $lsPriority);
 add_action('wp_enqueue_scripts', 'ls_load_google_fonts', ($lsPriority+1));
@@ -14,6 +15,7 @@ add_action('wp_head', 'ls_meta_generator', 9);
 add_filter('script_loader_tag', 'layerslider_script_attributes', 10, 3);
 function layerslider_script_attributes( $tag, $handle, $src ) {
 
+
 	if(
 		$handle === 'layerslider' ||
 		$handle === 'layerslider-greensock' ||
@@ -22,7 +24,14 @@ function layerslider_script_attributes( $tag, $handle, $src ) {
 		$handle === 'layerslider-popup' ||
 		$handle === 'ls-user-transitions'
 	) {
-		$tag = str_replace('src=', 'data-cfasync="false" src=', $tag);
+
+		if( get_option('ls_rocketscript_ignore', false ) ) {
+			$tag =  str_replace( "type='text/javascript' src=", 'data-cfasync="false" src=', $tag );
+		}
+
+		if( get_option('ls_defer_scripts', false ) ) {
+			$tag = str_replace( '></script>', ' defer></script>', $tag);
+		}
 	}
 
 
@@ -33,8 +42,9 @@ function layerslider_script_attributes( $tag, $handle, $src ) {
 function layerslider_enqueue_content_res() {
 
 	// Include in the footer?
-	$condsc = get_option('ls_conditional_script_loading', false) ? true : false;
-	$footer = get_option('ls_include_at_footer', false) ? true : false;
+	$condsc = get_option( 'ls_conditional_script_loading', false ) ? true : false;
+	$always = get_option( 'ls_load_all_js_files', false );
+	$footer = get_option( 'ls_include_at_footer', false ) ? true : false;
 	$footer = $condsc ? true : $footer;
 
 	// Use Gogole CDN version of jQuery
@@ -87,11 +97,21 @@ function layerslider_enqueue_content_res() {
 		wp_enqueue_style('ls-user', $uploads['baseurl'].'/layerslider.custom.css', false, LS_PLUGIN_VERSION );
 	}
 
-	if( ! $footer) {
+	if( ! $footer || $always ) {
 		wp_enqueue_script('layerslider-greensock');
 		wp_enqueue_script('layerslider');
 		wp_enqueue_script('layerslider-transitions');
 		wp_enqueue_script('ls-user-transitions');
+	}
+
+	// If the "Always load all JS files" option is enabled
+	// load all LayerSlider plugin files as well.
+	if( $always ) {
+		wp_enqueue_style( 'layerslider-origami' );
+		wp_enqueue_script( 'layerslider-origami' );
+
+		wp_enqueue_style( 'layerslider-popup' );
+		wp_enqueue_script( 'layerslider-popup' );
 	}
 }
 
@@ -104,12 +124,12 @@ function layerslider_footer_scripts() {
 	if( ! $condsc || ! empty( $GLOBALS['lsSliderInit'] ) ) {
 
 		// Enqueue scripts
-		wp_print_scripts('layerslider-greensock');
-		wp_print_scripts('layerslider');
-		wp_print_scripts('layerslider-transitions');
+		wp_enqueue_script('layerslider-greensock');
+		wp_enqueue_script('layerslider');
+		wp_enqueue_script('layerslider-transitions');
 
 		if(wp_script_is('ls-user-transitions', 'registered')) {
-			wp_print_scripts('ls-user-transitions');
+			wp_enqueue_script('ls-user-transitions');
 		}
 	}
 
@@ -121,8 +141,8 @@ function layerslider_footer_scripts() {
 
 		// Load plugins
 		foreach( $GLOBALS['lsLoadPlugins'] as $item ) {
-			wp_print_scripts('layerslider-'.$item);
-			wp_print_styles('layerslider-'.$item);
+			wp_enqueue_script('layerslider-'.$item);
+			wp_enqueue_style('layerslider-'.$item);
 		}
 	}
 
@@ -135,13 +155,12 @@ function layerslider_footer_scripts() {
 
 		// Load fonts
 		foreach( $GLOBALS['lsLoadFonts'] as $item ) {
-			wp_print_styles('layerslider-'.$item);
+			wp_enqueue_style('layerslider-'.$item);
 		}
 	}
 
-
 	if( ! empty( $GLOBALS['lsSliderInit'] ) ) {
-		echo implode('', $GLOBALS['lsSliderInit']);
+		wp_add_inline_script( 'layerslider', implode('', $GLOBALS['lsSliderInit']) );
 	}
 }
 
@@ -163,7 +182,7 @@ function layerslider_enqueue_admin_res() {
 		wp_enqueue_style('layerslider-embed', LS_ROOT_URL.'/static/admin/css/embed.css', false, LS_PLUGIN_VERSION);
 	}
 
-	// Use Gogole CDN version of jQuery
+	// Use Google CDN version of jQuery
 	if(get_option('ls_use_custom_jquery', false)) {
 		wp_deregister_script('jquery');
 		wp_enqueue_script('jquery', '//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js', array(), '1.8.3');
@@ -320,6 +339,8 @@ function ls_require_builder_assets() {
 	wp_enqueue_script('air-datepicker', LS_ROOT_URL.'/static/air-datepicker/datepicker.min.js', array('jquery'), '2.1.0' );
 	wp_enqueue_script('air-datepicker-en', LS_ROOT_URL.'/static/air-datepicker/i18n/datepicker.en.js', array('jquery'), '2.1.0' );
 
+	// 3rd party: html2canvas
+	wp_enqueue_script('html2canvas', LS_ROOT_URL.'/static/html2canvas/html2canvas.min.js', array('jquery'), '1.0.0a9' );
 
 	// User CSS
 	$uploads = wp_upload_dir();

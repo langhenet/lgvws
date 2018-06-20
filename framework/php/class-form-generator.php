@@ -1015,6 +1015,13 @@ if( ! class_exists( 'avia_form' ) )
 						if(preg_match("!^[\w|\.|\-]+@\w[\w|\.|\-]*\.[a-zA-Z]{2,20}$!", urldecode($_POST[$id]))) return "valid";
 
 					break;
+						
+					case 'is_ext_email':
+
+						$this->autoresponder[] = $id;
+						if(preg_match("!^[\w|\.|\-|ÄÖÜäöü]+@\w[\w|\.|\-|ÄÖÜäöü]*\.[a-zA-Z]{2,20}$!", urldecode($_POST[$id]))) return "valid";
+
+					break;
 
 					case 'is_number':
 

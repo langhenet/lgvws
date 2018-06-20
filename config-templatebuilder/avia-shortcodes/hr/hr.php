@@ -31,6 +31,7 @@ if ( !class_exists( 'avia_sc_hr' ) )
 				$this->config['tooltip'] 	= __('Creates a delimiter/whitespace to separate elements', 'avia_framework' );
 				$this->config['tinyMCE']    = array('tiny_always'=>true);
 				$this->config['preview'] 	= 1;
+				$this->config['disabling_allowed'] = true;
 			}
 			
 			function extra_assets()

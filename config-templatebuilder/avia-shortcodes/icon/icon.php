@@ -28,6 +28,7 @@ if ( !class_exists( 'av_font_icon' ) )
             //$this->config['inline']   = true;
             $this->config['tinyMCE']    = array('tiny_always'=>true);
 			$this->config['preview'] 	= 1;
+			$this->config['disabling_allowed'] = true;
         }
         
         function extra_assets()

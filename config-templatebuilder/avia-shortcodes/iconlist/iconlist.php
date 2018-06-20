@@ -26,6 +26,7 @@ if ( !class_exists( 'avia_sc_iconlist' ) )
 				$this->config['shortcode_nested'] = array('av_iconlist_item');
 				$this->config['tooltip'] 	= __('Creates a list with nice icons beside', 'avia_framework' );
 				$this->config['preview'] 	= true;
+				$this->config['disabling_allowed'] = true;
 
 			}
 			
@@ -33,6 +34,9 @@ if ( !class_exists( 'avia_sc_iconlist' ) )
 			{
 				wp_enqueue_style( 'avia-module-icon' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/icon/icon.css' , array('avia-layout'), false );
 				wp_enqueue_style( 'avia-module-iconlist' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/iconlist/iconlist.css' , array('avia-layout'), false );
+				
+				wp_enqueue_script( 'avia-module-iconlist' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/iconlist/iconlist.js' , array('avia-shortcodes'), false, TRUE );
+
 			}
 
 			/**

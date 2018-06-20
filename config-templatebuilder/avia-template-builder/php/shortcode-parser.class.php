@@ -93,7 +93,6 @@ if( ! class_exists( 'ShortcodeParser' ) )
 			unset( $this->err_counters );
 		}
 		
-		
 		/**
 		 * 
 		 * @since 4.2.1
@@ -231,10 +230,23 @@ if( ! class_exists( 'ShortcodeParser' ) )
 			
 			$messages = get_post_meta( $post_id, $key, true );
 			
+			/**
+			 * Clear all messages if parser has been disabled or debug mode is disabled
+			 */
+			if( ( 'debug' != AviaBuilder::$mode ) || ( 'disabled' == $this->get_parser_state() ) )
+			{
+				if( is_array( $messages ) || ! empty( $messages ) )
+				{
+					delete_post_meta( $post_id, $key );
+				}
+				return;
+			}
+			
 			if( ! is_array( $messages ) )
 			{
 				$messages = array();
 			}
+			
 			
 			$now = new DateTime();
 			
@@ -2867,6 +2879,8 @@ if( ! class_exists( 'ShortcodeParser' ) )
 			
 			$out .=			"[/av_tab]";
 			
+			$out .=			Avia_Builder()->element_manager()->debug_element_usage_info();
+			
 			$out .=		"[/av_tab_container]";
 			
 			return $out;
@@ -2990,6 +3004,33 @@ if( ! class_exists( 'ShortcodeParser' ) )
 			$out .=			"[/av_tab]";
 			
 			return $out;
+		}
+		
+		/**
+		 * Enable elements needed for parser info window
+		 * 
+		 * @since 4.4.1
+		 * @param array $disabled
+		 * @return array
+		 */
+		static public function enable_used_assets( array $disabled )
+		{
+			$needed = array(
+							'av_codeblock',
+							'av_heading',
+							'av_tab_container',
+							'av_tab',
+							'av_toggle_container',
+							'av_toggle',
+						);
+						
+			foreach( $needed as $sc ) 
+			{
+				unset( $disabled[ $sc ] );
+			}
+			
+			
+			return $disabled;
 		}
 	
 	}		//	end class ShortcodeParser

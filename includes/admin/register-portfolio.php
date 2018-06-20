@@ -69,6 +69,7 @@ add_filter("manage_edit-portfolio_columns", "prod_edit_columns");
 add_filter("manage_edit-post_columns", "post_edit_columns");
 add_filter("manage_edit-page_columns", "post_edit_columns");
 add_action("manage_posts_custom_column",  "prod_custom_columns");
+add_action("manage_pages_custom_column",  "prod_custom_columns");
 
 
 /**
@@ -81,7 +82,7 @@ function avia_listtable_image_css()
     ?>
         <style>
             .widefat thead tr th#avia-image {
-                width: 65px;
+                width: 45px;
             }
         </style>
     <?php

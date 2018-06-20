@@ -15,6 +15,62 @@ if ( !class_exists( 'AviaHelper' ) ) {
 		static $mobile_styles = array(); 		//an array that holds mobile styling rules that are appened to the end of the page
 		
 		/**
+		 * Returns the result of a multi input field that works with 2-4 values eg: margin, padding, border-radius etc
+		 * 
+		 * @since 4.3
+		 * @added_by Kriesi
+		 * @return array
+		 */
+		static public function multi_value_result( $value_array , $attr_name , $directions = array('top' , 'right' , 'bottom' , 'left') )
+		{
+			$explode = explode( ',', $value_array );
+			
+    		$minifed = "";
+			$writen  = "";
+			$comp_count = 0;
+			//make sure that the explode array has the correct amount of entries. if only one is set apply it to all direction sets
+			if(count($explode) == 1)
+			{
+				$new_explode = array();
+				foreach($directions as $key => $value)
+				{
+					$new_explode[] = $explode[0];
+				}
+				
+				$explode = $new_explode;
+			}
+			
+			foreach($explode as $key => $value)
+			{
+				if(!isset($value) && is_numeric($value))
+				{
+					$value = $value ."px";
+				}
+				
+				if(empty($value) && ( isset($value) && $value !== "0") )
+				{
+					$value = "0";
+				}
+				else
+				{
+					$writen .= $attr_name ."-". $directions[$key] . ":".$value."; ";
+					$comp_count ++;
+				}
+				
+				$minifed .= $value ." ";
+			}
+			
+			$minifed = $attr_name.":".trim($minifed)."; ";
+			if($comp_count == 4) $writen = $minifed;
+			
+			//overwrite sets all values, those not set by the user are set to 0. complement only creates rules for set elements and skips unset rules
+			$result = array( 'overwrite' => $minifed , 'complement' => $writen ); 			
+			
+			return $result;
+		}
+		
+		
+		/**
     	 * get_url - Returns a url based on a string that holds either post type and id or taxonomy and id
     	 */
     	static function get_url($link, $post_id = false) 
@@ -49,11 +105,82 @@ if ( !class_exists( 'AviaHelper' ) ) {
             	if(is_object($return)) $return = ""; //if an object is returned it is a WP_Error object and something was not found
             	return $return;
             } 
-            
-            
     	}
-    	
-    	/**
+		
+		/**
+		 * Returns a user friendly text that can be rendered to a screen reader output
+		 * Based on same input as to AviaHelper::get_url
+		 * 
+		 * @since 4.2.7
+		 * @added_by Günter
+		 * @param string $link
+		 * @param int|null $post_id
+		 * @return string
+		 */
+		static public function get_screen_reader_url_text( $link, $post_id = false )
+		{
+			$link = explode( ',', $link, 2 );
+			
+			if( $link[0] == 'lightbox' )        
+    		{
+				$post = get_post( $post_id );
+				if( ! $post instanceof WP_Post )
+				{
+					return __( 'No attachment image available', 'avia_framework' );
+				}
+				
+    			$link = wp_get_attachment_image_src( $post_id, apply_filters( 'avf_avia_builder_helper_lightbox_size', 'large' ) );
+				
+				if( false === $link )
+				{
+					return __( 'No attachment image available for: ', 'avia_framework' ) . esc_html( $post->post_title );
+				}
+				
+    			return __( 'Attachment image for: ', 'avia_framework' ) . esc_html( $post->post_title );
+    		}
+			
+			if( empty( $link[1] ) )
+    		{
+    			return __( 'Follow a manual added link', 'avia_framework' );
+    		}
+			
+			if( $link[0] == 'manually' )
+    		{
+    			if( strpos( $link[1], "@" ) !== false && strpos( $link[1], "://" ) === false )
+				{
+					return __( 'Send an E-Mail to: ', 'avia_framework' ) . $link[1];
+				}		
+
+    			return __( 'Follow a manual added link', 'avia_framework' );
+    		}
+			
+			if( post_type_exists( $link[0] ) )
+            {
+				$post = get_post( $link[1] );
+				if( ! $post instanceof WP_Post )
+				{
+					return __( 'Wrong link - page does not exist', 'avia_framework' );
+				}
+				
+				return __( 'Link to: ', 'avia_framework' ) . esc_html( $post->post_title );
+            }
+			
+			if( taxonomy_exists( $link[0] ) )  
+            {
+				$term = get_term( $link[1], $link[0] );
+							
+				if( ! $term instanceof WP_Term)
+				{
+					return __( 'Wrong link - page does not exist', 'avia_framework' );
+				}
+					
+            	return sprintf( __( 'Link to %s in %s', 'avia_framework' ), $term->name, $term->taxonomy );
+            } 
+			
+			return '';
+		}
+				
+		/**
     	 * get_entry - fetches an entry based on a post type and id
     	 */
     	static function get_entry($entry) 

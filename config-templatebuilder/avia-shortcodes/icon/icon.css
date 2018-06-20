@@ -10,19 +10,7 @@ ICON
 .avia-icon-pos-right {float: right; margin-left: 0.5em;}
 
 
-.av-icon-display{
-display: block;
-font-size: 30px;
-line-height: 58px;
-margin: 0 auto 20px auto;
-width: 60px;
-border-radius: 100px;
-border-style: solid;
-border-width: 1px;
-text-align: center;
--webkit-transition: all 0.3s ease-in-out;
-transition: 		all 0.3s ease-in-out;
-}
+
 
 /*tooltip*/
 
