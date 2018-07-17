@@ -34,7 +34,7 @@
 ?><!DOCTYPE html>
 <html <?php language_attributes(); ?> class="<?php echo "html_{$style} ".$responsive." ".$preloader." ".$av_lightbox." ".$filterable_classes." ".$av_classes_manually ?> ">
 <head>
-<link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,400,600,300' rel='stylesheet' type='text/css'>
+<link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,400,600,300' rel='stylesheet' type='text/css'>
 <meta charset="<?php bloginfo( 'charset' ); ?>" />
 <?php
 /*

@@ -34,3 +34,39 @@
 .select2-container--open .select2-dropdown--below {
   box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
 }
+
+/***
+ * Stripe
+ */
+.woocommerce-checkout #payment input#payment_method_stripe,
+#add_payment_method #payment input#payment_method_stripe {
+  position: relative !important;
+  top: 0 !important;
+}
+
+.woocommerce-checkout #payment .payment_method_stripe label[for=payment_method_stripe] {
+  padding-left: 0 !important;
+}
+
+.wc-stripe-elements-field {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  box-shadow: none;
+  width: 100%;
+  padding: 8px 6px !important;
+  margin: 0 !important;
+  outline: 0 !important;
+  font-size: 12px;
+  font-family: "Helvetica Neue", Helvetica,Arial,sans-serif;
+  line-height: 18px;
+}
+
+.wc-credit-card-form {
+  .form-row-first,
+  .form-row-last {
+    @include breakpoint-max(md) {
+      width: 100% !important;
+    }
+  }
+}
