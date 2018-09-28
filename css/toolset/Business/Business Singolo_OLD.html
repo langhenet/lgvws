@@ -129,12 +129,7 @@
 						</div>
 						<div class="business__booking-column">
 							<p>[wpml-string context="Business"]Use the module below to request a stay in[/wpml-string] [wpv-post-title]</p>
-              [wpv-conditional debug="false" if="('[get_wpml_language_code_value]' eq 'it')"]
-                  [gravityform id="10" title="false" description="false" ajax="true"]
-              [/wpv-conditional]
-              [wpv-conditional debug="false" if="('[get_wpml_language_code_value]' eq 'en')"]
-                  [gravityform id="13" title="false" description="false" ajax="true"]
-              [/wpv-conditional]
+							[types field="lgb-contactform"][/types]
 						</div>
 					[/wpv-if]
 					[wpv-if form="wpcf-lgb-contactform" evaluate="$form = 2"]
@@ -143,12 +138,7 @@
 						</div>
 						<div class="business__booking-column">
 							<p>[wpml-string context="Business"]Use the module below to request a table at[/wpml-string] [wpv-post-title]</p>
-              [wpv-conditional debug="false" if="('[get_wpml_language_code_value]' eq 'it')"]
-                  [gravityform id="11" title="false" description="false" ajax="true"]
-              [/wpv-conditional]
-              [wpv-conditional debug="false" if="('[get_wpml_language_code_value]' eq 'en')"]
-                  [gravityform id="14" title="false" description="false" ajax="true"]
-              [/wpv-conditional]
+							[types field="lgb-contactform"][/types]
 						</div>
 					[/wpv-if]
 					[wpv-if form="wpcf-lgb-contactform" evaluate="$form = 3"]
@@ -157,12 +147,7 @@
 						</div>
 						<div class="business__booking-column">
 							<p>[wpml-string context="Business"]Use the module below to request a visit at[/wpml-string] [wpv-post-title]</p>
-              [wpv-conditional debug="false" if="('[get_wpml_language_code_value]' eq 'it')"]
-                  [gravityform id="9" title="false" description="false" ajax="true"]
-              [/wpv-conditional]
-              [wpv-conditional debug="false" if="('[get_wpml_language_code_value]' eq 'en')"]
-                  [gravityform id="15" title="false" description="false" ajax="true"]
-              [/wpv-conditional]
+							[types field="lgb-contactform"][/types]
 						</div>
 					[/wpv-if]
 					[wpv-if form="wpcf-lgb-contactform" evaluate="$form = 4"]
@@ -171,14 +156,19 @@
 						</div>
 						<div class="business__booking-column">
 							<p>[wpml-string context="Business"]Use the module below to send a message to[/wpml-string] [wpv-post-title]</p>
-              [wpv-conditional debug="false" if="('[get_wpml_language_code_value]' eq 'it')"]
-                  [gravityform id="8" title="false" description="false" ajax="true"]
-              [/wpv-conditional]
-              [wpv-conditional debug="false" if="('[get_wpml_language_code_value]' eq 'en')"]
-                  [gravityform id="12" title="false" description="false" ajax="true"]
-              [/wpv-conditional]
+							[types field="lgb-contactform"][/types]
 						</div>
 					[/wpv-if]
+          [wpv-if form="wpcf-lgb-contactform" evaluate="$form = 5"]
+						<div class="business__booking-title">
+							<h2 class="title">[wpml-string context="Business"]Contact Us[/wpml-string]</h2>
+						</div>
+						<!-- <iframe width="100%" height="600px" src="//booking.langhe.net/it/widget/tours/list?referral=LANGHE&tourGroupId=[types field="lg-trekksoft-activity-overview"][/types]" style="magin: 0 auto;"></iframe> -->
+            <div class="business__booking-column">
+            <iframe class="business_booking-form" width="100%" height="100%" src="//booking.langhe.net/it/widget/activity/book/[types field="lg-trekksoft-activity"][/types]"></iframe>
+
+            </div>
+          [/wpv-if]
 					<div class="business__booking-column">
 						<div class="tabcontainer  top_tab">
 								<section class="av_tab_section" itemscope="itemscope" itemtype="https://schema.org/CreativeWork">
