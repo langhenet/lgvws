@@ -472,18 +472,21 @@ h4 {
 }
 
 h5 {
-  font-size: 0.625em;
-  line-height: 1.2em;
-  margin-top: 1.2em;
-  margin-bottom: 1.2em;
+  font-size: 0.85em;
+  line-height: 1.5em;
+  margin-top: 1.5em;
+  margin-bottom: 0em;
+  font-weight: bold;
+  text-transform: uppercase;
 }
 
 
 h6 {
-  font-size: 0.390625em;
-  line-height: 1.92em;
-  margin-top: 1.92em;
-  margin-bottom: 1.92em;
+  font-size: 0.85em;
+  line-height: 1.5em;
+  margin-top: 1.5em;
+  margin-bottom: 0em;
+  font-weight: bold;
 }
 
 ul, ol {
@@ -521,10 +524,9 @@ p + h4 {
 }
 
 p + h5 {
-  font-size: 0.625em;
-  line-height: 1.2em;
-  margin-top: 1.2em;
-  margin-bottom: 1.2em;
+
+  margin-top: 1.5em;
+  // margin-bottom: 1.2em;
 }
 
 .template-page .entry-content-wrapper h2.bg-title {
