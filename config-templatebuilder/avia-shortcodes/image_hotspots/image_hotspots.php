@@ -479,12 +479,24 @@ if ( !class_exists( 'avia_sc_image_hotspots' ) )
 				$img_h = "";
 				$img_w = "";
 				
-				if(!empty($attachment))
+				if( ! empty( $attachment ) )
 				{
-					$attachment_entry = get_post( $attachment );
+					/**
+					 * Allows e.g. WPML to reroute to translated image
+					 */
+					$posts = get_posts( array(
+											'include'			=> $attachment,
+											'post_status'		=> 'inherit',
+											'post_type'			=> 'attachment',
+											'post_mime_type'	=> 'image',
+											'order'				=> 'ASC',
+											'orderby'			=> 'post__in' )
+										);
 					
-					if(!empty($attachment_entry))
+					if( is_array( $posts ) && ! empty( $posts ) )
 					{
+						$attachment_entry = $posts[0];
+						
 						$alt = get_post_meta($attachment_entry->ID, '_wp_attachment_image_alt', true);
 	                	$alt = !empty($alt) ? esc_attr($alt) : '';
 	                	$title = trim($attachment_entry->post_title) ? esc_attr($attachment_entry->post_title) : "";

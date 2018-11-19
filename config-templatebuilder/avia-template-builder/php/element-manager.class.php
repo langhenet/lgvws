@@ -531,6 +531,20 @@ if( ! class_exists( 'aviaElementManager' ) )
 						'nopaging'		=> true,
 						'fields'		=> 'ids'
 					);
+			
+			if( '' != $update_state )
+			{
+				/**
+				 * Filter not updated posts
+				 */
+				$query_args['meta_query'] = array(
+						array(
+								'key'     => '_av_alb_element_mgr_version',
+								'value'   => aviaElementManager::VERSION,
+								'compare' => '!=',
+							),
+					);
+			}
 						
 			$query = new WP_Query( $query_args );
 			
@@ -555,12 +569,6 @@ if( ! class_exists( 'aviaElementManager' ) )
 				update_option( 'av_alb_blog_elements_state', $this->blog_elements_state );
 				
 				$this->post_elements_state = array();
-				
-				foreach ( $query->posts as $post_id ) 
-				{
-					set_time_limit( 0 );
-					update_post_meta( $post_id, '_av_alb_posts_elements_state', array() );
-				}
 			}
 			
 			update_option( 'av_alb_element_mgr_update', 'in_update' );
@@ -579,6 +587,8 @@ if( ! class_exists( 'aviaElementManager' ) )
 					continue;
 				}
 				
+				update_post_meta( $post_id, '_av_alb_posts_elements_state', array() );
+				
 				$content = Avia_Builder()->get_post_content( $post_id );
 				
 				$content_new = $this->set_element_ids_in_content( $content, $post_id, 'no_escape' );
@@ -586,7 +596,8 @@ if( ! class_exists( 'aviaElementManager' ) )
 				
 				if( $content != $content_new )
 				{
-					Avia_Builder()->update_post_content( $post_id, $content_new );
+					$content_new_wp = wp_slash( $content_new );
+					Avia_Builder()->update_post_content( $post_id, $content_new_wp );
 				}
 				
 				$this->update_usage_from_post_content( $content_new, $post_id, 'initialise' );

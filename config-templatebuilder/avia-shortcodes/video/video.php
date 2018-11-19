@@ -278,11 +278,12 @@ if ( !class_exists( 'avia_sc_video' ) )
 			function editor_element($params)
 			{
 				$template = $this->update_template("src", "URL: {{src}}");
+				$url = isset( $params['args']['src'] ) ? $params['args']['src'] : '';
 				
 				$params['content'] = NULL;
 				$params['innerHtml'] = "<img src='".$this->config['icon']."' title='".$this->config['name']."' />";
 				$params['innerHtml'].= "<div class='avia-element-label'>".$this->config['name']."</div>";
-				$params['innerHtml'].= "<div class='avia-element-url' {$template}> URL: ".$params['args']['src']."</div>";
+				$params['innerHtml'].= "<div class='avia-element-url' {$template}> URL: ". $url ."</div>";
 				$params['class'] = "avia-video-element";
 
 				return $params;

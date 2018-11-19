@@ -97,22 +97,7 @@ if ( !class_exists( 'avia_sc_animated_numbers' ) )
 							"std" 	=> "",
 							"required" => array('icon_select','not','no')
 							),
-							
-                    
-                    array(	"name" 	=> __("Number custom font size?", 'avia_framework' ),
-							"desc" 	=> __("Size of your number in pixel", 'avia_framework' ),
-				            "id" 	=> "font_size",
-				            "type" 	=> "select",
-				            "subtype" => AviaHtmlHelper::number_array(16,100,2,array('Default' =>''),'px'),
-				            "std" => ""),
-                    
-                    array(	"name" 	=> __("Description custom font size?", 'avia_framework' ),
-							"desc" 	=> __("Size of your description in pixel", 'avia_framework' ),
-				            "id" 	=> "font_size_description",
-				            "type" 	=> "select",
-				            "subtype" => AviaHtmlHelper::number_array(10,40,1, array('Default' =>''),'px'),
-				            "std" => ""),
-                    
+
 					
                     array(
                         "name" 	=> __("Apply link?", 'avia_framework' ),
@@ -139,13 +124,113 @@ if ( !class_exists( 'avia_sc_animated_numbers' ) )
                         "subtype" => array(
                             __('Yes',  'avia_framework' ) =>'yes',
                             __('No', 'avia_framework' ) =>'no')),
-                      
-                      
-                      array(
-							"type" 	=> "close_div",
-							'nodescription' => true
-						),
-					
+
+                    array(
+                        "type" 	=> "close_div",
+                        'nodescription' => true
+                    ),
+
+
+                    array(
+                        "type" 	=> "tab",
+                        "name"  => __("Appearence" , 'avia_framework'),
+                        'nodescription' => true
+                    ),
+
+                    array(	"name" 	=> __("Number custom font size?", 'avia_framework' ),
+                        "desc" 	=> __("Size of your number in pixel", 'avia_framework' ),
+                        "id" 	=> "font_size",
+                        "type" 	=> "select",
+                        "subtype" => AviaHtmlHelper::number_array(16,100,2,array('Default' =>''),'px'),
+                        "std" => ""),
+
+                    array(	"name" 	=> __("Description custom font size?", 'avia_framework' ),
+                        "desc" 	=> __("Size of your description in pixel", 'avia_framework' ),
+                        "id" 	=> "font_size_description",
+                        "type" 	=> "select",
+                        "subtype" => AviaHtmlHelper::number_array(10,40,1, array('Default' =>''),'px'),
+                        "std" => ""
+                    ),
+
+                    array(
+                        "name" 	=> __("Display Circle", 'avia_framework' ),
+                        "desc" 	=> __("Do you want to display a circle around the animated number?", 'avia_framework' ),
+                        "id" 	=> "circle",
+                        "type" 	=> "select",
+                        "std" 	=> "",
+                        "subtype" => array(
+                            __('No',  'avia_framework' ) =>'',
+                            __('Yes', 'avia_framework' ) =>'yes')
+                    ),
+
+                    array(
+                        "name" => __("Display Circle", 'avia_framework'),
+                        "desc" => __("The circle may overlap other elements, add spacing around the Animated Number element to prevent that.", 'avia_framework'),
+                        "type" => "heading",
+                        "required" 	=> array('circle', 'not', ''),
+                    ),
+                    array(
+                        "name" 	=> __("Circle Appearence", 'avia_framework' ),
+                        "desc" 	=> __("Define the appearence of the circle here", 'avia_framework' ),
+                        "id" 	=> "circle_custom",
+                        "type" 	=> "select",
+                        "required" 	=> array('circle', 'not', ''),
+                        "std" 	=> "",
+                        "subtype" => array(
+                            __('Default',  'avia_framework' ) =>'',
+                            __('Custom', 'avia_framework' ) =>'custom')
+                    ),
+
+                    array(
+                        "name" 	=> __("Circle Border Color", 'avia_framework' ),
+                        "desc" 	=> __("Select a custom border color. Leave empty to use the default", 'avia_framework' ),
+                        "id" 	=> "circle_border_color",
+                        "type" 	=> "colorpicker",
+                        "rgba"  => true,
+                        "container_class" => 'av_half av_half_first',
+                        "required" 	=> array('circle_custom', 'not', ''),
+                        "std" 	=> "",
+                    ),
+
+                    array(
+                        "name" 	=> __("Circle Backgound Color", 'avia_framework' ),
+                        "desc" 	=> __("Select a custom background color. Leave empty to use the default", 'avia_framework' ),
+                        "id" 	=> "circle_bg_color",
+                        "container_class" => 'av_half',
+                        "rgba"  => true,
+                        "type" 	=> "colorpicker",
+                        "required" 	=> array('circle_custom', 'not', ''),
+                        "std" 	=> "",
+                    ),
+
+                    array(
+                        "name" 	=> __("Border Width", 'avia_framework' ),
+                        "desc" 	=> __("Select a custom border width for the circle", 'avia_framework' ),
+                        "id" 	=> "circle_border_width",
+                        "container_class" => 'av_half av_half_first',
+                        "required" 	=> array('circle_custom', 'not', ''),
+                        "type" 	=> "select",
+                        "std" 	=> "",
+                        "subtype" => AviaHtmlHelper::number_array(1,30,1, array( __("Default Width", 'avia_framework' )=>''), 'px'),
+                    ),
+
+                    array(
+                        "name" 	=> __("Circle Size", 'avia_framework' ),
+                        "desc" 	=> __("Define the size of the circle", 'avia_framework' ),
+                        "id" 	=> "circle_size",
+                        "container_class" => 'av_half',
+                        "required" 	=> array('circle_custom', 'not', ''),
+                        "type" 	=> "select",
+                        "std" 	=> "",
+                        "subtype" => AviaHtmlHelper::number_array(50,120,10, array( __("Default Size", 'avia_framework' )=>''), '%'),
+                    ),
+
+
+                    array(
+                        "type" 	=> "close_div",
+                        'nodescription' => true
+                    ),
+
 					array(
 							"type" 	=> "tab",
 							"name"	=> __("Colors",'avia_framework' ),
@@ -295,7 +380,13 @@ if ( !class_exists( 'avia_sc_animated_numbers' ) )
 											 	'icon' 			=> 'no',
 											 	'font'			=> '',
 											 	'font_size'		=> '',
-											 	'font_size_description'=>''
+                                                'font_size_description'=>'',
+                                                'circle'=>'',
+                                                'circle_custom'=>'',
+                                                'circle_border_color' => '',
+                                                'circle_bg_color' => '',
+                                                'circle_border_width' => '',
+                                                'circle_size' => '',
 											 	)
 											 , $atts));
 				
@@ -327,8 +418,7 @@ if ( !class_exists( 'avia_sc_animated_numbers' ) )
                 {
                 	$font_style2 = "style='font-size:{$font_size_description}px'";
                 }
-                
-                
+
 				
 				if($icon_select !== 'no')
 				{
@@ -337,9 +427,43 @@ if ( !class_exists( 'avia_sc_animated_numbers' ) )
 					if($icon_select == 'av-icon-before') $before = $display_char;
 					if($icon_select == 'av-icon-after')  $after  = $display_char;
 				}
-				
+
+
+                // add circle around animated number
+                $circle_markup = "";
+                if ($circle !== "") {
+
+                    $circle_style_string = '';
+                    $circle_size_string = '';
+
+                    if ($circle_custom == "custom"){
+
+                        if ($circle_border_color !== ""){
+                            $circle_style_string .= AviaHelper::style_string($atts, 'circle_border_color', 'border-color');
+                        }
+                        if ($circle_bg_color !== ""){
+                            $circle_style_string .= AviaHelper::style_string($atts, 'circle_bg_color', 'background-color');
+                        }
+                        if ($circle_border_width !== ""){
+                            $circle_style_string .= AviaHelper::style_string($atts, 'circle_border_width', 'border-width','px');
+                        }
+                        if ($circle_size !== ""){
+                            $circle_size_string .= AviaHelper::style_string($atts, 'circle_size', 'width','%');
+                        }
+                    }
+
+                    $circle_style_string = AviaHelper::style_string($circle_style_string);
+                    $circle_size_string = AviaHelper::style_string($circle_size_string);
+
+                    $circle_markup = "<span class='avia-animated-number-circle' {$circle_size_string}><span class='avia-animated-number-circle-inner' {$circle_style_string}></span></span>";
+                }
+
+
         		// add blockquotes to the content
         		$output  = '<'.$tags[0].' '.$style.' class="avia-animated-number av-force-default-color '.$av_display_classes.' avia-color-'.$color.' '.$meta['el_class'].' avia_animate_when_visible" '.$style.'>';
+                $output .= $circle_markup;
+
+
         		$output .= 		'<strong class="heading avia-animated-number-title" '.$font_style.'>';
         		$output .= 		$before.$this->extract_numbers($number).$after;
         		$output .= 		"</strong>";

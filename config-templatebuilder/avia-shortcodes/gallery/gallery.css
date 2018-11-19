@@ -15,12 +15,12 @@ Gallery
 
 
 /*gallery animation*/
-.avia_transform .avia-gallery-thumb img{
+.avia_transform .avia-gallery-animate .avia-gallery-thumb img{
 opacity: 0.1;
 -webkit-transform:	scale(0.5);
 transform:			scale(0.5);
 }
-.avia_transform .avia-gallery-thumb  img.avia_start_animation{
+.avia_transform .avia-gallery-animate .avia-gallery-thumb  img.avia_start_animation{
 -webkit-animation: avia_appear 0.9s 1 cubic-bezier(0.175, 0.885, 0.320, 1.275); /* Safari 4+ */
 animation:         avia_appear 0.9s 1 cubic-bezier(0.175, 0.885, 0.320, 1.275); /* IE 10+ */
 opacity: 1;
@@ -28,14 +28,14 @@ opacity: 1;
 transform:			scale(1);
 }
 
-.av-hover-grow{overflow: hidden; }
-.av-hover-grow img {
+.avia-gallery-animate .av-hover-grow{overflow: hidden; }
+.avia-gallery-animate .av-hover-grow img {
 -webkit-transition: all 1.7s cubic-bezier(0.230, 1.000, 0.320, 1.000);
 transition:			all 1.7s cubic-bezier(0.230, 1.000, 0.320, 1.000);
 }
-.av-hover-grow:hover img { -webkit-transform: scale(1.1); transform: scale(1.1); }
+.avia-gallery-animate .av-hover-grow:hover img { -webkit-transform: scale(1.1); transform: scale(1.1); }
 
-.av-hide-gallery-thumbs .avia-gallery-thumb{display:none;}
+av-hide-gallery-thumbs .av-hide-gallery-thumbs .avia-gallery-thumb{display:none;}
 
 
 #top #av-admin-preview .avia-gallery .avia-gallery-big-inner{height:auto;}

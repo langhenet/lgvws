@@ -678,7 +678,7 @@ if ( !class_exists( 'avia_sc_cell' ) )
 				
 				if( ! empty( $link ) )
 				{
-					$extraClass .= ' avia-link-column';
+					$extraClass .= ' avia-link-column av-cell-link';
 					if( ! empty( $atts['link_hover'] ) )
 					{
 						$extraClass .= ' avia-link-column-hover';

@@ -14,6 +14,12 @@ Image
 .avia-image-overlay-wrap a.avia_image{overflow: hidden; }
 .avia-image-overlay-wrap a.avia_image .image-overlay{-webkit-transform: scale(1.5); -ms-transform: scale(1.5); transform: scale(1.5);}
 
+.av-hover-grow,
+.av-hover-grow .avia-image-overlay-wrap a.avia_image 
+{
+    overflow: visible;
+}
+
 /*styling variations*/
 
 .av-styling-circle .avia-image-container-inner, .av-styling-circle .avia_image, .av-styling-circle .av-image-caption-overlay,

@@ -134,7 +134,6 @@
 	else
 	{
 		echo "<div><div>";
-		
 	}
 
 // global fix for https://kriesi.at/support/topic/footer-disseapearing/#post-427764

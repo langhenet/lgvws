@@ -103,6 +103,12 @@ width:11px;
 border:none;
 }
 
+
+.hasCurrentStyle .toggle_icon,
+.hasCurrentStyle .toggle_icon > span{
+    border-color: inherit !important;
+}
+
 /* removed, otherwise opening animation does not work
 .active_tc.toggle_wrap{
 display:block;
@@ -127,3 +133,67 @@ display:block;
 .av-minimal-toggle .activeTitle.toggler:hover { opacity: 1; }
 
 
+/* elegant toggle */
+.av-elegant-toggle.togglecontainer .single_toggle:first-child .toggler,
+.av-elegant-toggle.togglecontainer .taglist + .single_toggle .toggler{
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+
+.av-elegant-toggle.togglecontainer .av_toggle_section:first-of-type .toggler{
+    border-top-width: 1px;
+    border-top-style: 1px;
+}
+
+.js_active .av-elegant-toggle .toggler{
+    padding: 35px 10px 30px 35px;
+    font-size: 17px;
+    top: 0;
+    border-top-width: 0;
+    border-left-width: 0;
+    border-right-width: 0;
+}
+
+.av-elegant-toggle .toggle_icon{
+    width: 32px;
+    height: 32px;
+    border-radius: 40px;
+    left: auto;
+    right: 20px;
+    margin-top: -16px;
+    border-width: 2px;
+    opacity: 0.4;
+    transition: all 0.2s ease-in;
+}
+
+.av-elegant-toggle .activeTitle .toggle_icon,
+.av-elegant-toggle .single_toggle:hover .toggle_icon {
+    opacity: 1;
+}
+
+.av-elegant-toggle .toggle_icon .hor_icon,
+.av-elegant-toggle .toggle_icon .vert_icon{
+    border-width: 2px;
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+}
+
+.av-elegant-toggle .toggle_content{
+    margin-bottom: 0;
+    font-size: 15px;
+    line-height: 1.4;
+    padding: 20px 35px 30px 35px;
+    border-top-width: 0;
+    border-left-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 1px;
+    border-radius: 0;
+}
+
+.av-elegant-toggle .single_toggle{
+    border-width: 0;
+    margin: 0;
+    padding: 0;
+    float: none;
+}

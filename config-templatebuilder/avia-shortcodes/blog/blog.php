@@ -104,10 +104,28 @@ if ( !class_exists( 'avia_sc_blog' ) )
 												__('Single Author, small preview Pic (no author picture is displayed, feature image is small)', 'avia_framework') =>'single-small',
 												__('Single Author, big preview Pic (no author picture is displayed, feature image is big)', 'avia_framework') =>'single-big',
 												__('Grid Layout', 'avia_framework') =>'blog-grid',
+                                                __('List Layout - Simple (Title and meta information only)', 'avia_framework' ) =>'bloglist-simple',
+                                                __('List Layout - Compact (Title and icon only)', 'avia_framework' ) =>'bloglist-compact',
+                                                __('List Layout - Excerpt (Title, meta information and excerpt only)', 'avia_framework' ) =>'bloglist-excerpt',
+
 												/* 'no sidebar'=>'fullsize' */
 										)),
-										
-					array(
+
+                    array(
+                        "name" 	=> __("Blog List Width", 'avia_framework' ),
+                        "desc" 	=> __("Define the width of the list", 'avia_framework' ),
+                        "id" 	=> "bloglist_width",
+                        "type" 	=> "select",
+                        "std" 	=> "",
+                        "required" 	=> array('blog_style', 'contains', 'bloglist'),
+                        "subtype" =>   array(
+                            __('Auto',  'avia_framework' ) =>'',
+                            __('Force Fullwidth',  'avia_framework' ) =>'force_fullwidth'
+                            )),
+
+
+
+                    array(
 							"name" 	=> __("Blog Grid Columns", 'avia_framework' ),
 							"desc" 	=> __("How many columns do you want to display?", 'avia_framework' ),
 							"id" 	=> "columns",
@@ -140,7 +158,7 @@ if ( !class_exists( 'avia_sc_blog' ) )
 							"id" 	=> "content_length",
 							"type" 	=> "select",
 							"std" 	=> "content",
-							"required" 	=> array('blog_style', 'not', 'blog-grid'),
+							"required" 	=> array('blog_style', 'doesnt_contain', 'blog'),
 							"subtype" => array(
 								__('Full Content',  'avia_framework' ) =>'content',
 								__('Excerpt',  'avia_framework' ) =>'excerpt',
@@ -150,6 +168,7 @@ if ( !class_exists( 'avia_sc_blog' ) )
 							"name" 	=> __("Preview Image Size", 'avia_framework' ),
 							"desc" 	=> __("Set the image size of the preview images", 'avia_framework' ),
 							"id" 	=> "preview_mode",
+                            "required" 	=> array('blog_style', 'doesnt_contain', 'bloglist'),
 							"type" 	=> "select",
 							"std" 	=> "auto",
 							"subtype" => array(__('Set the preview image size automatically based on column or layout width','avia_framework' ) =>'auto',__('Choose the preview image size manually (select thumbnail size)','avia_framework' ) =>'custom')),
@@ -342,8 +361,28 @@ if ( !class_exists( 'avia_sc_blog' ) )
                         $atts['categories'] = $atts['link'][1];
                     }
                     else if(!empty($atts['taxonomy']))
-                    {
-                        $taxonomy_terms_obj = get_terms($atts['taxonomy']);
+					{
+						$term_args = array( 
+										'taxonomy'		=> $atts['taxonomy'],
+										'hide_empty'	=> true
+									);
+						/**
+						 * To display private posts you need to set 'hide_empty' to false, 
+						 * otherwise a category with ONLY private posts will not be returned !!
+						 * 
+						 * You also need to add post_status "private" to the query params of filter avia_post_slide_query.
+						 * 
+						 * @since 4.4.2
+						 * @added_by Günter
+						 * @param array $term_args 
+						 * @param array $atts 
+						 * @param boolean $ajax
+						 * @return array
+						 */
+						$term_args = apply_filters( 'avf_av_blog_term_args', $term_args, $atts, $content );						
+
+						$taxonomy_terms_obj = AviaHelper::get_terms( $term_args );
+						
                         foreach ($taxonomy_terms_obj as $taxonomy_term)
                         {
                             $atts['categories'] .= $taxonomy_term->term_id . ',';
@@ -352,6 +391,7 @@ if ( !class_exists( 'avia_sc_blog' ) )
                 }
 
 				$atts = shortcode_atts(array('blog_style'	=> '',
+											 'bloglist_width' => '',
 											 'columns' 		=> 3,
                                              'blog_type'    => 'posts',
 			                                 'items' 		=> '16',
@@ -416,6 +456,7 @@ if ( !class_exists( 'avia_sc_blog' ) )
 				if($output)
 				{
 					$extraclass = function_exists('avia_blog_class_string') ? avia_blog_class_string() : "";
+					$extraclass .= $atts['bloglist_width'] == 'force_fullwidth' ? ' av_force_fullwidth' : "";
                     $markup = avia_markup_helper(array('context' => 'blog','echo'=>false, 'custom_markup'=>$meta['custom_markup']));
 					$output = "<div class='av-alb-blogposts template-blog {$extraclass} {$av_display_classes}' {$markup}>{$output}</div>";
 				}

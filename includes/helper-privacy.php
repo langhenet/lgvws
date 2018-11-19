@@ -7,15 +7,11 @@
 	* @added_by Kriesi
 	*
 	* Shortcodes used: 
-	* [av_privacy_link] -> returns a link to the wordpress privacy policy page (requires WP 4.9.6)
+	* [av_privacy_link page_id="your custom page id"]your custom page title[/av_privacy_link] -> returns a link to the wordpress privacy policy page (requires WP 4.9.6) or a custom page
 	* [av_privacy_google_tracking] -> to disable google tracking
 	* [av_privacy_google_webfonts] -> to disable google webfonts
 	* [av_privacy_google_maps] -> to disable google maps
 	* [av_privacy_video_embeds] -> to disable video embeds
-	*
-	*
-	* Allows to add a checkbox to the comment form
-	*
 	*
 	*/
 
@@ -25,10 +21,53 @@ if(!class_exists('av_privacy_class'))
 {
 	class av_privacy_class
 	{
-		var $toggles = array();
+		/**
+		 * Holds the instance of this class
+		 * 
+		 * @since 4.4.1
+		 * @var av_privacy_class 
+		 */
+		static private $_instance = null;
 		
-		function __construct()
+		/**
+		 *
+		 * @since 4.4.1
+		 * @var string 
+		 */
+		static protected $default_privacy_message = '';
+		
+		
+		/**
+		 * @since 4.4
+		 * @var array 
+		 */
+		protected $toggles;
+		
+		
+		/**
+		 * Return the instance of this class
+		 * 
+		 * @since 4.4.1
+		 * @return AviaBuilder
+		 */
+		static public function instance()
 		{
+			if( is_null( av_privacy_class::$_instance ) )
+			{
+				av_privacy_class::$_instance = new av_privacy_class();
+			}
+			
+			return av_privacy_class::$_instance;
+		}
+		
+		
+		/**
+		 * @since 4.4
+		 */
+		protected function __construct()
+		{
+			$this->toggles = array();
+			
 			//shortcode related stuff
 			add_shortcode( 'av_privacy_link', array($this, 'av_privacy_policy_link') );
 			add_shortcode( 'av_privacy_google_tracking', array($this, 'av_privacy_disable_google_tracking') );
@@ -36,15 +75,13 @@ if(!class_exists('av_privacy_class'))
 			add_shortcode( 'av_privacy_google_maps', array($this, 'av_privacy_disable_google_maps') );
 			add_shortcode( 'av_privacy_video_embeds', array($this, 'av_privacy_disable_video_embeds') );
 			
-			
-			
 			add_action('wp_footer', array($this, 'footer_script') , 1000);
 			
 		
 			//hook into commentform if enabled in backend
 			if(avia_get_option('privacy_message_commentform_active') == "privacy_message_commentform_active")
 			{
-				add_filter( 'comment_form_default_fields', array($this, 'av_privacy_comment_checkbox')  );
+				add_filter( 'comment_form_fields', array($this, 'av_privacy_comment_checkbox')  );
 				add_filter( 'preprocess_comment', array($this, 'av_privacy_verify_comment_checkbox')  );
 			}
 			
@@ -63,13 +100,46 @@ if(!class_exists('av_privacy_class'))
 			//hook into login/registration forms if enabled in backend
 			if(avia_get_option('privacy_message_login_active') == "privacy_message_login_active")
 			{
-				add_action( 'login_form', array($this, 'av_privacy_login_extra') , 10 , 2 );
-				add_filter( 'wp_authenticate_user', array($this,'av_authenticate_user_acc'), 99999, 2);
+				add_action( 'login_form', array($this, 'av_privacy_login_extra') , 10 );
+				add_filter( 'wp_authenticate_user', array($this,'av_authenticate_user_acc'), 99999, 2 );
 			}
 			
+			//hook into registration forms if enabled in backend
+			if( avia_get_option('privacy_message_registration_active') == "privacy_message_registration_active" )
+			{
+				add_action( 'register_form', array( $this, 'av_privacy_register_extra') , 10 );
+				add_filter( 'registration_errors', array( $this,'av_registration_errors'), 99999, 3 );
+			}
 			
 		}
 		
+		/**
+		 * 
+		 * @since 4.4.1
+		 */
+		public function __destruct() 
+		{
+			unset( $this->toggles );
+		}
+		
+		/**
+		 * Returns a filterable default privacy message for checkboxes
+		 * 
+		 * @since 4.4.1
+		 * @added_by Günter
+		 * @return string
+		 */
+		static public function get_default_privacy_message()
+		{
+			if( empty( av_privacy_class::$default_privacy_message ) )
+			{
+				av_privacy_class::$default_privacy_message = apply_filters( 'avf_default_privacy_message',	__( "I agree to the terms and conditions laid out in the [av_privacy_link]Privacy Policy[/av_privacy_link]", 'avia_framework' ) );
+			}
+			
+			return av_privacy_class::$default_privacy_message;
+		}
+
+
 		/**
 		 * Toggle that allows to set/unset a cookie that can then be used for privacy options
 		 * 
@@ -158,23 +228,45 @@ if(!class_exists('av_privacy_class'))
 		}
 		
 		/**
-		 * Shortcode for a link to the privacy policy page. Requires wp 4.9.6
+		 * Shortcode for a link to the privacy policy page. Requires wp 4.9.6.
 		 * 
 		 * @since 4.4
+		 * @since 4.4.1				custom page id added
 		 * @added_by Kriesi
 		 * @return string
 		 */
-		function av_privacy_policy_link( $atts = array() , $content = "")
+		function av_privacy_policy_link( $atts = array() , $content = "", $shortcodename = "" )
 		{	
-			$page_id = get_option('wp_page_for_privacy_policy');
-			$url	 = get_permalink($page_id);
-			$content = !empty($content) ?  $content : get_the_title($page_id);
-			$link	 = "<a href='{$url}'>{$content}</a>";
+			$atts = shortcode_atts(	array(		
+							'page_id'	=> ''
+						), $atts, $shortcodename );
+			
+			$url = false;
+			
+			if( ! empty( $atts['page_id'] ) )
+			{
+				$url = get_permalink( $atts['page_id'] );
+			}
+			
+			if( false === $url )
+			{
+				$page_id = get_option( 'wp_page_for_privacy_policy' );
+				$url	 = get_permalink( $page_id );
+			}
+			
+			if( false === $url )
+			{
+				$link = $content;
+			}
+			else
+			{
+				$content = ! empty( $content ) ? $content : get_the_title( $page_id );
+				$link	 = "<a href='{$url}' target='_blank'>{$content}</a>";
+			}
 			
 			return $link;
 		}
-		
-		
+
 		/**
 		 * Javascript that gets appended to pages that got a privacy shortcode toggle
 		 * 
@@ -238,11 +330,18 @@ if(!class_exists('av_privacy_class'))
 		 * 
 		 * @since 4.4
 		 * @added_by Kriesi
+		 * @param array $comment_field
 		 * @return array
 		 */
 		function av_privacy_comment_checkbox( $comment_field = array() )
 		{
-			$comment_field['comment-form-av-privatepolicy'] = $this->av_privacy_comment_checkbox_content();
+			$args = array(
+							'id'			=> 'comment-form-av-privatepolicy',
+							'content'		=> avia_get_option( 'privacy_message' ),
+							'extra_class'	=> ''
+					);
+			
+			$comment_field['comment-form-av-privatepolicy'] = $this->privacy_checkbox_field( $args );
 			
 			return $comment_field ;
 		}
@@ -250,17 +349,41 @@ if(!class_exists('av_privacy_class'))
 		/**
 		 * Creates the checkbox html 
 		 * 
+		 * To be able to support 3rd party plugins with custom login forms that do not use standard WP hooks we
+		 * add hidden field fake-comment-form-av-privatepolicy we can check if our form was included at all. 
+		 * 
 		 * @since 4.4
 		 * @added_by Kriesi
+		 * @param array $args 
 		 * @return string
 		 */
-		function av_privacy_comment_checkbox_content( $content = "", $extra_class = "")
+		public function privacy_checkbox_field( array $args = array() )
 		{
-			if(empty($content)) $content = do_shortcode(avia_get_option('privacy_message'));
+			$args = wp_parse_args( $args, array(
+							'id'			=> '',
+							'content'		=> '',			//	shortcode are executed in this function
+							'extra_class'	=> '',
+							'attributes'	=> ''
+					) );
 			
-			$output = '<p class="comment-form-av-privatepolicy '.$extra_class.'">
-						<input id="comment-form-av-privatepolicy" name="comment-form-av-privatepolicy" type="checkbox" value="yes">
-						<label for="comment-form-av-privatepolicy">'.$content.'</label>
+			extract( $args );
+			
+			if( empty( $id ) )
+			{
+				return '';
+			}
+			
+			if( empty( $content ) ) 
+			{
+				$content = av_privacy_class::get_default_privacy_message();
+			}
+			
+			$content = do_shortcode( $content );
+			
+			$output = '<p class="form-av-privatepolicy ' . $id . ' ' . $extra_class . '" style="margin: 10px 0;">
+						<input id="' . $id . '" name="' . $id . '" type="checkbox" value="yes" ' . $attributes . '>
+						<label for="' . $id . '">' . $content . '</label>
+						<input type="hidden" name="fake-' . $id . '" value="fake-val">
 					  </p>';
 			
 			return $output ;
@@ -275,7 +398,7 @@ if(!class_exists('av_privacy_class'))
 		 */
 		function av_privacy_verify_comment_checkbox( $commentdata ) 
 		{
-		    if ( ! is_user_logged_in() && ! isset( $_POST['comment-form-av-privatepolicy'] ) )
+		    if ( ! is_user_logged_in() && isset( $_POST['fake-comment-form-av-privatepolicy'] ) && ! isset( $_POST['comment-form-av-privatepolicy'] ) )
 		    {
 			    $error_message = apply_filters( 'avf_privacy_comment_checkbox_error_message', __( 'Error: You must agree to our privacy policy to comment on this site...' , 'avia_framework' ) );
 			    wp_die( $error_message );
@@ -293,7 +416,12 @@ if(!class_exists('av_privacy_class'))
 		 */
 		function av_privacy_contactform_checkbox( $fields , $atts )
 		{
-      		$content = do_shortcode(avia_get_option('privacy_message_contact'));
+			$content = avia_get_option('privacy_message_contact');
+			if( empty( $content ) )
+			{
+				$content = av_privacy_class::get_default_privacy_message();
+			}
+      		$content = do_shortcode( $content );
       		
 			$fields['av_privacy_agreement'] = array(
 				'label' 	=> $content,
@@ -323,7 +451,13 @@ if(!class_exists('av_privacy_class'))
 				if(strpos($key, 'av-button') === 0) break;
 			}
 			
-      		$content = do_shortcode( avia_get_option('privacy_message_mailchimp') );
+			$content = avia_get_option('privacy_message_mailchimp');
+			if( empty( $content ) )
+			{
+				$content = av_privacy_class::get_default_privacy_message();
+			}
+      		$content = do_shortcode( $content );
+			
 			$new_fields['av_privacy_agreement'] = array(
 				'label' 	=> $content,
 				'type' 		=> 'checkbox',
@@ -342,18 +476,42 @@ if(!class_exists('av_privacy_class'))
 			
 			return $fields ;
 		}
+
+		
+		/**
+		 * Adds a checkbox field to the registration form
+		 * 
+		 * @since 4.4.1
+		 * @added_by Günter
+		 */
+		function av_privacy_register_extra()
+		{
+			$args = array(
+							'id'			=> 'registration-form-av-privatepolicy',
+							'content'		=> avia_get_option( 'privacy_message_registration' ),
+							'extra_class'	=> ''
+					);
+			
+			
+			echo $this->privacy_checkbox_field( $args );
+		}
 		
 		/**
 		 * Adds a checkbox field to the login form
 		 * 
 		 * @since 4.4
 		 * @added_by Kriesi
-		 * @return string
 		 */
-		function av_privacy_login_extra( $form )
+		function av_privacy_login_extra()
 		{
-			$content = do_shortcode( avia_get_option('privacy_message_login') );
-			echo $this->av_privacy_comment_checkbox_content( $content , 'forgetmenot');
+			$args = array(
+							'id'			=> 'login-form-av-privatepolicy',
+							'content'		=> avia_get_option( 'privacy_message_login' ),
+							'extra_class'	=> 'forgetmenot'
+					);
+			
+			
+			echo $this->privacy_checkbox_field( $args );
 		}
 		
 		/**
@@ -365,20 +523,68 @@ if(!class_exists('av_privacy_class'))
 		 */
 		function av_authenticate_user_acc( $user, $password )
 		{
+			//	Check if our checkbox was displayed at all
+			if ( ! isset(  $_REQUEST['fake-login-form-av-privatepolicy'] ) )
+			{
+				return $user;
+			}
+					
 			// See if the checkbox #login_accept was checked
-		    if ( isset( $_REQUEST['comment-form-av-privatepolicy'] ) ) {
+		    if( isset( $_REQUEST['login-form-av-privatepolicy'] ) ) 
+			{
 		        // Checkbox on, allow login
 		        return $user;
-		    } else {
+		    } 
+			else 
+			{
 		        // Did NOT check the box, do not allow login
+				$error_message = apply_filters( 'avf_privacy_login_checkbox_error_message', __( 'You must acknowledge and agree to the privacy policy' , 'avia_framework' ) );
+				
 		        $error = new WP_Error();
-		        $error->add('did_not_accept', __( 'You must acknowledge and agree to the privacy policy' , 'avia_framework'));
+		        $error->add('did_not_accept', $error_message );
 		        return $error;
 		    }
 		}
 		
-		
-		
+		/**
+		 * Authenticate the extra checkbox in the registration login screen
+		 * 
+		 * @since 4.4.1
+		 * @added_by Günter
+		 * @param WP_Error $errors
+		 * @param string $sanitized_user_login
+		 * @param string $user_email
+		 * @return \WP_Error
+		 */
+		public function av_registration_errors( WP_Error $errors, $sanitized_user_login, $user_email )
+		{
+			//	Check if our checkbox was displayed at all
+			if ( ! isset(  $_REQUEST['fake-registration-form-av-privatepolicy'] ) )
+			{
+				return $errors;
+			}
+			
+			// See if the checkbox #login_accept was checked
+		    if ( isset( $_REQUEST['registration-form-av-privatepolicy'] ) ) 
+			{
+		        // Checkbox on, allow login
+		        return $errors;
+		    } 
+			else 
+			{
+		        // Did NOT check the box, do not allow login
+				$error_message = apply_filters( 'avf_privacy_registration_checkbox_error_message', __( 'You must acknowledge and agree to the privacy policy to register' , 'avia_framework' ) );
+				
+		        $error = new WP_Error();
+		        $error->add('did_not_accept', $error_message );
+		        return $error;
+		    }
+			
+			return $errors;
+		}
+
+
+
 		
 	}
 }
@@ -386,10 +592,14 @@ if(!class_exists('av_privacy_class'))
 
 
 
-
+/**
+ * Returns the single instance of class av_privacy_helper - avoids the use of globals
+ * 
+ * @return av_privacy_class
+ */
 function av_privacy_helper()
 {
-	return new av_privacy_class();
+	return av_privacy_class::instance();
 }
 
 add_action('init', 'av_privacy_helper', 20);

@@ -86,7 +86,12 @@
 				<?php
 
 				//get the sidebar
-				$avia_config['currently_viewing'] = 'blog';
+                if (avia_get_option('archive_sidebar') == 'archive_sidebar_separate') {
+                    $avia_config['currently_viewing'] = 'archive';
+                }
+                else {
+                    $avia_config['currently_viewing'] = 'blog';
+                }
 				get_sidebar();
 
 				?>

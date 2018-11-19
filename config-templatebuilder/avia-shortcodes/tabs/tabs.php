@@ -294,6 +294,16 @@ if ( !class_exists( 'avia_sc_tab' ) )
             $boxed   = $position != "top_tab" ? $boxed : "";
             $output  = '<div class="tabcontainer  '.$av_display_classes.' '.$position.' '.$boxed.' '.$meta['el_class'].'">'."\n";
             $counter = 1;
+		
+			$tab_sc = ShortcodeHelper::shortcode2array( $content, 1 );
+			if( ! is_numeric( $initial ) || ( $initial < 1 ) )
+			{
+				$initial = 1;
+			}
+			if( $initial > count( $tab_sc ) )
+			{
+				$initial = count( $tab_sc );
+			}
 
             avia_sc_tab::$counter = 1;
             avia_sc_tab::$initial = $initial;
@@ -312,11 +322,14 @@ if ( !class_exists( 'avia_sc_tab' ) )
             $tab_atts = shortcode_atts(array('title' => '', 'icon_select'=>'no', 'icon' =>"", 'custom_id' =>'', 'font' =>'', 'custom_markup' => ''), $atts, 'av_tab');
             
             $display_char = av_icon($tab_atts['icon'], $tab_atts['font']);
+			
+			$aria_content = 'aria-hidden="true"';
 
             if(is_numeric(avia_sc_tab::$initial) && avia_sc_tab::$counter == avia_sc_tab::$initial)
             {
                 $titleClass   = "active_tab";
                 $contentClass = "active_tab_content";
+				$aria_content = 'aria-hidden="false"';
             }
 
             if(empty($tab_atts['title']))
@@ -340,8 +353,8 @@ if ( !class_exists( 'avia_sc_tab' ) )
             $markup_text = avia_markup_helper(array('context' => 'entry_content','echo'=>false, 'custom_markup'=>$tab_atts['custom_markup']));
 
             $output .= '<section class="av_tab_section" '.$markup_tab.'>';
-            $output .= '    <div data-fake-id="#'.$tab_atts['custom_id'].'" class="tab '.$titleClass.'" '.$markup_title.'>'.$icon.$tab_atts['title'].'</div>'."\n";
-            $output .= '    <div id="'.$tab_atts['custom_id'].'-container" class="tab_content '.$contentClass.'">'."\n";
+            $output .= '    <div aria-controls="' . $tab_atts['custom_id'] . '" role="tab" tabindex="0" data-fake-id="#'.$tab_atts['custom_id'].'" class="tab '.$titleClass.'" '.$markup_title.'>'.$icon.$tab_atts['title'].'</div>'."\n";
+            $output .= '    <div id="'.$tab_atts['custom_id'].'-container" class="tab_content '.$contentClass.'" ' . $aria_content . '>'."\n";
             $output .= '        <div class="tab_inner_content invers-color" '.$markup_text.'>'."\n";
             $output .= ShortcodeHelper::avia_apply_autop(ShortcodeHelper::avia_remove_autop($content))."\n";
             $output .= '        </div>'."\n";

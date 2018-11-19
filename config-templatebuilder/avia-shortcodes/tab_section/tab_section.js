@@ -44,6 +44,7 @@
 						prev_container 	= container.find('.av-active-tab-content').not('[data-av-tab-section-content="'+tab_nr+'"]');
 	
 					tabs.attr('style','').removeClass('av-active-tab-title');
+					current_tab.removeClass('no-scroll');
 					current_tab.addClass('av-active-tab-title');
 					current_content.addClass("av-active-tab-content");
 					

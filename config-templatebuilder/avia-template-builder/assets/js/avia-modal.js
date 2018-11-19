@@ -1016,6 +1016,7 @@
 			iframe_container	= _self.modal.find('.avia-modal-preview-content'),
 			preview_footer		= _self.modal.find('.avia-modal-preview-footer'),
 			preview_bg_stored	= _self.modal.find('#aviaTBadmin_preview_bg'),
+			preview_scale       = "avia-preview-scale-" + iframe_container.attr('data-preview-scale'),
 			iframe				= false,
 			elements			= _self.modal.find('input, select, radio, textarea'),
 			res					= window.avia_preview.paths,
@@ -1097,7 +1098,7 @@
 					newframe = document.createElement('iframe');
 					iframe_container.html("").append(newframe);
 				
-					response = "<html class='responsive'><head>" +res+ "</head><body id='top'><div id='wrap_all'><div id='av-admin-preview' class='entry-content-wrapper main_color all_colors'>" +response+ "</div></div></body></html>";
+					response = "<html class='responsive'><head>" +res+ "</head><body id='top'><div id='wrap_all'><div id='av-admin-preview' class='entry-content-wrapper main_color all_colors "+preview_scale+"'>" +response+ "</div></div></body></html>";
 					
 					newframe.contentWindow.contents = response;
 					newframe.src = 'javascript:window["contents"]'; 

@@ -249,7 +249,13 @@ if ( !class_exists( 'AviaHelper' ) ) {
     	
     	static function list_menus()
     	{
-    		$menus = get_terms( 'nav_menu', array( 'hide_empty' => false ) );
+			$term_args = array( 
+							'taxonomy'		=> 'nav_menu',
+							'hide_empty'	=> false
+						);
+			
+			$menus = AviaHelper::get_terms( $term_args );
+				
     		$result = array();
     		
     		if(!empty($menus))
@@ -433,7 +439,33 @@ if ( !class_exists( 'AviaHelper' ) ) {
 		}
 		
 		
-	
+		/**
+		 * Helper function to ensure backwards comp. for WP version < 4.5
+		 * 
+		 * @since 4.4.2
+		 * @added_by Günter
+		 * @param array $term_args
+		 * @return array|int|WP_Error		List of WP_Term instances and their children. Will return WP_Error, if any of $taxonomies do not exist.
+		 */
+		static public function get_terms( array $term_args )
+		{
+			global $wp_version;
+			
+			if( version_compare( $wp_version, '4.5.0', '>=' ) )
+			{
+				$terms = get_terms( $term_args );
+			}
+			else
+			{
+				$depr = $term_args;
+				unset( $depr['taxonomy'] );
+				$terms = get_terms( $term_args['taxonomy'], $depr );
+			}
+			
+			return $terms;
+		}
+
+		
 		/**
 		 * Helper function that converts an array into a html data string
 		 *
@@ -587,10 +619,120 @@ if ( !class_exists( 'AviaHelper' ) ) {
 			
 			return $style_string;
 		}
-	
-		
 
-	static function backend_post_type()
+
+        /**
+         * Helper function that builds background css styling strings
+         * Useful when there are multiple background settings like an image and a gradient
+         * Returns a string to be used with the background property, e.g. style="background: $string";
+         *
+         * @param array $bg_image = array('url','position','repeat','attachment')
+         * @param array $bg_gradient = array('direction','color1','color2')
+         *        direction: vertical, horizontal, radial, diagonal_tb, diagonal_bt
+         *
+         */
+
+
+        static function css_background_string($bg_image = array(), $bg_gradient = array()){
+
+
+            $background = array();
+
+            // bg image
+            if ( ! empty( $bg_image ) ) {
+
+
+                if ( $bg_image['0'] !== '' ) {
+
+                    $background['image_string'] = array();
+
+                    $background['image_string'][] = 'url("'.$bg_image['0'].'")';
+
+                    // bg image position
+                    if ( array_key_exists('1', $bg_image) ) {
+                        $background['image_string'][] = $bg_image['1'];
+                    }
+                    else {
+                        $background['image_string'][] = 'center';
+                    }
+
+                    // bg image repeat
+                    if ( array_key_exists('2', $bg_image) ) {
+                        $background['image_string'][] = $bg_image['2'];
+                    }
+                    else {
+                        $background['image_string'][] = 'no-repeat';
+                    }
+
+                    // bg image attachment
+                    if ( array_key_exists('3', $bg_image) ) {
+                        $background['image_string'][] = $bg_image['3'];
+                    }
+                }
+
+            }
+
+            // bg image css string
+            if ( ! empty ( $background['image_string'] ) ) {
+                $background['image_string'] = implode( ' ', $background['image_string'] );
+            }
+
+            // gradient
+            if ( ! empty( $bg_gradient ) && count ( $bg_gradient ) == 3 ) {
+
+                if ($bg_gradient['0'] !== '') {
+
+                    $background['gradient_string'] = array();
+
+                    switch ($bg_gradient['0']) {
+                        case 'vertical':
+                            $background['gradient_string'][] = 'linear-gradient(';
+                            break;
+                        case 'horizontal':
+                            $background['gradient_string'][] = 'linear-gradient(to right,';
+                            break;
+                        case 'radial':
+                            $background['gradient_string'][] = 'radial-gradient(';
+                            break;
+                        case 'diagonal_tb':
+                            $background['gradient_string'][] = 'linear-gradient(to bottom right,';
+                            break;
+                        case 'diagonal_bt':
+                            $background['gradient_string'][] = 'linear-gradient(45deg,';
+                            break;
+                    }
+
+                    // gradient css string
+                    if ( ! empty( $background['gradient_string'] ) ) {
+                        $background['gradient_string'][]  .= $bg_gradient['1'] . ', ' . $bg_gradient['2'] . ')';
+                    }
+
+                }
+
+            }
+
+            // bg gradient css string
+            if ( ! empty ( $background['gradient_string'] ) ) {
+                $background['gradient_string'] = implode( ' ', $background['gradient_string'] );
+            }
+
+            if ( ! empty( $background ) ) {
+
+                $background = implode(', ', $background );
+
+                return $background;
+            }
+
+            else {
+
+                return false;
+
+            }
+
+        }
+
+
+        static function backend_post_type()
 	{
 		global $post, $typenow, $current_screen;
 		

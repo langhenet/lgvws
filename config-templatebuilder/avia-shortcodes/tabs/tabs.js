@@ -29,7 +29,7 @@
 				oldtabs 	= false;
 	
 			newtabs = tabs.clone();
-			oldtabs = tabs.addClass('fullsize-tab');
+			oldtabs = tabs.addClass('fullsize-tab').attr('aria-hidden', true );
 			tabs = newtabs;
 	
 			tabs.prependTo(tab_titles).each(function(i)
@@ -38,18 +38,32 @@
 	
 				if(newtabs) the_oldtab = oldtabs.filter(':eq('+i+')');
 	
-				tab.addClass('tab_counter_'+i).bind('click', function()
+				tab.addClass('tab_counter_'+i).on('click', function()
 				{
 					open_content(tab, i, the_oldtab);
 					return false;
 				});
+				
+				tab.on('keydown', function(objEvent)
+				{
+					if (objEvent.keyCode === 13) { // if user presses 'enter'
+								tab.trigger('click');
+							}
+				});
 	
 				if(newtabs)
 				{
-					the_oldtab.bind('click', function()
+					the_oldtab.on('click', function()
 					{
 						open_content(the_oldtab, i, tab);
 						return false;
+					});
+					
+					the_oldtab.on('keydown', function(objEvent)
+					{
+						if (objEvent.keyCode === 13) { // if user presses 'enter'
+									the_oldtab.trigger('click');
+								}
 					});
 				}
 			});
@@ -78,7 +92,7 @@
 				if(!tab.is('.'+options.active))
 				{
 					$('.'+options.active, container).removeClass(options.active);
-					$('.'+options.active+'_content', container).removeClass(options.active+'_content');
+					$('.'+options.active+'_content', container).attr('aria-hidden', true).removeClass(options.active+'_content');
 	
 					tab.addClass(options.active);
 	
@@ -86,7 +100,7 @@
 					if(typeof new_loc == 'string') location.replace(new_loc);
 	
 					if(alternate_tab) alternate_tab.addClass(options.active);
-					var active_c = content.filter(':eq('+i+')').addClass(options.active+'_content');
+					var active_c = content.filter(':eq('+i+')').addClass(options.active+'_content').attr('aria-hidden', false);
 	
 					if(typeof click_container != 'undefined' && click_container.length)
 					{

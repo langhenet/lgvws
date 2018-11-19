@@ -261,6 +261,23 @@ if ( !class_exists( 'avia_sc_magazine' ))
 
 
 				);
+			
+			if(current_theme_supports('add_avia_builder_post_type_option'))
+			{
+			    $element = array(
+				"name" 	=> __("Select Post Type", 'avia_framework' ),
+				"desc" 	=> __("Select which post types should be used. Note that your taxonomy will be ignored if you do not select an assign post type.
+					      If you don't select post type all registered post types will be used", 'avia_framework' ),
+				"id" 	=> "post_type",
+				"type" 	=> "select",
+				"multiple"	=> 6,
+				"std" 	=> "",
+				"subtype" => AviaHtmlHelper::get_registered_post_type_array()
+			    );
+
+			    array_splice($this->elements, 2, 0, array($element));
+			}
+			
 		}
 
 		/**
@@ -338,6 +355,7 @@ if ( !class_exists( 'avia_magazine' ) )
 		                                 		'link'					=> '',
 		                                 		'categories'			=> array(),
 		                                 		'extra_categories'		=> array(),
+							   	'post_type'			=> array(),
 		                                 		'offset'				=> 0,
 		                                 		'image_size'			=> array( 'small'=> 'thumbnail', 'big' => 'magazine')
 		                                 		
@@ -384,7 +402,25 @@ if ( !class_exists( 'avia_magazine' ) )
 		
 		function sort_buttons()
 		{
-			$sort_terms = get_terms( $this->atts['taxonomy'] , array('hide_empty'=>true) );
+			$term_args = array( 
+								'taxonomy'		=> $this->atts['taxonomy'],
+								'hide_empty'	=> true
+							);
+			/**
+			 * To display private posts you need to set 'hide_empty' to false, 
+			 * otherwise a category with ONLY private posts will not be returned !!
+			 * 
+			 * You also need to add post_status "private" to the query params with filter avf_magazine_entries_query.
+			 * 
+			 * @since 4.4.2
+			 * @added_by Günter
+			 * @param array $term_args 
+			 * @param string $context 
+			 * @return array
+			 */
+			$term_args = apply_filters( 'avf_av_magazine_term_args', $term_args, 'sort_button' );
+				
+			$sort_terms = AviaHelper::get_terms( $term_args );
 			
 			$current_page_terms	= array();
 			$term_count 		= array();
@@ -444,9 +480,28 @@ if ( !class_exists( 'avia_magazine' ) )
 				//if we find no terms for the taxonomy fetch all taxonomy terms
 				if(empty($terms[0]) || is_null($terms[0]) || $terms[0] === "null")
 				{
+					$term_args = array( 
+								'taxonomy'		=> $params['taxonomy'],
+								'hide_empty'	=> true
+							);
+					/**
+					 * To display private posts you need to set 'hide_empty' to false, 
+					 * otherwise a category with ONLY private posts will not be returned !!
+					 * 
+					 * You also need to add post_status "private" to the query params with filter avf_magazine_entries_query.
+					 * 
+					 * @since 4.4.2
+					 * @added_by Günter
+					 * @param array $term_args 
+					 * @param string $context 
+					 * @return array
+					 */
+					$term_args = apply_filters( 'avf_av_magazine_term_args', $term_args, 'query_entries' );
+
+					$allTax = AviaHelper::get_terms( $term_args );
+
 					$terms = array();
-					$allTax = get_terms( $params['taxonomy']);
-					foreach($allTax as $tax)
+					foreach( $allTax as $tax )
 					{
 						$terms[] = $tax->term_id;
 					}

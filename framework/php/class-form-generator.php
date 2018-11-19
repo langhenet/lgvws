@@ -860,7 +860,7 @@ if( ! class_exists( 'avia_form' ) )
 			$to = apply_filters("avf_form_sendto", $to, $new_post, $this->form_params);
 	
 			$from = urldecode( $from );
-			$from = apply_filters("avf_form_from", $from, $new_post, $this->form_params);
+			$from_filtered = apply_filters("avf_form_from", $from, $new_post, $this->form_params);
 
 			$subject = urldecode( $subject );
 			$subject = apply_filters("avf_form_subject", $subject, $new_post, $this->form_params);
@@ -889,10 +889,15 @@ if( ! class_exists( 'avia_form' ) )
 				{
 					if($element['type'] != 'hidden' && $element['type'] != 'decoy')
 					{
-						if($element['type'] == 'textarea') $message .= " <br/>";
+						$form_field = '';
+						if($element['type'] == 'textarea') $form_field .= " <br/>";
+						
 						$field_value = apply_filters( "avf_form_mail_field_values", nl2br(urldecode($new_post[$key])), $new_post, $this->form_elements, $this->form_params, $element, $key );
-						$message .= $element['label'].": ".$field_value." <br/>";
-						if($element['type'] == 'textarea') $message .= " <br/>";
+						
+						$form_field .= $element['label'].": ".$field_value." <br/>";
+						if($element['type'] == 'textarea') $form_field .= " <br/>";
+						
+						$message .= apply_filters( "avf_form_mail_form_field", $form_field, $new_post, $this->form_elements, $this->form_params, $element, $key, $field_value );
 					}
 				}
 			}
@@ -921,12 +926,12 @@ if( ! class_exists( 'avia_form' ) )
 				
 				if($use_wpmail)
 				{
-					$header .= 'From: '. $from . " <".$from."> \r\n";
+					$header .= 'From: '. $from_filtered . " <".$from_filtered."> \r\n";
 					wp_mail($send_to_mail, $subject, $message, $header);
 				}
 				else
 				{
-					$header .= 'From:'. $from . " \r\n";
+					$header .= 'From:'. $from_filtered . " \r\n";
 					mail($send_to_mail, $subject, $message, $header);
 				}
 			}
@@ -956,30 +961,39 @@ if( ! class_exists( 'avia_form' ) )
 					$message = apply_filters("avf_form_autorespondermessage", $message);
 				}
 					
-				$from = apply_filters( "avf_form_autoresponder_from", $from, $new_post, $this->form_params );
-
-				$this->form_params['autoresponder_email'] = array_filter( array_map( 'trim', explode( $delimiter, $this->form_params['autoresponder_email'] ) ) );
+				/**
+				 * @since 4.4.2
+				 */
+				$autoresponder_to = $from;
+				$autoresponder_to = apply_filters_deprecated( 'avf_form_autoresponder_from', array( $autoresponder_to, $new_post, $this->form_params ), '4.4.2', 'avf_form_autoresponder_to', __( 'Inconsistent usage of filter name.', 'avia_framework' ) );
+				$autoresponder_to = apply_filters( 'avf_form_autoresponder_to', $autoresponder_to, $new_post, $this->form_params );
 				
-				if( is_array( $this->form_params['autoresponder_email'] ) )
+				$autoresponder_email = array_filter( array_map( 'trim', explode( $delimiter, $this->form_params['autoresponder_email'] ) ) );
+				if( is_array( $autoresponder_email ) )
 				{
-					$this->form_params['autoresponder_email'] = $this->form_params['autoresponder_email'][0];
+					$autoresponder_email = $autoresponder_email[0];
 				}
+				
+				/**
+				 * @since 4.4.2
+				 */
+				$autoresponder_email = apply_filters( 'avf_form_autoresponder_email_from', $autoresponder_email, $new_post, $this->form_params );
 
 				if( $use_wpmail )
 				{
-					$header .= 'From:' . get_bloginfo('name') .' <'. urldecode( $this->form_params['autoresponder_email'] ) . "> \r\n";
-					$result = wp_mail( $from, $this->form_params['autoresponder_subject'], $message, $header );
+					$header .= 'From: ' . get_bloginfo('name') .' <'. urldecode( $autoresponder_email ) . "> \r\n";
+					$result = wp_mail( $autoresponder_to, $this->form_params['autoresponder_subject'], $message, $header );
 				}
 				else
 				{
-					$header .= 'From:'. urldecode( $this->form_params['autoresponder_email'] ) . " \r\n";
-					mail( $from, $this->form_params['autoresponder_subject'], $message, $header );
+					$header .= 'From: '. urldecode( $autoresponder_email ) . " \r\n";
+					mail( $autoresponder_to, $this->form_params['autoresponder_subject'], $message, $header );
 				}
 			}
+			
 			unset($_POST);
 			return true;
 			//return wp_mail( $to, $subject, $message , $header);
-
 
 		}
 

@@ -153,7 +153,7 @@
 		//activates animation for iconlist
 		if($.fn.avia_sc_iconlist)
 		{
-			$('.avia-icon-list.av-iconlist-big', container).avia_sc_iconlist();
+			$('.avia-icon-list.av-iconlist-big.avia-iconlist-animate', container).avia_sc_iconlist();
 		}
 
 		//activates animation for progress bar
@@ -610,7 +610,8 @@ $.fn.avia_link_column = function()
 				
 				var	column = $(this),
 					url = column.data('link-column-url'),
-					target = column.data('link-column-target');
+					target = column.data('link-column-target'),
+					link = window.location.hostname+window.location.pathname;
 					
 				if( 'undefined' === typeof url || 'string' !== typeof url )
 				{
@@ -623,6 +624,18 @@ $.fn.avia_link_column = function()
 				}
 				else
 				{
+					//	allow smoothscroll feature when on same page and hash exists - trigger only works for current page 
+					if( column.hasClass('av-cell-link') || column.hasClass('av-column-link') )
+					{
+						var reader = column.hasClass('av-cell-link') ? column.prev('a.av-screen-reader-only').first() : column.find('a.av-screen-reader-only').first();
+						url = url.trim();
+						if( (0 == url.indexOf("#")) || ((url.indexOf(link) >= 0) && (url.indexOf("#") > 0) ) )
+						{
+							reader.trigger('click');
+							return;
+						}
+					}
+					
 					window.location.href = url;
 				}
 				

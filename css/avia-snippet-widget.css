@@ -49,8 +49,14 @@ top:5px;
 }
 
 #top .sidebar_left .widget_nav_menu ul ul li:before {
-right: -10px;
+    right: -10px;
 }
+
+#top .sidebar_left.sidebar_align_left .widget_nav_menu ul ul li:before {
+    right: auto;
+    left: 0;
+}
+
 
 #top .widget_nav_menu ul ul li a{
 padding:6px 0px 7px 12px;
@@ -97,8 +103,21 @@ padding:0 0 0 13px;
 padding:0 13px 0 0 ;
 }
 
+#top .sidebar_left.sidebar_align_left .widget_nav_menu .current-menu-item > ul,
+#top .sidebar_left.sidebar_align_left .widget_nav_menu .current_page_item > ul,
+#top .sidebar_left.sidebar_align_left .widget_nav_menu .current_page_ancestor > ul,
+#top .sidebar_left.sidebar_align_left .widget_nav_menu .current-menu-ancestor > ul{
+    padding:0 0 0 13px ;
+}
+
+
 #top .sidebar_left .widget_nav_menu .sub-menu{
 padding-right: 13px;
+}
+
+#top .sidebar_left.sidebar_align_left .widget_nav_menu .sub-menu{
+    padding-left: 13px;
+    padding-right: 0;
 }
 
 
@@ -188,9 +207,8 @@ overflow: hidden;
 }
 
 /*combo widget*/
-#top .widget_tab_tags{ display:none; }
 .js_active .avia_combo_widget .tab_titles{border-bottom-width: 1px; border-bottom-style: solid;}
-.js_active #top .avia_combo_widget .active_tab{ border-bottom-style: solid; border-bottom-width: 2px;}
+.js_active #top .avia_combo_widget .active_tab{ border-bottom-style: solid; border-bottom-width: 2px; border-bottom-color: initial;}
 .js_active #top .avia_combo_widget .tab_content {
 padding:0;
 background: transparent;
@@ -200,9 +218,10 @@ border: none;
 .js_active .avia_combo_widget .top_tab .tab{
 border: none;
 background: transparent;
-padding:5px 0;
-width: 33%;
-text-align: center;
+padding:5px 10px;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: transparent;
 }
 
 /*likebox*/
@@ -868,4 +887,168 @@ top:1px;
 #top .widget_twitter .intent-meta{ display: block; font-size: 11px; margin-top:8px;}
 #top .widget_twitter .intent-meta a{ text-decoration: none; margin-right: 4px;  }
 #top .widget_twitter .intent-meta a:hover{text-decoration: underline;}
+
+/* user defined text alignmnt for sidebars */
+.sidebar_left.sidebar_align_left.sidebar{text-align: left;}
+.sidebar_left.sidebar_align_left .news-thumb{float:left; margin: 4px 9px 0 0}
+.sidebar_left.sidebar_align_left .widget_nav_menu ul:first-child>.current-menu-item,
+.sidebar_left.sidebar_align_left .widget_nav_menu ul:first-child>.current_page_item,
+.sidebar_left.sidebar_align_left .widget_nav_menu ul:first-child>.current-menu-ancestor{
+    padding-left: 52px;
+    padding-right:0;
+    left: 0;
+    right: auto;
+    top:1px;
+}
+
+
+/* Table of Contents */
+
+.avia-toc-container{
+    position: relative;
+}
+
+.avia-toc-container a {
+    display: block;
+    position: relative;
+    line-height: 1.4em;
+}
+
+.avia-toc-container a:hover {
+    text-decoration: none;
+}
+
+/* simple style */
+
+.avia-toc-style-simple a{
+    overflow-x: hidden;
+    margin-bottom: 1em;
+    min-height: 25px;
+}
+
+.avia-toc-style-simple a span{
+    background-color: #fff;
+    position: relative;
+    padding-right: 5px;
+    z-index: 2;
+}
+
+
+.avia-toc-style-simple a:after {
+    float: left;
+    width: 0;
+    color: rgba(0,0,0,0.25);
+    font-size: 9px;
+    font-weight: normal;
+    white-space: nowrap;
+    content:
+            ". . . . . . . . . . . . . . . . . . . . "
+            ". . . . . . . . . . . . . . . . . . . . "
+            ". . . . . . . . . . . . . . . . . . . . "
+            ". . . . . . . . . . . . . . . . . . . . "
+}
+
+.avia-toc-style-simple .avia-toc-level-0:after {line-height: 3;}
+.avia-toc-style-simple .avia-toc-level-1:after {line-height: 3;}
+.avia-toc-style-simple .avia-toc-level-2:after {line-height: 2.9;}
+.avia-toc-style-simple .avia-toc-level-3:after {line-height: 2.7;}
+.avia-toc-style-simple .avia-toc-level-4:after {line-height: 2.5;}
+.avia-toc-style-simple .avia-toc-level-5:after {line-height: 2.4;}
+
+
+.avia-toc-style-simple .avia-toc-level-0 {font-weight: bold; font-size: 1em;}
+.avia-toc-style-simple .avia-toc-level-2 {font-weight: normal; font-size: 0.9375em;}
+.avia-toc-style-simple .avia-toc-level-3 {font-weight: normal; font-size: 0.875em;}
+.avia-toc-style-simple .avia-toc-level-4 {font-weight: normal; font-size: 0.8125em;}
+.avia-toc-style-simple .avia-toc-level-5 {font-weight: normal; font-size: 0.8125em; font-style: italic;}
+
+/* indentation */
+
+.avia-toc-style-simple.avia-toc-indent .avia-toc-level-1 {margin-left: 0.625em}
+.avia-toc-style-simple.avia-toc-indent .avia-toc-level-2 {margin-left: 1em}
+.avia-toc-style-simple.avia-toc-indent .avia-toc-level-3 {margin-left: 1.428em}
+.avia-toc-style-simple.avia-toc-indent .avia-toc-level-4 {margin-left: 2.307em}
+.avia-toc-style-simple.avia-toc-indent .avia-toc-level-5 {margin-left: 2.692em}
+
+
+/* elegant style */
+
+.avia-toc-style-elegant{
+    padding-left: 30px;
+}
+
+.avia-toc-style-elegant a {
+    text-transform: uppercase;
+    padding-bottom: 1.5em;
+}
+
+.avia-toc-style-elegant .avia-toc-level-0 {font-weight: bold; font-size: 0.875em;}
+.avia-toc-style-elegant .avia-toc-level-1 {font-weight: normal; font-size: 0.875em;}
+.avia-toc-style-elegant .avia-toc-level-2 {font-weight: normal; font-size: 0.8125em;}
+.avia-toc-style-elegant .avia-toc-level-3 {font-weight: bold; font-size: 0.8125em;}
+.avia-toc-style-elegant .avia-toc-level-4 {font-weight: normal; font-size: 0.75em}
+.avia-toc-style-elegant .avia-toc-level-5 {font-weight: normal; font-size: 0.75em; font-style: italic;}
+
+
+.avia-toc-style-elegant a:before{
+    content: '';
+    position: absolute;
+    height: calc(100% + 0.3em);
+    left: -20px;
+    top: 0.15em;
+    border-left-width: 2px;
+    border-left-style: solid;
+    border-left-color: rgba(0,0,0,0.08);
+}
+
+.avia-toc-style-elegant a.avia-toc-level-0:last-child:after,
+.avia-toc-style-elegant a:first-child:after,
+.avia-toc-style-elegant a.avia-toc-level-0:after,
+.avia-toc-style-elegant a:first-child span:after,
+.avia-toc-style-elegant a.avia-toc-level-0 span:after {
+    content: '';
+    position: absolute;
+    width: 9px;
+    height: 9px;
+    border-width: 3px;
+    border-style: solid;
+    border-radius: 9px;
+    left: -26px;
+    top: 0.15em;
+    z-index: 2;
+}
+
+.avia-toc-style-elegant a:first-child span:after,
+.avia-toc-style-elegant a.avia-toc-level-0 span:after {
+    border-color: transparent;
+    z-index: 1;
+}
+
+.avia-toc-style-elegant a:first-child:hover span:after,
+.avia-toc-style-elegant a.avia-toc-level-0:hover span:after {
+    animation: sonarEffect 2s ease-out infinite;
+}
+
+.avia-toc-style-elegant a:last-child:before {
+    display: none;
+}
+
+.avia-toc-style-elegant a:last-child:after{
+    content: '';
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    left: -23px;
+    top: 0.4em;
+    border-radius: 8px;
+}
+
+
+/* indentation */
+
+.avia-toc-style-elegant.avia-toc-indent .avia-toc-level-1 {padding-left: 0.625em}
+.avia-toc-style-elegant.avia-toc-indent .avia-toc-level-2 {padding-left: 1em}
+.avia-toc-style-elegant.avia-toc-indent .avia-toc-level-3 {padding-left: 1.428em}
+.avia-toc-style-elegant.avia-toc-indent .avia-toc-level-4 {padding-left: 2.307em}
+.avia-toc-style-elegant.avia-toc-indent .avia-toc-level-5 {padding-left: 2.692em}
 

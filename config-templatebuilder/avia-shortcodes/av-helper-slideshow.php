@@ -197,7 +197,7 @@ if ( !class_exists( 'avia_slideshow' ) )
 			$slideshow_data['id_array'] = explode( ',', $this->config['ids'] );
 			$slideshow_data['slide_count'] = count(array_filter($slideshow_data['id_array'])) + $this->config['video_counter'];
 			
-			$slideshow_data = apply_filters('avf_avia_builder_slideshow_filter', $slideshow_data);
+			$slideshow_data = apply_filters( 'avf_avia_builder_slideshow_filter', $slideshow_data, $this );
 			
 			$this->slides = $slideshow_data['slides'];
 			$this->id_array = $slideshow_data['id_array'];

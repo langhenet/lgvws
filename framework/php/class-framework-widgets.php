@@ -71,6 +71,47 @@ if ( ! class_exists( 'Avia_Widget' ) )
 			return $this->field_names;
 		}
 		
+		/**
+		 * Output the <option> tag for a series of numbers and set the selected attribute
+		 * 
+		 * @since 4.3.2
+		 * @added_by günter
+		 * @param int $start
+		 * @param int $end
+		 * @param string $selected
+		 */
+		static public function number_options( $start = 1, $end = 50, $selected = 1 )
+		{
+			$options = array();
+			
+			for( $i = $start; $i <= $end; $i++ )
+			{
+				$options[ $i ] = $i;
+			}
+			
+			return Avia_Widget::options_from_array( $options, $selected );
+		}
+		
+		/**
+		 * Output the <option> tag for a key - value array and set the selected attribute
+		 * 
+		 * @since 4.3.2 
+		 * @added_by günter
+		 * @param array $options
+		 * @param type $selected
+		 * @return string
+		 */
+		static public function options_from_array( array $options, $selected )
+		{
+			$out = '';
+			
+			foreach( $options as $key => $value ) 
+			{
+				$out .= '<option value="' . $key . '" ' . selected( $key, $selected ) . '>' . esc_html( $value ) . '</option>';
+			}
+			return $out;
+		}
+	
 	}
 	
 }
@@ -1298,83 +1339,452 @@ if (!class_exists('avia_one_partner_widget'))
 
 
 /**
- * AVIA COMBO WIDGET
+ * 
  *
  * Widget that retrieves, stores and displays the number of twitter and rss followers
  *
- * @package AviaFramework
+ * 
  * @todo replace the widget system with a dynamic one, based on config files for easier widget creation
  */
 
-if (!class_exists('avia_combo_widget'))
+if( ! class_exists( 'avia_combo_widget' ) )
 {
-	class avia_combo_widget extends WP_Widget {
-
-		function __construct() {
-			//Constructor
-			$widget_ops = array('classname' => 'avia_combo_widget', 'description' => __('A widget that displays your popular posts, recent posts, recent comments and a tagcloud', 'avia_framework') );
+	/**
+	 * AVIA COMBO WIDGET
+	 * 
+	 * Widget that displays your popular posts, recent posts, recent comments and a tagcloud in a tabbed section
+	 * 
+	 * @package AviaFramework
+	 * 
+	 * @since 4.4.2 extended and modified by günter
+	 */
+	class avia_combo_widget extends Avia_Widget 
+	{
+		/**
+		 * Constructor
+		 */
+		public function __construct() 
+		{
+			$widget_ops = array(
+						'classname' => 'avia_combo_widget', 
+						'description' => __( 'A widget that displays your popular posts, recent posts, recent comments and a tagcloud', 'avia_framework' ) 
+					);
+			
 			parent::__construct( 'avia_combo_widget', THEMENAME.' Combo Widget', $widget_ops );
+			
+			/**
+			 * Hook to enable 
+			 */
+			add_filter( 'avf_disable_frontend_assets', array( $this, 'handler_enable_shortcodes' ), 50, 1 );
 		}
 
-		function widget($args, $instance)
+		/**
+		 * 
+		 * @since 4.4.2
+		 */
+		public function __destruct() 
 		{
-			// prints the widget
+			parent::__destruct();
+		}		
+		
+		/**
+		 * 
+		 * @since 4.4.2
+		 * @param array $instance
+		 * @return array
+		 */
+		protected function parse_args_instance( array $instance )
+		{
+			/**
+			 * Backwards comp. only
+			 * 
+			 * @since 4.4.2 'count' was removed
+			 */
+			$fallback = isset( $instance['count'] );
+			
+			$new_instance = wp_parse_args( $instance, array( 
+												'show_popular'		=> 4,
+												'show_recent'		=> 4,
+												'show_comments'		=> 4,
+												'show_tags'			=> 45,
+												'tab_1'				=> 'popular',
+												'tab_2'				=> 'recent',
+												'tab_3'				=> 'comments',
+												'tab_4'				=> 'tagcloud',
+											) );
+			
+			if( $fallback )
+			{
+				$new_instance['show_popular'] = $instance['count'];
+				$new_instance['show_recent'] = $instance['count'];
+				$new_instance['show_comments'] = $instance['count'];
+				unset( $new_instance['count'] );
+			}
+			
+			return $new_instance;
+		}
 
-			extract($args, EXTR_SKIP);
-			$posts = empty($instance['count']) ? 4 : $instance['count'];
-
+		/**
+		 * prints the widget
+		 * 
+		 * @param array $args
+		 * @param array $instance
+		 */
+		public function widget( $args, $instance )
+		{
+			$instance = $this->parse_args_instance( $instance );
+			
+			extract( $args );
+			
 			echo $before_widget;
-			echo "<div class='tabcontainer border_tabs top_tab tab_initial_open tab_initial_open__1'>";
-
-			echo '<div class="tab first_tab active_tab widget_tab_popular"><span>'.__('Popular', 'avia_framework').'</span></div>';
-			echo "<div class='tab_content active_tab_content'>";
-			avia_get_post_list('cat=&orderby=comment_count&posts_per_page='.$posts);
-			echo "</div>";
-
-			echo '<div class="tab widget_tab_recent"><span>'.__('Recent', 'avia_framework').'</span></div>';
-			echo "<div class='tab_content'>";
-			avia_get_post_list('showposts='. $posts .'&orderby=post_date&order=desc');
-			echo "</div>";
-
-			echo '<div class="tab widget_tab_comments"><span>'.__('Comments', 'avia_framework').'</span></div>';
-			echo "<div class='tab_content'>";
-			avia_get_comment_list( array('number' => $posts, 'status' => 'approve', 'order' => 'DESC') );
-			echo "</div>";
-
-			echo '<div class="tab last_tab widget_tab_tags"><span>'.__('Tags', 'avia_framework').'</span></div>';
-			echo "<div class='tab_content tagcloud'>";
-			wp_tag_cloud('smallest=12&largest=12&unit=px');
-			echo "</div>";
-
-			echo "</div>";
+			
+			$used_tabs = 0;
+			
+			for( $tab_nr = 1; $tab_nr < 5; $tab_nr++ )
+			{
+				$key = 'tab_' . $tab_nr;
+				
+				if( empty( $instance[ $key ] ) )
+				{
+					continue;
+				}
+				
+				if( ! in_array( $instance[ $key ], array( 'popular', 'recent', 'comments', 'tagcloud' ) ) )
+				{
+					continue;
+				}
+				
+				$used_tabs++;
+				$add_class = '';
+				$add_class2 = '';
+				
+				if( 1 == $used_tabs )
+				{
+					echo "<div class='tabcontainer border_tabs top_tab tab_initial_open tab_initial_open__1'>";
+					$add_class = ' first_tab active_tab ';
+					$add_class2 = 'active_tab_content';
+				}
+				
+				switch( $instance[ $key ] )
+				{
+					case 'popular':
+							$args = array(
+												'posts_per_page'	=> $instance['show_popular'],
+												'orderby'			=> 'comment_count',
+												'order'				=> 'desc'
+											);
+						
+							echo '<div class="tab widget_tab_popular' . $add_class . '"><span>' . __( 'Popular', 'avia_framework' ) . '</span></div>';
+							echo "<div class='tab_content {$add_class2}'>";
+									avia_combo_widget::get_post_list( $args );
+							echo "</div>";
+							break;
+					case 'recent':
+							$args = array(
+												'posts_per_page'	=> $instance['show_recent'],
+												'orderby'			=> 'post_date',
+												'order'				=> 'desc'
+											);
+							echo '<div class="tab widget_tab_recent' . $add_class . '"><span>'.__('Recent', 'avia_framework').'</span></div>';
+							echo "<div class='tab_content {$add_class2}'>";
+									avia_combo_widget::get_post_list( $args );
+							echo "</div>";
+							break;
+					case 'comments':
+							$args = array(
+												'number'	=> $instance['show_comments'], 
+												'status'	=> 'approve', 
+												'order'		=> 'DESC'
+											);
+							echo '<div class="tab widget_tab_comments' . $add_class . '"><span>'.__('Comments', 'avia_framework').'</span></div>';
+							echo "<div class='tab_content {$add_class2}'>";
+									avia_combo_widget::get_comment_list( $args );
+							echo "</div>";
+							break;
+					case 'tagcloud':
+							$args = array(
+												'number'	=> $instance['show_tags'], 
+												'smallest'	=> 12, 
+												'largest'	=> 12,
+												'unit'		=> 'px'
+											);
+							echo '<div class="tab last_tab widget_tab_tags' . $add_class . '"><span>'.__('Tags', 'avia_framework').'</span></div>';
+							echo "<div class='tab_content tagcloud {$add_class2}'>";
+										wp_tag_cloud( $args );
+							echo "</div>";
+						break;
+				}
+			}
+			
+			if( $used_tabs > 0 )
+			{
+				echo "</div>";
+			}
+			
 			echo $after_widget;
 		}
 
 
-		function update($new_instance, $old_instance)
+		/**
+		 * 
+		 * @param array $new_instance
+		 * @param array $old_instance
+		 * @return array
+		 */
+		public function update( $new_instance, $old_instance )
 		{
-			$instance = $old_instance;
-			foreach($new_instance as $key=>$value)
+			$instance = $this->parse_args_instance( $old_instance );
+			$fields = $this->get_field_names();
+			
+			foreach( $new_instance as $key => $value ) 
 			{
-				$instance[$key]	= strip_tags($new_instance[$key]);
+				if( in_array( $key, $fields ) )
+				{
+					$instance[ $key ] = strip_tags( $value );
+				}
 			}
-
+			
 			return $instance;
 		}
 
-		function form($instance) {
-			//widgetform in backend
-
-			$instance = wp_parse_args( (array) $instance, array('count' => 4) );
-			if(!is_numeric($instance['count'])) $instance['count'] = 4;
-
+		
+		/**
+		 * Widgetform in backend
+		 * 
+		 * @param array $instance
+		 */
+		public function form( $instance ) 
+		{
+			$instance = $this->parse_args_instance( $instance );
+			
+			extract( $instance );
+			
+			$tab_content = array(
+						0				=> __( 'No content', 'avia_framework' ),
+						'popular'		=> __( 'Popular posts', 'avia_framework' ),
+						'recent'		=> __( 'Recent posts', 'avia_framework' ),
+						'comments'		=> __( 'Newest comments', 'avia_framework' ),
+						'tagcloud'		=> __( 'Tag cloud', 'avia_framework' ),
+				
+				);
 	?>
-			<p>
-			<label for="<?php echo $this->get_field_id('count'); ?>"><?php _e('Number of posts you want to display:', 'avia_framework'); ?>
-			<input class="widefat" id="<?php echo $this->get_field_id('count'); ?>" name="<?php echo $this->get_field_name('count'); ?>" type="text" value="<?php echo esc_attr($instance['count']); ?>" /></label></p>
+			<p><label for="<?php echo $this->get_field_id( 'show_popular' ); ?>"><?php _e( 'Number of popular posts', 'avia_framework' ); ?>:</label>
+				<select id="<?php echo $this->get_field_id( 'show_popular' ); ?>" name="<?php echo $this->get_field_name( 'show_popular' ); ?>" class="widefat">
+	<?php		
+					echo Avia_Widget::number_options( 1, 30, $show_popular );
+	?>
+				</select>
+			</p>
+			<p><label for="<?php echo $this->get_field_id( 'show_recent' ); ?>"><?php _e( 'Number of recent posts', 'avia_framework' ); ?>:</label>
+				<select id="<?php echo $this->get_field_id( 'show_recent' ); ?>" name="<?php echo $this->get_field_name( 'show_recent' ); ?>" class="widefat">
+	<?php		
+					echo Avia_Widget::number_options( 1, 30, $show_recent );
+	?>
+				</select>
+			</p>
+			<p><label for="<?php echo $this->get_field_id( 'show_comments' ); ?>"><?php _e( 'Number of newest comments', 'avia_framework' ); ?>:</label>
+				<select id="<?php echo $this->get_field_id( 'show_comments' ); ?>" name="<?php echo $this->get_field_name( 'show_comments' ); ?>" class="widefat">
+	<?php		
+					echo Avia_Widget::number_options( 1, 30, $show_comments );
+	?>
+				</select>
+			</p>
+			<p><label for="<?php echo $this->get_field_id( 'show_tags' ); ?>"><?php _e( 'Number of tags for tag cloud', 'avia_framework' ); ?>:</label>
+				<select id="<?php echo $this->get_field_id( 'show_tags' ); ?>" name="<?php echo $this->get_field_name( 'show_tags' ); ?>" class="widefat">
+	<?php		
+					echo Avia_Widget::number_options( 1, 100, $show_tags );
+	?>
+				</select>
+			</p>
+			<p><label for="<?php echo $this->get_field_id( 'tab_1' ); ?>"><?php _e( 'Content of first tab', 'avia_framework' ); ?>:</label>
+				<select id="<?php echo $this->get_field_id( 'tab_1' ); ?>" name="<?php echo $this->get_field_name( 'tab_1' ); ?>" class="widefat">
+	<?php		
+					$tab_content_first = $tab_content;
+					unset( $tab_content_first[0] );
+					echo Avia_Widget::options_from_array( $tab_content_first, $tab_1 );
+	?>
+				</select>
+			</p>
+			<p><label for="<?php echo $this->get_field_id( 'tab_2' ); ?>"><?php _e( 'Content of next tab', 'avia_framework' ); ?>:</label>
+				<select id="<?php echo $this->get_field_id( 'tab_2' ); ?>" name="<?php echo $this->get_field_name( 'tab_2' ); ?>" class="widefat">
+	<?php		
+					echo Avia_Widget::options_from_array( $tab_content, $tab_2 );
+	?>
+				</select>
+			</p>
+			<p><label for="<?php echo $this->get_field_id( 'tab_3' ); ?>"><?php _e( 'Content of next tab', 'avia_framework' ); ?>:</label>
+				<select id="<?php echo $this->get_field_id( 'tab_3' ); ?>" name="<?php echo $this->get_field_name( 'tab_3' ); ?>" class="widefat">
+	<?php		
+					echo Avia_Widget::options_from_array( $tab_content, $tab_3 );
+	?>
+				</select>
+			</p>
+			<p><label for="<?php echo $this->get_field_id( 'tab_4' ); ?>"><?php _e( 'Content of next tab', 'avia_framework' ); ?>:</label>
+				<select id="<?php echo $this->get_field_id( 'tab_4' ); ?>" name="<?php echo $this->get_field_name( 'tab_4' ); ?>" class="widefat">
+	<?php		
+					echo Avia_Widget::options_from_array( $tab_content, $tab_4 );
+	?>
+				</select>
+			</p>
+	<?php
+		}
+		
+		
+		/**
+		 * This widget needs tab.css and tab.js to work properly.
+		 * 
+		 * @since 4.4.2
+		 * @added_by Günter
+		 * @param array $disabled
+		 * @return array
+		 */
+		public function handler_enable_shortcodes( array $disabled )
+		{
+			$settings = $this->get_settings();
+			
+			/**
+			 * Search page might lead to no result and in this case we activate this widget manually
+			 */
+			if( ( count( $settings ) > 0 ) || is_search() )
+			{
+				unset( $disabled['av_tab_container'] );
+			}
+			
+			return $disabled;
+		}
 
+		/**
+		 * Get postlist by query args
+		 * (up to 4.4.2 this was function avia_get_post_list( $avia_new_query , $excerpt = false)
+		 * 
+		 * @since 4.4.2
+		 * @added_by Günter
+		 * @param array $args
+		 * @param type $excerpt
+		 */
+		static public function get_post_list( array $args , $excerpt = false )
+		{
+			global $avia_config;
+			
+			$image_size = isset( $avia_config['widget_image_size'] ) ? $avia_config['widget_image_size'] : 'widget';
+			
+			$additional_loop = new WP_Query($args);
 
-		<?php
+			if( $additional_loop->have_posts() )
+			{
+				echo '<ul class="news-wrap">';
+				
+				while ( $additional_loop->have_posts() )
+				{
+					$additional_loop->the_post();
+
+					$format = "";
+					if( get_post_type() != 'post' ) 		
+					{
+						$format = get_post_type();
+					}
+					
+					if( empty( $format ) ) 					
+					{
+						$format = get_post_format();
+					}
+					if( empty( $format ) ) 					
+					{
+						$format = 'standard';
+					}
+
+					echo '<li class="news-content post-format-' . $format . '">';
+
+					//check for preview images:
+					$image = "";
+
+					if( ! current_theme_supports( 'force-post-thumbnails-in-widget' ) )
+						{
+						$slides = avia_post_meta( get_the_ID(), 'slideshow' );
+
+						if( $slides != "" && ! empty( $slides[0]['slideshow_image'] ) )
+						{
+							$image = avia_image_by_id( $slides[0]['slideshow_image'], 'widget', 'image' );
+						}
+					}
+
+					if( ! $image && current_theme_supports( 'post-thumbnails' ) )
+					{
+						$image = get_the_post_thumbnail( get_the_ID(), $image_size );
+					}
+
+					$time_format = apply_filters( 'avia_widget_time', get_option('date_format') . " - " . get_option('time_format'), 'avia_get_post_list' );
+
+					$nothumb = ( ! $image) ? 'no-news-thumb' : '';
+
+					echo "<a class='news-link' title='" . get_the_title() . "' href='" . get_permalink() . "'>";
+					echo	"<span class='news-thumb $nothumb'>";
+					echo		$image;
+					echo	"</span>";
+					echo	"<strong class='news-headline'>".avia_backend_truncate(get_the_title(), 55," ");
+					echo		"<span class='news-time'>".get_the_time($time_format)."</span>";
+					echo	"</strong>";
+					echo "</a>";
+
+					if( 'display title and excerpt' == $excerpt )
+					{
+						echo "<div class='news-excerpt'>";
+								the_excerpt();
+						echo "</div>";
+					}
+
+					echo '</li>';
+				}
+				
+				echo "</ul>";
+				wp_reset_postdata();
+			}
+		}
+		
+		/**
+		 * Get commentlist by query args
+		 * (up to 4.4.2 this was function avia_get_comment_list( $avia_new_query )
+		 * 
+		 * @since 4.4.2
+		 * @added_by Günter
+		 * @param array $args
+		 */
+		static public function get_comment_list( array $args )
+		{
+			$time_format = apply_filters( 'avia_widget_time', get_option( 'date_format' ) . " - " . get_option( 'time_format' ), 'avia_get_comment_list' );
+
+			$comments = get_comments( $args );
+
+			if( ! empty( $comments ) )
+			{
+				echo '<ul class="news-wrap">';
+				
+				foreach( $comments as $comment )
+				{
+					if( $comment->comment_author != 'ActionScheduler' )
+					{
+						$gravatar_alt = esc_html( $comment->comment_author );
+						
+						echo '<li class="news-content">';
+						echo	"<a class='news-link' title='" . get_the_title( $comment->comment_post_ID ) . "' href='" . get_comment_link($comment) . "'>";
+						echo		"<span class='news-thumb'>";
+						echo			get_avatar( $comment, '48', '', $gravatar_alt );
+						echo		"</span>";
+						echo		"<strong class='news-headline'>" . avia_backend_truncate( $comment->comment_content, 55," " );
+
+						if($time_format)
+						{
+							echo		"<span class='news-time'>" . get_comment_date( $time_format, $comment->comment_ID ) . " " . __( 'by', 'avia_framework' ) . " " . $comment->comment_author . "</span>";
+						}
+						echo		"</strong>";
+						echo	"</a>";
+						echo '</li>';
+					}
+				}
+				
+				echo "</ul>";
+				wp_reset_postdata();
+			}
 		}
 	}
 }
@@ -1382,116 +1792,29 @@ if (!class_exists('avia_combo_widget'))
 /*-----------------------------------------------------------------------------------
 get posts posts
 -----------------------------------------------------------------------------------*/
-if (!function_exists('avia_get_post_list'))
+if ( ! function_exists('avia_get_post_list'))
 {
 	function avia_get_post_list( $avia_new_query , $excerpt = false)
 	{
-		global $avia_config;
-		$image_size = isset($avia_config['widget_image_size']) ? $avia_config['widget_image_size'] : 'widget';
-		$additional_loop = new WP_Query($avia_new_query);
-
-		if($additional_loop->have_posts()) :
-		echo '<ul class="news-wrap">';
-		while ($additional_loop->have_posts()) : $additional_loop->the_post();
-
-		$format = "";
-		if(get_post_type() != 'post') 		$format = get_post_type();
-		if(empty($format)) 					$format = get_post_format();
-     	if(empty($format)) 					$format = 'standard';
-
-		echo '<li class="news-content post-format-'.$format.'">';
-
-		//check for preview images:
-		$image = "";
-
-		if(!current_theme_supports('force-post-thumbnails-in-widget'))
-			{
-			$slides = avia_post_meta(get_the_ID(), 'slideshow');
-
-			if( $slides != "" && !empty( $slides[0]['slideshow_image'] ) )
-			{
-				$image = avia_image_by_id($slides[0]['slideshow_image'], 'widget', 'image');
-			}
-		}
-
-		if(!$image && current_theme_supports( 'post-thumbnails' ))
-		{
-			$image = get_the_post_thumbnail( get_the_ID(), $image_size );
-		}
-
-		$time_format = apply_filters( 'avia_widget_time', get_option('date_format')." - ".get_option('time_format'), 'avia_get_post_list' );
-
-		$nothumb = (!$image) ? 'no-news-thumb' : '';
-
-		echo "<a class='news-link' title='".get_the_title()."' href='".get_permalink()."'>";
-		echo "<span class='news-thumb $nothumb'>";
-		echo $image;
-		echo "</span>";
-		echo "<strong class='news-headline'>".avia_backend_truncate(get_the_title(), 55," ");
-		echo "<span class='news-time'>".get_the_time($time_format)."</span>";
-		echo "</strong>";
-		echo "</a>";
-
-		if('display title and excerpt' == $excerpt)
-		{
-			echo "<div class='news-excerpt'>";
-			the_excerpt();
-			echo "</div>";
-		}
-
-		echo '</li>';
-
-
-		endwhile;
-		echo "</ul>";
-		wp_reset_postdata();
-		endif;
+		_deprecated_function( 'avia_get_post_list', '4.4.2', 'avia_combo_widget::get_post_list( $args )');
+		
+		$avia_new_query = wp_parse_args( $avia_new_query );
+		avia_combo_widget::get_post_list( $avia_new_query, $excerpt );
 	}
+	
 }
-
-
-
-
 
 if (!function_exists('avia_get_comment_list'))
 {
-
-	function avia_get_comment_list($avia_new_query)
+	function avia_get_comment_list( $avia_new_query )
 	{
-		$time_format = apply_filters( 'avia_widget_time', get_option('date_format')." - ".get_option('time_format'), 'avia_get_comment_list' );
-
-		global $avia_config;
+		_deprecated_function( 'avia_get_comment_list', '4.4.2', 'avia_combo_widget::get_comment_list( $args )');
 		
-		
-		$comments = get_comments($avia_new_query);
-
-		if(!empty($comments)) :
-		echo '<ul class="news-wrap">';
-		foreach($comments as $comment)
-		{
-			if ($comment->comment_author != 'ActionScheduler')
-			{
-			$gravatar_alt = esc_html($comment->comment_author);
-			echo '<li class="news-content">';
-			echo "<a class='news-link' title='".get_the_title($comment->comment_post_ID)."' href='".get_comment_link($comment)."'>";
-			echo "<span class='news-thumb'>";
-			echo get_avatar($comment,'48', '', $gravatar_alt);
-			echo "</span>";
-			echo "<strong class='news-headline'>".avia_backend_truncate($comment->comment_content, 55," ");
-			
-			if($time_format)
-			{
-				echo "<span class='news-time'>".get_comment_date($time_format, $comment->comment_ID)." ".__('by','avia_framework')." ".$comment->comment_author."</span>";
-			}
-			echo "</strong>";
-			echo "</a>";
-			echo '</li>';
-			}
-		}
-		echo "</ul>";
-		wp_reset_postdata();
-		endif;
+		$avia_new_query = wp_parse_args( $avia_new_query );
+		avia_combo_widget::get_comment_list( $avia_new_query);
 	}
+
+	
 }
 
 
@@ -1678,6 +2001,21 @@ if( ! class_exists('avia_google_maps') )
 				}
 				
 				$html_overlay .= '<span>' . $text_overlay . '</span></a>';
+				
+				/**
+				 * @since 4.4.2
+				 * @param string		output string
+				 * @param object		context
+				 * @param array
+				 * @param array
+				*/
+				$filter_args = array(
+						   $html_overlay,
+						   $this,
+						   $args,
+						   $instance
+				   );
+				$html_overlay = apply_filters_ref_array( 'avf_google_maps_confirm_overlay', $filter_args );
 			}
 			
 			$map_id = '';
@@ -2515,7 +2853,7 @@ if( ! class_exists('avia_instagram_widget') )
 					$out = '';
 					$out .= '<div class="av-instagram-errors">';
 
-					$out .=		'<p class="av-instagram-errors-msg av-instagram-admin">' . esc_html__( 'Only visisble for Admins:', 'avia_framework' ) . '</p>';
+					$out .=		'<p class="av-instagram-errors-msg av-instagram-admin">' . esc_html__( 'Only visible for admins:', 'avia_framework' ) . '</p>';
 
 					$out .=		'<p class="av-instagram-errors-msg av-instagram-admin">';
 					$out .=			implode( '<br />', $errors );
@@ -2693,7 +3031,7 @@ if( ! class_exists('avia_instagram_widget') )
 				echo '</p>';
 
 				$timestamp = ( $this->cache['last_updated'] != 0 ) ? $this->cache['last_updated'] + $this->expire_time : false;
-				$time = ( false !== $timestamp ) ? date( 'Y/m/d H:i a', $timestamp ) . ' UTC' : __( 'No time available', 'avia_framework' );
+				$time = ( false !== $timestamp ) ? date( 'Y/m/d H:i a', $timestamp ) .  __( ' UTC', 'avia_framework' ) : __( 'No time available', 'avia_framework' );
 
 				echo '<p class="av-instagram-next-update">';
 				echo	__( 'The widget preloads and caches Instagram data for better performance.', 'avia_framework' )." ";
@@ -2703,7 +3041,7 @@ if( ! class_exists('avia_instagram_widget') )
 			else
 			{
 				$timestamp = wp_next_scheduled( 'av_instagram_scheduled_filecheck' );
-				$time = ( false !== $timestamp ) ? date( "Y/m/d H:i", $timestamp ) . ' UTC' : __( '', 'avia_framework' );
+				$time = ( false !== $timestamp ) ? date( "Y/m/d H:i", $timestamp ) .  __( ' UTC', 'avia_framework' ) : __( 'No time available', 'avia_framework' );
 
 				echo '<p class="av-instagram-next-update">';
 				echo	__( 'The widget preloads and caches Instagram data for better performance.', 'avia_framework' )." ";
@@ -3016,7 +3354,7 @@ if( ! class_exists('avia_instagram_widget') )
 			/**
 			 * Now we check that all directories belong to a cache entry
 			 */
-			$cache_dirs = scandir( $this->upload_folders['instagram_dir'] );
+			$cache_dirs = is_dir( $this->upload_folders['instagram_dir'] ) ? scandir( $this->upload_folders['instagram_dir'] ) : false;
 			if( ! is_array( $cache_dirs ) )
 			{
 				/**
@@ -3586,3 +3924,164 @@ if( ! class_exists('avia_instagram_widget') )
 	}
 }
 
+
+
+/**
+ * AVIA TABLE OF CONTENTS WIDGET
+ *
+ * Widget that displays a 'table of contents' genereated from the headlines of the page it is viewed on
+ *
+ * @package AviaFramework
+ * @author tinabillinger
+ * @todo replace the widget system with a dynamic one, based on config files for easier widget creation
+ */
+
+if (!class_exists('avia_auto_toc'))
+{
+	class avia_auto_toc extends WP_Widget {
+
+		static $script_loaded = 0;
+
+		function __construct() { 
+			//Constructor
+			$widget_ops = array('classname' => 'avia_auto_toc', 'description' => __('Widget that displays a table of contents genereated from the headlines of the page it is viewed on', 'avia_framework') );
+			parent::__construct( 'avia_auto_toc', THEMENAME.' Table of Contents', $widget_ops );
+		}
+
+		function widget($args, $instance) {
+			extract($args, EXTR_SKIP);
+
+			if ($instance['single_only'] && ! is_single()) return false;
+
+			$title = empty($instance['title']) ? '' : apply_filters('widget_title', $instance['title']);
+            $indent_class = $instance['indent'] ? ' avia-toc-indent' : '';
+            $smoothscroll_class = $instance['smoothscroll'] ? ' avia-toc-smoothscroll' : '';
+
+			echo $before_widget;
+
+			if ( !empty( $title ) ) { echo $before_title . $title . $after_title; };
+
+			$exclude = "";
+			if ( $instance['exclude'] !== '' ){
+			    $exclude = 'data-exclude="'.$instance['exclude'].'"';
+			}
+			
+			$instance['style'] = "elegant";
+			
+			echo '<div class="avia-toc-container avia-toc-style-'.$instance['style'].$indent_class.$smoothscroll_class.'" data-level="'.$instance['level'].'" '.$exclude.'></div>';
+
+			echo $after_widget;
+        }
+
+        function update($new_instance, $old_instance) {
+			$instance = $old_instance;
+			$instance['title'] = trim(strip_tags($new_instance['title']));
+			$instance['exclude'] = strip_tags($new_instance['exclude']);
+			$instance['style'] = strip_tags($new_instance['style']);
+			$instance['level'] = implode(',',$new_instance['level']);
+			$instance['single_only'] = isset( $new_instance['single_only'] ) ? 1 : 0;
+			$instance['indent'] = isset( $new_instance['indent'] ) ? 1 : 0;
+			$instance['smoothscroll'] = isset( $new_instance['smoothscroll'] ) ? 1 : 0;
+
+			return $instance;
+		}
+
+		function form( $instance ) {
+
+			$instance = wp_parse_args( (array) $instance, array(
+			        'exclude' => '',
+			        'level' => 'h1',
+			        'title' => '',
+			        'style' => 'simple',
+			        ) );
+
+ 		    $title = sanitize_text_field( $instance['title'] );
+			$single_only = isset( $instance['single_only'] ) ? (bool) $instance['single_only'] : true;
+			$indent = isset( $instance['indent'] ) ? (bool) $instance['indent'] : true;
+			$smoothscroll = isset( $instance['smoothscroll'] ) ? (bool) $instance['smoothscroll'] : true;
+
+			$levels = array(
+			        'h1' => 'H1 Headlines',
+			        'h2' => 'H2 Headlines',
+			        'h3' => 'H3 Headlines',
+			        'h4' => 'H4 Headlines',
+			        'h5' => 'H5 Headlines',
+			        'h6' => 'H6 Headlines'
+			);
+
+			$styles = array(
+			        'simple' => 'Simple',
+			        'elegant' => 'Elegant',
+			);
+
+	        ?>
+			<p>
+			<label for="<?php echo $this->get_field_id('Title'); ?>"><?php _e('Title:', 'avia_framework'); ?>
+			    <input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo esc_attr($title); ?>" /></label>
+			</p>
+
+			<p>
+			<label for="<?php echo $this->get_field_id('exclude'); ?>"><?php _e('Exclude headlines by class:', 'avia_framework'); ?>
+			    <input class="widefat" id="<?php echo $this->get_field_id('exclude'); ?>" name="<?php echo $this->get_field_name('exclude'); ?>" type="text" value="<?php echo esc_attr($instance['exclude']); ?>" /></label>
+			    <small>Provice a classname without a dot</small>
+			</p>
+
+			<p>
+			<label for="<?php echo $this->get_field_id('level'); ?>"><?php _e('Select headlines to include:', 'avia_framework'); ?><br/>
+			    <select class="widefat" id="<?php echo $this->get_field_id('level'); ?>" name="<?php echo $this->get_field_name('level'); ?>[]" multiple="multiple">
+                    <?php
+   			         $selected_levels = explode(',', $instance['level']);
+
+   			         foreach ( $levels as $k => $l) {
+                            $selected = '';
+                            if (in_array($k,$selected_levels)){
+                                $selected = ' selected="selected"';
+                            }
+                            ?>
+                            <option<?php echo $selected;?> value="<?php echo $k; ?>"><?php echo $l; ?></option>
+                            <?php
+                        }
+                    ?>
+                </select>
+            </label>
+			</p>
+			<!--
+			<p>
+			<label for="<?php echo $this->get_field_id('style'); ?>"><?php _e('Select a style', 'avia_framework'); ?><br/>
+			    <select class="widefat" id="<?php echo $this->get_field_id('style'); ?>" name="<?php echo $this->get_field_name('style'); ?>">
+                    <?php
+
+   			         foreach ( $styles as $sk => $sv) {
+
+                            $selected = '';
+                            if ($sk == $instance['style']){
+                                $selected = ' selected="selected"';
+                            }
+                            ?>
+                            <option<?php echo $selected;?> value="<?php echo $sk; ?>"><?php echo $sv; ?></option>
+                            <?php
+                        }
+                    ?>
+                </select>
+            </label>
+			</p>
+			-->
+
+
+            <p>
+                <input class="checkbox" id="<?php echo $this->get_field_id('single_only'); ?>" name="<?php echo $this->get_field_name('single_only'); ?>" type="checkbox" <?php checked( $single_only ); ?> />
+                <label for="<?php echo $this->get_field_id('single_only'); ?>"><?php _e('Display on Single Blog Posts only', 'avia_framework'); ?></label>
+            </br>
+                <input class="checkbox" id="<?php echo $this->get_field_id('indent'); ?>" name="<?php echo $this->get_field_name('indent'); ?>" type="checkbox" <?php checked( $indent ); ?> />
+                <label for="<?php echo $this->get_field_id('indent'); ?>"><?php _e('Hierarchy Indentation', 'avia_framework'); ?></label>
+            </br>
+                <input class="checkbox" id="<?php echo $this->get_field_id('smoothscroll'); ?>" name="<?php echo $this->get_field_name('smoothscroll'); ?>" type="checkbox" <?php checked( $indent ); ?> />
+                <label for="<?php echo $this->get_field_id('smoothscroll'); ?>"><?php _e('Enable Smooth Scrolling', 'avia_framework'); ?></label>
+            </p>
+
+		    <?php
+
+        }
+
+    }
+}

@@ -152,9 +152,13 @@ color:$bg;
 border-color:$button_border2;
 }
 
-$key .ajax_controlls a:hover{
-border-color:$secondary;
-}
+$key .avia-toc-style-elegant a.avia-toc-level-0:last-child:after, $key .avia-toc-style-elegant a:first-child:after, $key .avia-toc-style-elegant a.avia-toc-level-0:after {background-color:$bg; border-color: $secondary }
+$key .avia-toc-style-elegant a:first-child span:after, $key .avia-toc-style-elegant a.avia-toc-level-0 span:after {background-color:$bg;}
+$key .avia-toc-style-elegant a:first-child:hover span:after, $key .avia-toc-style-elegant a.avia-toc-level-0:hover span:after {border-color: $secondary}
+
+$key .avia-toc-style-elegant a:before{border-color: $border}
+$key .avia-toc-style-elegant a:first-child:after, $key .avia-toc-style-elegant a.avia-toc-level-0:after {border-color: $secondary; background-color: $bg;}
+$key .avia-toc-style-elegant a:last-child:after{ background-color:$border;}
 
 $key .timeline-bullet{
 background-color:$border;
@@ -164,7 +168,6 @@ border-color: $bg;
 $key table, $key .widget_nav_menu ul:first-child>.current-menu-item, $key .widget_nav_menu ul:first-child>.current_page_item, $key .widget_nav_menu ul:first-child>.current-menu-ancestor, $key .pagination .current, $key .pagination a, $key.iconbox_top .iconbox_content, $key .av_promobox, $key .toggle_content, $key .toggler:hover, #top $key .av-minimal-toggle .toggler, $key .related_posts_default_image, $key .search-result-counter, $key .container_wrap_meta, $key .avia-content-slider .slide-image, $key .avia-slider-testimonials .avia-testimonial-content, $key .avia-testimonial-arrow-wrap .avia-arrow, $key .news-thumb, $key .portfolio-preview-content, $key .portfolio-preview-content .avia-arrow, $key .av-magazine .av-magazine-entry-icon, $key .related_posts.av-related-style-full a, $key .aviaccordion-slide, $key.avia-fullwidth-portfolio .pagination, $key .isotope-item.special_av_fullwidth .av_table_col.portfolio-grid-image, $key .av-catalogue-list li:hover, $key .wp-playlist, $key .avia-slideshow-fixed-height > li, $key .avia-form-success, $key .av-boxed-grid-style .avia-testimonial{
 background: $bg2;
 }
-
 
 
 #top $key .post_timeline li:hover .timeline-bullet{
@@ -264,13 +267,27 @@ border-color:$border;
 
 @media only screen and (max-width: 767px) { 
 
-#top #wrap_all .av_header_transparency{
-	background-color:$bg;
-	color: $color;
-	border-color: $border;
-}
+	#top #wrap_all .av_header_transparency{
+		background-color:$bg;
+		color: $color;
+		border-color: $border;
+	}
 
 }
+
+@media only screen and (max-width: 989px) { 
+
+	.html_mobile_menu_tablet #top #wrap_all .av_header_transparency{
+		background-color:$bg;
+		color: $color;
+		border-color: $border;
+	}
+
+}
+
+
+
+
 
 ";
 
@@ -299,7 +316,7 @@ background-color: $bg;
 color: $meta;
 }
 
-$key .ajax_search_image{
+$key .av_ajax_search_image{
 background-color: $primary;
 color:$bg;
 }
@@ -308,7 +325,7 @@ $key .ajax_search_excerpt{
 color: $meta;
 }
 
-$key .ajax_search_title{
+$key .av_ajax_search_title{
 color: $heading;
 }
 
@@ -316,7 +333,7 @@ $key .ajax_load{
 background-color:$primary;
 }
 
-$key .searchsubmit_wrapper{
+$key .av_searchsubmit_wrapper{
 background-color:$primary;
 }
 
@@ -600,20 +617,20 @@ background-color:$bg2;
 // ajax search shortcode
 
 $output.= "
-$key .searchform_element_results .ajax_search_entry,
-$key .searchform_element_results .ajax_search_title,
-$key.searchform_element_results .ajax_search_entry,
-$key.searchform_element_results .ajax_search_title{
+$key .av_searchform_element_results .av_ajax_search_entry,
+$key .av_searchform_element_results .av_ajax_search_title,
+$key.av_searchform_element_results .av_ajax_search_entry,
+$key.av_searchform_element_results .av_ajax_search_title{
 color: $primary;
 }
 
-$key .searchform_element_results .ajax_search_excerpt,
-$key.searchform_element_results .ajax_search_excerpt{
+$key .av_searchform_element_results .ajax_search_excerpt,
+$key.av_searchform_element_results .ajax_search_excerpt{
 color: $meta;
 }
 
-$key .searchform_element_results .ajax_search_image,
-$key.searchform_element_results .ajax_search_image{
+$key .av_searchform_element_results .av_ajax_search_image,
+$key.av_searchform_element_results .av_ajax_search_image{
 color: $meta;
 }
 ";
@@ -797,6 +814,26 @@ background-color:$bg2;
 				}
 			}
 			";
+			
+			$output .= " @media only screen and (max-width: 989px) {
+				.html_mobile_menu_tablet #top #wrap_all {$key}.av_header_transparency, .html_mobile_menu_tablet #top #wrap_all {$key}.av_header_transparency .phone-info.with_nav span,
+				.html_mobile_menu_tablet #top #header{$key}.av_header_transparency .av-main-nav > li > a .avia-menu-text, .html_mobile_menu_tablet #top #header{$key}.av_header_transparency .av-main-nav > li > a .avia-menu-subtex{ color: $meta }
+				
+				.html_mobile_menu_tablet $key div .av-hamburger-inner, .html_mobile_menu_tablet $key div .av-hamburger-inner::before, .html_mobile_menu_tablet $key div .av-hamburger-inner::after{
+					background-color:$meta;
+				}
+				
+				.html_mobile_menu_tablet #top .av_header_with_border.av_header_transparency .avia-menu.av_menu_icon_beside{
+					border-color:$border;
+				}
+			}
+			";
+			
+			
+			
+			
+			
+			
 		}
 		
 		if(!empty($avia_config['backend_colors']['burger_flyout_width']))
@@ -856,7 +893,8 @@ background-color:$bg2;
 			#top a.av-active-tab-title{color:$primary;}
 			#top .av-tab-arrow-container span{background-color: $bg;}
 			";
-		break;
+			
+            break;
 
 
 

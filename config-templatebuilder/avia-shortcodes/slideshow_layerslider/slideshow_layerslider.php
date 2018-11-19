@@ -128,7 +128,14 @@ if ( ! class_exists( 'avia_sc_layerslider' ) )
 					$responsive = ! empty( $slides['properties']['responsive'] ) ? $slides['properties']['responsive'] : '';
 					$responsiveunder = ! empty( $slides['properties']['responsiveunder'] ) ? $slides['properties']['responsiveunder'] : '';
 
-					$params['style'] = " style='height: ".($height+1)."px;' ";
+					if( ! empty( $slides['properties']['type'] ) && ( 'responsive' == $slides['properties']['type'] ) )
+					{
+						$params['style'] = " style='height: " . ($height+1) . "px; max-width: {$width}px; margin: 0 auto;' ";
+					}
+					else
+					{
+						$params['style'] = " style='height: " . ($height+1) . "px;' ";
+					}
 				}
 				else
 				{

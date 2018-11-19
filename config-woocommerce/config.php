@@ -1337,6 +1337,8 @@ if(!function_exists('avia_woocommerce_frontend_search_params'))
 
 
 		parse_str($_SERVER['QUERY_STRING'], $params);
+		
+		$params['avia_extended_shop_select'] = 'yes';
 
 		$po_key = !empty($avia_config['woocommerce']['product_order']) ? $avia_config['woocommerce']['product_order'] : 'default';
 		$ps_key = !empty($avia_config['woocommerce']['product_sort'])  ? $avia_config['woocommerce']['product_sort'] : 'asc';
@@ -1411,12 +1413,26 @@ if(!function_exists('avia_woocommerce_overwrite_catalog_ordering'))
 {
 	add_action( 'woocommerce_get_catalog_ordering_args', 'avia_woocommerce_overwrite_catalog_ordering', 20);
 
-	function avia_woocommerce_overwrite_catalog_ordering($args)
+	function avia_woocommerce_overwrite_catalog_ordering( $args )
 	{
 		global $avia_config;
 
-		if(!empty($avia_config['woocommerce']['disable_sorting_options'])) return $args;
-
+		if( ! empty( $avia_config['woocommerce']['disable_sorting_options'] ) ) 
+		{
+			return $args;
+		}
+		
+		/**
+		 * WC added shortcodes that use this filter (e.g. products).
+		 * We only need to alter the query when we have our select boxes.
+		 * 
+		 * LINITATION: It is not possible to mix shop overview (= shop) and other shortcodes because we cannot distinguish when this filter is called !!! 
+		 */
+		if( ! isset( $_REQUEST['avia_extended_shop_select'] ) || ( 'yes' != $_REQUEST['avia_extended_shop_select'] ) )
+		{
+			return $args;
+		}
+		
 		//check the folllowing get parameters and session vars. if they are set overwrite the defaults
 		$check = array('product_order', 'product_count', 'product_sort');
 		if(empty($avia_config['woocommerce'])) $avia_config['woocommerce'] = array();
@@ -2225,4 +2241,156 @@ if( ! function_exists( 'avia_wc_filter_terms_page_selection' ) )
 	}
 }
 
+/**
+ * Force WC images in widgets to have Enfold default image size
+ * 
+ * @since 4.4.2
+ * @added_by Günter
+ */
+add_action( 'woocommerce_widget_product_item_start', 'avia_wc_widget_product_item_start', 10, 1 );
+add_filter( 'woocommerce_product_get_image', 'avia_wc_widget_product_image_size', 10, 6 );
+add_action( 'woocommerce_widget_product_item_end', 'avia_wc_widget_product_item_end', 10, 1 );
 
+global $avia_wc_product_widget_active;
+$avia_wc_product_widget_active = false;
+
+if( ! function_exists( 'avia_wc_widget_product_item_start' ) )
+{
+	/**
+	 * Set a global variable to limit changeing to widget areas only
+	 * 
+	 * @since 4.4.2
+	 * @added_by Günter
+	 * @param array $args
+	 * @return array
+	 */
+	function avia_wc_widget_product_item_start( $args )
+	{
+		global $avia_wc_product_widget_active;
+
+		/**
+		 * @since 4.4.2
+		 * @return boolean
+		 */
+		if( false !== apply_filters( 'avf_wc_widget_product_image_size_ignore', false, $args ) )
+		{
+			return;
+		}
+
+		$avia_wc_product_widget_active = true;
+	}
+}
+
+if( ! function_exists( 'avia_wc_widget_product_image_size' ) )
+{
+	/**
+	 * Modify default WC behaviour.
+	 * Based on the function WC_Product::get_image
+	 * 
+	 * @since 4.4.2
+	 * @param string $image
+	 * @param WC_Product $product
+	 * @param string $size
+	 * @param array $attr
+	 * @param boolean $placeholder
+	 * @param string $image1
+	 * @return string
+	 */
+	function avia_wc_widget_product_image_size( $image, $product, $size, $attr, $placeholder, $image1 )
+	{
+		global $avia_wc_product_widget_active, $avia_config;
+
+		if( ! $avia_wc_product_widget_active )
+		{
+			return $image;
+		}
+
+		/**
+		 * @since 4.4.2
+		 * @return string
+		 */
+		$size = apply_filters( 'avf_wc_widget_product_image_size', 'widget', $product, $size, $attr, $placeholder );
+
+		if ( has_post_thumbnail( $product->get_id() ) ) 
+		{
+			$image = get_the_post_thumbnail( $product->get_id(), $size, $attr );
+		} 
+		elseif ( ( $parent_id = wp_get_post_parent_id( $product->get_id() ) ) && has_post_thumbnail( $parent_id ) )  // @phpcs:ignore Squiz.PHP.DisallowMultipleAssignments.Found
+		{
+			$image = get_the_post_thumbnail( $parent_id, $size, $attr );
+		} 
+		elseif ( $placeholder ) 
+		{
+			$image = wc_placeholder_img( $size );
+		} 
+		else 
+		{
+			$image = '';
+		}
+		
+		return $image;
+	}
+}
+
+if( ! function_exists( 'avia_wc_widget_product_item_end' ) )
+{
+	/**
+	 * Reset a global variable to limit changeing to widget areas only
+	 * 
+	 * @since 4.4.2
+	 * @param array $args
+	 */
+	function avia_wc_widget_product_item_end( $args )
+	{
+		global $avia_wc_product_widget_active;
+		
+		$avia_wc_product_widget_active = false;
+	}
+}
+
+
+/**
+ * Fix problem with ALB pages used as "Terms and Conditions" page on checkout.
+ * WC loads page content above the checkbox with js. With ALB this breaks and might also lead to styling problems.
+ * Therefore we link to an external page.
+ * 
+ * Up to WC 3.4.5 no hooks are provided to fix this in php. Therefore we have to add a js snippet.
+ * 
+ * @since 4.4.2
+ * @added_by Günter
+ */
+if( ! is_admin() && avia_woocommerce_version_check( '3.4.0' ) )
+{
+	add_action( 'woocommerce_checkout_terms_and_conditions', 'avia_wc_checkout_terms_and_conditions' );
+	
+	if( ! function_exists( 'avia_wc_checkout_terms_and_conditions' ) )
+	{
+		function avia_wc_checkout_terms_and_conditions()
+		{
+			$terms_id = wc_get_page_id('terms');
+			if( 'active' == Avia_Builder()->get_alb_builder_status( $terms_id ) )
+			{
+				add_action( 'wp_footer', 'avia_woocommerce_fix_checkout_term_link' );
+			}
+		}
+	}
+	if( ! function_exists( 'avia_woocommerce_fix_checkout_term_link' ) )
+	{
+		function avia_woocommerce_fix_checkout_term_link()
+		{
+			$i = 1;
+			?>
+	<script>
+	(function($) {
+		// wait until everything completely loaded all assets
+		$(window).on('load', function() {
+			// remove the click event
+			$( document.body ).off( 'click', 'a.woocommerce-terms-and-conditions-link' );
+		});
+	}(jQuery));
+	</script>
+	<?php
+		}
+	}
+	
+}

@@ -218,21 +218,29 @@ Avia Slideshow
 					}
 					else
 					{
-						var image = $('<img src="'+fallback+'" alt="" title="" />');
+						var image = '<img src="'+fallback+'" alt="" title="" />';
 						var lightbox = false;
 						
 						if( 'string' == typeof fallback_link && fallback_link.trim() != '' )
 						{
-							image = $('<a href="' + fallback_link.trim() + '" rel="lightbox">' + image + '</a>');
+							if( appendTo.is('a') )
+							{
+								appendTo.attr('href', fallback_link);
+							}
+							else
+							{
+								var rel = fallback_link.match(/\.(jpg|jpeg|gif|png)$/i) != null ? ' rel="lightbox" ' : '';
+								image = '<a href="' + fallback_link.trim() + '"' + rel + '>' + image + '</a>';
+							}
 							lightbox = true;
 						}
+						
+						current.find('.avia-slide-wrap').append(image);
 						
 						if( lightbox && $.fn.avia_activate_lightbox)
 						{
 							current.parents('#main').avia_activate_lightbox();
 						}
-						
-						current.find('.avia-slide-wrap').append(image);
 					}
 					
 				});

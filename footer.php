@@ -56,11 +56,36 @@
 		 */
 		if( ! $blank && in_array( $footer_widget_setting, array( 'page_in_footer_socket', 'page_in_footer' ) ) )
 		{
-			$post = get_post( avia_get_option( 'footer_page', 0 ) );
+			/**
+			 * Allow e.g. translation plugins to hook and change the id to translated post
+			 * 
+			 * @since 4.4.2
+			 * @param int
+			 */
+			$post = get_post( apply_filters( 'avf_footer_page_id', avia_get_option( 'footer_page', 0 ), $the_id ) );
 			
 			if( ( $post instanceof WP_Post ) && ( $post->ID != $the_id ) )
 			{
+				/**
+				 * Make sure that footerpage is set to fullwidth
+				 */
+				$old_avia_config = $avia_config;
+				
+				$avia_config['layout']['current'] = array(
+											'content'	=> 'av-content-full alpha', 
+											'sidebar'	=> 'hidden', 
+											'meta'		=> '', 
+											'entry'		=> '',
+											'main'		=> 'fullsize'
+										);    
+				
+				$builder_stat = ( 'active' == Avia_Builder()->get_alb_builder_status( $post->ID ) );
+				$avia_config['conditionals']['is_builder'] = $builder_stat;
+				$avia_config['conditionals']['is_builder_template'] = $builder_stat;
+				
 				$content = Avia_Builder()->compile_post_content( $post );
+				
+				$avia_config = $old_avia_config;
 				
 				/* was removed in 4.2.7 before rollout - should not break the output - can be removed completly when no errors are reported !
 				 *		<div class='container_wrap footer_color footer-page-content' id='footer'>

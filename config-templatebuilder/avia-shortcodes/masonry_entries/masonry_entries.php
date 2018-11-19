@@ -256,27 +256,42 @@ if ( !class_exists( 'avia_sc_masonry_entries' ) )
 						__('1 Pixel Gap',  'avia_framework' ) =>'1px',
 						__('Large Gap',  'avia_framework' ) =>'large',
 					)),
-				
-				
-				
-				array(
-					"name" 	=> __("Image overlay effect", 'avia_framework' ),
-					"desc" 	=> __("Do you want to display the image overlay?", 'avia_framework' ),
+
+
+
+                   array(
+					"name" 	=> __("Image effect", 'avia_framework' ),
+					"desc" 	=> __("Do you want to add an image overlay effect that gets applied or removed on mouseover?", 'avia_framework' ),
 					"id" 	=> "overlay_fx",
 					"type" 	=> "select",
 					"std" 	=> "active",
 					"subtype" => array(
-						__('Overlay activated',  'avia_framework' ) =>'active',
-						__('Overlay deactivated',  'avia_framework' ) =>'',
+						__('White overlay',  'avia_framework' ) =>'active',
+						__('Greyscale effect',  'avia_framework' ) =>'grayscale',
+						__('Desaturation effect',  'avia_framework' ) =>'desaturation',
+						__('Blur on hover effect',  'avia_framework' ) =>'bluronhover',
+						__('No effect',  'avia_framework' ) =>'',
 					)),
-				
-				array(	"name" 	=> __("For Developers: Section ID", 'avia_framework' ),
+
+                    array(
+                        "name" 	=> __("Animation on load", 'avia_framework' ),
+                        "desc" 	=> __("Should the masonry items load in an animated way?", 'avia_framework' ),
+                        "id" 	=> "animation",
+                        "type" 	=> "select",
+                        "std" 	=> "active",
+                        "subtype" => array(
+                            __('Animation activated',  'avia_framework' ) =>'active',
+                            __('Animation deactivated',  'avia_framework' ) =>'',
+                        )),
+
+
+                    array(	"name" 	=> __("For Developers: Section ID", 'avia_framework' ),
 						"desc" 	=> __("Apply a custom ID Attribute to the section, so you can apply a unique style via CSS. This option is also helpful if you want to use anchor links to scroll to a sections when a link is clicked", 'avia_framework' )."<br/><br/>".
 								   __("Use with caution and make sure to only use allowed characters. No special characters can be used.", 'avia_framework' ),
 			            "id" 	=> "id",
 			            "type" 	=> "input",
 			            "std" => ""),
-				
+
 				array(
 							"type" 	=> "close_div",
 							'nodescription' => true

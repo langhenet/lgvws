@@ -137,20 +137,25 @@
 					mapTypeId = google.maps.MapTypeId.ROADMAP;
 			}
 			
+			if( 'undefined' == typeof this.$data.scrollwheel ) {this.$data.scrollwheel = false; }
+			if( 'undefined' == typeof this.$data.gestureHandling ) {this.$data.gestureHandling = 'cooperative' };
+			if( 'undefined' == typeof this.$data.backgroundColor ) {this.$data.backgroundColor = 'transparent' };
+			if( 'undefined' == typeof this.$data.styles ) {this.$data.styles = [{featureType: "poi", elementType: "labels", stylers: [ { visibility: "off" }] }] };
+			
 			this.mapVars = {
 				mapMaker: false, //mapmaker tiles are user generated content maps. might hold more info but also be inaccurate
-				backgroundColor:'transparent',
+				backgroundColor: this.$data.backgroundColor,
 				streetViewControl: this.$data.streetview_control,
 				zoomControl: this.$data.zoom_control,
 				//draggable: mobile_drag,
-				gestureHandling: 'cooperative',
-				scrollwheel: false,
+				gestureHandling: this.$data.gestureHandling,
+				scrollwheel: this.$data.scrollwheel,
 				zoom: zoomValue,
 				mapTypeControl: mapTypeControl,
 				mapTypeControlOptions: {style:mapTypeControlOptions},
 				mapTypeId: mapTypeId,
 				center: new google.maps.LatLng(this.$data.marker[0].lat, this.$data.marker[0].long),
-				styles:[{featureType: "poi", elementType: "labels", stylers: [ { visibility: "off" }] }]
+				styles: this.$data.styles
 			};
 
 			this.map = new google.maps.Map(this.container, this.mapVars);

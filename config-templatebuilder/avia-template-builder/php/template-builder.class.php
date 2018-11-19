@@ -658,10 +658,11 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 			$output .= "<script type='text/javascript' src='".includes_url('/js/jquery/jquery.js')."?ver=".$ver."'></script>";
 			$output .= "<script type='text/javascript' src='".$template_url."/js/avia-admin-preview.js?ver=".$ver."'></script>";
 			$output .= $avia->style->link_google_font();
-			
-			
+
+
+
 			$error = __('It seems you are currently adding some HTML markup or other special characters. Once all HTML tags are closed the preview will be available again. If this message persists please check your input for special characters and try to remove them.','avia_framework');
-			$html  = "<script type='text/javascript'>var avia_preview = " . json_encode( array( "error" => $error, "paths" => $output.$icon_font, 'title' => __('Element Preview','avia_framework') , 'background' => __('Set preview background:','avia_framework')) )  . "; \n";
+			$html  = "<script type='text/javascript'>var avia_preview = " . json_encode( array( "error" => $error, "paths" => $output.$icon_font, 'title' => __('Element Preview','avia_framework') , 'background' => __('Set preview background:','avia_framework'), 'scale' => __('Scaled to:','avia_framework')) )  . "; \n";
 			$html .= "</script>";
 		
 			return $html;
@@ -1459,7 +1460,16 @@ if ( !class_exists( 'AviaBuilder' ) ) {
     	
     	   	$post_id = @get_the_ID();
     	   	
-    	   	if(is_feed()) return;
+    	   	if( is_feed() )
+			{
+				return;
+			}
+			
+			if( is_embed() )
+			{
+				return $original_template;
+			}
+		
     	   	
     	   	if(($post_id && is_singular()) || isset($avia_config['builder_redirect_id']))
     	   	{

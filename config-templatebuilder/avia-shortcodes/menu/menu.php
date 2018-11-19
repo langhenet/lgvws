@@ -236,7 +236,12 @@ if ( !class_exists( 'avia_sc_submenu' ) )
 			 */
 			function editor_element($params)
 			{	
-				$menus = get_terms( 'nav_menu', array( 'hide_empty' => false ) );
+				$term_args = array( 
+								'taxonomy'		=> 'nav_menu',
+								'hide_empty'	=> false
+							);
+				
+				$menus = AviaHelper::get_terms( $term_args );
 			
 				$params['innerHtml'] = "<img src='".$this->config['icon']."' title='".$this->config['name']."' />";
 				$params['innerHtml'].= "<div class='avia-element-label'>".$this->config['name']."</div>";

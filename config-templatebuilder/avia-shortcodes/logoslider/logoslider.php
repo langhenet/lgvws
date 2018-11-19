@@ -35,6 +35,7 @@ if ( !class_exists( 'avia_sc_partner_logo' ) )
 				//load css
 				wp_enqueue_style( 'avia-module-slideshow' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/slideshow/slideshow.css' , array('avia-layout'), false );
 				wp_enqueue_style( 'avia-module-slideshow-contentpartner' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/contentslider/contentslider.css' , array('avia-module-slideshow'), false );
+				wp_enqueue_style( 'avia-module-postslider' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/postslider/postslider.css' , array('avia-layout'), false );
 				
 					//load js
 				wp_enqueue_script( 'avia-module-slideshow' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/slideshow/slideshow.js' , array('avia-shortcodes'), false, TRUE );
@@ -511,7 +512,6 @@ if ( !class_exists( 'avia_partner_logo' ) )
 				);
 
 
-
 			//resort slides so the id of each slide matches the post id
 			$new_slides = array();
 			$new_ids = array();
@@ -520,10 +520,21 @@ if ( !class_exists( 'avia_partner_logo' ) )
 				$new_slides[$slide->ID] = $slide;
 				$new_ids[] = $slide->ID;
 			}
-
-			$this->slides 		= $new_slides;
-			$this->id_array 	= $new_ids;
-			$this->slide_count 	= count( explode( ',', $ids ) );
+			
+			$slideshow_data = array();
+			$slideshow_data['slides'] = $new_slides;
+			$slideshow_data['id_array'] = explode( ',', $ids );
+			$slideshow_data['slide_count'] = count( $slideshow_data['id_array'] );
+			
+			/**
+			 * @used_by				config-wpml\config.php				10
+			 * @since 4.4.2
+			 */
+			$slideshow_data = apply_filters( 'avf_avia_builder_slideshow_filter', $slideshow_data, $this );
+			
+			$this->slides 		= $slideshow_data['slides'];
+			$this->id_array 	= $slideshow_data['id_array'];
+			$this->slide_count 	= $slideshow_data['slide_count'];
 		}
 
 		public function set_size($size)
@@ -542,7 +553,7 @@ if ( !class_exists( 'avia_partner_logo' ) )
 		{
 			$output = "";
 			$counter = 0;
-            		avia_partner_logo::$slider++;
+			avia_partner_logo::$slider++;
 			if($this->slide_count == 0) return $output;
 
 
@@ -595,6 +606,7 @@ if ( !class_exists( 'avia_partner_logo' ) )
                 foreach( $this->subslides as $key => $slides )
                 {
 					$id = isset( $slides['attr']['id'] ) ? $slides['attr']['id'] : 0;
+					$img = '';
 					
                     if(isset($this->slides[$id]))
                     {

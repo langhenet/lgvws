@@ -34,6 +34,7 @@ function portfolio_register()
 		'rewrite' => array('slug'=>_x($permalinks['portfolio_permalink_base'],'URL slug','avia_framework'), 'with_front'=>true),
 		'query_var' => true,
 		'show_in_nav_menus'=> true,
+		'show_in_rest' => true,
 		'taxonomies' => array('post_tag'),
 		'supports' => array('title','thumbnail','excerpt','editor','comments'),
 		'menu_icon' => 'dashicons-images-alt2'

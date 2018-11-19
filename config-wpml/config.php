@@ -261,7 +261,8 @@ if(defined('ICL_SITEPRESS_VERSION') && defined('ICL_LANGUAGE_CODE'))
             if(empty($avia_config['wpml_language_menu_position'])) $avia_config['wpml_language_menu_position'] = apply_filters('avf_wpml_language_switcher_position', 'sub_menu');
             if($avia_config['wpml_language_menu_position'] != 'sub_menu') return;
 
-			$languages = icl_get_languages('skip_missing=0&orderby=custom');
+			// icl_get_languages deprecated since 3.2
+			$languages = function_exists( 'wpml_get_active_languages_filter' ) ? wpml_get_active_languages_filter( '', 'skip_missing=0&orderby=custom' ) : icl_get_languages( 'skip_missing=0&orderby=custom' );
 			$output = "";
 
 			if(is_array($languages))
@@ -348,7 +349,8 @@ if(defined('ICL_SITEPRESS_VERSION') && defined('ICL_LANGUAGE_CODE'))
 		*/
 		function avia_wpml_correct_domain_in_url($url)
 		{
-		    if (function_exists('icl_get_home_url'))
+			//  icl_get_home_url was deprecaated since 3.2
+		    if( function_exists( 'wpml_get_home_url_filter' ) || function_exists( 'icl_get_home_url' ) )
 		    {
 		        // Use the language switcher object, because that contains WPML settings, and it's available globally
 		        global $icl_language_switcher, $avia_config;
@@ -358,7 +360,8 @@ if(defined('ICL_SITEPRESS_VERSION') && defined('ICL_LANGUAGE_CODE'))
 		        {
 					if(!avia_wpml_is_default_language())
 					{
-		            	return str_replace(untrailingslashit( get_option('home') ), untrailingslashit(icl_get_home_url()), $url);
+						$wpml_home = function_exists( 'wpml_get_home_url_filter' ) ? wpml_get_home_url_filter() : icl_get_home_url();
+		            	return str_replace( untrailingslashit( get_option( 'home' ) ), untrailingslashit( $wpml_home ), $url );
 		    		}
 		    	}
 		    }
@@ -401,7 +404,8 @@ if(defined('ICL_SITEPRESS_VERSION') && defined('ICL_LANGUAGE_CODE'))
                 $query .= $_SERVER['QUERY_STRING'] . '&';
             }
 
-			$languages = icl_get_languages('skip_missing=0&orderby=id');
+			// icl_get_languages deprecated since 3.2
+			$languages = function_exists( 'wpml_get_active_languages_filter' ) ? wpml_get_active_languages_filter( '', 'skip_missing=0&orderby=id' ) : icl_get_languages( 'skip_missing=0&orderby=id' );
 			$output = "";
 
 			if(is_array($languages) && !empty($languages))
@@ -500,19 +504,31 @@ if(defined('ICL_SITEPRESS_VERSION') && defined('ICL_LANGUAGE_CODE'))
 
 	if(!function_exists('avia_wpml_slideshow_slide_id_check'))
 	{
-		add_filter( 'avf_avia_builder_slideshow_filter', 'avia_wpml_slideshow_slide_id_check', 10, 1);
-		function avia_wpml_slideshow_slide_id_check($slideshow_data)
+		add_filter( 'avf_avia_builder_slideshow_filter', 'avia_wpml_slideshow_slide_id_check', 10, 2 );
+		
+		/**
+		 * Change ID of post array back to untranslated ID to be able to recognise selected image
+		 * 
+		 * @param array $slideshow_data
+		 * @param mixed $context_object
+		 * @return array
+		 */
+		function avia_wpml_slideshow_slide_id_check( $slideshow_data, $context_object )
 		{
 		    $id_array = $slideshow_data['id_array'];
 		    $slides = $slideshow_data['slides'];
 		
-		    if(empty($id_array) || empty($slides)) return $slideshow_data;
+		    if( empty( $id_array ) || empty( $slides ) ) 
+			{
+				return $slideshow_data;
+			}
 		
 		    foreach($id_array as $key => $id)
 		    {
 		        if(!isset($slides[$id]))
 		        {
-		            $id_of_translated_attachment = icl_object_id($id, "attachment", true);
+					//	icl_object_id deprecated since 3.2 - backward comp only
+		            $id_of_translated_attachment = function_exists( 'wpml_object_id_filter' ) ? wpml_object_id_filter( $id, "attachment", true ) : icl_object_id( $id, "attachment", true );
 		
 		            if($id_of_translated_attachment && isset($slides[$id_of_translated_attachment]))
 		            {
@@ -568,7 +584,8 @@ if(defined('ICL_SITEPRESS_VERSION') && defined('ICL_LANGUAGE_CODE'))
 		        if(empty($avia_config['wpml_language_menu_position'])) $avia_config['wpml_language_menu_position'] = apply_filters('avf_wpml_language_switcher_position', 'main_menu');
 		        if($avia_config['wpml_language_menu_position'] != 'main_menu') return $items;
 		
-		        $languages = icl_get_languages('skip_missing=0&orderby=custom');
+				// icl_get_languages deprecated since 3.2
+		        $languages = function_exists( 'wpml_get_active_languages_filter' ) ? wpml_get_active_languages_filter( '', 'skip_missing=0&orderby=custom' ) : icl_get_languages('skip_missing=0&orderby=custom');
 		
 		        if(is_array($languages))
 		        {
@@ -609,7 +626,9 @@ if(defined('ICL_SITEPRESS_VERSION') && defined('ICL_LANGUAGE_CODE'))
 	{
 		function avia_wpml_translate_all_search_results_url($search_messages, $search_query)
 		{
-			$search_messages['all_results_link'] =  icl_get_home_url() . '?' . $search_messages['all_results_query'];
+			//  icl_get_home_url was deprecaated since 3.2
+			$wpml_home = function_exists( 'wpml_get_home_url_filter' ) ? wpml_get_home_url_filter() : icl_get_home_url();
+			$search_messages['all_results_link'] = $wpml_home . '?' . $search_messages['all_results_query'];
 			return $search_messages;
 		}
 	
@@ -629,7 +648,8 @@ if(defined('ICL_SITEPRESS_VERSION') && defined('ICL_LANGUAGE_CODE'))
 			{
 				foreach ($query['tax_query'][0]['terms'] as $id)
 				{
-					$xlat = @icl_object_id($id, $query['tax_query'][0]['taxonomy'], true);
+					//	icl_object_id deprecated since 3.2 - backward comp only
+					$xlat = function_exists( 'wpml_object_id_filter' ) ?  wpml_object_id_filter( $id, $query['tax_query'][0]['taxonomy'], true ) : icl_object_id( $id, $query['tax_query'][0]['taxonomy'], true );
 					if(!is_null($xlat)) $res[] = $xlat;
 				}
 			
@@ -639,7 +659,8 @@ if(defined('ICL_SITEPRESS_VERSION') && defined('ICL_LANGUAGE_CODE'))
 			{
 				foreach($query['post__in'] as $id)
 				{
-					$xlat = @icl_object_id($id, $query['post_type'], true);
+					//	icl_object_id deprecated since 3.2 - backward comp only
+					$xlat = function_exists( 'wpml_object_id_filter' ) ?  wpml_object_id_filter( $id, $query['post_type'], true ) : icl_object_id(  $id, $query['post_type'], true );
 					if(!is_null($xlat)) $res[] = $xlat;
 				}
 				
@@ -672,13 +693,14 @@ if(defined('ICL_SITEPRESS_VERSION') && defined('ICL_LANGUAGE_CODE'))
 						continue;
 					}
 						
-					$translated_id = icl_object_id( $orig_term->term_id, 'post_tag', true );
+					//	icl_object_id deprecated since 3.2 - backward comp only
+					$translated_id = function_exists( 'wpml_object_id_filter' ) ? wpml_object_id_filter( $orig_term->term_id, 'post_tag', true ) : icl_object_id( $orig_term->term_id, 'post_tag', true );
 					if( is_null( $translated_id ) || ( false === $translated_id ) )
 					{
 						continue;
 					}
 					
-					$translated_term = icl_object_id( $translated_id->term_id, 'post_tag', true );
+					$translated_term = function_exists( 'wpml_object_id_filter' ) ? wpml_object_id_filter( $translated_id->term_id, 'post_tag', true ) : icl_object_id(  $translated_id->term_id, 'post_tag', true );
 					if( is_null( $translated_term ) || ( false === $translated_term ) )
 					{
 						continue;
@@ -795,42 +817,46 @@ if(!function_exists('avia_portfolio_compat') && defined('ICL_SITEPRESS_VERSION')
 /**
  * Error 404 - Custom Page
  * Hooks into 'the_posts' filter and display the defined 404 page - compatible with WPML
+ * Removed by günter with 4.4.2 and replaced with wp_redirect to set 404 header code
+ * 
+ * Left in case we need a fallback - can be deleted in some future version
+ * 
  * @author tinabillinger
  * @since 4.3
  */
-if( ! function_exists( 'av_error404_wpml' ) )
-{
-    function av_error404_wpml($posts)
-    {
-        if( defined('ICL_SITEPRESS_VERSION') && defined('ICL_LANGUAGE_CODE') && !is_admin()) {
-            if (avia_get_option('error404_custom') == "error404_custom") {
-                // prevent endless loop
-                remove_filter( 'the_posts', 'av_error404_wpml', 999 );
-                if ( empty( $posts ) &&
-                    is_main_query() &&
-                    !is_robots() &&
-                    !is_home() &&
-                    !is_feed() &&
-                    !is_search() &&
-                    !is_archive() &&
-                    ( !defined('DOING_AJAX') || !DOING_AJAX ) ) {
-                    global $wp_query;
-                    $error404_page = avia_get_option('error404_page');
-                    $wp_query = null;
-                    $wp_query = new WP_Query();
-                    $wp_query->query( 'page_id=' . $error404_page );
-                    $wp_query->the_post();
-                    $template = get_page_template();
-                    $posts = $wp_query->posts;
-                    $wp_query->rewind_posts();
-                    return $posts;
-                }
-            }
-        }
-        return $posts;
-    }
-    add_filter( 'the_posts', 'av_error404_wpml', 999 );
-}
+//if( ! function_exists( 'av_error404_wpml' ) )
+//{
+//    function av_error404_wpml($posts)
+//    {
+//        if( defined('ICL_SITEPRESS_VERSION') && defined('ICL_LANGUAGE_CODE') && !is_admin()) {
+//            if (avia_get_option('error404_custom') == "error404_custom") {
+//                // prevent endless loop
+//                remove_filter( 'the_posts', 'av_error404_wpml', 999 );
+//                if ( empty( $posts ) &&
+//                    is_main_query() &&
+//                    !is_robots() &&
+//                    !is_home() &&
+//                    !is_feed() &&
+//                    !is_search() &&
+//                    !is_archive() &&
+//                    ( !defined('DOING_AJAX') || !DOING_AJAX ) ) {
+//                    global $wp_query;
+//                    $error404_page = avia_get_option('error404_page');
+//                    $wp_query = null;
+//                    $wp_query = new WP_Query();
+//                    $wp_query->query( 'page_id=' . $error404_page );
+//                    $wp_query->the_post();
+//                    $template = get_page_template();
+//                    $posts = $wp_query->posts;
+//                    $wp_query->rewind_posts();
+//                    return $posts;
+//                }
+//            }
+//        }
+//        return $posts;
+//    }
+//    add_filter( 'the_posts', 'av_error404_wpml', 999 );
+//}
 
 if( ! function_exists( 'av_wpml_get_fb_language_code' ) )
 {
@@ -844,7 +870,8 @@ if( ! function_exists( 'av_wpml_get_fb_language_code' ) )
 	 */
 	function av_wpml_get_fb_language_code( $langcode, $source )
 	{
-		if ( function_exists('icl_object_id') ) 
+		//	icl_object_id deprecated since 3.2 - backward comp only
+		if( function_exists( 'wpml_object_id_filter' ) || function_exists( 'icl_object_id' ) ) 
 		{
 			$locale = ICL_LANGUAGE_NAME_EN;
 			$fbxml = @simplexml_load_file( AVIA_BASE . '/config-wpml/FacebookLocales.xml' );
@@ -866,3 +893,5 @@ if( ! function_exists( 'av_wpml_get_fb_language_code' ) )
 	}
 	
 }
+
+

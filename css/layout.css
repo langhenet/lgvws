@@ -191,7 +191,7 @@ transition: 		all 0.4s ease-in-out;
 {height:118px; line-height: 118px;}
 
 #top .av_minimal_header #s{border:none; padding: 12px 47px 12px 5px; }
-#top .av_minimal_header .ajax_search_entry{border:none;}
+#top .av_minimal_header .av_ajax_search_entry{border:none;}
 
 
 .av_minimal_header_shadow{ box-shadow: 0 0 2px 1px rgba(0,0,0,0.1); }
@@ -571,7 +571,7 @@ html.av-burger-overlay-active #top .social_bookmarks{
 .av-burger-overlay-active #top #header .av-main-nav > li > a{background: transparent;}
 
 .av-burger-overlay-active #scroll-top-link{z-index:150;}
-#av-burger-menu-ul{display: table-cell; height: 100%; width:100%; vertical-align: middle; padding:125px 0;}
+#top #av-burger-menu-ul{display: table-cell; height: 100%; width:100%; vertical-align: middle; padding:125px 0;}
 
 
 .html_av-overlay-full #av-burger-menu-ul li{display:block; height:auto; width:100%; padding:0.3em 0; font-size: 35px;}
@@ -588,6 +588,12 @@ html.av-burger-overlay-active #top .social_bookmarks{
 .html_av-overlay-full.av-burger-overlay-active #top #wrap_all #menu-item-search a:hover{
 	color:#fff;
 }
+
+
+.html_header_top.html_logo_center.av-burger-overlay-active .menu-item-avia-special{
+	z-index: 150;
+}
+
 
 #top #wrap_all #av-burger-menu-ul > li{
 	opacity:0;
@@ -1036,7 +1042,7 @@ text-decoration: underline;
 z-index: 100;
 }
 
-#top .menu-item-search-dropdown > a, #searchform #searchsubmit, .ajax_search_image, .iconfont{
+#top .menu-item-search-dropdown > a, #searchform #searchsubmit, .av_ajax_search_image, .iconfont{
 font-size: 17px;
 }
 
@@ -1152,7 +1158,7 @@ padding-top:0px;
 border:none;
 }
 
-#top div .ajax_search_entry{
+#top div .av_ajax_search_entry{
 	display:block;
 	text-decoration: none;
 	line-height: 1.4em;
@@ -1166,34 +1172,34 @@ border:none;
 	position: relative;
 }
 
-#top div .ajax_search_entry:hover{
+#top div .av_ajax_search_entry:hover{
 	background-color: rgba(0,0,0,0.04);
 }
 
-#top div .ajax_search_entry.with_image .ajax_search_image{
+#top div .av_ajax_search_entry.with_image .av_ajax_search_image{
 background: transparent;
 }
 
 
-.ajax_search_content{
+.av_ajax_search_content{
 overflow: hidden;
 display: block;
 }
 
-.ajax_search_title{
+.av_ajax_search_title{
 display:block;
 font-weight: bold;
 text-transform: uppercase;
 }
 
-.ajax_not_found .ajax_search_title{
+.ajax_not_found .av_ajax_search_title{
 text-transform: none;
 }
 
 
 
 
-.ajax_search_image{
+.av_ajax_search_image{
 height:32px;
 line-height:32px;
 text-align: center;
@@ -1205,7 +1211,7 @@ overflow: hidden;
 font-size: 15px;
 }
 
-.ajax_search_image img{
+.av_ajax_search_image img{
 display:block; border:none; max-width: 100%;
 min-height:32px;
 min-width:32px;
@@ -1219,13 +1225,13 @@ margin-top: 3px;
 font-style: italic;
 }
 
-#top div .ajax_search_entry_view_all{
+#top div .av_ajax_search_entry_view_all{
 text-align: center;
 font-weight: bold;
 border:none;
 }
 
-#top div .ajax_not_found, #top div .ajax_search_entry.ajax_not_found:hover{border:none; background: transparent;}
+#top div .ajax_not_found, #top div .av_ajax_search_entry.ajax_not_found:hover{border:none; background: transparent;}
 
 /*title container*/
 
@@ -1840,6 +1846,15 @@ padding-top: 20px;
 .no_sidebar_border#top #main .sidebar, 
 .no_sidebar_border .content{border-left:none; border-right:none;}
 
+.sidebar_shadow#top #main .sidebar,
+.sidebar_shadow .content{border-left:none; border-right:none;}
+
+.sidebar_shadow#top #main .sidebar_right.av-enable-shadow{box-shadow: inset 25px 0 25px -25px #e9e9eb;}
+.sidebar_shadow .sidebar_right .content.av-enable-shadow{box-shadow: 25px 0 25px -25px #e9e9eb;}
+
+.sidebar_shadow#top #main .sidebar_left.av-enable-shadow{box-shadow: inset -25px 0 25px -25px #e9e9eb;}
+.sidebar_shadow .sidebar_left .content.av-enable-shadow{box-shadow: -25px 0 25px -25px #e9e9eb;}
+
 
 /* ======================================================================================================================================================
 #Page Styles
@@ -2190,6 +2205,9 @@ animation:         avia_pop_small 0.5s 1 cubic-bezier(0.175, 0.885, 0.320, 1.275
 		.responsive.html_header_sidebar #header .av-main-nav > li > a .avia-menu-subtext{font-size: 11px; }
 		.responsive.html_header_sidebar #header .avia-custom-sidebar-widget-area .widget{padding:10%;}
 		.responsive.html_header_sidebar .logo{padding: 10%;}
+		/*headers*/
+		.responsive.html_mobile_menu_tablet #top .av_header_transparency.av_alternate_logo_active .logo a > img{opacity:1}
+		.responsive.html_mobile_menu_tablet #top .av_header_transparency .logo img.alternate{display:none;}
 		
 		/*framed layout*/
 		.responsive .av-frame{display:none;}
@@ -2251,7 +2269,6 @@ animation:         avia_pop_small 0.5s 1 cubic-bezier(0.175, 0.885, 0.320, 1.275
 		.responsive #top .av_mobile_menu_tablet #header_main_alternate{display:none;}
 		.responsive.html_mobile_menu_tablet #top #wrap_all #header {position: relative; width:100%; float:none; height:auto; margin:0 !important; opacity: 1; min-height:0;}
 		.responsive.html_mobile_menu_tablet #top #header #header_meta .social_bookmarks{display:none;}
-		.responsive.html_mobile_menu_tablet .phone-info{float:none; width:100%; clear:both; text-align: center;}
 		.responsive.html_mobile_menu_tablet #top .av-logo-container .social_bookmarks{display:none}
 		.responsive.html_mobile_menu_tablet #top .av-logo-container .main_menu .social_bookmarks{display:block; position: relative; margin-top: -15px; right:0;}
 		.responsive.html_logo_center.html_bottom_nav_header .av_mobile_menu_tablet .avia-menu.av_menu_icon_beside{height:100%;}

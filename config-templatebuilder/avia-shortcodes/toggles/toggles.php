@@ -159,7 +159,10 @@ if ( !class_exists( 'avia_sc_toggle' ) )
                     "id" 	=> "styling",
                     "type" 	=> "select",
                     "std" 	=> "",
-                    "subtype" => array( __('Default', 'avia_framework' ) =>'', __("Minimal", 'avia_framework' ) => 'av-minimal-toggle')
+                    "subtype" => array(
+                        __('Default', 'avia_framework' ) =>'',
+                        __("Minimal", 'avia_framework' ) => 'av-minimal-toggle',
+                        __("Elegant", 'avia_framework' ) => 'av-elegant-toggle')
                 ),
                 
                 
@@ -193,20 +196,137 @@ if ( !class_exists( 'avia_sc_toggle' ) )
 					"rgba" 	=> true,
 					"container_class" => 'av_third',
 					"required" => array('colors','equals','custom')
-				),	
-				
-				array(	
-					"name" 	=> __("Custom Border Color", 'avia_framework' ),
-					"desc" 	=> __("Select a custom border color. Leave empty to use the default", 'avia_framework' ),
-					"id" 	=> "border_color",
-					"type" 	=> "colorpicker",
-					"std" 	=> "",
-					"rgba" 	=> true,
-					"container_class" => 'av_third',
-					"required" => array('colors','equals','custom')
-				),	
-				
-				
+				),
+
+                array(
+                    "name" 	=> __("Custom Border Color", 'avia_framework' ),
+                    "desc" 	=> __("Select a custom border color. Leave empty to use the default", 'avia_framework' ),
+                    "id" 	=> "border_color",
+                    "type" 	=> "colorpicker",
+                    "std" 	=> "",
+                    "rgba" 	=> true,
+                    "container_class" => 'av_third',
+                    "required" => array('colors','equals','custom')
+                ),
+
+                array(
+                    "name" 	=> __("Hover Toggle Appearence", 'avia_framework' ),
+                    "desc" 	=> __("Appearence of toggles on mouse hover", 'avia_framework' ),
+                    "id" 	=> "hover_colors",
+                    "type" 	=> "select",
+                    "std" 	=> "",
+                    "subtype" => array(
+                        __('Default', 'avia_framework' )=>'',
+                        __('Define Custom Colors', 'avia_framework' )=>'custom'),
+                ),
+
+                array(
+                    "name" 	=> __("Custom Hover Background Color", 'avia_framework' ),
+                    "desc" 	=> __("Select a custom hover background color. Leave empty to use the default", 'avia_framework' ),
+                    "id" 	=> "hover_background_color",
+                    "type" 	=> "colorpicker",
+                    "std" 	=> "",
+                    "rgba" 	=> true,
+                    "container_class" => 'av_third av_half_first',
+                    "required" => array('hover_colors','equals','custom')
+                ),
+
+                array(
+                    "name" 	=> __("Custom Hover Font Color", 'avia_framework' ),
+                    "desc" 	=> __("Select a custom hover font color. Leave empty to use the default", 'avia_framework' ),
+                    "id" 	=> "hover_font_color",
+                    "type" 	=> "colorpicker",
+                    "std" 	=> "",
+                    "rgba" 	=> true,
+                    "container_class" => 'av_third',
+                    "required" => array('hover_colors','equals','custom')
+                ),
+
+                array(
+                    "name" 	=> __("Current Toggle Appearence", 'avia_framework' ),
+                    "desc" 	=> __("Highlight title bar of open toggles", 'avia_framework' ),
+                    "id" 	=> "colors_current",
+                    "type" 	=> "select",
+                    "std" 	=> "",
+                    "subtype" => array(
+                        __('Default', 'avia_framework' )=>'',
+                        __('Define Custom Colors', 'avia_framework' )=>'custom'),
+                ),
+
+                array(
+                    "name" 	=> __("Custom Font Color", 'avia_framework' ),
+                    "desc" 	=> __("Select a custom font color. Leave empty to use the default", 'avia_framework' ),
+                    "id" 	=> "font_color_current",
+                    "type" 	=> "colorpicker",
+                    "std" 	=> "",
+                    "rgba" 	=> true,
+                    "container_class" => 'av_third av_third_first',
+                    "required" => array('colors_current','equals','custom')
+                ),
+
+                array(
+                    "name" 	=> __("Background",'avia_framework' ),
+                    "desc" 	=> __("Select the type of background for the title bar.", 'avia_framework' ),
+                    "id" 	=> "background_current",
+                    "type" 	=> "select",
+                    "std" 	=> "",
+                    "container_class" => 'av_third',
+                    "subtype" => array(
+                        __('Default','avia_framework' )=>'',
+                        __('Background Color','avia_framework' )=>'bg_color',
+                        __('Background Gradient','avia_framework' ) =>'bg_gradient',
+                    )
+                ),
+
+                array(
+                    "name" 	=> __("Title Bar Custom Background Color", 'avia_framework' ),
+                    "desc" 	=> __("Select a custom background color. Leave empty for default color", 'avia_framework' ),
+                    "id" 	=> "background_color_current",
+                    "type" 	=> "colorpicker",
+                    "required" => array('background_current','equals','bg_color'),
+                    "rgba" 	=> true,
+                    "std" 	=> "",
+                ),
+
+                array(
+                    "name" 	=> __("Background Gradient Color 1", 'avia_framework' ),
+                    "desc" 	=> __("Select the first color for the gradient.", 'avia_framework' ),
+                    "id" 	=> "background_gradient_current_color1",
+                    "type" 	=> "colorpicker",
+                    "container_class" => 'av_third av_third_first',
+                    "required" => array('background_current','equals','bg_gradient'),
+                    "rgba" 	=> true,
+                    "std" 	=> "",
+                ),
+                array(
+                    "name" 	=> __("Background Gradient Color 2", 'avia_framework' ),
+                    "desc" 	=> __("Select the second color for the gradient.", 'avia_framework' ),
+                    "id" 	=> "background_gradient_current_color2",
+                    "type" 	=> "colorpicker",
+                    "container_class" => 'av_third',
+                    "required" => array('background_current','equals','bg_gradient'),
+                    "rgba" 	=> true,
+                    "std" 	=> "",
+                ),
+
+                array(
+                    "name" 	=> __("Background Gradient Direction",'avia_framework' ),
+                    "desc" 	=> __("Define the gradient direction", 'avia_framework' ),
+                    "id" 	=> "background_gradient_current_direction",
+                    "type" 	=> "select",
+                    "container_class" => 'av_third',
+                    "std" 	=> "vertical",
+                    "required" => array('background_current','equals','bg_gradient'),
+                    "subtype" => array(
+                        __('Vertical','avia_framework' )=>'vertical',
+                        __('Horizontal','avia_framework' ) =>'horizontal',
+                        __('Radial','avia_framework' ) =>'radial',
+                        __('Diagonal Top Left to Bottom Right','avia_framework' ) =>'diagonal_tb',
+                        __('Diagonal Bottom Left to Top Right','avia_framework' ) =>'diagonal_bt',
+                    )
+                ),
+
+
 				array(
 							"type" 	=> "close_div",
 							'nodescription' => true
@@ -321,15 +441,67 @@ if ( !class_exists( 'avia_sc_toggle' ) )
         function shortcode_handler($atts, $content = "", $shortcodename = "", $meta = "")
         {
 	        extract(AviaHelper::av_mobile_sizes($atts)); //return $av_font_classes, $av_title_font_classes and $av_display_classes 
-	        
-            $atts =  shortcode_atts(array('initial' => '0', 'mode' => 'accordion', 'sort'=>'', 'styling'=>'', 'colors'=>'', 'border_color'=>'', 'font_color'=>'', 'background_color'=>''), $atts, $this->config['shortcode']);
+
+            $atts =  shortcode_atts(array(
+                'initial' => '0',
+                'mode' => 'accordion',
+                'sort'=>'', 'styling'=>'',
+                'colors'=>'',
+                'border_color'=>'',
+                'font_color'=>'',
+                'background_color'=>'',
+                'colors_current'=>'',
+                'font_color_current'=>'',
+                'background_current'=>'',
+                'background_color_current'=>'',
+                'background_gradient_current_color1'=>'',
+                'background_gradient_current_color2'=>'',
+                'background_gradient_current_direction' => '',
+                'hover_colors' => '',
+                'hover_background_color' => '',
+                'hover_font_color' => ''
+
+            ), $atts, $this->config['shortcode']);
             extract($atts);
 
             $output = "";
             $addClass = '';
             if($mode == 'accordion') $addClass = 'toggle_close_all ';
-			
-            $output  = '<div class="togglecontainer '.$av_display_classes.' '.$styling.' '.$addClass.$meta['el_class'].'" >';
+
+
+            // custom title bar styling
+            $current_colors = "";
+
+            if ($atts['colors_current'] == 'custom'){
+
+                if ($atts['font_color_current'] !== '') {
+                    $current_colors .= AviaHelper::style_string($atts,'font_color_current','color');
+                    $current_colors .= AviaHelper::style_string($atts,'font_color_current','border-color');
+                    $addClass .= ' hasCurrentStyle';
+                }
+
+                if ($atts['background_current'] == 'bg_color') {
+                    $current_colors .= AviaHelper::style_string($atts,'background_color_current','background-color');
+                }
+                else if ($atts['background_current'] == 'bg_gradient'){
+
+                    $gradient_settings = array(
+                        $atts['background_gradient_current_direction'],
+                        $atts['background_gradient_current_color1'],
+                        $atts['background_gradient_current_color2']
+                    );
+                    $atts['gradient_string'] = AviaHelper::css_background_string(array(), $gradient_settings);
+                    $atts['gradient_fallback'] = $atts['background_gradient_current_color1'];
+                    $current_colors .= AviaHelper::style_string($atts,'gradient_fallback','background-color');
+                    $current_colors .= AviaHelper::style_string($atts,'gradient_string','background');
+                }
+
+            }
+
+            $current_colors_attr = "";
+            if ($current_colors) $current_colors_attr = "data-currentstyle='{$current_colors}'";
+
+            $output  = '<div class="togglecontainer '.$av_display_classes.' '.$styling.' '.$addClass.$meta['el_class'].'" '.$current_colors_attr.'>';
             avia_sc_toggle::$counter = 1;
             avia_sc_toggle::$initial = $initial;
             avia_sc_toggle::$tags 	 = array();
@@ -381,6 +553,8 @@ if ( !class_exists( 'avia_sc_toggle' ) )
 		            $colors .= "color: ".avia_sc_toggle::$atts['font_color']."; ";
 		            $icon_color = "style='border-color:".avia_sc_toggle::$atts['font_color'].";'";
 		            $inherit .= " av-inherit-font-color ";
+		            $titleClass .= ' hasCustomColor';
+
 	            }
 	            
 	            if(!empty(avia_sc_toggle::$atts['border_color']))
@@ -394,7 +568,26 @@ if ( !class_exists( 'avia_sc_toggle' ) )
             {
 	            $colors = "style='{$colors}'";
             }
-            
+
+            // hover styling
+            $hover_styling = '';
+            if(!empty(avia_sc_toggle::$atts['hover_colors']) && avia_sc_toggle::$atts['hover_colors'] == "custom"){
+
+
+                if(!empty(avia_sc_toggle::$atts['hover_background_color'])){
+                    $hover_styling .= "background-color: ".avia_sc_toggle::$atts['hover_background_color']."; ";
+                }
+
+                if(!empty(avia_sc_toggle::$atts['hover_font_color'])) {
+                    $hover_styling .= "color: ".avia_sc_toggle::$atts['hover_font_color']."; ";
+                }
+            }
+
+            $hover_styling_markup = '';
+            if ($hover_styling) {
+                $hover_styling_markup = "data-hoverstyle='{$hover_styling}'";
+            }
+
 
             $markup_tab = avia_markup_helper(array('context' => 'entry','echo'=>false, 'custom_markup'=>$toggle_atts['custom_markup']));
             $markup_title = avia_markup_helper(array('context' => 'entry_title','echo'=>false, 'custom_markup'=>$toggle_atts['custom_markup']));
@@ -402,7 +595,7 @@ if ( !class_exists( 'avia_sc_toggle' ) )
 
             $output .= '<section class="av_toggle_section" '.$markup_tab.' >';
             $output .= '    <div class="single_toggle" '.$this->create_tag_string($toggle_atts['tags'], $toggle_atts).'  >';
-            $output .= '        <p data-fake-id="#'.$toggle_atts['custom_id'].'" class="toggler '.$titleClass.$inherit.'" '.$markup_title.' '.$colors.'>'.$toggle_atts['title'].'<span class="toggle_icon" '.$icon_color.'>';
+            $output .= '        <p data-fake-id="#'.$toggle_atts['custom_id'].'" class="toggler '.$titleClass.$inherit.'" '.$markup_title.' '.$colors.' '.$hover_styling_markup.'>'.$toggle_atts['title'].'<span class="toggle_icon" '.$icon_color.'>';
             $output .= '        <span class="vert_icon"></span><span class="hor_icon"></span></span></p>';
             $output .= '        <div id="'.$toggle_atts['custom_id'].'-container" class="toggle_wrap '.$contentClass.'"  '.$toggle_init_open_style.'>';
             $output .= '            <div class="toggle_content invers-color '.$inherit.'" '.$markup_text.' '.$colors.' >';

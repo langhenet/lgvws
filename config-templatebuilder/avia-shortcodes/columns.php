@@ -318,9 +318,39 @@ if ( !class_exists( 'avia_sc_columns' ) )
 											'bottom'=> __('Margin-Bottom','avia_framework'),
 											)
 						),
-						
 
-					array(
+
+                    array(
+                        "name" 	=> __("Row Box-Shadow",'avia_framework' ),
+                        "desc" 	=> __("Add a box-shadow to the row",'avia_framework' ),
+                        "required" => array('min_height','not',''),
+                        "id" 	=> "row_boxshadow",
+                        "type" 	=> "checkbox",
+                        "std" 	=> "",
+                    ),
+
+                    array(
+                        "name" 	=> __("Row Box-Shadow Color", 'avia_framework' ),
+                        "desc" 	=> __("Set a color for the box-shadow", 'avia_framework' ),
+                        "id" 	=> "row_boxshadow_color",
+                        "type" 	=> "colorpicker",
+                        "rgba" 	=> true,
+                        "required" => array('row_boxshadow','not',''),
+                        "std" 	=> "",
+                    ),
+
+                    array(
+                        "name" 	=> __("Row Box-Shadow Width",'avia_framework' ),
+                        "desc" 	=> __("Set the width of the box-shadow", 'avia_framework' ),
+                        "id" 	=> "row_boxshadow_width",
+                        "type" 	=> "select",
+                        "std" 	=> "10",
+                        "required" => array('row_boxshadow','not',''),
+                        "subtype" => AviaHtmlHelper::number_array(1,40,1, array() , 'px'),
+                    ),
+
+
+                    array(
 							"type" 	=> "close_div",
 							'nodescription' => true
 						),
@@ -396,10 +426,28 @@ if ( !class_exists( 'avia_sc_columns' ) )
 												'left'	=> __('Padding-Left','avia_framework'), 
 												)
 						),
-					
-					
-					
-					array(
+
+
+                    array(
+                        "name" 	=> __("Highlight Column",'avia_framework' ),
+                        "desc" 	=> __("Hightlight this column by making is slightly bigger",'avia_framework' ),
+                        "id" 	=> "highlight",
+                        "type" 	=> "checkbox",
+                        "std" 	=> "",
+                    ),
+
+                    array(
+                        "name" 	=> __("Highlight - Column Scaling",'avia_framework' ),
+                        "desc" 	=> __("How much should the highlighted column be increased in size?", 'avia_framework' ),
+                        "id" 	=> "highlight_size",
+                        "type" 	=> "select",
+                        "required"		=> array( 'highlight', 'not', '' ),
+                        "std" 	=> "",
+                        "subtype" => AviaHtmlHelper::number_array(1.1,1.6,0.1, array()),
+                    ),
+
+
+                    array(
 							"type" 	=> "close_div",
 							'nodescription' => true
 						),
@@ -444,10 +492,37 @@ if ( !class_exists( 'avia_sc_columns' ) )
 												'left'	=> __('Bottom-Left-Radius','avia_framework'),
 												)
 						),
-					
-					
-					
-					array(
+
+
+                    array(
+                        "name" 	=> __("Column Box-Shadow",'avia_framework' ),
+                        "desc" 	=> __("Add a box-shadow to the column",'avia_framework' ),
+                        "id" 	=> "column_boxshadow",
+                        "type" 	=> "checkbox",
+                        "std" 	=> "",
+                    ),
+
+                    array(
+                        "name" 	=> __("Column Box-Shadow Color", 'avia_framework' ),
+                        "desc" 	=> __("Set a color for the box-shadow", 'avia_framework' ),
+                        "id" 	=> "column_boxshadow_color",
+                        "type" 	=> "colorpicker",
+                        "rgba" 	=> true,
+                        "required" => array('column_boxshadow','not',''),
+                        "std" 	=> "",
+                    ),
+
+                    array(
+                        "name" 	=> __("Column Box-Shadow Width",'avia_framework' ),
+                        "desc" 	=> __("Set the width of the box-shadow", 'avia_framework' ),
+                        "id" 	=> "column_boxshadow_width",
+                        "type" 	=> "select",
+                        "std" 	=> "10",
+                        "required" => array('column_boxshadow','not',''),
+                        "subtype" => AviaHtmlHelper::number_array(1,40,1, array() , 'px'),
+                    ),
+
+                    array(
 							"type" 	=> "close_div",
 							'nodescription' => true
 						),
@@ -738,7 +813,13 @@ array(
 								'border'				=> '',
 								'border_color'			=> '',
 								'border_style'			=> 'solid',
-								'margin'				=> '',
+                                'column_boxshadow'		=> '',
+                                'column_boxshadow_color'=> 'rgba(0,0,0,0.1)',
+                                'column_boxshadow_width'=> '10px',
+                                'row_boxshadow'			=> '',
+                                'row_boxshadow_color'   => 'rgba(0,0,0,0.1)',
+                                'row_boxshadow_width'   => '10px',
+                                'margin'				=> '',
 								'custom_margin'			=> '',
 								'min_height'			=> '',
 								'vertical_alignment'	=> 'av-align-top',
@@ -747,8 +828,10 @@ array(
 								'linktarget'			=> '',
 								'link_hover'			=> '',
 								'mobile_display'		=> '',
-								'mobile_breaking'		=> ''
-					
+								'mobile_breaking'		=> '',
+                                'highlight' => '',
+                                'highlight_size' => '',
+
 							), $atts, $this->config['shortcode'] );
 				
 				
@@ -808,7 +891,10 @@ array(
 				{
 					$extraClass .= " flex_column_div";
 				}
-				
+
+                $margins = "";
+                $margin_style = "";
+
 				if( !empty( avia_sc_columns::$first_atts['custom_margin'] ) )
 				{
 					$explode_margin = explode(',',avia_sc_columns::$first_atts['margin']);
@@ -820,22 +906,43 @@ array(
 					$atts['margin-top'] = $explode_margin[0];
 					$atts['margin-bottom'] = $explode_margin[1];
 					
-					$margins = "";
 					$margins .= AviaHelper::style_string($atts, 'margin-top');
 					$margins .= AviaHelper::style_string($atts, 'margin-bottom');
 					
 					if( !empty( avia_sc_columns::$first_atts['min_height'] ) )
 					{
-						$margin_style = AviaHelper::style_string( $margins );
+						$margin_style = $margins;
 					}
 					else
 					{
 						$outer_style .= $margins;
 					}
 				}
-				
-				
-				
+
+
+				$row_boxshadow_style = "";
+
+                if (!empty($atts['row_boxshadow'])){
+                    if (array_key_exists('row_boxshadow_width',$atts) && array_key_exists('row_boxshadow_color',$atts)) {
+                        if ($atts['row_boxshadow_width'] !== '' && $atts['row_boxshadow_color'] !== '') {
+                            $row_boxshadow_style .= 'box-shadow: 0 0 '.$atts['row_boxshadow_width'].'px 0 '.$atts['row_boxshadow_color'].'; ';
+                        }
+                    }
+                }
+                /*
+                if( !empty($atts['boxshadow']) ){
+
+                    if (array_key_exists('boxshadow_width',$atts) && array_key_exists('boxshadow_color',$atts)) {
+                        if ($atts['boxshadow_width'] !== '' && $atts['boxshadow_color'] !== '') {
+                            $row_boxshadow_style .= 'box-shadow: 0 0 '.$atts['boxshadow_width'].'px 0 '.$atts['boxshadow_color'].'; ';
+                        }
+                    }
+
+                }
+                */
+
+                $row_style = AviaHelper::style_string( $margin_style.$row_boxshadow_style );
+
 				$explode_padding = explode(',',$atts['padding']);
 				if(count($explode_padding) > 1)
 				{
@@ -944,14 +1051,29 @@ array(
 					$outer_style .= AviaHelper::style_string($atts, 'border_color', 'border-color');
 					$outer_style .= AviaHelper::style_string($atts, 'border_style', 'border-style');
 				}
-				
+
+				if (!empty($atts['column_boxshadow'])){
+                    if (array_key_exists('column_boxshadow_width',$atts) && array_key_exists('column_boxshadow_color',$atts)) {
+                        if ($atts['column_boxshadow_width'] !== '' && $atts['column_boxshadow_color'] !== '') {
+                            $outer_style .= 'box-shadow: 0 0 '.$atts['column_boxshadow_width'].'px 0 '.$atts['column_boxshadow_color'].'; ';
+                        }
+                    }
+                }
+
+
+                if (!empty($atts['highlight']) ){
+                    if ( array_key_exists('highlight_size',$atts)) {
+                        $highlight_size = $atts['highlight_size'];
+                        $outer_style .= "-webkit-transform: scale({$highlight_size}); -ms-transform: scale({$highlight_size}); transform: scale({$highlight_size}); z-index: 4;";
+                    }
+                }
+
+
 				$outer_style .= AviaHelper::style_string($atts, 'padding');
 				$outer_style .= AviaHelper::style_string($atts, 'background_color', 'background-color');
 				$outer_style .= AviaHelper::style_string($atts, 'radius', 'border-radius');
 				$outer_style  = AviaHelper::style_string($outer_style);
-				
-				
-				
+
 				
 				if( $first )
 				{	
@@ -973,7 +1095,7 @@ array(
 
 				if(!empty( avia_sc_columns::$first_atts['min_height'] ) && avia_sc_columns::$calculated_size == 0)
 				{
-					$output .= "<div class='flex_column_table ".avia_sc_columns::$first_atts['min_height']."-flextable ".avia_sc_columns::$first_atts['mobile_breaking']."-flextable' {$margin_style}>";
+					$output .= "<div class='flex_column_table ".avia_sc_columns::$first_atts['min_height']."-flextable ".avia_sc_columns::$first_atts['mobile_breaking']."-flextable' {$row_style}>";
 				}	
 				
 				if(!$first && empty( avia_sc_columns::$first_atts['space'] ) && !empty( avia_sc_columns::$first_atts['min_height'] ))
@@ -988,7 +1110,7 @@ array(
 				$screen_reader_link = "";
 				if( ! empty( $link ) )
 				{
-					$extraClass .= ' avia-link-column';
+					$extraClass .= ' avia-link-column av-column-link';
 					if( ! empty( $atts['link_hover'] ) )
 					{
 						$extraClass .= ' avia-link-column-hover';

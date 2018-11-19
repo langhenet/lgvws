@@ -1,5 +1,4 @@
 <?php
-return; /*We will add this element to version 4.4 - once we got a proper demo to display it ;) */
 	
 
 /**
@@ -130,77 +129,10 @@ if (!class_exists('avia_sc_search')) {
                     'nodescription' => true
                 ),
 
-
-                // Appearence Tab
-                array(
-                    "type" => "tab",
-                    "name" => __("Appearence", 'avia_framework'),
-                    'nodescription' => true
-                ),
-
-                array(
-                    "name" 	=> __("Input Font Size", 'avia_framework' ),
-                    "desc" 	=> __("Select a custom font size for the input. Leave empty to use the default", 'avia_framework' ),
-                    "id" 	=> "custom_input_size",
-                    "type" 	=> "select",
-                    "std" 	=> "",
-                    "container_class" => 'av_half av_half_first',
-                    "subtype" => AviaHtmlHelper::number_array(10,50,1, array( __("Default Size", 'avia_framework' )=>''), 'px'),
-                ),
-
-                array(
-                    "name" 	=> __("Button Font Size", 'avia_framework' ),
-                    "desc" 	=> __("Select a custom font size for the button. Leave empty to use the default", 'avia_framework' ),
-                    "id" 	=> "custom_button_size",
-                    "type" 	=> "select",
-                    "std" 	=> "",
-                    "container_class" => 'av_half',
-                    "subtype" => AviaHtmlHelper::number_array(10,50,1, array( __("Default Size", 'avia_framework' )=>''), 'px'),
-                ),
-
-                array(
-                    "name" 	=> __("Height", 'avia_framework' ),
-                    "desc" 	=> __("Select a custom height for the search input and button", 'avia_framework' ),
-                    "id" 	=> "custom_height",
-                    "type" 	=> "select",
-                    "std" 	=> "",
-                    "subtype" => AviaHtmlHelper::number_array(40,100,1, array( __("Default Height", 'avia_framework' )=>''), 'px'),
-                ),
-
-                array(
-                    "name" 	=> __("Border Radius", 'avia_framework' ),
-                    "desc" 	=> __("Set the border radius of the search form", 'avia_framework' ),
-                    "id" 	=> "radius",
-                    "type" 	=> "multi_input",
-                    "std" 	=> "0px",
-                    "sync" 	=> true,
-                    "multi" => array(	'top' 	=> __('Top-Left-Radius','avia_framework'),
-                        'right'	=> __('Top-Right-Radius','avia_framework'),
-                        'bottom'=> __('Bottom-Right-Radius','avia_framework'),
-                        'left'	=> __('Bottom-Left-Radius','avia_framework'),
-                    )
-                ),
-
-                array(
-                    "name" 	=> __("Border Width", 'avia_framework' ),
-                    "desc" 	=> __("Select a custom border width for the search input and button", 'avia_framework' ),
-                    "id" 	=> "border_width",
-                    "type" 	=> "select",
-                    "std" 	=> "",
-                    "subtype" => AviaHtmlHelper::number_array(0,30,1, array( __("Default Width", 'avia_framework' )=>''), 'px'),
-                ),
-
-
-                array(
-                    "type" 	=> "close_div",
-                    'nodescription' => true
-                ),
-
-
                 // Search Tab
                 array(
                     "type" => "tab",
-                    "name" => __("Search", 'avia_framework'),
+                    "name" => __("Search Settings", 'avia_framework'),
                     'nodescription' => true
                 ),
 
@@ -301,6 +233,116 @@ if (!class_exists('avia_sc_search')) {
                     'nodescription' => true
                 ),
 
+
+                // Form Appearence Tab
+                array(
+                    "type" => "tab",
+                    "name" => __("Form Appearence", 'avia_framework'),
+                    'nodescription' => true
+                ),
+
+                array(
+                    "name" 	=> __("Input Font Size", 'avia_framework' ),
+                    "desc" 	=> __("Select a custom font size for the input. Leave empty to use the default", 'avia_framework' ),
+                    "id" 	=> "custom_input_size",
+                    "type" 	=> "select",
+                    "std" 	=> "",
+                    "container_class" => 'av_half av_half_first',
+                    "subtype" => AviaHtmlHelper::number_array(10,50,1, array( __("Default Size", 'avia_framework' )=>''), 'px'),
+                ),
+
+                array(
+                    "name" 	=> __("Button Font Size", 'avia_framework' ),
+                    "desc" 	=> __("Select a custom font size for the button. Leave empty to use the default", 'avia_framework' ),
+                    "id" 	=> "custom_button_size",
+                    "type" 	=> "select",
+                    "std" 	=> "",
+                    "container_class" => 'av_half',
+                    "subtype" => AviaHtmlHelper::number_array(10,50,1, array( __("Default Size", 'avia_framework' )=>''), 'px'),
+                ),
+
+                array(
+                    "name" 	=> __("Height", 'avia_framework' ),
+                    "desc" 	=> __("Select a custom height for the search input and button", 'avia_framework' ),
+                    "id" 	=> "custom_height",
+                    "type" 	=> "select",
+                    "std" 	=> "",
+                    "subtype" => AviaHtmlHelper::number_array(40,100,1, array( __("Default Height", 'avia_framework' )=>''), 'px'),
+                ),
+
+                array(
+                    "name" 	=> __("Border Radius", 'avia_framework' ),
+                    "desc" 	=> __("Set the border radius of the search form", 'avia_framework' ),
+                    "id" 	=> "radius",
+                    "type" 	=> "multi_input",
+                    "std" 	=> "0px",
+                    "sync" 	=> true,
+                    "multi" => array(
+                        'top' 	=> __('Top-Left-Radius','avia_framework'),
+                        'right'	=> __('Top-Right-Radius','avia_framework'),
+                        'bottom'=> __('Bottom-Right-Radius','avia_framework'),
+                        'left'	=> __('Bottom-Left-Radius','avia_framework'),
+                    )
+                ),
+
+                array(
+                    "name" 	=> __("Border Width", 'avia_framework' ),
+                    "desc" 	=> __("Select a custom border width for the search input and button", 'avia_framework' ),
+                    "id" 	=> "border_width",
+                    "type" 	=> "select",
+                    "std" 	=> "",
+                    "subtype" => AviaHtmlHelper::number_array(0,30,1, array( __("Default Width", 'avia_framework' )=>''), 'px'),
+                ),
+
+
+                array(
+                    "type" 	=> "close_div",
+                    'nodescription' => true
+                ),
+
+
+                // Results Appearence Tab
+                array(
+                    "type" => "tab",
+                    "name" => __("Results Appearence", 'avia_framework'),
+                    'nodescription' => true
+                ),
+
+                array(
+                    "name" 	=> __("Search Results Container Padding", 'avia_framework' ),
+                    "desc" 	=> __("Set the padding for the search results container", 'avia_framework' ),
+                    "id" 	=> "results_padding",
+                    "type" 	=> "multi_input",
+                    "std" 	=> "0px",
+                    "sync" 	=> true,
+                    "multi" => array(
+                        'top' 	=> __('Top-Left-Padding','avia_framework'),
+                        'right'	=> __('Top-Right-Padding','avia_framework'),
+                        'bottom'=> __('Bottom-Right-Padding','avia_framework'),
+                        'left'	=> __('Bottom-Left-Padding','avia_framework'),
+                    )
+                ),
+
+                array(
+                    "name" 	=> __("Search Results Container Margin", 'avia_framework' ),
+                    "desc" 	=> __("Set the margin for the search results container", 'avia_framework' ),
+                    "id" 	=> "results_margin",
+                    "type" 	=> "multi_input",
+                    "std" 	=> "0px",
+                    "sync" 	=> true,
+                    "multi" => array(
+                        'top' 	=> __('Top-Left-Margin','avia_framework'),
+                        'right'	=> __('Top-Right-Margin','avia_framework'),
+                        'bottom'=> __('Bottom-Right-Margin','avia_framework'),
+                        'left'	=> __('Bottom-Left-Margin','avia_framework'),
+                    )
+                ),
+
+
+                array(
+                    "type" 	=> "close_div",
+                    'nodescription' => true
+                ),
 
                 // Colors Tab
                 array(
@@ -614,6 +656,8 @@ if (!class_exists('avia_sc_search')) {
                     'results_hide_titles' => '',
                     'results_hide_meta' => '',
                     'results_hide_image' => '',
+                    'results_padding' => '',
+                    'results_margin' => ''
 
             ), $atts, $this->config['shortcode']));
 
@@ -648,9 +692,44 @@ if (!class_exists('avia_sc_search')) {
                     $atts['radius'] .= $value ." ";
                 }
             }
-            else {
-                $value = empty($radius) ? '0' : $radius;
+
+            // padding results container
+            if (array_key_exists('results_padding',$atts) ) {
+                $explode_padding = explode(',',$atts['results_padding']);
+                if(count($explode_padding) > 1)
+                {
+                    $atts['results_padding'] = "";
+                    foreach($explode_padding as $value)
+                    {
+                        if(empty($value)) $value = "0";
+                        $atts['results_padding'] .= $value ." ";
+                    }
+                }
+
+                if($atts['results_padding'] == "0px" && $atts['results_padding'] == "0" && $atts['results_padding'] == "0%" && $atts['results_padding'] == null) {
+                    $atts['results_padding'] = "";
+                }
             }
+
+
+            // margin results container
+            if (array_key_exists('results_margin',$atts) ) {
+                $explode_margin = explode(',',$atts['results_margin']);
+                if(count($explode_margin) > 1)
+                {
+                    $atts['results_margin'] = "";
+                    foreach($explode_margin as $value)
+                    {
+                        if(empty($value)) $value = "0";
+                        $atts['results_margin'] .= $value ." ";
+                    }
+                }
+
+                if($atts['results_margin'] == "0px" || $atts['results_margin'] == "0" || $atts['results_margin'] == "0%" || $atts['results_margin'] == null) {
+                    $atts['results_margin'] = "";
+                }
+            }
+
 
             $button_val = $label_text;
 
@@ -762,6 +841,13 @@ if (!class_exists('avia_sc_search')) {
                 $results_style['color'] = $custom_results_color;
             }
 
+            if ( $results_padding !== "" && $results_padding !== '0px') {
+                $results_style['padding'] = $atts['results_padding'];
+            }
+
+            if ( $results_margin !== "" && $results_margin !== '0px') {
+                $results_style['margin'] = $atts['results_margin'];
+            }
 
             $form_style = AviaHelper::style_string($form_style);
             $input_style = AviaHelper::style_string($input_style);
@@ -786,7 +872,7 @@ if (!class_exists('avia_sc_search')) {
             $output .= "<input type='text' value='{$search_val}' id='s' name='{$search_id}' placeholder='{$placeholder}' {$input_style} class='{$input_class}' />";
             if ($input_icon) $output .= "<span class='av-search-icon avia-font-".$font."' {$input_icon_style}>".$icon."</span>";
 
-            $output .= "<div class='searchsubmit_wrapper{$button_wrapper_class}' {$button_wrapper_style}>";
+            $output .= "<div class='av_searchsubmit_wrapper{$button_wrapper_class}' {$button_wrapper_style}>";
             if ($submit_icon) $output .= "<span class='av-search-icon avia-font-".$font."' {$button_icon_style}>".$icon."</span>";
             $output .= "<input type='submit' value='{$button_val}' id='searchsubmit' class='button{$button_class}' {$button_style} />";
 

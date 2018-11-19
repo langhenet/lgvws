@@ -356,7 +356,7 @@ if(!function_exists('av_blog_entry_markup_helper'))
 		{
 			$output .= "<span class='av-structured-data' {$publisher_markup}>
 				<span itemprop='name'>{$author_name}</span>
-				<span itemprop='logo' itemscope itemtype='http://schema.org/ImageObject'>
+				<span itemprop='logo' itemscope itemtype='https://schema.org/ImageObject'>
 				   <span itemprop='url'>{$logo_url}</span>
 				 </span>
 			  </span>";

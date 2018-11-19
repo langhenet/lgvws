@@ -144,14 +144,14 @@ if(!class_exists('avia_social_share_links'))
 		{
 			$default_arguments = array
 			(
-				'facebook' 	=> array("encode"=>true, "encode_urls"=>false, "pattern" => "http://www.facebook.com/sharer.php?u=[permalink]&amp;t=[title]"),
+				'facebook' 	=> array("encode"=>true, "encode_urls"=>false, "pattern" => "https://www.facebook.com/sharer.php?u=[permalink]&amp;t=[title]"),
 				'twitter' 	=> array("encode"=>true, "encode_urls"=>false, "pattern" => "https://twitter.com/share?text=[title]&url=[shortlink]"),
 				'gplus' 	=> array("encode"=>true, "encode_urls"=>false, "pattern" => "https://plus.google.com/share?url=[permalink]" , 'label' => __("Share on Google+",'avia_framework')),
-				'pinterest' => array("encode"=>true, "encode_urls"=>true, "pattern" => "http://pinterest.com/pin/create/button/?url=[permalink]&amp;description=[title]&amp;media=[thumbnail]"),
-				'linkedin' 	=> array("encode"=>true, "encode_urls"=>false, "pattern" => "http://linkedin.com/shareArticle?mini=true&amp;title=[title]&amp;url=[permalink]"),
-				'tumblr' 	=> array("encode"=>true, "encode_urls"=>true, "pattern" => "http://www.tumblr.com/share/link?url=[permalink]&amp;name=[title]&amp;description=[excerpt]"),
-				'vk' 		=> array("encode"=>true, "encode_urls"=>false, "pattern" => "http://vk.com/share.php?url=[permalink]"),
-				'reddit' 	=> array("encode"=>true, "encode_urls"=>false, "pattern" => "http://reddit.com/submit?url=[permalink]&amp;title=[title]"),
+				'pinterest' => array("encode"=>true, "encode_urls"=>true, "pattern" => "https://pinterest.com/pin/create/button/?url=[permalink]&amp;description=[title]&amp;media=[thumbnail]"),
+				'linkedin' 	=> array("encode"=>true, "encode_urls"=>false, "pattern" => "https://linkedin.com/shareArticle?mini=true&amp;title=[title]&amp;url=[permalink]"),
+				'tumblr' 	=> array("encode"=>true, "encode_urls"=>true, "pattern" => "https://www.tumblr.com/share/link?url=[permalink]&amp;name=[title]&amp;description=[excerpt]"),
+				'vk' 		=> array("encode"=>true, "encode_urls"=>false, "pattern" => "https://vk.com/share.php?url=[permalink]"),
+				'reddit' 	=> array("encode"=>true, "encode_urls"=>false, "pattern" => "https://reddit.com/submit?url=[permalink]&amp;title=[title]"),
 				'mail' 		=> array("encode"=>true, "encode_urls"=>false, "pattern" => "mailto:?subject=[title]&amp;body=[permalink]", 'label' => __("Share by Mail",'avia_framework') ),
 			);
 			
@@ -217,7 +217,7 @@ if(!class_exists('avia_social_share_links'))
 			$this->html .= "<div class='av-share-box'>";
 			if($this->title)
 			{
-				$this->html .= 		"<h5 class='av-share-link-description'>";
+				$this->html .= 		"<h5 class='av-share-link-description av-no-toc'>";
 				$this->html .= 		apply_filters('avia_social_share_title', $this->title , $this->args);
 				$this->html .= 		"</h5>";
 			}

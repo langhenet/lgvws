@@ -220,7 +220,56 @@ overflow: hidden;
 display: block;
 }
 
+.avia-form-element .avia-image-radio{
+	position: relative;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+	width: 47.5%;
+	float: left;
+	clear: none;
+	padding: 0;
+}
 
+.avia-form-element .avia-image-radio:nth-child(odd) {
+	border-right-width: 0;
+}
+
+.avia-form-element .avia-image-radio .radio_image{
+	width: 80px;
+	float: left;
+	margin-right: 15px;
+}
+
+.avia-form-element .avia-image-radio label{
+	margin-left: 0;
+	display: table;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+	width: 100%;
+	padding: 7px;
+}
+
+.avia-form-element .avia-image-radio .labeltext{
+	display: table-cell;
+	vertical-align: middle;
+	width: 100%;
+}
+
+.avia-form-element .avia-image-radio input{
+	visibility: hidden;
+	opacity: 1;
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	margin: 0;
+}
+
+.avia-form-element .avia-image-radio input:checked + label{
+	background-color: #E1E1E1;
+	box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+}
 
 .avia-expand-button{
 position: absolute;

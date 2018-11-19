@@ -85,7 +85,43 @@ if ( !class_exists( 'avia_sc_heading' ) )
 							"subtype" => array("H1"=>'h1',"H2"=>'h2',"H3"=>'h3',"H4"=>'h4',"H5"=>'h5',"H6"=>'h6')
 							), 
 							
-					
+					array(	
+							"name" 	=> __( "Apply a link to the header text?", 'avia_framework' ),
+							"desc" 	=> __( "You can choose to wrap the header in a link", 'avia_framework' ),
+							"id" 	=> "link_apply",
+							"type" 	=> "select",
+							"std" 	=> "",
+							"subtype" => array(
+										__('No Link for this header',  	'avia_framework' ) => '',
+										__('Apply Link to header',  	'avia_framework' ) => 'header_link'
+									)
+							),
+									
+					array(	
+							"name" 	=> __( "Header Text Link?", 'avia_framework' ),
+							"desc" 	=> __( "Where should the header text link to?", 'avia_framework' ),
+							"id" 	=> "link",
+							"required"	=> array( 'link_apply', 'equals', 'header_link' ),
+							"type" 	=> "linkpicker",
+							"fetchTMPL"	=> true,
+							"std" 	=> "",
+							"subtype" => array(	
+										__( 'Set Manually', 'avia_framework' )				=> 'manually',
+										__( 'Single Entry', 'avia_framework' )				=> 'single',
+										__( 'Taxonomy Overview Page',  'avia_framework' )	=> 'taxonomy',
+									),
+							),
+							
+					array(	
+							"name" 	=> __( "Open Link in new Window?", 'avia_framework' ),
+							"desc" 	=> __( "Select here if you want to open the linked page in a new window", 'avia_framework' ),
+							"id" 	=> "link_target",
+							"type" 	=> "select",
+							"std" 	=> "",
+							"required"	=> array( 'link', 'not_empty_and', 'lightbox' ),
+							"subtype" => AviaHtmlHelper::linking_options()
+							),   
+
 					array(	
 							"name" 	=> __("Heading Style", 'avia_framework' ),
 							"desc" 	=> __("Select a heading style", 'avia_framework' ),
@@ -94,8 +130,8 @@ if ( !class_exists( 'avia_sc_heading' ) )
 							"std" 	=> "",
 							"subtype" => array( __("Default Style", 'avia_framework' )=>'',  __("Heading Style Modern (left)", 'avia_framework' )=>'blockquote modern-quote' , __("Heading Style Modern (centered)", 'avia_framework' )=>'blockquote modern-quote modern-centered', __("Heading Style Classic (centered, italic)", 'avia_framework' )=>'blockquote classic-quote')
 							),   
-				            
-							
+					
+					
 					array(	"name" 	=> __("Heading Size", 'avia_framework' ),
 							"desc" 	=> __("Size of your Heading in Pixel or Viewport Width", 'avia_framework' ),
 				            "id" 	=> "size",
@@ -328,22 +364,34 @@ if ( !class_exists( 'avia_sc_heading' ) )
 			 */
 			function editor_element($params)
 			{
-				
-				$params['args'] = shortcode_atts(array('tag' => 'h3', 'padding' => '5', 'heading'=>'', 'color'=>'', 'style'=>'', 'custom_font'=>'', 'size'=>'', 'subheading_active' => '', 'subheading_size'=>'', 'custom_class'=>'', 'admin_preview_bg'=>'',
-				'av-desktop-hide'=>'',
-				'av-medium-hide'=>'',
-				'av-small-hide'=>'',
-				'av-mini-hide'=>'',
-				'av-medium-font-size-title'=>'',
-				'av-small-font-size-title'=>'',
-				'av-mini-font-size-title'=>'',
-				'av-medium-font-size'=>'',
-				'av-small-font-size'=>'',
-				'av-mini-font-size'=>'',
-				'margin'=>'',
-				
-				
-				), $params['args'], $this->config['shortcode']);
+				$params['args'] = shortcode_atts( array(
+										'heading'		=> '',
+										'tag'			=> 'h3', 
+										'link_apply'	=> '',
+										'link'			=> '',
+										'link_target'	=> '',
+										'style'			=> '',
+										'size'			=> '',
+										'subheading_active' => '', 
+										'subheading_size'	=>'', 
+										'margin'		=> '',
+										'padding'		=> '5', 
+										'color'			=> '', 
+										'custom_font'	=> '', 
+					
+										'custom_class'				=> '', 
+										'admin_preview_bg'			=> '',
+										'av-desktop-hide'			=> '',
+										'av-medium-hide'			=> '',
+										'av-small-hide'				=> '',
+										'av-mini-hide'				=> '',
+										'av-medium-font-size-title'	=> '',
+										'av-small-font-size-title'	=> '',
+										'av-mini-font-size-title'	=> '',
+										'av-medium-font-size'		=> '',
+										'av-small-font-size'		=> '',
+										'av-mini-font-size'			=> ''
+								), $params['args'], $this->config['shortcode'] );
 				
 				$templateNAME  	= $this->update_template("name", "{{name}}");
 				
@@ -376,8 +424,24 @@ if ( !class_exists( 'avia_sc_heading' ) )
 				
 				extract(AviaHelper::av_mobile_sizes($atts)); //return $av_font_classes, $av_title_font_classes and $av_display_classes 
 				
-			    extract(shortcode_atts(array('tag' => 'h3', 'padding' => '5', 'heading'=>'', 'color'=>'', 'style'=>'', 'custom_font'=>'', 'size'=>'', 'subheading_active' => '', 'subheading_size'=>'', 'margin'=>''), $atts, $this->config['shortcode']));
-			
+				$atts = shortcode_atts( array(
+										'heading'		=> '',
+										'tag'			=> 'h3', 
+										'link_apply'	=> '',
+										'link'			=> '',
+										'link_target'	=> '',
+										'style'			=> '',
+										'size'			=> '',
+										'subheading_active' => '', 
+										'subheading_size'	=>'', 
+										'margin'		=> '',
+										'padding'		=> '5', 
+										'color'			=> '', 
+										'custom_font'	=> '', 
+								), $atts, $this->config['shortcode'] );
+				
+				extract( $atts );
+				
         		$output  = "";
         		$styling = "";
         		$subheading = "";
@@ -385,8 +449,9 @@ if ( !class_exists( 'avia_sc_heading' ) )
         		$before = $after = "";
         		$class   = $meta['el_class'];
         		$subheading_extra = "";
-        		
-        		
+        		$link_before = '';
+        		$link_after = '';
+				
         		/*margin calc*/
         		$margin_calc = AviaHelper::multi_value_result( $margin , 'margin' );
         	
@@ -421,6 +486,23 @@ if ( !class_exists( 'avia_sc_heading' ) )
 	        		
 	        		//finish up the styling string
 	        		if(!empty($styling)) $styling = "style='{$styling}'";
+					
+					//check if we need to apply a link
+					if( ! empty( $link_apply ) && ! empty( $link ) )
+					{
+						$class .= ' av-linked-heading';
+						
+						$link_before = '<a';
+						$link_before .= ' href="' . AviaHelper::get_url( $link ) . '"';
+						
+						$blank = ( strpos( $link_target, '_blank' ) !== false || $link_target == 'yes' ) ? ' target="_blank" ' : '';
+						$blank .= strpos( $link_target, 'nofollow' ) !== false ? ' rel="nofollow" ' : '';
+						
+						$link_before .= $blank;
+						$link_before .= '>';
+						
+						$link_after = '</a>';
+					}
 	        		
 	        		//check if we got a subheading
 	        		if( !empty( $style ) && !empty( $subheading_active ) && !empty( $content ) )
@@ -441,7 +523,7 @@ if ( !class_exists( 'avia_sc_heading' ) )
 	        		//html markup
 	        		$output .= "<div {$styling} class='av-special-heading av-special-heading-{$tag} {$color} {$style} {$class} {$av_display_classes}'>";
 	        		$output .= 		$before;
-	        		$output .= 		"<{$tag} class='av-special-heading-tag {$av_title_font_classes}' $markup >{$heading}</{$tag}>";
+	        		$output .= 		"<{$tag} class='av-special-heading-tag {$av_title_font_classes}' $markup >{$link_before}{$heading}{$link_after}</{$tag}>";
 	        		$output .= 		$after;
 	        		$output .= 		"<div class='special-heading-border'><div class='special-heading-inner-border' {$border_styling}></div></div>";
 	        		$output .= "</div>";

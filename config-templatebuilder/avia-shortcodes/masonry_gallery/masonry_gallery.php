@@ -171,16 +171,29 @@ if ( !class_exists( 'avia_sc_masonry_gallery' ) )
 					)),
 					
 				array(
-					"name" 	=> __("Image overlay", 'avia_framework' ),
-					"desc" 	=> __("Do you want to display the image overlay effect that gets removed on mouseover?", 'avia_framework' ),
+					"name" 	=> __("Image effect", 'avia_framework' ),
+					"desc" 	=> __("Do you want to add an image overlay effect that gets applied or removed on mouseover?", 'avia_framework' ),
 					"id" 	=> "overlay_fx",
 					"type" 	=> "select",
-					"std" 	=> "1px",
+					"std" 	=> "active",
 					"subtype" => array(
-						__('Overlay activated',  'avia_framework' ) =>'active',
-						__('Overlay deactivated',  'avia_framework' ) =>'',
+						__('White overlay',  'avia_framework' ) =>'active',
+						__('Greyscale effect',  'avia_framework' ) =>'grayscale',
+						__('Desaturation effect',  'avia_framework' ) =>'desaturation',
+						__('Blur on hover effect',  'avia_framework' ) =>'bluronhover',
+						__('No effect',  'avia_framework' ) =>'',
 					)),
-				
+
+                array(
+                    "name" 	=> __("Animation on load", 'avia_framework' ),
+                    "desc" 	=> __("Should the masonry items load in an animated way?", 'avia_framework' ),
+                    "id" 	=> "animation",
+                    "type" 	=> "select",
+                    "std" 	=> "active",
+                    "subtype" => array(
+                        __('Animation activated',  'avia_framework' ) =>'active',
+                        __('Animation deactivated',  'avia_framework' ) =>'',
+                    )),
 				array(
 					"name" 	=> __("Image Link", 'avia_framework' ),
 					"desc" 	=> __("By default images link to a larger image version in a lightbox. You can deactivate that link. You can also set custom links when editing the images in the gallery", 'avia_framework' ),

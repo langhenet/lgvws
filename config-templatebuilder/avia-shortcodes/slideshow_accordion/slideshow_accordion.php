@@ -738,9 +738,28 @@ if ( !class_exists( 'aviaccordion' ) )
 				//if we find no terms for the taxonomy fetch all taxonomy terms
 				if(empty($terms[0]) || is_null($terms[0]) || $terms[0] === "null")
 				{
+					$term_args = array( 
+								'taxonomy'		=> $params['taxonomy'],
+								'hide_empty'	=> true
+							);
+					/**
+					 * To display private posts you need to set 'hide_empty' to false, 
+					 * otherwise a category with ONLY private posts will not be returned !!
+					 * 
+					 * You also need to add post_status "private" to the query params with filter avf_accordion_entries_query.
+					 * 
+					 * @since 4.4.2
+					 * @added_by Günter
+					 * @param array $term_args 
+					 * @param array $params 
+					 * @return array
+					 */
+					$term_args = apply_filters( 'avf_av_slideshow_accordion_term_args', $term_args, $params );
+
+					$allTax = AviaHelper::get_terms( $term_args );
+					
 					$terms = array();
-					$allTax = get_terms( $params['taxonomy']);
-					foreach($allTax as $tax)
+					foreach( $allTax as $tax )
 					{
 						$terms[] = $tax->term_id;
 					}

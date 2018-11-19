@@ -69,3 +69,44 @@ visibility: visible;
 .av-icon-before-number{margin-right:10px;}
 .av-icon-after-number{margin-left:10px;}
 
+.avia-animated-number-circle{
+    display: block;
+    position: absolute;
+    width: 100%;
+    max-width: 600px;
+    top: 50%;
+    left: 50%;
+    transform: translateY(-50%) translateX(-50%);
+}
+
+.avia-animated-number-circle:after{
+    content: "";
+    display: block;
+    padding-bottom: 100%;
+}
+
+.avia-animated-number-circle-inner{
+    display: block;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 100%;
+    border-width: 1px;
+    border-style: solid;
+}
+
+.avia-animated-number-circle-inner:after{
+    content: "";
+    display: block;
+    padding-bottom: 100%;
+}
+
+.av-circle-hover-animate:hover{
+    animation: sonarEffect 1s ease-out;
+}
+
+@media only screen and (max-width: 767px) {
+    .avia-animated-number-circle {
+        display: none;
+    }
+}

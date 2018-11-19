@@ -255,7 +255,7 @@ if ( !class_exists( 'avia_sc_codeblock' ) )
         
         public function extra_assets()
 		{
-			add_filter('avia_builder_precompile', array($this, 'code_block_extraction'), 1, 1);
+			add_filter('avia_builder_precompile', array($this, 'code_block_extraction'), 10, 1);
     		add_filter('avf_template_builder_content', array($this, 'code_block_injection'), 10, 1);
 		}
         
@@ -334,8 +334,8 @@ if ( !class_exists( 'avia_sc_codeblock' ) )
 					}
 				}
 
-				self::$codeblocks[$key] = $codeblock;
-				avia_sc_codeblock::$shortcodes_executed[ $key ] = ShortcodeHelper::$direct_calls;
+				self::$codeblocks[] = $codeblock;
+				avia_sc_codeblock::$shortcodes_executed[] = ShortcodeHelper::$direct_calls;
 			}
 			
 			/**

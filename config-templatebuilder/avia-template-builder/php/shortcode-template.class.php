@@ -682,7 +682,8 @@ if ( !class_exists( 'aviaShortcodeTemplate' ) ) {
 			$data['modal_ajax_hook'] 	= $this->config['shortcode'];
 			$data['dragdrop-level']		= $this->config['drag-level'];
 			$data['allowed-shortcodes'] = $this->config['shortcode'];
-			$data['preview'] 			= ! empty( $this->config['preview'] ) ? $this->config['preview'] : 0;
+            $data['preview'] 			= ! empty( $this->config['preview'] ) ? $this->config['preview'] : 0;
+            $data['preview_scale'] 		= ! empty( $this->config['preview_scale'] ) ? $this->config['preview_scale'] : 'noscale';
 			$data['closing_tag']		= $this->is_self_closing() ? 'no' : 'yes';
 			
 			if(isset($this->config['shortcode_nested']))

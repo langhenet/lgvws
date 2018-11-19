@@ -24,12 +24,13 @@
 				links			= filter.find('a'),
 				imgParent		= container.find('.grid-image'),
 				isoActive		= false,
-				items			= $('.post-entry', container);
+				items			= $('.post-entry', container),
+				is_originLeft	= the_body.hasClass('rtl') ? false : true;
 
 			function applyIso()
 			{
 				container.addClass('isotope_activated').isotope({
-					layoutMode : 'fitRows', itemSelector : '.flex_column'
+					layoutMode : 'fitRows', itemSelector : '.flex_column', originLeft: is_originLeft
 				});
 				
 				container.isotope( 'on', 'layoutComplete', function()
@@ -57,7 +58,7 @@
 
 					parentContainer.find('.open_container .ajax_controlls .avia_close').trigger('click');
 					//container.css({overflow:'hidden'})
-					container.isotope({ layoutMode : 'fitRows', itemSelector : '.flex_column' , filter: '.'+selector});
+					container.isotope({ layoutMode : 'fitRows', itemSelector : '.flex_column' , filter: '.'+selector, originLeft: is_originLeft });
 
 					return false;
 			});
@@ -272,7 +273,16 @@
 						return;
 					}
 					
-					content_retrieved[post_id] = $('#avia-tmpl-portfolio-preview-' + post_id.replace(/ID_/,"")).html();
+					/**
+					 * Possible fix for complex pages that throw a js error when user clicks item and not fully loaded
+					 */
+					var template = $('#avia-tmpl-portfolio-preview-' + post_id.replace(/ID_/,""));
+					if( template.length == 0 )
+					{
+						setTimeout( function(){ methods.ajax_get_contents( post_id, clickedIndex); return; }, 500);
+					}
+					
+					content_retrieved[post_id] = template.html();
 					
 					//this line is necessary to prevent w3 total cache from messing up the portfolio if inline js is compressed
 					content_retrieved[post_id] = content_retrieved[post_id].replace('/*<![CDATA[*/','').replace('*]]>','');

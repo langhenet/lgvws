@@ -92,6 +92,11 @@ float: none;
 
 body .av-special-heading.blockquote .special-heading-border{display:none;}
 
+/*linked header*/
+#top .av-special-heading.av-linked-heading a:hover{
+	opacity: 0.5;
+}
+
 /*subheading*/
 
 .av-subheading{ font-size: 15px; line-height: 1.3em;  }

@@ -134,9 +134,20 @@ if ( !class_exists( 'av_font_icon' ) )
 						__('Align Left',   'avia_framework' ) =>'left',
 						__('Align Center',  'avia_framework' ) =>'center',
 						__('Align Right',   'avia_framework' ) =>'right',
-					)),	
-					
-					
+					)),
+
+                array(
+                    "name" 	=> __("Animation", 'avia_framework' ),
+                    "desc" 	=> __("Should the icons appear in an animated way?", 'avia_framework' ),
+                    "id" 	=> "animation",
+                    "type" 	=> "select",
+                    "std" 	=> "",
+                    "subtype" => array(
+                        __('Animation activated',  'avia_framework' ) =>'',
+                        __('Animation deactivated',  'avia_framework' ) =>'deactivated',
+                    )),
+
+
 				array(
 						"name" 	=> __("Optional Tooltip",'avia_framework' ),
 						"desc" 	=> __("Add a tooltip for this Icon. The tooltip will appear on mouse over",'avia_framework' )
@@ -311,6 +322,7 @@ if ( !class_exists( 'av_font_icon' ) )
                 'caption'	=> '',
                 'use_link' => 'no',
                 'position' => 'left',
+                'animation' => '',
                 'link' =>'',
                 'linktarget' => 'no',
                 'font' => ''
@@ -334,8 +346,13 @@ if ( !class_exists( 'av_font_icon' ) )
 			{
 				$caption = "";
 			}
-			
-			
+
+            // animation
+            $animation_class = "";
+            if ($animation == ''){
+                $animation_class = " avia-icon-animate ";
+            }
+
             $blank = (strpos($linktarget, '_blank') !== false || $linktarget == 'yes') ? ' target="_blank" ' : "";
             $blank .= strpos($linktarget, 'nofollow') !== false ? ' rel="nofollow" ' : "";
            
@@ -347,7 +364,7 @@ if ( !class_exists( 'av_font_icon' ) )
             
             $display_char = "<{$tags[0]} class='av-icon-char' style='{$size_string}' {$char} {$tooltip}></{$tags[1]}>";
             
-            $output = '<span class="'.$shortcodename.' avia_animate_when_visible '.$av_display_classes.' av-icon-style-'.$style.' '.$custom_class.' avia-icon-pos-'.$position.' " style="'.$color.'">'.$display_char.$caption.'</span>';
+            $output = '<span class="'.$shortcodename.' avia_animate_when_visible'.$animation_class.$av_display_classes.' av-icon-style-'.$style.' '.$custom_class.' avia-icon-pos-'.$position.' " style="'.$color.'">'.$display_char.$caption.'</span>';
 
 			
 			

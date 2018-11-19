@@ -194,6 +194,9 @@ ul.avia-timeline-vertical li {
     left: 50%;
     border-left-style: dashed;
     border-left-width: 1px;
+}
+
+.avia-timeline-vertical.avia-timeline-animate .av-milestone-icon-wrap:after {
     opacity: 0;
 }
 
@@ -222,20 +225,65 @@ ul.avia-timeline-vertical li.av-milestone-valign-middle:last-child .av-milestone
     height: inherit;
 }
 
-.avia_transform .avia-timeline-vertical .milestone_icon{
+.avia_transform .avia-timeline-vertical.avia-timeline-animate .milestone_icon{
     opacity: 0.1;
     -webkit-transform: scale(0.5);
     -ms-transform: scale(0.5);
     transform: scale(0.5);
 }
 
-.avia_transform .avia-timeline-vertical .av-milestone-indicator{
+
+.avia_transform .avia-timeline-vertical .milestone_icon.milestone_bullet_arrow {
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 100px;
+    border-top-right-radius: 100px;
+    border-top-left-radius: 100px;
+    -webkit-transform: scale(0.5) rotate(45deg);
+    -ms-transform: scale(0.5) rotate(45deg);
+    transform: scale(0.5) rotate(45deg);
+}
+
+.avia-timeline-vertical .milestone_icon.milestone_bullet_arrow {
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 100px;
+    border-top-right-radius: 100px;
+    border-top-left-radius: 100px;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+}
+
+.avia-timeline-vertical .milestone_icon.milestone_bullet_arrow .milestone_number {
+    display: block;
+    -webkit-transform: rotate(-45deg);
+    -ms-transform: rotate(-45deg);
+    transform: rotate(-45deg);
+}
+
+.avia_transform .avia-timeline-vertical.avia-timeline-animate .av-milestone-indicator{
+
     opacity: 0.1;
 }
 
+.avia_transform .avia-timeline-vertical .avia_start_animation .milestone_icon{
+    -webkit-animation: avia_appear 1s 1 cubic-bezier(0.175, 0.885, 0.320, 1); /* Safari 4+ */
+    animation:         avia_appear 1s 1 cubic-bezier(0.175, 0.885, 0.320, 1); /* IE 10+ */
+    -webkit-transform: scale(1);
+    -ms-transform: scale(1);
+    transform: scale(1);
+    opacity: 1;
+}
 
-.avia_transform .avia-timeline-vertical .avia_start_animation .milestone_icon,
-.avia_transform .avia-timeline-vertical .avia_start_animation .av-milestone-icon-wrap:after{
+.avia_transform .avia-timeline-vertical .avia_start_animation .milestone_icon.milestone_bullet_arrow {
+    -webkit-transform: scale(1) rotate(45deg);
+    -ms-transform: scale(1) rotate(45deg);
+    transform: scale(1) rotate(45deg);
+}
+
+
+.avia_transform .avia-timeline-vertical.avia-timeline-animate .avia_start_animation .milestone_icon,
+.avia_transform .avia-timeline-vertical.avia-timeline-animate .avia_start_animation .av-milestone-icon-wrap:after{
+
     -webkit-animation: avia_appear 1s 1 cubic-bezier(0.175, 0.885, 0.320, 1); /* Safari 4+ */
     animation:         avia_appear 1s 1 cubic-bezier(0.175, 0.885, 0.320, 1); /* IE 10+ */
     -webkit-transform: scale(1);
@@ -250,7 +298,7 @@ ul.avia-timeline-vertical li.av-milestone-valign-middle:last-child .av-milestone
     width: 90%;
 }
 
-.avia_transform .avia-timeline-vertical.av-milestone-placement-left .avia_start_animation .av-milestone-indicator{
+.avia_transform .avia-timeline-vertical.av-milestone-placement-left.avia-timeline-animate .avia_start_animation .av-milestone-indicator{
     -webkit-animation: caption-right 1s 1 cubic-bezier(0.175, 0.885, 0.320, 1); /* Safari 4+ */
     animation:         caption-right 1s 1 cubic-bezier(0.175, 0.885, 0.320, 1); /* IE 10+ */
     opacity: 1;
@@ -287,7 +335,7 @@ ul.avia-timeline-vertical li.av-milestone-valign-middle:last-child .av-milestone
     left: auto;
 }
 
-.avia_transform .avia-timeline-vertical.av-milestone-placement-right .avia_start_animation .av-milestone-indicator{
+.avia_transform .avia-timeline-vertical.av-milestone-placement-right.avia-timeline-animate .avia_start_animation .av-milestone-indicator{
     -webkit-animation: caption-left 1s 1 cubic-bezier(0.175, 0.885, 0.320, 1); /* Safari 4+ */
     animation:         caption-left 1s 1 cubic-bezier(0.175, 0.885, 0.320, 1); /* IE 10+ */
     opacity: 1;
@@ -346,13 +394,13 @@ ul.avia-timeline-vertical li.av-milestone-valign-middle:last-child .av-milestone
     left: auto;
 }
 
-.avia_transform .avia-timeline-vertical.av-milestone-placement-alternate li.av-milestone-even.avia_start_animation .av-milestone-indicator{
+.avia_transform .avia-timeline-vertical.av-milestone-placement-alternate.avia-timeline-animate li.av-milestone-even.avia_start_animation .av-milestone-indicator{
     -webkit-animation: caption-left 1s 1 cubic-bezier(0.175, 0.885, 0.320, 1); /* Safari 4+ */
     animation:         caption-left 1s 1 cubic-bezier(0.175, 0.885, 0.320, 1); /* IE 10+ */
     opacity: 1;
 }
 
-.avia_transform .avia-timeline-vertical.av-milestone-placement-alternate li.av-milestone-odd.avia_start_animation .av-milestone-indicator{
+.avia_transform .avia-timeline-vertical.av-milestone-placement-alternate.avia-timeline-animate li.av-milestone-odd.avia_start_animation .av-milestone-indicator{
     -webkit-animation: caption-right 1s 1 cubic-bezier(0.175, 0.885, 0.320, 1); /* Safari 4+ */
     animation:         caption-right 1s 1 cubic-bezier(0.175, 0.885, 0.320, 1); /* IE 10+ */
     opacity: 1;
@@ -405,6 +453,24 @@ ul.avia-timeline-horizontal li:first-child {
 .avia-timeline-horizontal .av-milestone-icon-wrap{
     display: block;
 }
+
+.avia-timeline-horizontal .milestone_icon.milestone_bullet_arrow{
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 100px;
+    border-top-right-radius: 100px;
+    border-top-left-radius: 100px;
+    -webkit-transform: rotate(-45deg);
+    -ms-transform: rotate(-45deg);
+    transform: rotate(-45deg);
+}
+
+.avia-timeline-horizontal .milestone_icon.milestone_bullet_arrow .milestone_number {
+    display: block;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+}
+
 
 .avia-timeline-horizontal .av-milestone-icon-wrap:after{
     content: "";
@@ -740,7 +806,7 @@ ul.avia-timeline-horizontal li:first-child {
         width: 100%;
     }
 
-    .av-no-preview .avia_transform .avia-timeline-vertical.av-milestone-placement-left .avia_start_animation .av-milestone-indicator{
+    .av-no-preview .avia_transform .avia-timeline-vertical.av-milestone-placement-left.avia-timeline-animate .avia_start_animation .av-milestone-indicator{
         -webkit-animation: caption-left 1s 1 cubic-bezier(0.175, 0.885, 0.320, 1); /* Safari 4+ */
         animation:         caption-left 1s 1 cubic-bezier(0.175, 0.885, 0.320, 1); /* IE 10+ */
     }
@@ -803,7 +869,7 @@ ul.avia-timeline-horizontal li:first-child {
         left: -50px;
     }
 
-    .av-no-preview .avia_transform .avia-timeline-vertical.av-milestone-placement-alternate li.av-milestone-odd.avia_start_animation .av-milestone-indicator{
+    .av-no-preview .avia_transform .avia-timeline-vertical.av-milestone-placement-alternate.avia-timeline-animate li.av-milestone-odd.avia_start_animation .av-milestone-indicator{
         -webkit-animation: caption-left 1s 1 cubic-bezier(0.175, 0.885, 0.320, 1); /* Safari 4+ */
         animation:         caption-left 1s 1 cubic-bezier(0.175, 0.885, 0.320, 1); /* IE 10+ */
     }

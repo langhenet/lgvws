@@ -67,18 +67,18 @@ list-style: disc outside;
 .avia-icon-list-right .iconlist-timeline{left: auto; right: 32px;}
 
 /*iconlist animation*/
-.avia_transform .avia-icon-list.av-iconlist-big .iconlist_icon{
+.avia_transform .avia-icon-list.av-iconlist-big.avia-iconlist-animate .iconlist_icon{
 opacity: 0.1;
 -webkit-transform:scale(0.5);
 -ms-transform:scale(0.5);
 transform:scale(0.5);
 }
 
-.avia_transform .iconlist-timeline{
+.avia_transform .avia-iconlist-animate .iconlist-timeline{
 height: 0%;
 }
 
-.avia_transform .avia-icon-list.av-iconlist-big .avia_start_animation .iconlist_icon{
+.avia_transform .avia-icon-list.av-iconlist-big.avia-iconlist-animate .avia_start_animation .iconlist_icon{
 -webkit-animation: avia_appear 1s 1 cubic-bezier(0.175, 0.885, 0.320, 1.275); /* Safari 4+ */
 animation:         avia_appear 1s 1 cubic-bezier(0.175, 0.885, 0.320, 1.275); /* IE 10+ */
 opacity: 1;
@@ -87,7 +87,7 @@ opacity: 1;
 transform:scale(1);
 }
 
-.avia_transform .avia-icon-list.av-iconlist-big .avia_start_animation .iconlist-timeline{
+.avia_transform .avia-icon-list.av-iconlist-big.avia-iconlist-animate .avia_start_animation .iconlist-timeline{
 -webkit-animation: avia_slide_down 1s 1 cubic-bezier(0.175, 0.885, 0.320, 1.275); /* Safari 4+ */
 animation:         avia_slide_down 1s 1 cubic-bezier(0.175, 0.885, 0.320, 1.275); /* IE 10+ */
 height: 100%;

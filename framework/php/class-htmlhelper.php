@@ -365,9 +365,9 @@ if( ! class_exists( 'avia_htmlhelper' ) )
 			
 			$output .= "<div class='av-verification-result'>";
 			
-			if($element['std'] != "")
+			if( ( $element['std'] != "") || ( ! empty( $element['force_callback'] ) ) )
 			{
-				$output .= str_replace('avia_trigger_save' ,"",$callback( $element['std'] , $ajax));
+				$output .= str_replace('avia_trigger_save' ,"", $callback( $element['std'] , $ajax));
 			}
 			
 			$output .= "</div>";
@@ -388,7 +388,9 @@ if( ! class_exists( 'avia_htmlhelper' ) )
 			$extraClass = "";
 			if(isset($element['class_on_value']) && !empty($element['std'])) $extraClass = " ".$element['class_on_value'];
 			
-			$text = '<input type="text" class="'.$element['class'].$extraClass.'" value="'.$element['std'].'" id="'.$element['id'].'" name="'.$element['id'].'"/>';
+			$attr = ! empty( $element['readonly'] ) ? 'readonly="readonly"' : '';
+			
+			$text = '<input type="text" class="'.$element['class'].$extraClass.'" value="'.$element['std'].'" id="'.$element['id'].'" name="'.$element['id'].'" '. $attr . '/>';
 			
 			if(isset($element['simple'])) return $text;
 			return '<span class="avia_style_wrap">'.$text.'</span>';
@@ -434,29 +436,75 @@ if( ! class_exists( 'avia_htmlhelper' ) )
          * @return string $output the string returned contains the html code generated within the method
          */
 		function radio( $element )
-		{	
+		{
+
 			$output = "";
 			$counter = 1;
 			foreach($element['buttons'] as $radiobutton)
-			{	
+			{
 				$checked = "";
 				if( $element['std'] == $counter ) { $checked = 'checked = "checked"'; }
-				
+
 				$output  .= '<span class="avia_radio_wrap">';
 				$output  .= '<input '.$checked.' type="radio" class="'.$element['class'].'" ';
 				$output  .= 'value="'.$counter.'" id="'.$element['id'].$counter.'" name="'.$element['id'].'"/>';
-				
+
 				$output  .= '<label for="'.$element['id'].$counter.'">'.$radiobutton.'</label>';
 				$output  .= '</span>';
-				
+
 				$counter++;
-			}	
-				
+			}
+
 			return $output;
 		}
-		
-		
-		/**
+
+
+        /**
+         *
+         * The imgselect method renders one or more input type:radio elements, based on the definition of the $elements array with images
+         * @param array $element the array holds data like type, value, id, class, description which are necessary to render the whole option-section
+         * @return string $output the string returned contains the html code generated within the method
+         */
+        function imgselect( $element )
+        {
+            $output = "";
+            $counter = 1;
+            foreach($element['buttons'] as $key => $radiobutton)
+            {
+                $checked = "";
+                $image = "";
+                $extra_class = "";
+
+                if( $element['std'] == $key ) {
+                    $checked = 'checked = "checked"';
+                }
+
+                $output  .= '<span class="avia_radio_wrap'.$extra_class .'">';
+
+
+                $output  .= '<input '.$checked.' type="radio" class="'.$element['class'].'" ';
+                $output  .= 'value="'.$key.'" id="'.$element['id'].$counter.'" name="'.$element['id'].'"/>';
+
+                $output  .= '<label for="'.$element['id'].$counter.'">';
+
+                if( isset($element['images']) &&  !empty($element['images'][$key]) ) {
+
+                    $output  .= "<img class='radio_image' src='".$element['images'][$key]."' />";
+                    $extra_class = ' avia-image-radio';
+                }
+
+                $output  .= '<span>'.$radiobutton.'</span>';
+                $output  .= '</label>';
+                $output  .= '</span>';
+
+                $counter++;
+            }
+
+            return $output;
+        }
+
+
+        /**
          * 
          * The textarea method renders a single textarea element
          * @param array $element the array holds data like type, value, id, class, description which are necessary to render the whole option-section
@@ -1508,9 +1556,45 @@ if( ! class_exists( 'avia_htmlhelper' ) )
 			return $this->select($element);
 		}
 		
-		
-		
-		
+		/**
+		 * Returns a selectbox of available menus
+		 * In case you need extra options in front add them to subtype array. Menus will be appended.
+		 * 
+		 * @since 4.5
+		 * @added_by Günter
+		 * @param array $element
+		 * @return string
+		 */
+		public function select_menu( array $element )
+		{
+			$locations = get_registered_nav_menus();
+			$menu_locations = array_flip( get_nav_menu_locations() );
+			$nav_menus = wp_get_nav_menus();
+			
+			if( ! isset( $element['subtype'] ) || ! is_array( $element['subtype'] ) )
+			{
+				$element['subtype'] = array();
+			}
+			
+			foreach( $nav_menus as $menu ) 
+			{
+				$key = wp_html_excerpt( $menu->name, 40, '&hellip;' );
+				if( isset( $menu_locations[ $menu->term_id ] ) )
+				{
+					if( isset( $locations[ $menu_locations[ $menu->term_id ] ] ) )
+					{
+						$key .= ' (--&gt; ' . wp_html_excerpt( $locations[ $menu_locations[ $menu->term_id ] ], 70, '&hellip;' ) . ')';
+					}
+				}
+				
+				$element['subtype'][ $key ] = $menu->term_id;
+			}
+			
+			return $this->select( $element );
+		}
+
+
+
 		/**
          * 
          * The hidden method renders a div for a visually conected group

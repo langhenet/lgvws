@@ -136,7 +136,19 @@ function avia_nl2br (str, is_xhtml)
 	               window.postboxes.init(); 
                }
                
-               window.postboxes.save_order(pagenow);
+               /**
+				* Some plugins cause problem by adding their own postboxes to the post editor and
+				* the object has not been correctly initialised
+				* see https://kriesi.at/support/topic/uncaught-error-cannot-call-methods-on-sortable-prior-to-initialization/#post-516758
+				*/
+			   if( 'undefined' == typeof window.postboxes || 'function' != typeof window.postboxes.save_order )
+			   {
+				   setTimeout( function() { window.postboxes.save_order(pagenow); }, 500 );
+			   }
+			   else
+			   {
+					window.postboxes.save_order(pagenow);
+			   }
             }
 		},
 		
@@ -242,13 +254,18 @@ function avia_nl2br (str, is_xhtml)
 					params.on_save		= obj.send_to_datastorage;
 					params.save_param	= parent;
 					params.ajax_param	= {extract: true, shortcode: parent.find('>.avia_inner_shortcode>'+ obj.datastorage + ':eq(0)').val(), allowed: params.allowedShortcodes, _ajax_nonce: $('#avia-loader-nonce').val() };
-					
+
+					var preview_scale_markup = '';
+					if (!isNaN(params.preview_scale)) {
+						preview_scale_markup = "<span class='avia-modal-preview-scale'>"+window.avia_preview.scale+" "+params.preview_scale+"%</span>";
+					}
+
 					if(params.preview) //check for preview window
 					{
 						var bg_colors = "<a href='#' style='background:#fff;'></a><a href='#' style='background:#f1f1f1;'></a><a href='#' style='background:#222;'></a>";
 						params.modal_class = " modal-preview-active modal-preview-"+params.preview;
 						params.on_load = params.on_load != "" ? params.on_load + ", modal_preview_script" : "modal_preview_script";
-						params.attach_content = "<div class='avia-modal-preview'><div class='avia-modal-preview-header'><h3 class='avia-modal-title'>"+window.avia_preview.title+"</h3><div class='avia_loading'></div></div><div class='avia-modal-preview-content'></div><div class='avia-modal-preview-footer'><span>"+window.avia_preview.background+"</span>"+bg_colors+"</div></div>";
+						params.attach_content = "<div class='avia-modal-preview'><div class='avia-modal-preview-header'><h3 class='avia-modal-title'>"+window.avia_preview.title+"</h3><div class='avia_loading'></div></div><div class='avia-modal-preview-content' data-preview-scale='"+params.preview_scale+"'></div><div class='avia-modal-preview-footer'><span>"+window.avia_preview.background+"</span>"+bg_colors+preview_scale_markup+"</div></div>";
 					}
 				
 				var modal = new $.AviaModal(params);
@@ -1372,7 +1389,8 @@ function avia_nl2br (str, is_xhtml)
 						replace_val		= "";
 				
 						//	check if element must have a closing tag (independent if a content exists)
-						if( ( 'undefined' == typeof force_content_close ) || ( true !== force_content_close ) )
+						force_content_close = ( 'undefined' == typeof force_content_close ) ? false : force_content_close;
+						if( true !== force_content_close )
 						{
 							if( ( 'string' == typeof closing_tag ) && ( 'yes' == closing_tag ) )
 							{

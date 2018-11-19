@@ -140,17 +140,20 @@ if ( !class_exists( 'avia_sc_gallery' ) )
 	                            __('No, don\'t add a link to the images at all', 'avia_framework' ) =>'avianolink noLightbox')
 	                    	),
 
-	                    array(
+	                        array(
 		                        "name" 	=> __("Thumbnail fade in effect", 'avia_framework' ),
 		                        "desc" 	=> __("You can set when the gallery thumbnail animation starts", 'avia_framework' ),
 		                        "id" 	=> "lazyload",
 		                        "type" 	=> "select",
 		                        "std" 	=> "avia_lazyload",
-							"required" 	=> array('style','not','big_thumb lightbox_gallery'),
+							    "required" 	=> array('style','not','big_thumb lightbox_gallery'),
 		                        "subtype" => array(
-		                            __('Show the animation when user scrolls to the gallery',  'avia_framework' ) =>'avia_lazyload',
+                                    __('Disable all animations',  'avia_framework' ) =>'animations_off',
+                                    __('Show the animation when user scrolls to the gallery',  'avia_framework' ) =>'avia_lazyload',
 		                            __('Activate animation on page load (might be preferable on large galleries)', 'avia_framework' ) =>'deactivate_avia_lazyload')
 		                    ),
+
+
 		                    
 							array(
 									"type" 	=> "close_div",
@@ -296,7 +299,16 @@ if ( !class_exists( 'avia_sc_gallery' ) )
 					$lazyload  = 'deactivate_avia_lazyload';
 					$meta['el_class'] .= " av-hide-gallery-thumbs";
 				}
-				
+
+
+				// animation
+                $animation_class = "";
+                if ($lazyload !== 'animations_off'){
+                    $animation_class = 'avia-gallery-animate';
+                }
+
+
+
 				
 
 				if(!empty($attachments) && is_array($attachments))
@@ -305,7 +317,7 @@ if ( !class_exists( 'avia_sc_gallery' ) )
 					$thumb_width = round(100 / $columns, 4);
 
                     $markup = avia_markup_helper(array('context' => 'image','echo'=>false, 'custom_markup'=>$meta['custom_markup']));
-					$output .= "<div class='avia-gallery {$av_display_classes} avia-gallery-".self::$gallery." ".$lazyload." avia_animate_when_visible ".$meta['el_class']."' $markup>";
+					$output .= "<div class='avia-gallery {$av_display_classes} avia-gallery-".self::$gallery." ".$lazyload." ".$animation_class." avia_animate_when_visible ".$meta['el_class']."' $markup>";
 					$thumbs = "";
 					$counter = 0;
 

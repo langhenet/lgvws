@@ -174,13 +174,21 @@ $avia_elements[] =	array(	"name" => __("Disable Features",'avia_framework'),
 							"type" => "heading",
 							"nodescription"=>true);
 
-$avia_elements[] = array(
-		"name" 	=> __("Disable self hosted video and audio features", 'avia_framework'),
-		"desc" 	=> __("Check if you do not use self hosted video or audio files on your site.", 'avia_framework'),
-		"id" 	=> "disable_mediaelement",
-		"type" 	=> "checkbox",
-		"std"	=> "",
-		"slug"	=> "performance");
+
+$avia_elements[] =	array(
+					'slug'		=> 'performance',
+					'name'		=> __( 'Self hosted videos and audio features (WP-Mediaelement scripts)', 'avia_framework' ),
+					'desc'		=> __( 'By default the theme will load wp-mediaelement scripts only if needed on your posts and pages. You can disable the feature or force loading these elements if you run into troubles - some plugins require these elements and rely on the WP default behaviour loading these scripts.', 'avia_framework' ),
+					'id'		=> 'disable_mediaelement',
+					'type'		=> 'select',
+					'std'		=> '',
+					'no_first'	=> true,
+					'subtype'	=> array( 
+										__( 'Default - only load when needed (recommended)', 'avia_framework' )			=> '',
+										__( 'Disable self hosted video and audio features', 'avia_framework' )			=> 'disable_mediaelement',
+										__( 'Always load media features (= WP default behaviour)', 'avia_framework' )	=> 'force_mediaelement',
+								)
+				);
 		
 $avia_elements[] = array(
 		"name" 	=> __("Disable external video features", 'avia_framework'),
@@ -592,6 +600,20 @@ $avia_elements[] =	array(
 										));
 
 $avia_elements[] =	array(
+					"slug"		=> "menu",
+					"name"		=> __( "Alternate Menu for Mobile", 'avia_framework' ),
+					"desc"		=> __( "Choose if you want to display the alternate menu on mobile devices.", 'avia_framework' ),
+					"id"		=> "alternate_menu",
+					"type"		=> "select_menu",
+					"std"		=> "",
+					"required"	=> array( 'menu_display', '' ),
+					"no_first"	=> true,
+					"subtype"	=> array( 
+									__( 'Do not use an alternate menu for mobile', 'avia_framework' )		=> ''
+								)
+				);
+
+$avia_elements[] =	array(
 					"slug"	=> "menu",
 					"name" 	=> __("Menu Items for mobile", 'avia_framework'),
 					"desc" 	=> __("The mobile menu is usually displayed on smarthphone screensize only. If you have a lot of main menu items you might want to activate it for tablet screen size as well so it doesn't overlap the logo on tablets or small screens", 'avia_framework'),
@@ -850,16 +872,21 @@ $avia_elements[] = array("slug"	=> "google", "type" => "visual_group_end", "id" 
  * @author kriesi
  * @since 4.4
  */
- $avia_elements[] = array("slug"	=> "cookie", "type" => "visual_group_start", "id" => "avia_privacy_group_start", "nodescription" => true);
- 
- $avia_elements[] =	array(
+$avia_elements[] = array("slug"	=> "cookie", "type" => "visual_group_start", "id" => "avia_privacy_group_start", "nodescription" => true);
+
+$eu_msg  = __( "In case you deal with any EU customers/visitors these options allow you to make your site GDPR compliant.", 'avia_framework' ) . '<br />';
+$eu_msg .= __( "The following default text will be applied if you leave the textfields empty:", 'avia_framework' ) . '<br />';
+$eu_msg .= '<p><strong>' . av_privacy_class::get_default_privacy_message() . '</strong></p>';
+		
+$avia_elements[] =	array(
     "name" => __("Privacy Policy",'avia_framework'),
-    "desc" => __("In case you deal with any EU customers/visitors these options allow you to make your site GDPR compliant",'avia_framework'),
+    "desc" => $eu_msg,
     "id" => "gdpr_overveiw",
     "std" => "",
     "slug"	=> "cookie",
     "type" => "heading",
     "nodescription"=>true);
+ 
 
 $policy_page_wp = get_option('wp_page_for_privacy_policy');
 if(empty( $policy_page_wp ))
@@ -891,9 +918,9 @@ if(empty( $policy_page_wp ))
 
 else /******************************** PRIVACY PAGE ACTIVE *****************************************/
 {
-
-$default_message = __("I agree to the terms and conditions laid out in the [av_privacy_link]Privacy Policy[/av_privacy_link]",'avia_framework');
-
+	
+$desc = __( "A short message that can be displayed below forms, along with a checkbox, that lets the user know that he has to agree to your privacy policy in order to send the form. See default text above if you leave empty.", 'avia_framework');
+	
 $avia_elements[] =	array(
     "slug"	=> "cookie",
     "name" 	=> __("Append a privacy policy message to your comment form?", 'avia_framework'),
@@ -906,11 +933,11 @@ $avia_elements[] =	array(
 $avia_elements[] =	array(
     "slug"	=> "cookie",
     "name" 	=> __("Message below comment form", 'avia_framework'),
-    "desc" 	=> __("A short message that can be displayed below forms, along with a checkbox, that lets the user know that he has to agree to your privacy policy in order to send the form", 'avia_framework'),
+    "desc" 	=> $desc,
     "id" 	=> "privacy_message",
     "type" 	=> "textarea",
     "class" => "av_small_textarea",
-    "std" 	=> $default_message,
+    "std" 	=> '',
     "required" => array("privacy_message_commentform_active",'privacy_message_commentform_active'),
 );
 
@@ -926,11 +953,11 @@ $avia_elements[] =	array(
 $avia_elements[] =	array(
     "slug"	=> "cookie",
     "name" 	=> __("Message below template builder contact forms", 'avia_framework'),
-    "desc" 	=> __("A short message that can be displayed below forms, along with a checkbox, that lets the user know that he has to agree to your privacy policy in order to send the form", 'avia_framework'),
+    "desc" 	=> $desc,
     "id" 	=> "privacy_message_contact",
     "type" 	=> "textarea",
     "class" => "av_small_textarea",
-    "std" 	=> $default_message,
+    "std" 	=> '',
     "required" => array("privacy_message_contactform_active",'privacy_message_contactform_active'),
 );
 
@@ -946,11 +973,11 @@ $avia_elements[] =	array(
 $avia_elements[] =	array(
     "slug"	=> "cookie",
     "name" 	=> __("Message below mailchimp subscription forms", 'avia_framework'),
-    "desc" 	=> __("A short message that can be displayed below forms, along with a checkbox, that lets the user know that he has to agree to your privacy policy in order to send the form", 'avia_framework'),
+    "desc" 	=> $desc,
     "id" 	=> "privacy_message_mailchimp",
     "type" 	=> "textarea",
     "class" => "av_small_textarea",
-    "std" 	=> $default_message,
+    "std" 	=> '',
     "required" => array("privacy_message_mailchimp_active",'privacy_message_mailchimp_active'),
 );
 
@@ -958,7 +985,7 @@ $avia_elements[] =	array(
 $avia_elements[] =	array(
     "slug"	=> "cookie",
     "name" 	=> __("Append a privacy policy message to your login forms?", 'avia_framework'),
-    "desc" 	=> __("Check to append a message to the default login and registrations forms.", 'avia_framework'),
+    "desc" 	=> __("Check to append a message to the default login forms.", 'avia_framework'),
     "id" 	=> "privacy_message_login_active",
     "type" 	=> "checkbox",
     "std"	=> false,
@@ -967,12 +994,32 @@ $avia_elements[] =	array(
 $avia_elements[] =	array(
     "slug"	=> "cookie",
     "name" 	=> __("Message below login forms", 'avia_framework'),
-    "desc" 	=> __("A short message that can be displayed below forms, along with a checkbox, that lets the user know that he has to agree to your privacy policy in order to send the form", 'avia_framework'),
+    "desc" 	=> $desc,
     "id" 	=> "privacy_message_login",
     "type" 	=> "textarea",
     "class" => "av_small_textarea",
-    "std" 	=> $default_message,
+    "std" 	=> '',
     "required" => array("privacy_message_login_active",'privacy_message_login_active'),
+);
+
+$avia_elements[] =	array(
+    "slug"	=> "cookie",
+    "name" 	=> __("Append a privacy policy message to your registration forms?", 'avia_framework'),
+    "desc" 	=> __("Check to append a message to the default registrations forms.", 'avia_framework'),
+    "id" 	=> "privacy_message_registration_active",
+    "type" 	=> "checkbox",
+    "std"	=> false,
+);
+
+$avia_elements[] =	array(
+    "slug"	=> "cookie",
+    "name" 	=> __("Message below registration forms", 'avia_framework'),
+    "desc" 	=> $desc,
+    "id" 	=> "privacy_message_registration",
+    "type" 	=> "textarea",
+    "class" => "av_small_textarea",
+    "std" 	=> '',
+    "required" => array("privacy_message_registration_active",'privacy_message_registration_active'),
 );
 
 $avia_elements[] =	array(
@@ -996,7 +1043,7 @@ $avia_elements[] =	array(
     "<li><strong>[av_privacy_google_webfonts]</strong> - "	.__(" allows a user to disable the use of google webfonts in his or her browser",'avia_framework')."</li>".
     "<li><strong>[av_privacy_google_maps]</strong> - "		.__(" allows a user to disable the use of google maps in his or her browser",'avia_framework')."</li>".
     "<li><strong>[av_privacy_video_embeds]</strong> - "		.__(" allows a user to disable video embeds in his or her browser",'avia_framework')."</li>".
-    "<li><strong>[av_privacy_link]</strong> - "				.__(" displays a link to the privacy policy page set in your WordPress admin panel",'avia_framework')."</li>".
+    "<li><strong>[av_privacy_link]</strong> - "				.__(" displays a link to the privacy policy page set in your WordPress admin panel or to a custom page",'avia_framework')."</li>".
     //"<li><strong>[av_privacy_google_webfonts]</strong> - ".__(" allows a user to disable the use of google webfonts",'avia_framework')."</li>".
     "</ul><br>".
     __("Please note: if you do not like the default text that is displayed by those shortcodes you can change it by using [shortcode]Your text here[/shortcode]",'avia_framework'),
@@ -1132,16 +1179,14 @@ $avia_elements[] =	array(
 						);
 
 
-
-
 $avia_elements[] =	array(
-    "slug"	=> "cookie",
-	"name" 	=> __("Modal window with privacy and cookie info", 'avia_framework'),
-    "desc" 	=> __("Instead of displaying the default content set custom content yourself", 'avia_framework'),
-    "id" 	=> "cookie_info_custom_content",
-    "type" 	=> "checkbox",
-    "std"	=> false,
-);
+				"slug"	=> "cookie",
+				"name" 	=> __("Modal Window with Privacy and Cookie Info", 'avia_framework'),
+				"desc" 	=> __("Instead of displaying the default content set custom content yourself.", 'avia_framework'),
+				"id" 	=> "cookie_info_custom_content",
+				"type" 	=> "checkbox",
+				"std"	=> false,
+			);
 
 
 $avia_elements[] = array("slug"	=> "cookie", "type" => "visual_group_end", "id" => "avia_cookielink_group_end", "nodescription" => true, "required" => array("cookie_consent",'cookie_consent'));
@@ -1183,6 +1228,8 @@ Google Map Settings:
 
 Vimeo and Youtube video embeds:
 [av_privacy_video_embeds]', 'avia_framework' ));
+
+
 $contents[] = array(	'label'		=> __( 'Privacy Policy', 'avia_framework' ), 
 											'content'	=> __( 'You can read about our cookies and privacy settings in detail on our Privacy Policy Page. <br><br> [av_privacy_link]', 'avia_framework' ));
 											
@@ -1301,10 +1348,6 @@ $avia_elements[] =	array(
 					"subtype" => array( __('No, display no banner', 'avia_framework') =>'',
 										__('Yes, display a banner image', 'avia_framework') =>'av-active-shop-banner',
 										));
-
-
-
-					
 					
 $avia_elements[] =	array(
 					"slug"	=> "shop",
@@ -1380,9 +1423,7 @@ $avia_elements[] =	array(
 					"type" 	=> "checkbox",
 					"required" => array('shop_banner','{contains}av-active-shop-banner'),
 					"std"	=> false,
-					);
-
-
+				);
 
 
 
@@ -2474,7 +2515,7 @@ $avia_elements[] = array(	"slug"	=> "styling", "type" => "visual_group_start", "
 
 $avia_elements[] =		array(	"name" 	=> __("Heading Font", 'avia_framework'),
 								"slug"	=> "styling",
-								"desc" 	=> __("The Font heading allows you to use a wide range of fonts for your headings. Uplooad your own fonts, use websave fonts (faster rendering) or Google webkit fonts (more unqiue).", 'avia_framework'),
+								"desc" 	=> __("The Font heading allows you to use a wide range of fonts for your headings. Uplooad your own fonts, use websave fonts (faster rendering) or Google webkit fonts (more unique).", 'avia_framework'),
 					            "id" 	=> "google_webfont",
 					            "type" 	=> "select",
 					            "no_first" => true,
@@ -2486,7 +2527,7 @@ $avia_elements[] =		array(	"name" 	=> __("Heading Font", 'avia_framework'),
 
 $avia_elements[] =	array(	"name" 	=> __("Font for your body text", 'avia_framework'),
 							"slug"	=> "styling",
-							"desc" 	=> __("Choose between your own uploaded fonts, web safe fonts (faster rendering) and Google webkit fonts (more unqiue).", 'avia_framework')."<br/>",
+							"desc" 	=> __("Choose between your own uploaded fonts, web safe fonts (faster rendering) and Google webkit fonts (more unique).", 'avia_framework')."<br/>",
 				            "id" 	=> "default_font",
 				            "type" 	=> "select",
 				            "no_first" => true,
@@ -2615,6 +2656,18 @@ $avia_elements[] =	array(
 										__('no sidebar', 'avia_framework') =>'fullsize'
 										));
 
+$avia_elements[] =	array(
+					"slug"	=> "sidebars",
+					"name" 	=> __("Separate Sidebars for Blog and Archive Pages", 'avia_framework'),
+					"desc" 	=> __("Show separate 'Archive Sidebar' on Archive Pages", 'avia_framework'),
+					"id" 	=> "archive_sidebar",
+					"type" 	=> "select",
+					"std" 	=> "",
+					"no_first"=>true,
+					"subtype" => array( __('Show Blog Sidebar on Archiv Pages', 'avia_framework') =>'',
+										__('Show separate Archive Sidebar on Archive Pages', 'avia_framework')	=>'archive_sidebar_separate'
+										));
+
 
 $avia_elements[] =	array(
 					"slug"	=> "sidebars",
@@ -2648,9 +2701,25 @@ $avia_elements[] =	array(
 					"type" 	=> "select",
 					"std" 	=> "",
 					"no_first"=>true,
-					"subtype" => array( __('With Border', 'avia_framework') =>'',
-										__('No Border', 'avia_framework') =>'no_sidebar_border',
-										));
+					"subtype" => array(
+					    __('With Border', 'avia_framework') =>'',
+                        __('No Border', 'avia_framework') =>'no_sidebar_border',
+                        __('Shadow', 'avia_framework') =>'sidebar_shadow',
+					));
+
+$avia_elements[] =	array(
+                    "slug"	=> "sidebars",
+                    "name" 	=> __("Left Sidebar Text Alignment", 'avia_framework'),
+                    "desc" 	=> __("Define text alignment for the left sidebar", 'avia_framework'),
+                    "id" 	=> "sidebar_left_textalign",
+                    "type" 	=> "select",
+                    "std" 	=> "",
+                    "no_first"=>true,
+                    "subtype" => array(
+                        __('Right', 'avia_framework') =>'',
+                        __('Left', 'avia_framework') =>'align_left',
+                    ));
+
 
 $avia_elements[] =	array(	"name" => __("Create new Sidebar Widget Areas", 'avia_framework'),
 							"desc" => __("The theme supports the creation of custom widget areas. Simply open your", 'avia_framework') . " <a target='_blank' href='".admin_url('widgets.php')."'>".__('Widgets Page', 'avia_framework')."</a> ". 
@@ -3287,8 +3356,11 @@ $avia_elements[] =	array(
 									__( 'Single Author, small preview Pic (no author picture is displayed, feature image is small)', 'avia_framework' ) =>'single-small',
 									__( 'Single Author, big preview Pic (no author picture is displayed, feature image is big)', 'avia_framework' ) =>'single-big',
 									__( 'Grid Layout', 'avia_framework' ) =>'blog-grid',
+                                    __( 'List Layout - Simple (Title and meta information only)', 'avia_framework' ) =>'bloglist-simple',
+                                    __( 'List Layout - Compact (Title and icon only)', 'avia_framework' ) =>'bloglist-compact',
+                                    __( 'List Layout - Excerpt (Title, meta information and excerpt only)', 'avia_framework' ) =>'bloglist-excerpt',
 									__( 'Use the advance layout editor to build your own blog layout (simply edit the page you have chosen in Enfold->Theme Options as a blog page)', 'avia_framework') =>'custom',
-										));
+					));
 
 
 
@@ -3732,7 +3804,21 @@ $avia_elements[] =	array(
 					);	
 					
 					
-					
+$avia_elements[] =	array(
+					"slug"	=> "demo",
+					"name" 	=> __("Import: One Page Agency Demo", 'avia_framework'),
+					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-one-page-agency/' target='_blank'>{$online_demo}</a></strong></p>"
+								."<h4 class='av-before-plugins'>".__("Recommended Plugins:", 'avia_framework')."</h4><ul>"
+								."<li>".__("None", 'avia_framework')."</li>"
+								."</ul>"
+								."<h4 class='av-before-plugins'>".__("Demo Images included:", 'avia_framework')."</h4><ul>"
+								."<li>".__("All", 'avia_framework')."</li>"
+								."</ul>",
+					'files' => "/includes/admin/demo_files/agency-onepage",
+					"id" 	=> "import",
+					"type" 	=> "import",
+					"image"	=> "includes/admin/demo_files/demo_images/agency-onepage.jpg"
+					);					
 					
 			
 					
@@ -4172,7 +4258,21 @@ $avia_elements[] =	array(
 					"image"	=> "includes/admin/demo_files/demo_images/visual-artist.jpg"
 					);	
 
-
+$avia_elements[] =	array(
+					"slug"	=> "demo",
+					"name" 	=> __("Import: Knowledgebase Demo", 'avia_framework'),
+					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-knowledgebase-demo/' target='_blank'>{$online_demo}</a></strong></p>"
+								."<h4 class='av-before-plugins'>".__("Recommended Plugins:", 'avia_framework')."</h4><ul>"
+								."<li><a href='https://wordpress.org/plugins/bbpress/' target='_blank'>BBPress</a> ".__("(for forum functionality)", 'avia_framework')."</li>"
+								."</ul>"
+								."<h4 class='av-before-plugins'>".__("Demo Images included:", 'avia_framework')."</h4><ul>"
+								."<li>".__("All", 'avia_framework')."</li>"
+								."</ul>",
+					'files' => "/includes/admin/demo_files/knowledgebase",
+					"id" 	=> "import",
+					"type" 	=> "import",
+					"image"	=> "includes/admin/demo_files/demo_images/knowledgebase.jpg"
+					);
 	
 }		
 		

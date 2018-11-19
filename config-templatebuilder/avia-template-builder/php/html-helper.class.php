@@ -49,7 +49,7 @@ if ( ! class_exists( 'AviaHtmlHelper' ) )
 		
 		static function ajax_modify_id($element)
 		{
-			// check if its an ajax request. if so prepend a string to ensure that the ids are unqiue. 
+			// check if its an ajax request. if so prepend a string to ensure that the ids are unique. 
 			// If there are multiple modal windows called prepend the string multiple times
 			if(isset($_POST['ajax_fetch'])) 
 			{ 
@@ -84,7 +84,7 @@ if ( ! class_exists( 'AviaHtmlHelper' ) )
 			extract(self::check_dependencies($element));
 			
 			
-			// check if its an ajax request. if so prepend a string to ensure that the ids are unqiue. 
+			// check if its an ajax request. if so prepend a string to ensure that the ids are unique. 
 			// If there are multiple modal windows called prepend the string multiple times
 			$element = self::ajax_modify_id($element);
 			
@@ -359,6 +359,7 @@ if ( ! class_exists( 'AviaHtmlHelper' ) )
 			$data['modal_open']			= isset( $element['modal_open'] ) ? $element['modal_open'] : 'yes';
 			$data['trigger_button']			= isset( $element['trigger_button'] ) ? $element['trigger_button'] : '';
 			$data['shortcodehandler'] 	= $parent_class->config['shortcode_nested'][0];
+			$data['closing_tag']		= $parent_class->is_nested_self_closing( $parent_class->config['shortcode_nested'][0] ) ? 'no' : 'yes';
 			$data['modal_ajax_hook'] 	= $parent_class->config['shortcode_nested'][0];
 			$data['modal_on_load'] 		= array();
 			
@@ -917,8 +918,10 @@ if ( ! class_exists( 'AviaHtmlHelper' ) )
 			
 			$attachmentids 	= !empty($element['shortcode_data']['attachment']) ? explode(',', $element['shortcode_data']['attachment']) : array();
 			$attachmentid 	= !empty($attachmentids[self::$imageCount]) ? $attachmentids[self::$imageCount] : '';
-			$attachmentsize = !empty($element['shortcode_data']['attachment_size']) ? $element['shortcode_data']['attachment_size'] : "";		
-				
+			
+			$attachmentsizes = ! empty( $element['shortcode_data']['attachment_size'] ) ? explode( ',', $element['shortcode_data']['attachment_size'] ) : array();	
+			$attachmentsize = ! empty( $attachmentsizes[ self::$imageCount ] ) ? $attachmentsizes[ self::$imageCount ] : "";		
+						
 			//get image based on id if possible - use the force_id_fetch param in conjunction with the secondary_img when you need a secondary image based on id and not on url like pattern overlay. size of a secondary image can not be stored. tab section element is a working example
 			if(!empty($attachmentid) && !empty($attachmentsize) && empty($element['force_id_fetch']))
 			{
@@ -1078,7 +1081,14 @@ if ( ! class_exists( 'AviaHtmlHelper' ) )
 				$fetch = isset($element['fetch']) ? $element['fetch'] : "template";
 				$state = isset($element['state']) ? $element['state'] : "avia_insert_multi";
 				
-				$class = $fetch == "template" ? "avia-media-img-only-no-sidebars" : "avia-media-img-only";
+				if( empty( $element['show_options'] ) )
+				{
+					$class = $fetch == "template" ? "avia-media-img-only-no-sidebars" : "avia-media-img-only";
+				}
+				else if( $element['show_options'] == true )
+				{
+					$class = "avia-media-img-only";
+				}
 				
 				$element['data'] =  array(	'target' => $element['id'], 
 											'title'  => $element['title'], 
@@ -1655,25 +1665,36 @@ if ( ! class_exists( 'AviaHtmlHelper' ) )
 		static function radio( $element )
 		{	
 			$output = "";
+
 			$counter = 1;
 			foreach($element['options'] as $key => $radiobutton)
-			{	
+			{
 				$checked = "";
+				$extra_class = "";
 				if( $element['std'] == $key ) { $checked = 'checked = "checked"'; }
-				
-				$output  .= '<span class="avia_radio_wrap">';
-				$output  .= '<input '.$checked.' type="radio" class="radio_'.$key.'" ';
-				$output  .= 'value="'.$key.'" id="'.$element['id'].$counter.'" name="'.$element['id'].'"/>';
-				
-				$output  .= '<label for="'.$element['id'].$counter.'"><span class="labeltext">'.$radiobutton.'</span>';
-				if(!empty($element['images'][$key])) $output  .= "<img class='radio_image' src='".$element['images'][$key]."' />";
-				$output  .= '</label>';
+
+				$fields  = '<input '.$checked.' type="radio" class="radio_'.$key.'" ';
+                $fields  .= 'value="'.$key.'" id="'.$element['id'].$counter.'" name="'.$element['id'].'"/>';
+
+                $fields  .= '<label for="'.$element['id'].$counter.'">';
+
+				if( isset($element['images']) &&  !empty($element['images'][$key]) ) {
+                    $fields  .= "<img class='radio_image' src='".$element['images'][$key]."' />";
+                    $extra_class = 'avia-image-radio';
+                }
+
+                $fields .= '<span class="labeltext">'.$radiobutton.'</span>';
+                $fields  .= '</label>';
+
+                $output  .= '<span class="avia_radio_wrap '.$extra_class.'">';
+                $output  .= $fields;
 				$output  .= '</span>';
 				
 				$counter++;
 			}	
 				
 			return $output;
+
 		}
 		
 		

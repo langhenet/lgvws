@@ -52,7 +52,8 @@
 				filters['packery'] = {gutter:0};
 				filters['percentPosition'] = true;
 				filters['itemSelector'] = "a.isotope-item, div.isotope-item";
-				
+				filters['originLeft'] = $('body').hasClass('rtl') ? false : true;
+						
 				container.isotope(filters, function()
 				{
 					the_win.trigger('av-height-change');

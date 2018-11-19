@@ -205,23 +205,36 @@ if (!class_exists('avia_sc_timeline')) {
 
                         array(
                             "type" => "tab",
-                            "name" => __("Icon/Image", 'avia_framework'),
+                            "name" => __("Bullet", 'avia_framework'),
                             'nodescription' => true
                         ),
                         
 
                         array(
-                            "name" => __("Icon or Image", 'avia_framework'),
-                            "desc" => __("Select an icon or an image for your milestone", 'avia_framework'),
+                            "name" => __("Bullet Content", 'avia_framework'),
+                            "desc" => __("Select the type of content for your milestone bullet", 'avia_framework'),
                             "id" => "icon_image",
                             "type" => "select",
                             "std" => "icon",
                             "subtype" => array(
                                 __('Add Icon', 'avia_framework') => 'icon',
                                 __('Add Image', 'avia_framework') => 'image',
+                                __('Auto Numbering', 'avia_framework') => 'number',
                             )
                         ),
 
+                        array(
+                            "name" => __("Bullet Shape", 'avia_framework'),
+                            "desc" => __("Arrow shaped bullet", 'avia_framework'),
+                            "id" => "number_arrow",
+                            "std" => "",
+                            "required" => array('icon_image', 'equals', 'number'),
+                            "type" => "select",
+                            "subtype" => array(
+                                __('Round', 'avia_framework') => '',
+                                __('Arrow Shaped', 'avia_framework') => 'arrow',
+                            )
+                        ),
 
                         array(
                             "name" => __("Milestone Icon", 'avia_framework'),
@@ -318,6 +331,19 @@ if (!class_exists('avia_sc_timeline')) {
                             __('Box Shadow with Arrow', 'avia_framework') => 'boxshadow',
                         )
                 ),
+
+                array(
+                    "name" 	=> __("Animation", 'avia_framework' ),
+                    "desc" 	=> __("Should the items appear in an animated way?", 'avia_framework' ),
+                    "id" 	=> "animation",
+                    "type" 	=> "select",
+                    "std" 	=> "",
+                    "subtype" => array(
+                        __('Animation activated',  'avia_framework' ) =>'',
+                        __('Animation deactivated',  'avia_framework' ) =>'deactivated',
+                    )),
+
+
 
                 array(
                     "name" => __("Date Font Size", 'avia_framework'),
@@ -630,6 +656,7 @@ if (!class_exists('avia_sc_timeline')) {
                     'placement_h' => '',
                     'slides_num' => '',
                     'content_appearence' => '',
+                    'animation' => '',
 
                     'custom_date_size' => '',
                     'custom_title_size' => '',
@@ -756,9 +783,16 @@ if (!class_exists('avia_sc_timeline')) {
                 $slider_container_class = "avia-slideshow-carousel";
             }
 
+            // animation
+            $animation_class = "";
+            if ($animation == ''){
+                $animation_class = "avia-timeline-animate";
+            }
+
+
             $output = "";
             $output .= "<div id='avia-timeline-" . uniqid() . "' class='avia-timeline-container {$slider_container_class} {$av_display_classes} ".$meta['el_class']."' {$slider_attribute}>";
-            $output .= "<ul class='avia-timeline avia-timeline-{$orientation} {$this->placement} avia-timeline-{$this->appearence} avia_animate_when_almost_visible'>";
+            $output .= "<ul class='avia-timeline avia-timeline-{$orientation} {$this->placement} avia-timeline-{$this->appearence} avia_animate_when_almost_visible {$animation_class}'>";
             $output .= ShortcodeHelper::avia_remove_autop($content, true);
             $output .= "</ul>";
 
@@ -788,6 +822,7 @@ if (!class_exists('avia_sc_timeline')) {
                     'title' => '',
                     'link' => '',
                     'icon_image' => '',
+                    'number_arrow' => '',
                     'image' => '',
                     'attachment' => '',
                     'attachment_size' => '',
@@ -827,11 +862,26 @@ if (!class_exists('avia_sc_timeline')) {
 
             /* icon,image */
             $image_src = "";
-            if ($atts['icon_image'] == 'image'){
-                if (!empty($atts['attachment'])) {
-                    $attachment_entry = get_post($atts['attachment']);
+            if ($atts['icon_image'] == 'image')
+			{
+                if( ! empty( $atts['attachment'] ) ) 
+				{
+					/**
+					 * Allows e.g. WPML to reroute to translated image
+					 */
+					$posts = get_posts( array(
+											'include'			=> $atts['attachment'],
+											'post_status'		=> 'inherit',
+											'post_type'			=> 'attachment',
+											'post_mime_type'	=> 'image',
+											'order'				=> 'ASC',
+											'orderby'			=> 'post__in' )
+										);
 
-                    if (!empty($attachment_entry)) {
+                    if( is_array( $posts ) && ! empty( $posts ) ) 
+					{
+						$attachment_entry = $posts[0];
+						
                         $image_alt = get_post_meta($attachment_entry->ID, '_wp_attachment_image_alt', true);
                         $image_alt = !empty($alt) ? esc_attr($alt) : '';
                         $image_title = trim($attachment_entry->post_title) ? esc_attr($attachment_entry->post_title) : "";
@@ -887,10 +937,12 @@ if (!class_exists('avia_sc_timeline')) {
                 }
             }
 
+
             $icon_styling = ($icon_styling_string !== "") ? AviaHelper::style_string($icon_styling_string) : "";
             $icon_styling_inner = ($icon_styling_inner_string !== "") ? AviaHelper::style_string($icon_styling_inner_string) : "";
 
             $list_class = $this->i % 2 == 0 ? "av-milestone-odd" : "av-milestone-even";
+            
 
             $linktitle = "";
             $linktarget = "";
@@ -919,7 +971,7 @@ if (!class_exists('avia_sc_timeline')) {
             );
 
             if (in_array($atts['linkelement'], array('all', 'both', 'icon_head', 'icon_only')) &&  !empty($atts['link']) ) {
-                $icon_wrapper['start'] = "<a class='av-milestone-icon-wrap' title='" . esc_attr($linktitle) . "' href='{$atts['link']}'>";
+                $icon_wrapper['start'] = "<a class='av-milestone-icon-wrap' title='" . esc_attr($linktitle) . "' href='{$atts['link']}' {$linktarget}>";
                 $icon_wrapper['end'] = "</a>";
             }
 
@@ -930,9 +982,19 @@ if (!class_exists('avia_sc_timeline')) {
                 $icon .= "<span class='milestone_inner' {$icon_styling_inner}>&nbsp;</span>";
                 $icon .= '</span>';
 
-            } else {
+            } else if ($atts['icon_image'] == 'icon') {
                 $icon .= "<span class='milestone_icon{$icon_extra_class} avia-font-" . $atts['font'] . "' {$icon_styling}>";
                 $icon .= "<span class='milestone_inner' {$icon_styling_inner}><i class='milestone-char' {$display_char}></i></span>";
+                $icon .= "</span>";
+            } else if ($atts['icon_image'] == 'number') {
+                $num = $this->i + 1;
+
+                if ($atts['number_arrow'] == 'arrow'){
+                    $icon_extra_class .= ' milestone_bullet_arrow';
+                }
+
+                $icon .= "<span class='milestone_icon{$icon_extra_class}' {$icon_styling}>";
+                $icon .= "<span class='milestone_inner' {$icon_styling_inner}><span class='milestone_number'>".$num."</span></span>";
                 $icon .= "</span>";
             }
             $icon .= $icon_wrapper['end'];
@@ -946,7 +1008,7 @@ if (!class_exists('avia_sc_timeline')) {
             );
 
             if (in_array($atts['linkelement'], array('all', 'both', 'date_head')) &&  !empty($atts['link']) ) {
-                $date_wrapper['start'] = "<h2 class='av-milestone-date{$av_title_font_classes}' {$date_styling} id='milestone-{$title_sanitized}'><a title='" . esc_attr($linktitle) . "' href='{$atts['link']}'>";
+                $date_wrapper['start'] = "<h2 class='av-milestone-date{$av_title_font_classes}' {$date_styling} id='milestone-{$title_sanitized}'><a title='" . esc_attr($linktitle) . "' href='{$atts['link']}' {$linktarget}>";
                 $date_wrapper['end'] = "</a></h2>";
             }
 
@@ -969,7 +1031,7 @@ if (!class_exists('avia_sc_timeline')) {
                 );
 
                 if (in_array($atts['linkelement'], array('all', 'icon_head', 'date_head')) &&  !empty($atts['link']) ) {
-                    $headline_wrap['start'] = "<h4 {$title_styling}{$title_class}><a title='" . esc_attr($linktitle) . "' href='{$atts['link']}'>";
+                    $headline_wrap['start'] = "<h4 {$title_styling}{$title_class}><a title='" . esc_attr($linktitle) . "' href='{$atts['link']}' {$linktarget}>";
                     $headline_wrap['end'] = "</a></h4>";
                 }
 

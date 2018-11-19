@@ -454,7 +454,10 @@ if ( !class_exists( 'avia_sc_tab_section' ) )
 					$extraClass .= !empty($image) 	? "av-tab-with-image noHover " : "av-tab-no-image ";
 					$extraClass .= avia_sc_tab_section::$tab_atts[ $i ]['tab_image_style'];
 					
-					$active_tab = $i == $atts['initial'] ? "av-active-tab-title" : "";					
+					/**
+					 * Bugfix: Set no-scroll to avoid auto smooth scroll when initialising tab section and multiple tab sections are on a page - removed in js.
+					 */
+					$active_tab = $i == $atts['initial'] ? "av-active-tab-title no-scroll" : "";					
 					
 					$tab_title = !empty(avia_sc_tab_section::$tab_titles[$i]) ? avia_sc_tab_section::$tab_titles[$i] : "";
 					if($tab_title == "" && empty($image) && empty($icon)){

@@ -324,7 +324,7 @@ div .av-section-color-overlay{z-index: 1;}
 div .av-video-service-html5 .av-section-color-overlay{z-index: 8;}
 
 .html_minimal_header #main > .avia-builder-el-0,
-.av_minimal_header + #main .container_wrap_first { border-top: none; }
+.av_minimal_header + #main .container_wrap_first:first-child { border-top: none; }
 
 
 /* ======================================================================================================================================================

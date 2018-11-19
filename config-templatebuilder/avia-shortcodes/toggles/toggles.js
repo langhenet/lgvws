@@ -23,13 +23,18 @@
 			var container 	= $(this).addClass('enable_toggles'),
 				toggles		= $(options.single, container),
 				heading 	= $(options.heading, container),
+				activeStyle = $(container).attr('data-currentstyle'),
 				allContent 	= $(options.content, container),
 				sortLinks	= $(options.sortContainer + " a", container);
-	
+
+
 			heading.each(function(i)
 			{
-				var thisheading =  $(this), content = thisheading.next(options.content, container);
-	
+				var thisheading =  $(this),
+					content = thisheading.next(options.content, container),
+					headingStyle = thisheading.attr('style'),
+                    hoverStyle = thisheading.attr('data-hoverstyle');
+
 				function scroll_to_viewport()
 				{
 				    //check if toggle title is in viewport. if not scroll up
@@ -44,7 +49,7 @@
 	
 				if(content.css('visibility') != "hidden")
 				{
-					thisheading.addClass('activeTitle');
+					thisheading.addClass('activeTitle').attr('style',activeStyle);
 				}
 	
 				thisheading.on('click', function()
@@ -59,8 +64,8 @@
 							
 							location.replace(thisheading.data('fake-id') + "-closed");
 						});
-						thisheading.removeClass('activeTitle');
-	
+						thisheading.removeClass('activeTitle').attr('style',headingStyle);
+
 					}
 					else
 					{
@@ -71,7 +76,7 @@
 								$(this).removeClass('active_tc').attr({style:''});
 								scroll_to_viewport();
 							});
-							heading.removeClass('activeTitle');
+							heading.removeClass('activeTitle').attr('style',headingStyle);
 						}
 						
 						content.addClass('active_tc');
@@ -95,14 +100,29 @@
 						
 						}, 1);
 						
-						thisheading.addClass('activeTitle');
+						thisheading.addClass('activeTitle').attr('style',activeStyle);
 						location.replace(thisheading.data('fake-id'));
 					}
-					
-					
-					
+
 				});
-			});
+
+				/* change style on hover */
+				if (hoverStyle) {
+
+                    thisheading.hover(
+                        function() {
+                            if ( ! thisheading.hasClass('activeTitle')) {
+                                $(this).attr('style',hoverStyle);
+							}
+                        }, function() {
+                            if ( ! thisheading.hasClass('activeTitle')) {
+                                $(this).attr('style', headingStyle);
+                            }
+                        }
+                    );
+				}
+
+            });
 	
 	
 			sortLinks.click(function(e){

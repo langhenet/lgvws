@@ -62,6 +62,7 @@ if ( ! class_exists( 'avia_masonry' ) )
 												'size'	=> 'fixed',
 												'gap'	=> '1px',
 												'overlay_fx' 		=> 'active',
+                                                'animation' 		=> 'active',
 												'offset'			=> 0,
 												'container_links'	=> true,
 												'container_class'	=> "",
@@ -156,7 +157,29 @@ if ( ! class_exists( 'avia_masonry' ) )
 		
 		function sort_buttons()
 		{
-			$sort_terms = get_terms( $this->atts['taxonomy'] , array('hide_empty'=>true) );
+			
+			$term_args = array( 
+								'taxonomy'		=> $this->atts['taxonomy'],
+								'hide_empty'	=> true
+							);
+			
+			/**
+			 * To display private posts you need to set 'hide_empty' to false, 
+			 * otherwise a category with ONLY private posts will not be returned !!
+			 * 
+			 * You also need to add post_status "private" to the query params with filter avia_masonry_entries_query.
+			 * 
+			 * @since 4.4.2
+			 * @added_by Günter
+			 * @param array $term_args 
+			 * @param string $context
+			 * @param array $params 
+			 * @param boolean $ajax
+			 * @return array
+			 */
+			$term_args = apply_filters( 'avf_masonry_term_args', $term_args, 'sort_buttons', $this->atts, false );
+			
+			$sort_terms = AviaHelper::get_terms( $term_args );
 			
 			$current_page_terms	= array();
 			$term_count 		= array();
@@ -286,7 +309,7 @@ if ( ! class_exists( 'avia_masonry' ) )
 			
 			
 			$style = "";
-			
+
 			if( !empty( $this->atts['color'] ) )
 			{
 				$style .= AviaHelper::style_string( $this->atts, 'custom_bg', 'background-color' );
@@ -299,7 +322,7 @@ if ( ! class_exists( 'avia_masonry' ) )
                 $custom_class = $this->atts['custom_class'];
             }
 			
-			$output .= "<div id='av-masonry-".self::$element."' class='av-masonry {$custom_class} noHover av-{$size}-size av-{$this->atts['gap']}-gap av-hover-overlay-{$this->atts['overlay_fx']} av-masonry-col-{$this->atts['columns']} av-caption-{$this->atts['caption_display']} av-caption-style-{$this->atts['caption_styling']} {$this->atts['container_class']} {$orientation} {$av_display_classes} {$av_column_classes}' {$style} >";
+			$output .= "<div id='av-masonry-".self::$element."' class='av-masonry {$custom_class} noHover av-{$size}-size av-{$this->atts['gap']}-gap av-hover-overlay-{$this->atts['overlay_fx']} av-masonry-animation-{$this->atts['animation']} av-masonry-col-{$this->atts['columns']} av-caption-{$this->atts['caption_display']} av-caption-style-{$this->atts['caption_styling']} {$this->atts['container_class']} {$orientation} {$av_display_classes} {$av_column_classes}' {$style} >";
 			
 			$output .= $this->atts['sort'] != "no" ? $this->sort_buttons() : "";
 			
@@ -308,7 +331,10 @@ if ( ! class_exists( 'avia_masonry' ) )
 			$sort_array = array();
 			foreach($this->loop as $entry)
 			{
+				$title = '';
+				
 				extract(array_merge($defaults, $entry));
+				
 				$img_html		= "";
 				$img_style		= "";
 				if($this->atts['sort'] != "no")
@@ -322,13 +348,23 @@ if ( ! class_exists( 'avia_masonry' ) )
 				{
                     $alt = get_post_meta($thumb_ID, '_wp_attachment_image_alt', true);
                     $alt = !empty($alt) ? esc_attr($alt) : '';
-                    $title = esc_attr(get_the_title($thumb_ID));
+                    $title = trim( esc_attr( get_the_title( $thumb_ID ) ) );
+					$outer_title = empty( $title ) ? '' : ' title="' . $title . '" ';
 					
 					if(isset($attachment[0]))
 					{
-						if($size == 'flex')  $img_html  = '<img src="'.$attachment[0].'" title="'.$title.'" alt="'.$alt.'" />';
+						if($size == 'flex')  
+						{
+							$img_html  = '<img src="'.$attachment[0].'" title="'.$title.'" alt="'.$alt.'" />';
+							$outer_title = '';
+						}
+						
 						if($size == 'fixed') $img_style = 'style="background-image: url('.$attachment[0].');"';
 						$class_string .= " av-masonry-item-with-image";
+					}
+					else 
+					{
+						$outer_title = '';
 					}
 					
 					if(isset($attachment_overlay[0]))
@@ -338,8 +374,7 @@ if ( ! class_exists( 'avia_masonry' ) )
 						$img_before = '<div class="av-masonry-image-container av-masonry-overlay" '.$over_style.'>'.$over_html.'</div>';
 					}
 					
-					$bg = '<div class="av-masonry-outerimage-container">'.$img_before.'<div class="av-masonry-image-container" '.$img_style.'>'.$img_html.'</div></div>';
-					
+					$bg = '<div class="av-masonry-outerimage-container">'.$img_before.'<div class="av-masonry-image-container" ' . $img_style . $outer_title . '>' . $img_html . '</div></div>';
 				}
 				else
 				{
@@ -363,12 +398,14 @@ if ( ! class_exists( 'avia_masonry' ) )
 				
                 if($post_type == 'attachment' && strpos($html_tags[0], 'a href=') !== false)
                 {
-                    $linktitle = 'title="'.esc_attr($description).'"';
+                    $linktitle = 'title="'.esc_attr( $title ).'"';
                 }
                 else if(strpos($html_tags[0], 'a href=') !== false)
                 {
-                    $linktitle = 'title="'.esc_attr($the_title).'"';
+                    $display = empty( $title ) ? $the_title : $title;
+                    $linktitle = 'title="' . esc_attr( $display ) . '"';
                 }
+
                 $markup = ($post_type == 'attachment') ? avia_markup_helper(array('context' => 'image_url','echo'=>false, 'id'=>$entry['ID'], 'custom_markup'=>$this->atts['custom_markup'])) : avia_markup_helper(array('context' => 'entry','echo'=>false, 'id'=>$entry['ID'], 'custom_markup'=>$this->atts['custom_markup']));
 
 				$items .= 	"<{$html_tags[0]} id='av-masonry-".self::$element."-item-".$entry['ID']."' data-av-masonry-item='".$entry['ID']."' class='{$class_string}' {$linktitle} {$markup}>";
@@ -648,7 +685,6 @@ if ( ! class_exists( 'avia_masonry' ) )
 		//fetch new entries
 		public function query_entries($params = array(), $ajax = false)
 		{
-			
 			global $avia_config;
 
 			if(empty($params)) $params = $this->atts;
@@ -656,6 +692,7 @@ if ( ! class_exists( 'avia_masonry' ) )
 			if(empty($params['custom_query']))
             {
 				$query = array();
+				$terms = array();
 				$avialable_terms = array();
 				
 				if(!empty($params['categories']))
@@ -666,14 +703,35 @@ if ( ! class_exists( 'avia_masonry' ) )
 
 				$page = get_query_var( 'paged' ) ? get_query_var( 'paged' ) : get_query_var( 'page' );
 				if(!$page || $params['paginate'] == 'no') $page = 1;
-
+				
+				
+				$term_args = array( 
+								'taxonomy'		=> $params['taxonomy'],
+								'hide_empty'	=> true
+							);
+				/**
+				 * To display private posts you need to set 'hide_empty' to false, 
+				 * otherwise a category with ONLY private posts will not be returned !!
+				 * 
+				 * You also need to add post_status "private" to the query params with filter avia_masonry_entries_query.
+				 * 
+				 * @since 4.4.2
+				 * @added_by Günter
+				 * @param array $term_args 
+				 * @param string $context
+				 * @param array $params 
+				 * @param boolean $ajax
+				 * @return array
+				 */
+				$term_args = apply_filters( 'avf_masonry_term_args', $term_args, 'query_entries', $params, $ajax );
 				
 				//if we find no terms for the taxonomy fetch all taxonomy terms
 				if(empty($terms[0]) || is_null($terms[0]) || $terms[0] === "null")
 				{
+					$allTax = AviaHelper::get_terms( $term_args );
+
 					$terms = array();
-					$allTax = get_terms( $params['taxonomy'] );
-					foreach($allTax as $tax)
+					foreach( $allTax as $tax )
 					{
 						if( is_object($tax) )
 						{
@@ -682,12 +740,11 @@ if ( ! class_exists( 'avia_masonry' ) )
 					}
 				}
 				
-				
-				
 				if(!empty($params['taxonomy']))
 				{
-					$allTax = get_terms( $params['taxonomy'] );
-					foreach($allTax as $tax)
+					$allTax = AviaHelper::get_terms( $term_args );
+					
+					foreach( $allTax as $tax )
 					{
 						if( is_object($tax) )
 						{

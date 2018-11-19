@@ -132,7 +132,7 @@
 			event.preventDefault();
 						
 			var clicked = $(this), 
-				options = clicked.data();
+				options = clicked.data(),
 				parent 	= clicked.closest('.avia-modal-group-wrapper');
 				if( parent.length == 0 )
 				{
@@ -355,7 +355,7 @@
 							
 							values.img_fakeArg = '<img src="'+values.img_fakeArg +'" title="" alt="" />';
 							
-							var htmlVal 	 = $.avia_builder.update_builder_html(new_template, values, true),
+							var htmlVal 	 = $.avia_builder.update_builder_html(new_template, values, false),
 								saveTo 		 = new_template.find($.avia_builder.datastorage + ":eq(0)");
 					
 							saveTo[0].innerHTML = htmlVal.output;

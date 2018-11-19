@@ -278,12 +278,24 @@ if ( !class_exists( 'avia_sc_catalogue' ) )
 					$item_markup = array("open"=>"a href='{$link}' {$blank}", "close" => "a");
 				}
 				
-				if(!empty($id))
+				if( ! empty( $id ) )
 				{
-					$attachment_entry = get_post( $id );
+					/**
+					 * Allows e.g. WPML to reroute to translated image
+					 */
+					$posts = get_posts( array(
+											'include'			=> $id,
+											'post_status'		=> 'inherit',
+											'post_type'			=> 'attachment',
+											'post_mime_type'	=> 'image',
+											'order'				=> 'ASC',
+											'orderby'			=> 'post__in' )
+										);
 					
-					if(!empty($attachment_entry))
+					if( is_array( $posts ) && ! empty( $posts ) )
 					{
+						$attachment_entry = $posts[0];
+						
 						$alt = get_post_meta($attachment_entry->ID, '_wp_attachment_image_alt', true);
 	                	$alt = !empty($alt) ? esc_attr($alt) : '';
 	                	$img_title = trim($attachment_entry->post_title) ? esc_attr($attachment_entry->post_title) : "";

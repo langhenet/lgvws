@@ -121,7 +121,7 @@ if(!function_exists('avia_append_search_nav'))
 	        $form =  htmlspecialchars(ob_get_clean()) ;
 
 	        $items .= '<li id="menu-item-search" class="noMobile menu-item menu-item-search-dropdown menu-item-avia-special">
-							<a href="?s=" data-avia-search-tooltip="'.$form.'" '.av_icon_string('search').'><span class="avia_hidden_link_text">'.__('Search','avia_framework').'</span></a>
+							<a href="?s=" rel="nofollow" data-avia-search-tooltip="'.$form.'" '.av_icon_string('search').'><span class="avia_hidden_link_text">'.__('Search','avia_framework').'</span></a>
 	        		   </li>';
 	    }
 	    return $items;
@@ -249,11 +249,11 @@ if(!function_exists('avia_ajax_search'))
 		
 	    if(empty($posts))
 	    {
-	        $output  = "<span class='ajax_search_entry ajax_not_found'>";
-	        $output .= "<span class='ajax_search_image ".av_icon_string('info')."'>";
+	        $output  = "<span class='av_ajax_search_entry ajax_not_found'>";
+	        $output .= "<span class='av_ajax_search_image ".av_icon_string('info')."'>";
 	        $output .= "</span>";
-	        $output .= "<span class='ajax_search_content'>";
-	        $output .= "    <span class='ajax_search_title'>";
+	        $output .= "<span class='av_ajax_search_content'>";
+	        $output .= "    <span class='av_ajax_search_title'>";
             	$output .= $search_messages['no_criteria_matched'];
 	        $output .= "    </span>";
 	        $output .= "    <span class='ajax_search_excerpt'>";
@@ -333,15 +333,15 @@ if(!function_exists('avia_ajax_search'))
 
 	            $link = apply_filters('av_custom_url', get_permalink($post->ID), $post);
 
-	            $output .= "<a class ='ajax_search_entry {$extra_class}' href='".$link."'>";
+	            $output .= "<a class ='av_ajax_search_entry {$extra_class}' href='".$link."'>";
 
 	            if ($image !== "" || $iconfont) {
-                    $output .= "<span class='ajax_search_image' {$iconfont}>";
+                    $output .= "<span class='av_ajax_search_image' {$iconfont}>";
                     $output .= $image;
                     $output .= "</span>";
                 }
-	            $output .= "<span class='ajax_search_content'>";
-	            $output .= "    <span class='ajax_search_title'>";
+	            $output .= "<span class='av_ajax_search_content'>";
+	            $output .= "    <span class='av_ajax_search_title'>";
 	            $output .=      get_the_title($post->ID);
 	            $output .= "    </span>";
 	            if ($excerpt !== '') {
@@ -354,7 +354,7 @@ if(!function_exists('avia_ajax_search'))
 	        }
 	    }
 
-	    $output .= "<a class='ajax_search_entry ajax_search_entry_view_all' href='".$search_messages['all_results_link']."'>".$search_messages['view_all_results']."</a>";
+	    $output .= "<a class='av_ajax_search_entry av_ajax_search_entry_view_all' href='".$search_messages['all_results_link']."'>".$search_messages['view_all_results']."</a>";
 
 	    echo $output;
 	    die();
@@ -763,6 +763,7 @@ if(!function_exists('avia_header_setting'))
 							'header_style'				=> '',
 							'blog_global_style'			=> '',
 							'menu_display' 				=> '',
+							'alternate_menu'			=> '',
 							'submenu_clone' 			=> 'av-submenu-noclone',
 						  );
 							
@@ -932,7 +933,8 @@ if(!function_exists('avia_header_setting_sidebar'))
 								'bottom_menu'	=> false,
 								'header_style' 	=> '',
 								'menu_display' 	=> '',
-								'submenu_clone' => 'av-submenu-noclone',
+								'alternate_menu'	=> '',
+								'submenu_clone'		=> 'av-submenu-noclone',
 							  );
 		
 		$header = array_merge($header, $overwrite);
@@ -1008,6 +1010,7 @@ if(!function_exists('avia_header_class_string'))
 													'menu_display',
 													'submenu_visibility',
 													'overlay_style',
+													'alternate_menu',
 													'submenu_clone',
 
 												);
@@ -2205,40 +2208,102 @@ Vimeo and Youtube video embeds:
 
 
 
-/**
- * Error 404 - Custom Page
- * Hooks into the 404_template filter and display the defined 404 page
- * Does not work with WPML
- * @author tinabillinger
- * @since 4.3
- */
 if( ! function_exists( 'av_error404' ) )
 {
-    function av_error404($template)
+	/**
+	 * Error 404 - Reroute to a Custom Page
+	 * Hooks into the 404_template filter and performs a redirect to that page.
+	 * 
+	 * @author tinabillinger - modified by günter
+	 * @since 4.3 - 4.4.2
+	 * 
+	 * @param string $template
+	 * @return string
+	 */
+    function av_error404( $template )
     {
-        // skip if WPML is active
-          if( ! defined('ICL_SITEPRESS_VERSION') && ! defined('ICL_LANGUAGE_CODE')) {
-            if (avia_get_option('error404_custom') == "error404_custom") {
-                global $wp_query;
-                $error404_page = avia_get_option('error404_page');
-                // check if error 404 page is defined
-                if ($error404_page) {
-                    // hook into the query
-                    $wp_query = null;
-                    $wp_query = new WP_Query();
-                    $wp_query->query( 'page_id=' . $error404_page );
-                    $wp_query->the_post();
-                    $template = get_page_template();
-                    rewind_posts();
-                    return $template;
-                }
-            }
-        }
-        
-        return $template;
+		if( avia_get_option( 'error404_custom' ) != 'error404_custom' )
+		{
+			return $template;
+		}
+		
+		$error404_page = avia_get_option( 'error404_page' );
+		
+		if( empty( $error404_page ) )
+		{
+			return $template;
+		}
+		
+		$error404_url = get_permalink( $error404_page );
+
+		if( wp_redirect( $error404_url ) ) 
+		{
+			exit();
+		}
+		
+		return $template;
+		
+/**
+ * Kept in case we need a fallback - can be removed in future versions
+ * ===================================================================
+ */
+//        // skip if WPML is active
+//          if( ! defined('ICL_SITEPRESS_VERSION') && ! defined('ICL_LANGUAGE_CODE')) {
+//            if (avia_get_option('error404_custom') == "error404_custom") {
+//                global $wp_query;
+//                $error404_page = avia_get_option('error404_page');
+//                // check if error 404 page is defined
+//                if ($error404_page) {
+//                    // hook into the query
+//                    $wp_query = null;
+//                    $wp_query = new WP_Query();
+//                    $wp_query->query( 'page_id=' . $error404_page );
+//                    $wp_query->the_post();
+//                    $template = get_page_template();
+//                    rewind_posts();
+//                    return $template;
+//                }
+//            }
+//        }
         
     }
+	
     add_filter( '404_template', 'av_error404', 999 );
+}
+
+if( ! function_exists( 'av_custom_404_handler' ) )
+{
+	/**
+	 * Set the correct status code
+	 * 
+	 * @added_by günter
+	 * @since 4.4.2
+	 * @return void
+	 */
+	function av_custom_404_handler()
+	{
+		if( avia_get_option( 'error404_custom' ) != 'error404_custom' )
+		{
+			return;
+		}
+		
+		$error404_page = avia_get_option( 'error404_page' );
+		
+		if( empty( $error404_page ) || ! is_page( $error404_page ) )
+		{
+			return;
+		}
+		
+
+		/**
+		 * Do not call $wp_query->set_404(); as suggested in some stackoverflow posts - 
+		 * that leads to an endless loop with av_error404  !!!!!
+		 */
+		status_header(404);
+		nocache_headers();
+	}
+	
+	add_action( 'wp', 'av_custom_404_handler', 1 );
 }
 
 
@@ -2341,72 +2406,107 @@ if( ! function_exists( 'av_builder_meta_box_elements_content' ) )
 }
 
 
-/**
- * Maintenance Mode
- * Redirects all requests to a defined 'maintenance' page
- * Returns a 503 (temporary unavailable) status header
- *
- * If WPML active:
- * Simple to a defined 'maintenance' page,
- * returns a 302 (temporary redirect) status header
- *
- * Logged in users are still able to view the site
- *
- * @author tinabillinger
- * @since 4.3
- */
- 
-
 if( ! function_exists( 'av_maintenance_mode' ) )
 {
+	/**
+	 * Custom Maintenance Mode Page
+	 * 
+	 * Redirects all requests to a defined 'maintenance' page and 
+	 * returns a 503 (temporary unavailable) status header.
+	 * If user forgets to set a page we return a simple message.
+	 * 
+	 * Logged in users with "edit_published_posts" capability are still able to view the site
+	 * 
+	 * @author tinabillinger  modified by günter
+	 * @since 4.3 / 4.4.2
+	 * @return void
+	 */
     function av_maintenance_mode()
     {
-        if (avia_get_option('maintenance_mode') == "maintenance_mode") {
-            global $wp_query;
-            $maintenance_page = avia_get_option('maintenance_page');
-            
-            // check if maintenance page is defined
-            if ($maintenance_page) {
-                $maintenance_url = get_permalink($maintenance_page);
-                $current_url = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
-                // make sure site is accessible for logged in users, and the login page is not redirected
-                if ( ($GLOBALS['pagenow'] !== 'wp-login.php') && !current_user_can('edit_published_posts')) {
-                    // avoid infinite loop by making sure that maintenance page is NOT curently viewed
-                    if ($maintenance_url !== $current_url) {
-
-                        // do a simple redirect if WPML or Yoast is active
-                        $use_wp_redirect = false;
-
-                        if( defined('ICL_SITEPRESS_VERSION') && defined('ICL_LANGUAGE_CODE')) {
-                            $use_wp_redirect = true;
-                        }
-
-                        if( (defined('ICL_SITEPRESS_VERSION') && defined('ICL_LANGUAGE_CODE')) || defined('WPSEO_VERSION')) {
-                            $use_wp_redirect = true;
-                        }
-
-                        if( $use_wp_redirect ) {
-                            if (wp_redirect($maintenance_url)) {
-                                exit();
-                            }
-                        }
-                        else {
-                            // hook into the query
-                            $wp_query = null;
-                            $wp_query = new WP_Query();
-                            $wp_query->query('page_id=' . $maintenance_page);
-                            $wp_query->the_post();
-                            $template = get_page_template();
-                            rewind_posts();
-                            status_header(503);
-                            return $template;
-                        }
-                    }
-                }
-            }
-        }
+		if( is_user_logged_in() && current_user_can( 'edit_published_posts' ) )
+		{
+			return;
+		}
+		
+		if( avia_get_option('maintenance_mode') != 'maintenance_mode' )
+		{
+			return;
+		}
+		
+		$maintenance_page = avia_get_option( 'maintenance_page' );
+		
+		if( empty( $maintenance_page ) )
+		{
+			status_header( 503 );
+			nocache_headers();
+			exit( __( 'Sorry, we are currently updating our site - please try again later.', 'avia_framework' ) );
+		}
+		
+		if( is_page( $maintenance_page ) )
+		{
+			status_header( 503 );
+			nocache_headers();
+			return;
+		}
+		
+		$maintenance_url = get_permalink( $maintenance_page );
+		
+		if( wp_redirect( $maintenance_url ) )
+		{
+			exit();
+		}
+		
+/**
+ * Kept in case we need a fallback - can be removed in future versions
+ * ===================================================================
+ */
+//        if (avia_get_option('maintenance_mode') == "maintenance_mode") {
+//            global $wp_query;
+//            $maintenance_page = avia_get_option('maintenance_page');
+//            
+//            // check if maintenance page is defined
+//            if ($maintenance_page) {
+//                $maintenance_url = get_permalink($maintenance_page);
+//                $current_url = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+//                // make sure site is accessible for logged in users, and the login page is not redirected
+//                if ( ($GLOBALS['pagenow'] !== 'wp-login.php') && !current_user_can('edit_published_posts')) {
+//                    // avoid infinite loop by making sure that maintenance page is NOT curently viewed
+//                    if ($maintenance_url !== $current_url) {
+//
+//                        // do a simple redirect if WPML or Yoast is active
+//                        $use_wp_redirect = false;
+//
+//                        if( defined('ICL_SITEPRESS_VERSION') && defined('ICL_LANGUAGE_CODE')) {
+//                            $use_wp_redirect = true;
+//                        }
+//
+//                        if( (defined('ICL_SITEPRESS_VERSION') && defined('ICL_LANGUAGE_CODE')) || defined('WPSEO_VERSION')) {
+//                            $use_wp_redirect = true;
+//                        }
+//
+//                        if( $use_wp_redirect ) {
+//                            if (wp_redirect($maintenance_url)) {
+//                                exit();
+//                            }
+//                        }
+//                        else {
+//                            // hook into the query
+//                            $wp_query = null;
+//                            $wp_query = new WP_Query();
+//                            $wp_query->query('page_id=' . $maintenance_page);
+//                            $wp_query->the_post();
+//                            $template = get_page_template();
+//                            rewind_posts();
+//                            status_header(503);
+//                            return $template;
+//                        }
+//                    }
+//                }
+//            }
+//        }
     }
-    add_action('template_redirect', 'av_maintenance_mode');
+	
+    add_action( 'template_redirect', 'av_maintenance_mode' );
 }
 
 
@@ -2495,6 +2595,25 @@ if( ! function_exists( 'av_post_state' ) )
 
 
 
+/**
+ * Comment form order
+ * Restore comment form order to look like previous versions were comment field is below name/mail/website
+ *
+ * @author Kriesi
+ * @since 4.5
+ */
 
+if( ! function_exists( 'av_comment_field_order_reset' ) ) 
+{
+	function av_comment_field_order_reset( $fields ) 
+	{
+		$comment_field = $fields['comment'];
+		unset( $fields['comment'] );
+		$fields['comment'] = $comment_field;
+		return $fields;
+	}
+ 
+	add_filter( 'comment_form_fields', 'av_comment_field_order_reset' );
+}
 		
 

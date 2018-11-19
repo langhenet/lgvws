@@ -199,7 +199,7 @@ if ( !class_exists( 'avia_sc_contact' ) )
 						"desc" 	=> "",
 						"id" 	=> "on_send",
 						"type" 	=> "select",
-						"std" 	=> "text",
+						"std" 	=> "",
 						"no_first"=>true,
 						"subtype" => array(	__('Display a short message on the same page', 'avia_framework' ) =>'',
 											__('Redirect the user to another page', 'avia_framework' ) =>'redirect',
@@ -229,14 +229,22 @@ if ( !class_exists( 'avia_sc_contact' ) )
 	                    ),
 	                    "std" 	=> ""),
 						
-						
-						
 						array(
-						"name" 	=> __("E-Mail Subject", 'avia_framework' ),
-						"desc" 	=> __("You can define a custom Email Subject for your form here. If left empty the subject will be", 'avia_framework' ).": <small>".__("New Message", 'avia_framework') . " (".__('sent by contact form at','avia_framework')." ".get_option('blogname').")</small>" ,
-						"id" 	=> "subject",
-						"std" 	=> "",
-						"type" 	=> "input"),
+							"name" 	=> __("E-Mail Subject", 'avia_framework' ),
+							"desc" 	=> __("You can define a custom Email Subject for your form here. If left empty the subject will be", 'avia_framework' ).": <small>".__("New Message", 'avia_framework') . " (".__('sent by contact form at','avia_framework')." ".get_option('blogname').")</small>" ,
+							"id" 	=> "subject",
+							"std" 	=> "",
+							"type" 	=> "input"
+							),
+					
+						array(
+							"name" 	=> __("Autoresponder from email address", 'avia_framework' ),
+							"desc" 	=> __("Enter the from email address for the autoresponder.", 'avia_framework' ) . " (" .__( "Default:", 'avia_framework' ) . " " . get_option( 'admin_email' ) . ")",
+							"id" 	=> "autoresponder_email",
+							"std" 	=> get_option('admin_email'),
+							"type" 	=> "input"
+							),
+						
 						
 		 				array(
 							"name" 	=> __("Autorespond Text", 'avia_framework' ),
@@ -409,6 +417,7 @@ if ( !class_exists( 'avia_sc_contact' ) )
 							apply_filters( 'avf_sc_contact_default_atts', 
 										array('email' 		=> get_option('admin_email'),
 			                                 'button' 		=> __("Submit", 'avia_framework' ),
+											 'autoresponder_email'	=> '',
 			                                 'autorespond' 	=> '',
 			                                 'captcha' 		=> '',
 			                                 'subject'		=> '',
@@ -421,6 +430,18 @@ if ( !class_exists( 'avia_sc_contact' ) )
 			                                 'form_align'	=> ""
 
 			                                 )), $atts, $this->config['shortcode']);
+				
+				/**
+				 * For backwards comp. only - can be removed in future versions
+				 * In this case set default value in shortcode_atts to get_option('admin_email')
+				 * 
+				 * @since 4.4.2
+				 */
+				if( empty( $atts['autoresponder_email'] ) )
+				{
+					$atts['autoresponder_email'] = $atts['email'];
+				}
+				
 				extract($atts);
 
 				$post_id  = function_exists('avia_get_the_id') ? avia_get_the_id() : get_the_ID();
@@ -437,7 +458,7 @@ if ( !class_exists( 'avia_sc_contact' ) )
 					"myblogname" 			=> get_option('blogname'),
 					"autoresponder" 		=> $autorespond,
 					"autoresponder_subject" => __('Thank you for your Message!','avia_framework' ),
-					"autoresponder_email" 	=> $email,
+					"autoresponder_email" 	=> $autoresponder_email,
 					"subject"				=> $subject,
 					"form_class" 			=> $meta['el_class']." ".$color." ".$av_display_classes,
 					"multiform"  			=> true, //allows creation of multiple forms without id collision

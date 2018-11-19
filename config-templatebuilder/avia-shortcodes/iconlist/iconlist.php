@@ -165,8 +165,19 @@ if ( !class_exists( 'avia_sc_iconlist' ) )
 						"subtype" => array(	__('Default (Big List)', 'avia_framework' )  =>'',
 											__('Minimal small list', 'avia_framework' ) =>'av-iconlist-small',
 					)),
-					
-					
+
+                    array(
+                        "name" 	=> __("Animation", 'avia_framework' ),
+                        "desc" 	=> __("Should the items appear in an animated way?", 'avia_framework' ),
+                        "id" 	=> "animation",
+                        "type" 	=> "select",
+                        "std" 	=> "",
+                        "subtype" => array(
+                            __('Animation activated',  'avia_framework' ) =>'',
+                            __('Animation deactivated',  'avia_framework' ) =>'deactivated',
+                        )),
+
+
 					array(	
 						"name" 	=> __("Title Font Size", 'avia_framework' ),
 						"desc" 	=> __("Select a custom font size. Leave empty to use the default", 'avia_framework' ),
@@ -450,7 +461,8 @@ if ( !class_exists( 'avia_sc_iconlist' ) )
 				'custom_content_size' => '',
 				
 				
-				'iconlist_styling' => ''
+				'iconlist_styling' => '',
+                'animation' => ''
 				
 				), $atts, $this->config['shortcode']));
 				
@@ -504,11 +516,18 @@ if ( !class_exists( 'avia_sc_iconlist' ) )
 				if($this->icon_html_styling) $this->icon_html_styling = " style='{$this->icon_html_styling}'" ;
 				if($this->title_styling)  {	$this->title_styling = " style='{$this->title_styling}'" ; }
 				if($this->content_styling){ $this->content_styling = " style='{$this->content_styling}'" ; }
+
+
+				// animation
+                $animation_class = "";
+                if ($animation == ''){
+                    $animation_class = "avia-iconlist-animate";
+                }
 					
 					
 				$output	 = "";
 				$output .= "<div class='avia-icon-list-container {$av_display_classes} ".$meta['el_class']."'>";
-				$output .= "<ul class='avia-icon-list avia-icon-list-{$position} {$this->iconlist_styling} avia_animate_when_almost_visible'>";
+				$output .= "<ul class='avia-icon-list avia-icon-list-{$position} {$this->iconlist_styling} avia_animate_when_almost_visible {$animation_class}'>";
 				$output .= ShortcodeHelper::avia_remove_autop( $content, true );
 				$output .= "</ul>";
 				$output .= "</div>";

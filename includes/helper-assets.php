@@ -266,6 +266,8 @@ if( ! function_exists( 'av_disable_unused_assets' ) )
 			$buttons = json_encode(avia_get_option('msg_bar_buttons', array()));
 			if(strpos($buttons, 'info_modal') !== false)
 			{
+				unset($disabled['av_heading']);
+				unset($disabled['av_hr']);
 				unset($disabled['av_tab_container']);
 			}
 		}

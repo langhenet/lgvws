@@ -532,6 +532,21 @@ if ( ! class_exists( 'avia_sc_gmaps' ) )
 					}
 					
 					$html_overlay .= '<span>' . $text_overlay . '</span></a>';
+					
+					/**
+					 * @since 4.4.2
+					 * @param string		output string
+					 * @param object		context
+					 * @param array
+					 * @param array
+					 */
+					$filter_args = array(
+								$html_overlay,
+								$this,
+								$atts,
+								$meta
+						);
+					$html_overlay = apply_filters_ref_array( 'avf_google_maps_confirm_overlay', $filter_args );
 				}
 				
 				//an overlay that might be necessary if the user disables the map by the use of our [av_privacy_google_maps] function

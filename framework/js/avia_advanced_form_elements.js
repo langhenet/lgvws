@@ -166,6 +166,8 @@ verifies an input field by calling a user defined ajax function
 						$.ajax({
 								type: "POST",
 								url: window.ajaxurl,
+								dataType: 'json',
+								cache: false,
 								data: 
 								{
 									action: 'avia_ajax_verify_input',
@@ -191,13 +193,28 @@ verifies an input field by calling a user defined ajax function
 								},
 								success: function(response)
 								{
-									if(response.indexOf('avia_trigger_save') !== -1)
+									if( response.success !== true )
 									{
-										$('.avia_submit:eq(0)').trigger('click');
-										response = response.replace('avia_trigger_save', "");
+										return;
 									}
 									
-									answer.html(response);
+									
+									
+									if( 'undefined' != typeof response.update_input_fields )
+									{
+										$.each( response.update_input_fields, function( id, value ) {
+														$( "input[name='" + id + "']" ).val( value );
+													});
+									}
+									
+									var result = response.html;
+									if(result.indexOf('avia_trigger_save') !== -1)
+									{
+										$('.avia_submit:eq(0)').removeClass('avia_button_inactive').trigger('click');
+										result = result.replace('avia_trigger_save', "");
+									}
+									
+									answer.html(result);
 									
 								},
 								complete: function(response)

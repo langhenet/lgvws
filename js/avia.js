@@ -38,8 +38,10 @@
 		if($.fn.avia_iso_sort)
 		$('.grid-sort-container').avia_iso_sort();
 
-		
-		$.avia_utilities.avia_ajax_call();
+		// Checks height of content and sidebar and applies shadow class to the higher one
+        AviaSidebarShaowHelper();
+
+        $.avia_utilities.avia_ajax_call();
 		
 		
     });
@@ -160,7 +162,23 @@
 	}
 
 
+    // -------------------------------------------------------------------------------------------
+    // Tiny helper for sidebar shadow
+    // -------------------------------------------------------------------------------------------
 
+	function AviaSidebarShaowHelper(){
+
+		var $sidebar_container = $('.sidebar_shadow#top #main .sidebar');
+		var $content_container = $('.sidebar_shadow .content');
+
+		if ($sidebar_container.height() >= $content_container.height()) {
+			$sidebar_container.addClass('av-enable-shadow');
+		}
+		else{
+			$content_container.addClass('av-enable-shadow');
+		}
+		
+	}
 
 
 	// -------------------------------------------------------------------------------------------
@@ -509,7 +527,12 @@
     {
     	//hover overlay for mobile device doesnt really make sense. in addition it often slows down the click event
     	if($.avia_utilities.isMobile) return;
-    
+	    
+		if( $('body').hasClass( 'av-disable-avia-hover-effect' ) )
+		{
+			return;
+		}
+	    
 		var overlay = "", cssTrans = $.avia_utilities.supports('transition');
 		
 		if(container == 'body')
@@ -859,8 +882,18 @@
 			logo_container	= $('.av-logo-container .inner-container'),
 			menu_in_logo_container = logo_container.find('.main_menu'),
 			cloneFirst		= htmlEL.is('.html_av-submenu-display-click.html_av-submenu-clone, .html_av-submenu-display-hover.html_av-submenu-clone'),
-			menu_generated 	= false,
-			set_list_container_height = function()
+			menu_generated 	= false;
+	
+		/**
+		 * Check for alternate mobile menu
+		 */
+		var alternate = $('#avia_alternate_menu');
+		if( alternate.length > 0 )
+		{
+			menu = alternate;
+		}
+	
+		var	set_list_container_height = function()
 			{
 				//necessary for ios since the height is usually not 100% but 100% - menu bar which can be requested by window.innerHeight
 				if($.avia_utilities.isMobile)
@@ -1314,11 +1347,15 @@
         bind_events: function()
         {
             this.scope.on('keyup', '#s:not(".av_disable_ajax_search #s")' , $.proxy( this.try_search, this));
+            this.scope.on('click', '#s.av-results-parked' , $.proxy( this.reset, this));
 
         },
 
         try_search: function(e)
         {
+            var form = $(e.currentTarget).parents('form:eq(0)'),
+                resultscontainer = form.find('.ajax_search_response');
+
             clearTimeout(this.timer);
 
             //only execute search if chars are at least "minChars" and search differs from last one
@@ -1333,18 +1370,37 @@
                 this.timer = setTimeout($.proxy( this.reset, this, e), this.options.delay);
 			}
 
+			// close on ESC
+            if (e.keyCode === 27) {
+                this.reset(e);
+			}
+
         },
 
 		reset: function(e){
             var form = $(e.currentTarget).parents('form:eq(0)'),
 				resultscontainer = form.find('.ajax_search_response'),
-				alternative_resultscontainer = $(form.attr('data-ajaxcontainer')).find('.ajax_search_response');
+				alternative_resultscontainer = $(form.attr('data-ajaxcontainer')).find('.ajax_search_response'),
+				searchInput = $(e.currentTarget);
 
-            resultscontainer.hide('slow', function(){ resultscontainer.remove(); });
-            alternative_resultscontainer.hide('slow', function(){ resultscontainer.remove(); });
+            // bring back results that were hidden when user clicked outside the form element
+            if ($(e.currentTarget).hasClass('av-results-parked')) {
+                resultscontainer.show();
+                alternative_resultscontainer.show();
 
-            // in case results container is attached to body
-			$('body > .ajax_search_response').hide('slow', function(){ $(this).remove(); });
+                // in case results container is attached to body
+                $('body > .ajax_search_response').show();
+			}
+			else {
+                // remove results and delete the input value
+                resultscontainer.remove();
+                alternative_resultscontainer.remove();
+                searchInput.val('');
+
+                // in case results container is attached to body
+                $('body > .ajax_search_response').remove();
+			}
+
 
 		},
 
@@ -1367,12 +1423,12 @@
 
             // define results div if not found
             if(!results.length) {
-                results = $('<div class="ajax_search_response"></div>');
+                results = $('<div class="ajax_search_response" style="display:none;"></div>');
             }
 
             // add class to differentiate betweeen search element and header search
 			if (form.attr('id') == 'searchform_element'){
-				results.addClass('searchform_element_results');
+				results.addClass('av_searchform_element_results');
 			}
 
             //check if the form got get parameters applied and also apply them
@@ -1456,7 +1512,6 @@
             results.appendTo(resultscontainer);
 
 
-
             //return if we already hit a no result and user is still typing
             if(results.find('.ajax_not_found').length && e.currentTarget.value.indexOf(this.lastVal) != -1) return;
 
@@ -1475,7 +1530,7 @@
 				success: function(response)
 				{
 				    if(response == 0) response = "";
-                    results.html(response);
+                    results.html(response).show();
 				},
 				complete: function()
 				{
@@ -1483,7 +1538,19 @@
                     form.removeClass('ajax_loading_now');
                 }
 			});
+
+            // Hide search resuls if user clicks anywhere outside the form element
+			$(document).on('click',function(e) {
+			 if(!$(e.target).closest(form).length) {
+				 if($(results).is(":visible")) {
+					 $(results).hide();
+                     currentField.addClass('av-results-parked');
+				 }
+			 }
+			});
         }
+
+
     };
 
 
