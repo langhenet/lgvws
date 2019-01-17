@@ -970,7 +970,7 @@ if ( !class_exists( 'avia_sc_slider_full' ) )
 			         $background .= "background-position: {$position}; ";
 			    }
 			    
-			    if($background) $params['bg'] = "style = '{$background}'";
+			    if($background) $params['bg'] = $background;
 			    
 				$skipSecond = false;
 				avia_sc_slider_full::$slide_count++;

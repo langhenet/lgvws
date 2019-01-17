@@ -62,7 +62,7 @@
 	border: none;
 
 	background-size: cover;
-	background-position: center center;
+	background-position: left center;
 	border-radius: 10px;
 
 	.dashicons-dismiss {
@@ -91,10 +91,10 @@
 		padding: 0 20px;
 		border-radius: 38px;
 		border: 2px solid rgba(255,255,255,0.2);
-		background: transparent;
+		background: transparent !important;
 		box-shadow: none;
 
-		color: white;
+		color: white !important;
 		font-family: Nunito;
 		font-size: 14px;
 		font-weight: 500;

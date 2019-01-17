@@ -46,7 +46,7 @@ if( ! class_exists( 'Avia_Theme_Updater' ) )
 		
 		/**
 		 * function wp_update_themes calls filter pre_set_site_transient_update_themes twice during theme version check.
-		 * As we have a rate limiting by Envato we cache the result here
+		 * As we have a rate limiting by Envato we cache the result here. We also cache the results in a transient.
 		 * 
 		 * @since 4.4.3
 		 * @var array 
@@ -59,7 +59,15 @@ if( ! class_exists( 'Avia_Theme_Updater' ) )
 		 * @since 4.4.3
 		 * @var string 
 		 */
-		protected $updater_transient_name;
+		protected $transient_logfile_name;
+		
+		/**
+		 * Optionname that saves last update from envato to avoid multiple calls within a given period
+		 * 
+		 * @since 4.5.2
+		 * @var string 
+		 */
+		protected $transient_cache_name;
 
 		/**
 		 * Return the instance of this class
@@ -88,7 +96,8 @@ if( ! class_exists( 'Avia_Theme_Updater' ) )
 			$this->personal_token = '';
 			$this->envato_api = null;
 			$this->envato_results_cache = null;
-			$this->updater_transient_name = '';
+			$this->transient_logfile_name = '';
+			$this->transient_cache_name = '';
 			
 			$this->init( $args );
 			
@@ -176,8 +185,8 @@ if( ! class_exists( 'Avia_Theme_Updater' ) )
 		 * Checks for theme update and adds theme package to update array
 		 * 
 		 * @since 4.4.3
-		 * @param array $updates
-		 * @return array
+		 * @param stdClass $updates
+		 * @return stdClass
 		 */
 		public function handler_pre_set_site_transient_update_themes( $updates )
 		{
@@ -196,23 +205,40 @@ if( ! class_exists( 'Avia_Theme_Updater' ) )
 			if( ! $api instanceof Avia_Envato_Base_API )
 			{
 				/**
-				 * We have no Envato token -> clear all saved log data
+				 * We have no Envato token -> clear all saved log data and cache
 				 */
 				$this->clear_updater_log();
+				$this->clear_cache();
+				
 				return $updates;
+			}
+			
+			if( current_theme_supports( 'avia_envato_extended_log' ) )
+			{
+				$this->add_to_updater_log( new Avia_Envato_Exception( __( 'Theme update check started', 'avia_framework' ) ) );
 			}
 			
 			/**
 			 * If we have already cached the result from Envato we can take this and avoid multiple requests for the same data
 			 */
-			if( is_array( $this->envato_results_cache ) )
+			if( $this->get_cache() )
 			{
 				foreach( $this->envato_results_cache as $theme => $update ) 
 				{
 					$updates->response[ $theme ] = $update;
 				}
 				
+				if( current_theme_supports( 'avia_envato_extended_log' ) )
+				{
+					$this->add_to_updater_log( new Avia_Envato_Exception( __( 'Cache used', 'avia_framework' ) ) );
+				}
+				
 				return $updates;
+			}
+			
+			if( current_theme_supports( 'avia_envato_extended_log' ) )
+			{
+				$this->add_to_updater_log( new Avia_Envato_Exception( __( 'No cache, Envato API request started', 'avia_framework' ) ) );
 			}
 			 
 			try
@@ -243,8 +269,8 @@ if( ! class_exists( 'Avia_Theme_Updater' ) )
 				return $updates;
 			}
 			
-			$this->envato_results_cache = array();
 			$errors_occured = false;
+			$package_errors = array();
 			
 			foreach( $purchases as $purchase ) 
 			{
@@ -257,21 +283,27 @@ if( ! class_exists( 'Avia_Theme_Updater' ) )
 					$current = $filtered[ $theme_name ];
 					if( version_compare( $current->Version, $purchase['item']['wordpress_theme_metadata']['version'], '<' ) ) 
 					{
-						try 
+						try
 						{
 							$url = $api->get_wp_download_url( $purchase['item']['id'] );
 							$update = array(
-											"url"			=> $purchase['item']['url'],
-											"new_version"	=> $purchase['item']['wordpress_theme_metadata']['version'],
-											"package"		=> $url
+											'url'			=> $purchase['item']['url'],
+											'new_version'	=> $purchase['item']['wordpress_theme_metadata']['version'],
+											'package'		=> $url
 										);
 											
 							$updates->response[ $current->Stylesheet ] = $update;
-							$this->envato_results_cache[ $current->Stylesheet ] = $update;
+							$this->add_to_cache( $current->Stylesheet, $update );
+							
+							if( current_theme_supports( 'avia_envato_extended_log' ) )
+							{
+								$this->add_to_updater_log( new Avia_Envato_Exception( sprintf( __( 'Successfull download package for %s - %s', 'avia_framework' ), $current->Stylesheet, $update['new_version'] ) ) );
+							}
 						} 
 						catch( Avia_Envato_Exception $ex ) 
 						{
 							$errors_occured = true;
+							$package_errors[] = $current->Name . ' - ' . $purchase['item']['wordpress_theme_metadata']['version'];
 							continue;
 						}
 					}
@@ -279,14 +311,18 @@ if( ! class_exists( 'Avia_Theme_Updater' ) )
 			}
 			
 			/**
-			 * In case of an error we must try again to get the results
+			 * In case of an error we should try again to get the results.
+			 * As we had troubles with too many requests we keep what we have and try again
+			 * when cache is expired.
 			 */
 			if( $errors_occured )
 			{
-				$this->envato_results_cache = null;
+//				$this->clear_local_cache();
 			}
 			
-			$this->add_to_updater_log( $api );
+			$this->update_cache();
+			
+			$this->add_to_updater_log( $api, $package_errors );
 			return $updates;
 		}
 		
@@ -531,20 +567,137 @@ if( ! class_exists( 'Avia_Theme_Updater' ) )
 		
 		
 		/**
-		 * Returns the transient name depending on theme name to 
+		 * Returns the transient logfile name depending on theme name
+		 * 
 		 * @since 4.4.3
 		 * @return string
 		 */
-		public function get_updater_transient_name()
+		public function get_logfile_name()
 		{
-			if( empty( $this->updater_transient_name ) )
+			if( empty( $this->transient_logfile_name ) )
 			{
-				$this->updater_transient_name = apply_filters( 'avf_theme_updater_transient_name', '_av_' . avia_auto_updates::get_themename( 'parent' ) . '_updater_log' );
+				$this->transient_logfile_name = apply_filters( 'avf_theme_updater_transient_logfile_name', '_av_' . avia_auto_updates::get_themename( 'parent' ) . '_updater_log' );
 			}
 			
-			return Avia_Theme_Updater::validate_transient( $this->updater_transient_name );
+			return Avia_Theme_Updater::validate_transient( $this->transient_logfile_name );
 		}
 		
+		/**
+		 * Returns the transient logfile name depending on theme name
+		 * 
+		 * @since 4.5.2
+		 * @return string
+		 */
+		public function get_cache_name()
+		{
+			if( empty( $this->transient_cache_name ) )
+			{
+				$this->transient_cache_name = apply_filters( 'avf_theme_updater_transient_cache_name', '_av_' . avia_auto_updates::get_themename( 'parent' ) . '_updater_cache' );
+			}
+			
+			return Avia_Theme_Updater::validate_transient( $this->transient_cache_name );
+		}
+		
+		
+		/**
+		 * Tries to read cache from transient and stores it in local array
+		 * 
+		 * @since 4.5.2
+		 * @return boolean				true, if cache exists
+		 */
+		protected function get_cache()
+		{
+			static $force_check_executed = false;
+			
+			if( is_array( $this->envato_results_cache ) )
+			{
+				return true;
+			}
+			
+			/**
+			 * From theme option page we want to force a check
+			 */
+			if( isset( $_REQUEST['force-check'] ) && ! $force_check_executed )
+			{
+				$force_check_executed = true;
+				return false;
+			}
+			
+			$transient = $this->get_cache_name();
+			$cache = get_transient( $transient );
+			
+			if( false === $cache || ! is_array( $cache ) )
+			{
+				return false;
+			}
+			
+			$this->envato_results_cache = $cache;
+			return true;
+		}
+		
+		/**
+		 * Add update info to internal cache array
+		 * 
+		 * @since 4.5.2
+		 * @param string $theme_name
+		 * @param array $update
+		 */
+		protected function add_to_cache( $theme_name, $update )
+		{
+			if( ! is_array( $this->envato_results_cache ) )
+			{
+				$this->envato_results_cache = array();
+			}
+			
+			$this->envato_results_cache[ $theme_name ] = $update;
+		}
+		
+		/**
+		 * Clears the local cache
+		 * 
+		 * @since 4.5.2
+		 */
+		protected function clear_local_cache()
+		{
+			unset( $this->envato_results_cache );
+			$this->envato_results_cache = null;
+		}
+		
+		/**
+		 * Saves cache to transient
+		 * 
+		 * @since 4.5.2
+		 * @param boolean $set_locale
+		 */
+		protected function update_cache( $set_locale = false )
+		{
+			/**
+			 * We block update requests in any case to limit Envato API calls for download URL's !!
+			 */
+			$cache = is_array( $this->envato_results_cache ) ? $this->envato_results_cache : array();
+			
+			if( $set_locale )
+			{
+				$this->envato_results_cache = $cache;
+			}
+			
+			$transient = $this->get_cache_name();
+			$timeout = apply_filters( 'avf_updater_cache_timeout', 12 * HOUR_IN_SECONDS );
+			
+			return set_transient( $transient, $cache, $timeout );
+		}
+		
+		/**
+		 * Clears local and saved cache
+		 * 
+		 * @since 4.5.2
+		 */
+		protected function clear_cache()
+		{
+			$this->clear_local_cache();
+			$this->update_cache();
+		}
+
 		/**
 		 * Returns the stored transient or an empty array
 		 * 
@@ -553,7 +706,7 @@ if( ! class_exists( 'Avia_Theme_Updater' ) )
 		 */
 		public function get_updater_log()
 		{
-			$transient = $this->get_updater_transient_name();
+			$transient = $this->get_logfile_name();
 			$log = get_transient( $transient );
 			return ( false !== $log ) ? $log : array();
 		}
@@ -567,8 +720,8 @@ if( ! class_exists( 'Avia_Theme_Updater' ) )
 		 */
 		protected function update_updater_log( array $log )
 		{
-			$transient = $this->get_updater_transient_name();
-			$timeout = apply_filters( 'avf_updater_log_timeout',MONTH_IN_SECONDS );
+			$transient = $this->get_logfile_name();
+			$timeout = apply_filters( 'avf_updater_log_timeout', MONTH_IN_SECONDS );
 			
 			return set_transient( $transient, $log, $timeout );
 		}
@@ -589,39 +742,54 @@ if( ! class_exists( 'Avia_Theme_Updater' ) )
 		 * Adds an update message to the queue and removes the oldest if necessary
 		 * 
 		 * @since 4.4.3
-		 * @param Avia_Envato_Base_API $api
-		 * @param string $clear_errors				'clear_errors' | 'no_clear_errors'
+		 * @param Avia_Envato_Base_API|Avia_Envato_Exception  $info
+		 * @param array $package_errors
+		 * @param string $clear_errors									'clear_errors' | 'no_clear_errors'
 		 * @return boolean
 		 */
-		protected function add_to_updater_log( Avia_Envato_Base_API $api, $clear_errors = 'clear_errors' )
+		protected function add_to_updater_log( $info, $package_errors = null, $clear_errors = 'clear_errors' )
 		{
 			$log = $this->get_updater_log();
 			
-			$max_entries = apply_filters( 'avf_updater_log_max_entries', 20 );
+			$entries = ! current_theme_supports( 'avia_envato_extended_log' ) ? 20 : 500;
+			$max_entries = apply_filters( 'avf_updater_log_max_entries', $entries );
+			
 			if( count( $log ) >= $max_entries )
 			{
-				array_shift( $log );
+				$log = array_slice( $log, count( $log ) - $max_entries + 1 );
 			}
 			
-			$errors = $api->get_errors();
-			if( $errors instanceof WP_Error )
+			if( $info instanceof Avia_Envato_Base_API )
+			{
+				$entry = array(
+								'time'		=> date( 'Y/m/d H:i' ),
+								'errors'	=> array(),
+							);
+				
+				$errors = $info->get_errors();
+				if( $errors instanceof WP_Error )
+				{
+					$entry['errors'] = $errors->get_error_messages();
+				}
+				
+				if( is_array( $package_errors ) )
+				{
+					$entry['package_errors'] = trim( implode( ', ', $package_errors ) );
+				}
+				
+				$log[] = $entry;
+
+				if( 'clear_errors' == $clear_errors )
+				{
+					$info->clear_errors();
+				}
+			}
+			else if( $info instanceof Avia_Envato_Exception )
 			{
 				$log[] = array(
-						'time'		=> date( 'Y/m/d H:i' ),
-						'errors'	=> $errors->get_error_messages()
-					);
-			}
-			else 
-			{
-				$log[] = array(
-						'time'		=> date( 'Y/m/d H:i' ),
-						'errors'	=> array()
-					);
-			}
-			
-			if( 'clear_errors' == $clear_errors )
-			{
-				$api->clear_errors();
+							'time'		=> date( 'Y/m/d H:i' ),
+							'info'		=> $info->getMessage()
+						);
 			}
 			
 			return $this->update_updater_log( $log );

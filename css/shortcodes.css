@@ -370,9 +370,6 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAANCAYA
 
 #top select[multiple], #top .avia_ajax_form .select[multiple]{background-image:none;} 
 
-/*remove bg on firefox*/
-.avia-mozilla #top select, .avia-mozilla #top .avia_ajax_form .select, .avia-mozilla #top .entry-content-wrapper select{ background-image:none; }
-
 #top select[multiple] { background-image:none; }
 
 

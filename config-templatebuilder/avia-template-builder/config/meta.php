@@ -17,7 +17,8 @@ $boxes = array(
 );
 
 /**
- * used_by:		enfold\config-woocommerce\admin-options.php  avia_woocommerce_product_options()			10
+ * @used_by:		enfold\config-woocommerce\admin-options.php  avia_woocommerce_product_options()			10
+ * @used_by:		enfold\config-gutenberg\class-avia-gutenberg.php										20
  */
 $boxes = apply_filters('avf_builder_boxes', $boxes);
 
@@ -343,7 +344,12 @@ $elements = array(
 
 
 
-
+/**
+ * @used_by:		enfold\functions-enfold.php		avia_add_feature_image_checkbox()						10
+ * @used_by:		enfold\functions-enfold.php		av_builder_meta_box_elements_content()					10
+ * @used_by:		enfold\config-woocommerce\admin-options.php  avia_woocommerce_product_options()			10
+ * @used_by:		enfold\config-gutenberg\class-avia-gutenberg.php										20
+ */
 $elements = apply_filters('avf_builder_elements', $elements);
 
 

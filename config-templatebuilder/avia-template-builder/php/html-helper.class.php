@@ -1990,26 +1990,40 @@ if ( ! class_exists( 'AviaHtmlHelper' ) )
 		    return $linkoptions;
 		}
 		
+		/**
+		 * Returns an option array of all registered post types
+		 * 
+		 * @param array $args
+		 * @return array
+		 */
+		static function get_registered_post_type_array( $args = array() )
+		{
+			$post_types = get_post_types( $args, 'objects' );
+			$post_type_option = array();
 
-
-
-        static function get_registered_post_type_array($args = '')
-        {
-            $post_types = get_post_types($args,'objects');
-            $post_type_option = array();
-
-            if(!empty($post_types))
-            {
-                foreach($post_types as $post_type)
-                {
-                    $post_type_option[$post_type->label] = $post_type->name;
-                }
-            }
+			if( ! empty( $post_types ) )
+			{
+				foreach( $post_types as $post_type )
+				{
+					/**
+					 * Fixes a bug with non unique labels  
+					 */
+					if( ! isset( $post_type_option[ $post_type->label ] ) )
+					{
+						$post_type_option[ $post_type->label ] = $post_type->name;
+					}
+					else
+					{
+						$post_type_option[ "{$post_type->label} ({$post_type->name})" ] = $post_type->name;
+					}
+				}
+			}
             
-            $post_type_option = apply_filters('avf_registered_post_type_array', $post_type_option, $args);
+			$post_type_option = apply_filters( 'avf_registered_post_type_array', $post_type_option, $args );
 
-            return $post_type_option;
-        }
+			return $post_type_option;
+		}
+
 
 
 	} // end class

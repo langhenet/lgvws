@@ -104,8 +104,9 @@ if ( !class_exists( 'avia_sc_image' ) )
 							"type" 	=> "select",
 							"std" 	=> "",
 							"subtype" => array(
-												__('No',  'avia_framework' ) 	=>'',
-												__('Yes, slightly increase the image size',  'avia_framework' ) 	=>'av-hover-grow',
+												__('No',  'avia_framework' ) 	=> '',
+												__('Yes, slightly increase the image size',  'avia_framework' ) 	=> 'av-hover-grow',
+												__('Yes, slightly zoom the image',  'avia_framework' )				=> 'av-hover-grow av-hide-overflow',
 												)
 							),
 							

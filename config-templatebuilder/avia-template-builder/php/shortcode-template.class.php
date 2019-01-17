@@ -307,6 +307,20 @@ if ( !class_exists( 'aviaShortcodeTemplate' ) ) {
 		*/
 		public function shortcode_handler_prepare($atts, $content = "", $shortcodename = "", $fake = false)
 		{
+			/**
+			 * WP5.0 with gutenberg make REST_API calls to save post content which makes problems with $meta['index'].
+			 * As we do not need the output we can skip it.
+			 * 
+			 * @used_by				Avia_Gutenberg						10
+			 * @since 4.5.1
+			 */
+			$args = array( true, $this, $atts, $content, $shortcodename, $fake );
+			$continue = apply_filters_ref_array( 'avf_in_shortcode_handler_prepare', array( &$args ) );
+			if( ! $continue )
+			{
+				return;
+			}
+			
 			//dont use any shortcodes in backend
 			$meta = array();
 
@@ -393,7 +407,7 @@ if ( !class_exists( 'aviaShortcodeTemplate' ) ) {
 			
 			$meta = apply_filters('avf_template_builder_shortcode_meta', $meta, $atts, $content, $shortcodename);
 			
-			
+		
 			//if the element is disabled do load a notice for admins but do not show the info for other visitors)
 			
 			if(empty( $this->builder->disabled_assets[ $this->config['shortcode'] ]) || empty( $this->config['disabling_allowed'] ) )

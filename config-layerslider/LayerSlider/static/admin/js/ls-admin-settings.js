@@ -301,6 +301,19 @@ jQuery(function($) {
 		}
 	});
 
+	$('#ls-privacy-form .ls-checkbox').click(function(e) {
+
+		var $this 		= $(this),
+			warningText = $this.parent().data('warning');
+
+		if( $this.hasClass('on') && warningText ) {
+			if( ! confirm( warningText ) ) {
+				e.preventDefault();
+				return false;
+			}
+		}
+	});
+
 
 	// Google CDN version warning
 	$('#ls_use_custom_jquery').on('click', '.ls-checkbox', function(e) {

@@ -13,6 +13,149 @@ if ( !class_exists( 'avia_sc_icongrid' ) )
 	class avia_sc_icongrid extends aviaShortcodeTemplate
 	{
 			/**
+			 * @since 4.5
+			 * @var array 
+			 */
+			protected $screen_options;
+			
+			/**
+			 * @since 4.5
+			 * @var array 
+			 */
+			protected $icon_styling;
+			
+			/**
+			 * @since 4.5
+			 * @var array 
+			 */
+			protected $title_styling;
+			
+			/**
+			 * @since 4.5
+			 * @var array 
+			 */
+			protected $subtitle_styling;
+			
+			/**
+			 * @since 4.5
+			 * @var array 
+			 */
+			protected $content_styling;
+			
+			/**
+			 * @since 4.5
+			 * @var array 
+			 */
+			protected $flipbox_front_styling;
+			
+			/**
+			 * @since 4.5
+			 * @var array 
+			 */
+			protected $flipbox_back_styling;
+			
+			/**
+			 * @since 4.5
+			 * @var array 
+			 */
+			protected $wrapper_styling;
+			
+			/**
+			 * @since 4.5
+			 * @var array 
+			 */
+			protected $list_styling;
+			
+			/**
+			 * @since 4.5
+			 * @var string 
+			 */
+			protected $icongrid_styling;
+			
+			/**
+			 * @since 4.5
+			 * @var string 
+			 */
+            protected $icongrid_numrow;
+			
+			/**
+			 * @since 4.5
+			 * @var string 
+			 */
+            protected $icongrid_borders;
+			
+			/**
+			 * @since 4.5.1
+			 * @var string 
+			 */
+			protected $custom_title_size;
+			
+			/**
+			 * @since 4.5.1
+			 * @var string 
+			 */
+			protected $custom_subtitle_size;
+			
+			/**
+			 * @since 4.5.1
+			 * @var string 
+			 */
+			protected $custom_content_size;
+			
+			/**
+			 * @since 4.5.1
+			 * @var string 
+			 */
+			protected $custom_icon_size;
+		
+			/**
+			 * 
+			 * @since 4.5.1
+			 * @param AviaBuilder $builder
+			 */
+			public function __construct( $builder ) 
+			{
+				parent::__construct( $builder );
+				
+				$this->screen_options = array();
+				$this->icon_styling = array();
+                $this->title_styling = array();
+                $this->subtitle_styling = array();
+				$this->content_styling = array();
+				$this->flipbox_front_styling = array();
+                $this->flipbox_back_styling = array();
+                $this->wrapper_styling = array();
+                $this->list_styling = array();
+
+				$this->icongrid_styling = '';
+                $this->icongrid_numrow = '';
+                $this->icongrid_borders = '';
+				$this->custom_title_size = '';
+				$this->custom_subtitle_size = '';
+				$this->custom_content_size = '';
+				$this->custom_icon_size = '';
+			}
+			
+			/**
+			 * @since 4.5.1
+			 */
+			public function __destruct() 
+			{
+				parent::__destruct();
+				
+				unset( $this->screen_options );
+				unset( $this->icon_styling );
+				unset( $this->title_styling );
+				unset( $this->subtitle_styling );
+				unset( $this->content_styling );
+				unset( $this->flipbox_front_styling );
+				unset( $this->flipbox_back_styling );
+				unset( $this->wrapper_styling );
+				unset( $this->list_styling );
+			}
+			
+			
+			/**
 			 * Create the config array for the shortcode button
 			 */
 			function shortcode_insert_button()
@@ -291,7 +434,7 @@ if ( !class_exists( 'avia_sc_icongrid' ) )
 
                     array(
                         "name" 	=> __("Title Font Size", 'avia_framework' ),
-                        "desc" 	=> __("Select a custom font size. Leave empty to use the default", 'avia_framework' ),
+                        "desc" 	=> __("Select a custom font size (used for all screen sizes). Leave empty to use the default", 'avia_framework' ),
                         "id" 	=> "custom_title_size",
                         "type" 	=> "select",
                         "std" 	=> "",
@@ -300,7 +443,7 @@ if ( !class_exists( 'avia_sc_icongrid' ) )
                     ),
                     array(
                         "name" 	=> __("Sub-Title Font Size", 'avia_framework' ),
-                        "desc" 	=> __("Select a custom font size. Leave empty to use the default", 'avia_framework' ),
+                        "desc" 	=> __("Select a custom font size (used for all screen sizes). Leave empty to use the default", 'avia_framework' ),
                         "id" 	=> "custom_subtitle_size",
                         "type" 	=> "select",
                         "std" 	=> "",
@@ -310,7 +453,7 @@ if ( !class_exists( 'avia_sc_icongrid' ) )
 
 					array(	
 						"name" 	=> __("Content Font Size", 'avia_framework' ),
-						"desc" 	=> __("Select a custom font size. Leave empty to use the default", 'avia_framework' ),
+						"desc" 	=> __("Select a custom font size (used for all screen sizes). Leave empty to use the default", 'avia_framework' ),
 						"id" 	=> "custom_content_size",
 						"type" 	=> "select",
                         "container_class" => 'av_half',
@@ -320,7 +463,7 @@ if ( !class_exists( 'avia_sc_icongrid' ) )
 
                     array(
                         "name" 	=> __("Icon Font Size", 'avia_framework' ),
-                        "desc" 	=> __("Select a custom font size. Leave empty to use the default", 'avia_framework' ),
+                        "desc" 	=> __("Select a custom font size (used for all screen sizes). Leave empty to use the default", 'avia_framework' ),
                         "id" 	=> "custom_icon_size",
                         "type" 	=> "select",
                         "container_class" => 'av_half',
@@ -613,19 +756,23 @@ if ( !class_exists( 'avia_sc_icongrid' ) )
 				extract($this->screen_options); //return $av_font_classes, $av_title_font_classes and $av_display_classes
 				
 				extract(shortcode_atts(array(
-				    'font_color' => '',
-				    'custom_icon' => '',
-                    'custom_title' => '',
-                    'custom_subtitle' => '',
-				    'custom_content' => '',
-				    'bg_color' => '',
-				    'custom_front_bg' => '',
-                    'custom_back_bg' => '',
-                    'grid_color' => '',
-                    'custom_grid' => '',
-                    'icongrid_styling' => '',
-                    'icongrid_numrow' => '',
-                    'icongrid_borders' => ''
+				    'font_color'			=> '',
+				    'custom_icon'			=> '',
+                    'custom_title'			=> '',
+                    'custom_subtitle'		=> '',
+				    'custom_content'		=> '',
+				    'bg_color'				=> '',
+				    'custom_front_bg'		=> '',
+                    'custom_back_bg'		=> '',
+                    'grid_color'			=> '',
+                    'custom_grid'			=> '',
+                    'icongrid_styling'		=> '',
+                    'icongrid_numrow'		=> '',
+                    'icongrid_borders'		=> '',
+					'custom_title_size'		=> '',
+					'custom_subtitle_size'	=> '',
+					'custom_content_size'	=> '',
+					'custom_icon_size'		=> ''
 
 				), $atts, $this->config['shortcode']));
 
@@ -641,6 +788,11 @@ if ( !class_exists( 'avia_sc_icongrid' ) )
                 $this->icongrid_styling 	= "avia-icongrid-".$icongrid_styling;
                 $this->icongrid_numrow   	= "avia-icongrid-numrow-".$icongrid_numrow;
                 $this->icongrid_borders   	= "avia-icongrid-borders-".$icongrid_borders;
+				
+				$this->custom_title_size = $custom_title_size;
+				$this->custom_subtitle_size = $custom_subtitle_size;
+				$this->custom_content_size = $custom_content_size;
+				$this->custom_icon_size = $custom_icon_size;
 
                 if ($font_color == 'custom') {
                     if ( !empty($custom_icon ) ) $this->icon_styling['color'] = $custom_icon;
@@ -742,30 +894,46 @@ if ( !class_exists( 'avia_sc_icongrid' ) )
                     if ( !empty($atts['item_custom_front_bg']) ) $flipbox_front_styling['background_color'] = $atts['item_custom_front_bg'];
                     if ( !empty($atts['item_custom_back_bg']) ) $flipbox_back_styling['background_color'] = $atts['item_custom_back_bg'];
                 }
+				
+				if( is_numeric( $this->custom_title_size ) )
+				{
+					$title_styling['font-size'] = $this->custom_title_size . 'px';
+				}
+				
+				if( is_numeric( $this->custom_subtitle_size ) )
+				{
+					$subtitle_styling['font-size'] = $this->custom_subtitle_size . 'px';
+				}
+				
+				if( is_numeric( $this->custom_icon_size ) )
+				{
+					$icon_styling['font-size'] = $this->custom_icon_size . 'px';
+				}
+				
+				if( is_numeric( $this->custom_content_size ) )
+				{
+					$content_styling['font-size'] = $this->custom_content_size . 'px';
+				}
 
-                if (!empty($icon_styling)) {
-                    if (array_key_exists('color',$icon_styling)) {
-                        $icon_styling_str = AviaHelper::style_string($icon_styling, 'color', 'color');
-                    }
-                }
-
-                if (!empty($title_styling)) {
-                    if (array_key_exists('color',$title_styling)) {
-                        $title_styling_str = AviaHelper::style_string($title_styling, 'color', 'color');
-                    }
-                }
-
-                if (!empty($subtitle_styling)) {
-                    if (array_key_exists('color',$subtitle_styling)) {
-                        $subtitle_styling_str = AviaHelper::style_string($subtitle_styling, 'color', 'color');
-                    }
-                }
-
-                if (!empty($content_styling)) {
-                    if (array_key_exists('color',$content_styling)) {
-                        $content_styling_str = AviaHelper::style_string($content_styling, 'color', 'color');
-                    }
-                }
+				foreach( $title_styling as $key => $value ) 
+				{
+					$title_styling_str .= AviaHelper::style_string( $title_styling, $key, $key );
+				}
+				
+				foreach( $subtitle_styling as $key => $value ) 
+				{
+					$subtitle_styling_str .= AviaHelper::style_string( $subtitle_styling, $key, $key );
+				}
+				
+				foreach( $icon_styling as $key => $value ) 
+				{
+					$icon_styling_str .= AviaHelper::style_string( $icon_styling, $key, $key );
+				}
+                
+				foreach( $content_styling as $key => $value ) 
+				{
+					$content_styling_str .= AviaHelper::style_string( $content_styling, $key, $key );
+				}
 
                 if (!empty($flipbox_front_styling)){
                     if ($this->icongrid_styling == 'avia-icongrid-flipbox' && array_key_exists('background_color', $flipbox_front_styling)){
@@ -839,26 +1007,39 @@ if ( !class_exists( 'avia_sc_icongrid' ) )
                 $icongrid_subtitle = "";
                 $touch_js = " ontouchstart='this.classList.toggle(\"av-flip\");'";
 
-				$output  = "";
-				$output .= "<li><{$avia_icongrid_wrapper['start']} class='avia-icongrid-wrapper' {$wrapper_styling_str}>";
-                $output .= '<article '.$item_bg_str.' class="article-icon-entry '.$contentClass.'" '.avia_markup_helper(array('context' => 'entry','echo'=>false, 'custom_markup'=>$atts['custom_markup'])).'>';
-                $output .= "<div class='avia-icongrid-front' {$flipbox_front_styling_str}>";
-                $output .= "<div class='avia-icongrid-inner'>";
-                $output .= "<div {$icon_styling_str} class='avia-icongrid-icon  avia-font-".$atts['font']."'><span class='icongrid-char ' {$display_char}></span></div>";
-                $output .= '<header class="entry-content-header">';
+				$output  = "<li>";
+				$output .=	"<{$avia_icongrid_wrapper['start']} class='avia-icongrid-wrapper' {$wrapper_styling_str}>";
+                $output .=		'<article '.$item_bg_str.' class="article-icon-entry '.$contentClass.'" '.avia_markup_helper(array('context' => 'entry','echo'=>false, 'custom_markup'=>$atts['custom_markup'])).'>';
+                $output .=			"<div class='avia-icongrid-front' {$flipbox_front_styling_str}>";
+                $output .=				"<div class='avia-icongrid-inner'>";
+                $output .=					"<div {$icon_styling_str} class='avia-icongrid-icon  avia-font-".$atts['font']."'><span class='icongrid-char ' {$display_char}></span></div>";
+                $output .=					'<header class="entry-content-header">';
+				
                 $markup = avia_markup_helper(array('context' => 'entry_title','echo'=>false, 'custom_markup'=>$atts['custom_markup']));
                 $submarkup = avia_markup_helper(array('context' => 'entry_subtitle','echo'=>false, 'custom_markup'=>$atts['custom_markup']));
-                if(!empty($atts['title'])) $output .="<{$title_el} class='av_icongrid_title icongrid_title{$icongrid_title} {$av_title_font_classes}' {$markup} {$title_styling_str}>".$atts['title']."</{$title_el}>";
-                if(!empty($atts['subtitle'])) $output .="<{$subtitle_el} class='av_icongrid_subtitle icongrid_subtitle{$icongrid_subtitle} {$av_title_font_classes}' {$submarkup} {$subtitle_styling_str}>".$atts['subtitle']."</{$subtitle_el}>";
-                $output .= "</header>";
-                $output .= "</div></div>";
-                $output .= "<div class='avia-icongrid-content' {$flipbox_back_styling_str}>";
-                $output .= "<div class='avia-icongrid-inner' {$content_styling_str}>";
+                if( ! empty( $atts['title'] ) ) 
+				{
+					$output .=					"<{$title_el} class='av_icongrid_title icongrid_title{$icongrid_title} {$av_title_font_classes}' {$markup} {$title_styling_str}>".$atts['title']."</{$title_el}>";
+				}
+				if( ! empty( $atts['subtitle'] ) ) 
+				{
+					$output .=					"<{$subtitle_el} class='av_icongrid_subtitle icongrid_subtitle{$icongrid_subtitle} {$av_title_font_classes}' {$submarkup} {$subtitle_styling_str}>".$atts['subtitle']."</{$subtitle_el}>";
+				}
+				
+				$output .=					"</header>";
+                $output .=				"</div>";
+				$output .=			"</div>";
+                $output .=			"<div class='avia-icongrid-content' {$flipbox_back_styling_str}>";
+                $output .=				"<div class='avia-icongrid-inner' {$content_styling_str}>";
+				
                 $markup  = avia_markup_helper(array('context' => 'entry_content','echo'=>false, 'custom_markup'=>$atts['custom_markup']));
-                $output .= "<div class='avia-icongrid-text {$av_font_classes}' {$markup}>".ShortcodeHelper::avia_apply_autop(ShortcodeHelper::avia_remove_autop( $content ) )."</div>";
-                $output .= '</div></div>';
-                $output .= '</article>';
-                $output .= "</{$avia_icongrid_wrapper['end']}></li>";
+                
+				$output .=					"<div class='avia-icongrid-text {$av_font_classes}' {$markup}>".ShortcodeHelper::avia_apply_autop(ShortcodeHelper::avia_remove_autop( $content ) )."</div>";
+                $output .=				'</div>';
+				$output .=			'</div>';
+                $output .=		'</article>';
+                $output .=	"</{$avia_icongrid_wrapper['end']}>";
+				$output .= '</li>';
 
 				return $output;
 			}

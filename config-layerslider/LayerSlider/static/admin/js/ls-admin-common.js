@@ -649,3 +649,42 @@ jQuery(function($) {
 		$('#ls-share-template, .ls-overlay').remove();
 	});
 });
+
+
+var lsDisplayActivationWindow = function( windowProperties ) {
+
+	var handleWindow = function() {
+
+		var deafultProperties = {
+			into: 'body',
+			title: LS_l10n.activationFeature,
+			content: $('#tmpl-activation').text()
+		};
+
+
+		windowProperties = $.extend( true, deafultProperties, windowProperties );
+
+
+		kmUI.modal.open({
+			into: windowProperties.into,
+			title: windowProperties.title,
+			content: windowProperties.content,
+			width: 800,
+			height: 700,
+			clip: false,
+			overlayAnimate: 'fade'
+		});
+	};
+
+	if( kmUI.modal.state === 'opened' ) {
+
+		kmUI.overlay.close();
+		kmUI.modal.close( function() {
+			handleWindow();
+		});
+
+	} else {
+
+		handleWindow();
+	}
+}

@@ -22,6 +22,7 @@
 			menus		= $('.av-submenu-container'),
 			bordermod	= html.is('.html_minimal_header') ? 0 : 1,
 			fixed_frame	= $('.av-frame-top').height(),
+			burger_menu	= $('.av-burger-menu-main'),
 			calc_margin	= function()
 			{
 				html_margin = parseInt( html.css('margin-top'), 10);
@@ -47,7 +48,17 @@
 				var menu_pos	= this.offset().top,
 					top_pos 	= placeholder.offset().top,
 					scrolled	= win.scrollTop(),
-					modifier 	= html_margin, fixed = false;
+					modifier 	= html_margin, 
+					fixed		= false;
+			
+					/**
+					 * If we have burger menu active we ignore sticking submenus
+					 */
+					if( burger_menu.is(":visible") )
+					{
+						this.css({top: 'auto', position: 'absolute'}); fixed = false;
+						return;
+					}
 										
 					if(header.length) 
 					{
@@ -63,12 +74,12 @@
 					{
 						if(!fixed)
 						{
-							this.css({top: modifier - bordermod, position: 'fixed'}); fixed = true
+							this.css({top: modifier - bordermod, position: 'fixed'}); fixed = true;
 						}
 					}
 					else
 					{
-						this.css({top: 'auto', position: 'absolute'}); fixed = false
+						this.css({top: 'auto', position: 'absolute'}); fixed = false;
 					}
 					
 			},
@@ -103,7 +114,7 @@
              var menu = $(this), sticky = menu.filter('.av-sticky-submenu'),  placeholder = menu.next('.sticky_placeholder'), mobile_button = menu.find('.mobile_menu_toggle');
              
              
-             if(sticky.length) win.on( 'scroll',  function(){ window.requestAnimationFrame( $.proxy( check, sticky, placeholder) )} );
+             if(sticky.length) win.on( 'scroll debouncedresize',  function(){ window.requestAnimationFrame( $.proxy( check, sticky, placeholder) ); } );
 
              if(mobile_button.length)
              {
@@ -153,7 +164,7 @@
 		
 		
 		
-	}
+	};
 	
 	
 }(jQuery));

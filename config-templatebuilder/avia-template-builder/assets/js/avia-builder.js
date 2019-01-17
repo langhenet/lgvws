@@ -34,10 +34,6 @@ function avia_nl2br (str, is_xhtml)
 }
 
 
-
-
-
-
 //main builder js
 (function($)
 {
@@ -98,9 +94,20 @@ function avia_nl2br (str, is_xhtml)
         
         //var that holds the function to update the editor once updateTextarea() was executed, since updating the tinymce field requires too much resources on big sites
         this.update_timout	= false;
+		
+		//supress auto switching TinyMCE/HTML editor style for content editor when switching between ALB and standard editor 
+		//(used by Gutenberg, caused page reload with Edge browser when triggering HTML button)
+		this.disable_autoswitch_editor_style = false;
+		
+		this.builder_drag_drop_container = 'body';
         
         //activate the plugin
         this.set_up();
+		
+		/**
+		 * Allow 3rd party like Gutenberg add on to chain properly
+		 */
+		this.body_container.trigger( 'AviaBuilder_after_set_up', this );
     };
     
    	$.AviaBuilder.prototype = {
@@ -165,7 +172,7 @@ function avia_nl2br (str, is_xhtml)
 			this.switch_button.on('click', function(e)
 			{
                 e.preventDefault();
-				obj.switch_layout_mode();
+				obj.switch_layout_mode(e);
 			});
 			
 			
@@ -383,7 +390,7 @@ function avia_nl2br (str, is_xhtml)
 				scope  	= passed_scope || this.canvasParent,
 				params 	= 
 				{ 
-					appendTo: "body",
+					appendTo: this.builder_drag_drop_container,
 					handle: '>.menu-item-handle:not( .av-no-drag-drop .menu-item-handle )',
 					helper: "clone",
 					scroll: true,
@@ -638,7 +645,7 @@ function avia_nl2br (str, is_xhtml)
 		* Switches between the wordpress editor and the AviaBuilder editor
 		*
 		*/
-		switch_layout_mode: function()
+		switch_layout_mode: function(event)
 		{
 			var self = this, editor = this.tiny_active ? window.tinyMCE.get('content') : false;
 			
@@ -646,16 +653,23 @@ function avia_nl2br (str, is_xhtml)
 			
 			if(this.activeStatus.val() != 'active')
 			{
-				$('#content-html').trigger('click');
+				if( false === this.disable_autoswitch_editor_style )
+				{
+					$('#content-html').trigger('click');
+				}
+				
 				self.body_container.addClass('avia-advanced-editor-enabled');
 				self.classic_editor_wrap.addClass('avia-hidden-editor');
 				self.switch_button.addClass('avia-builder-active').text(self.switch_button.data('active-button'));
 				self.activeStatus.val('active');
 				self.canvasParent.removeClass('avia-hidden');
-					
+				
 				setTimeout(function()
 				{
-					$('#content-tmce').trigger('click');
+					if( false === this.disable_autoswitch_editor_style )
+					{
+						$('#content-tmce').trigger('click');
+					}
 					self.convertTextToInterface();
 					
 					/*
@@ -666,6 +680,7 @@ function avia_nl2br (str, is_xhtml)
 					}
 					*/
 					
+					self.body_container.trigger('AviaBuilder_after_switch_layout_mode', self.switch_button, self.activeStatus.val() );
 				},10);
 			}
 			else
@@ -686,6 +701,8 @@ function avia_nl2br (str, is_xhtml)
 					if(editor) editor.setContent("", {format:'html'});
 					this.classic_textarea.val("");
 				}
+				
+				this.body_container.trigger('AviaBuilder_after_switch_layout_mode', this.switch_button, this.activeStatus.val() );
 			}
 			
 			return false;
@@ -955,7 +972,7 @@ function avia_nl2br (str, is_xhtml)
 			}
 			
 			this.classic_textarea.val(content).trigger('av_update');
-			this.secureContent.val(content);
+			this.secureContent.val(content).trigger('av_secureContent_update');
 		},
 		
 		// create a snapshot for the undoredo function. timeout it so javascript has enough time to remove animation classes and hover states
@@ -979,7 +996,7 @@ function avia_nl2br (str, is_xhtml)
 		*/
 		convertTextToInterface: function(text)
 		{	
-            if(this.activeStatus.val() != "active") return;
+            if( this.activeStatus.val() != "active") return;
             
             this.body_container.addClass('avia-advanced-editor-enabled');
 		
@@ -1026,6 +1043,8 @@ function avia_nl2br (str, is_xhtml)
 				//obj.updateTextarea(); //dont update textarea on load, only when elements got edited
 				obj.canvas.removeClass('preloading');
 				obj.do_history_snapshot();
+				
+				obj.body_container.trigger('AviaBuilder_interface_loaded');
 			}
 		});
 			
@@ -1631,7 +1650,7 @@ function avia_nl2br (str, is_xhtml)
 			
 			return output;
 		}
-	}
+	};
 	
 	$(document).ready(function () 
 	{

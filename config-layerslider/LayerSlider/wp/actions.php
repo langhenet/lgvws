@@ -208,6 +208,11 @@ function ls_register_form_actions() {
 			}
 		}
 
+		// Privacy settings
+		if( isset( $_POST['ls_save_gdpr_settings'] ) ) {
+			ls_gdpr_settings( true );
+		}
+
 
 		// AJAX functions
 		add_action('wp_ajax_ls_save_slider', 'ls_save_slider');
@@ -222,8 +227,26 @@ function ls_register_form_actions() {
 		add_action('wp_ajax_ls_get_taxonomies', 'ls_get_taxonomies');
 		add_action('wp_ajax_ls_upload_from_url', 'ls_upload_from_url');
 		add_action('wp_ajax_ls_store_opened', 'ls_store_opened');
+		add_action('wp_ajax_ls_save_gdpr_settings', 'ls_gdpr_settings');
 
 	}
+}
+
+
+function ls_gdpr_settings( $redirect = false ) {
+
+	// Security check
+	check_admin_referer('ls-save-gdpr-settings');
+
+	update_option('layerslider-gdpr-consent', 1 );
+	update_option('layerslider-google-fonts-enabled', (int) array_key_exists('ls_gdpr_goole_fonts', $_POST) );
+	update_option('layerslider-aviary-enabled', (int) array_key_exists('ls_gdpr_aviary', $_POST) );
+
+	if( $redirect ) {
+		wp_redirect( admin_url('admin.php?page=layerslider-options&message=privacySuccess') );
+	}
+
+	die( json_encode( array( 'success' => true ) ) );
 }
 
 
@@ -808,7 +831,7 @@ function ls_import_online() {
 	if( ! $zip ) {
 		die(json_encode(array(
 			'success' => false,
-			'message' => __('LayerSlider couldn’t download your selected slider. Please check LayerSlider -> Settings -> System Status for potential issues. The WP Remote functions may be unavailable or your web hosting provider has to allow external connections to our domain.', 'LayerSlider')
+			'message' => __('LayerSlider couldn’t download your selected slider. Please check LayerSlider -> Options -> System Status for potential issues. The WP Remote functions may be unavailable or your web hosting provider has to allow external connections to our domain.', 'LayerSlider')
 		)));
 	}
 
@@ -845,7 +868,7 @@ function ls_import_online() {
 	if( ! file_put_contents($downloadPath, $zip) ) {
 		die(json_encode(array(
 			'success' => false,
-			'message' => __('LayerSlider couldn’t save the downloaded slider on your server. Please check LayerSlider -> Settings -> System Status for potential issues. The most common reason for this issue is the lack of write permission on the /wp-content/uploads/ directory.', 'LayerSlider')
+			'message' => __('LayerSlider couldn’t save the downloaded slider on your server. Please check LayerSlider -> Options -> System Status for potential issues. The most common reason for this issue is the lack of write permission on the /wp-content/uploads/ directory.', 'LayerSlider')
 		)));
 	}
 
@@ -1245,6 +1268,11 @@ function ls_do_erase_plugin_data() {
 		'ls-store-data',
 		'ls-store-last-updated',
 		'ls-p-url',
+
+		// GDPR
+		'layerslider-gdpr-consent',
+		'layerslider-google-fonts-enabled',
+		'layerslider-aviary-enabled',
 
 		// Revisions
 		'ls-revisions-enabled',

@@ -171,10 +171,10 @@ if(!class_exists('avia_breadcrumb'))
 
 
 function avia_breadcrumbs( $args = array() ) {
-
   //ouptutta yoast!
   $langhe_breadcrumb = yoast_breadcrumb('<p class="breadcrumb"><span class="breadcrumb_info">','</span></p>',false);
-  return $langhe_breadcrumb;
+
+   return $langhe_breadcrumb;
 
 } // End avia_breadcrumbs()
 
@@ -264,14 +264,27 @@ function avia_breadcrumbs_get_parents( $post_id = '', $path = '' ) {
 		}
 	}
 
+	$parents = array();
+
 	/* While there's a post ID, add the post link to the $parents array. */
 	while ( $post_id ) {
 
 		/* Get the post by ID. */
-		$page = get_page( $post_id );
+		$page = get_post( $post_id );
+
+		/**
+		 * Allow to translate breadcrumb trail - fixes a problem with parent page for portfolio
+		 * https://kriesi.at/support/topic/parent-page-link-works-correct-but-translation-doesnt/
+		 *
+		 * @used_by				config-wpml\config.php						10
+		 * @since 4.5.1
+		 * @param int $post_id
+		 * @return int
+		 */
+		$translated_id = apply_filters( 'avf_breadcrumbs_get_parents', $post_id );
 
 		/* Add the formatted post link to the array of parents. */
-		$parents[]  = '<a href="' . get_permalink( $post_id ) . '" title="' . esc_attr( get_the_title( $post_id ) ) . '">' . get_the_title( $post_id ) . '</a>';
+		$parents[]  = '<a href="' . get_permalink( $translated_id ) . '" title="' . esc_attr( get_the_title( $translated_id ) ) . '">' . get_the_title( $translated_id ) . '</a>';
 
 		/* Set the parent post's parent to the post ID. */
 		if(is_object($page))
@@ -285,8 +298,10 @@ function avia_breadcrumbs_get_parents( $post_id = '', $path = '' ) {
 	}
 
 	/* If we have parent posts, reverse the array to put them in the proper order for the trail. */
-	if ( isset( $parents ) )
+	if ( ! empty( $parents ) )
+	{
 		$trail = array_reverse( $parents );
+	}
 
 	/* Return the trail of parent posts. */
 	return $trail;

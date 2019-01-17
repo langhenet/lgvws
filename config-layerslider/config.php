@@ -640,15 +640,29 @@ if( ! class_exists( 'Avia_Config_LayerSlider' ) )
 		{
 			global $post;
 			
-			if( is_404() || ! ( $post instanceof WP_Post ) )
+			if( ! $post instanceof WP_Post )
 			{
-				return false;
+				if( ! is_404() || ( avia_get_option( 'error404_custom' ) != 'error404_custom' ) )
+				{
+					return false;
+				}
+				
+				$post_obj = get_post( avia_get_option( 'error404_page', 0 ) );
+				
+				if( ! $post_obj instanceof WP_Post )
+				{
+					return false;
+				}
+			}
+			else
+			{
+				$post_obj = $post;
 			}
 
 			/**
 			 * Check current post content
 			 */
-			if( $this->post_needs_layerslider( $post ) )
+			if( $this->post_needs_layerslider( $post_obj ) )
 			{
 				return true;
 			}

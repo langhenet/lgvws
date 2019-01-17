@@ -172,8 +172,10 @@ ICONGRID
     display: block;
     z-index: 3;
     min-height: 200px;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    -moz-backface-visibility: hidden;
 }
-
 
 .avia-icongrid-flipbox li .avia-icongrid-front,
 .avia-icongrid-flipbox li .avia-icongrid-flipback {
@@ -221,6 +223,10 @@ ICONGRID
     -ms-transform: translateY(-50%);
     transform: translateY(-50%);
     padding: 4em 3em;
+
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    -moz-backface-visibility: hidden;
 }
 
 .avia-icongrid-flipbox li:hover .avia-icongrid-front,
@@ -393,14 +399,6 @@ ICONGRID
         border-right-style: hidden !important;
     }
 
-    /*
-    .avia-icongrid-numrow-3:not(.avia-icongrid-noborder) li .avia-icongrid-wrapper,
-    .avia-icongrid-numrow-4:not(.avia-icongrid-noborder) li .avia-icongrid-wrapper,
-    .avia-icongrid-numrow-5:not(.avia-icongrid-noborder) li .avia-icongrid-wrapper {
-        -webkit-box-shadow: 0 1px 0;
-        box-shadow: 0 1px 0;
-    }
-    */
     .avia-icongrid-flipbox li:hover .avia-icongrid-front,
     .avia-icongrid-flipbox li.av-flip .avia-icongrid-front,
     .avia-icongrid-flipbox li:hover .avia-icongrid-flipback,

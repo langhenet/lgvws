@@ -44,7 +44,7 @@ function lsOptionRow( $type, $default, $current, $attrs = array(), $trClasses = 
 	} else if( ! empty($default['premium']) ) {
 		if( ! get_option( 'layerslider-authorized-site', false ) ) {
 			$trClasses .= ' ls-premium';
-			$wrapperStart = '<div><a class="dashicons dashicons-lock" target="_blank" href="'.admin_url('admin.php?page=layerslider-addons' ).'" data-help="'.__('This feature requires product activation. Click on the padlock icon to learn more.', 'LayerSlider').'"></a>';
+			$wrapperStart = '<div><a class="ls-activation-lock dashicons dashicons-lock" target="_blank" href="'.admin_url('admin.php?page=layerslider-addons' ).'" data-help="'.__('This feature requires product activation. Click on the padlock icon to learn more.', 'LayerSlider').'"></a>';
 			$wrapperEnd = '</div>';
 		}
 	}

@@ -373,7 +373,7 @@ class LS_Shortcode {
 			if( ! empty( $GLOBALS['lsPremiumNotice'] ) ) {
 				array_unshift($lsContainer, self::generateErrorMarkup(
 					__('Premium features is available for preview purposes only.', 'LayerSlider'),
-					sprintf(__('We’ve detected that you’re using premium features in this slider, but you have not yet activated your copy of LayerSlider. Premium features in your sliders will not be available for your visitors without activation. %sClick here to learn more%s. Detected features: %s', 'LayerSlider'), '<a href="https://support.kreaturamedia.com/docs/layersliderwp/documentation.html#activation" target="_blank">', '</a>', implode(', ', $GLOBALS['lsPremiumNotice'])),
+					sprintf(__('We’ve detected that you’re using premium features in this slider, but you have not yet activated your copy of LayerSlider. Premium features in your sliders will not be available for your visitors without activation. %sClick here to learn more%s. Detected features: %s', 'LayerSlider'), '<a href="https://layerslider.kreaturamedia.com/documentation/#activation" target="_blank">', '</a>', implode(', ', $GLOBALS['lsPremiumNotice'])),
 					'dashicons-star-filled', 'info'
 				));
 			}

@@ -267,7 +267,9 @@ if ( !class_exists( 'MetaBoxBuilder' ) ) {
 			/**
 			 * Provide a hook for some additional data manipulation where users can modify the $data array or save additional information
 			 * 
+			 * @used_by						Avia_Gutenberg			 5
 			 * @used_by						AviaBuilder				10
+			 * 
 			 * @since 4.2.1
 			 * @param array $data
 			 * @param array $postarr

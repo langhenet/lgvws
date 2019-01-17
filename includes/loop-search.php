@@ -38,7 +38,7 @@ if (have_posts()) :
                 ?>
                 <span class='post-meta-infos'>
                     <time class='date-container minor-meta updated' <?php avia_markup_helper(array('context' => 'entry_time')); ?>>
-                        <?php the_time('d M Y'); ?>
+			<?php the_time( get_option( 'date_format' ) ); ?>
                     </time>
                     <?php
                     if(get_post_type() !== "page")

@@ -183,7 +183,7 @@ function layerslider_enqueue_admin_res() {
 	}
 
 	// Use Google CDN version of jQuery
-	if(get_option('ls_use_custom_jquery', false)) {
+	if( get_option( 'ls_use_custom_jquery', false ) ) {
 		wp_deregister_script('jquery');
 		wp_enqueue_script('jquery', '//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js', array(), '1.8.3');
 	}
@@ -216,6 +216,12 @@ function layerslider_enqueue_admin_res() {
 		wp_enqueue_style('layerslider-admin', LS_ROOT_URL.'/static/admin/css/admin.css', false, LS_PLUGIN_VERSION );
 		wp_enqueue_style('layerslider-admin-new', LS_ROOT_URL.'/static/admin/css/admin_new.css', false, LS_PLUGIN_VERSION );
 		wp_enqueue_style('kreaturamedia-ui', LS_ROOT_URL.'/static/admin/css/km-ui.css', false, LS_PLUGIN_VERSION );
+
+		// Check if Google Fonts is enabled as per the new privacy
+		// settings introduced in version 6.7.6
+		if( get_option('layerslider-google-fonts-enabled', true ) ) {
+			wp_enqueue_style('ls-admin-google-fonts', LS_ROOT_URL.'/static/admin/css/google-fonts.css', false, LS_PLUGIN_VERSION );
+		}
 
 		// 3rd-party: Font Awesome
 		wp_enqueue_style('layerslider-font-awesome', LS_ROOT_URL.'/static/font-awesome/css/font-awesome.min.css', false, LS_PLUGIN_VERSION );
@@ -281,6 +287,7 @@ function layerslider_enqueue_admin_res() {
 
 		// Sliders list page
 		} elseif( empty( $_GET['action'] ) ) {
+
 			wp_enqueue_script('ls-admin-sliders', LS_ROOT_URL.'/static/admin/js/ls-admin-sliders.js', array('jquery'), LS_PLUGIN_VERSION );
 			wp_enqueue_script('ls-shuffle', LS_ROOT_URL.'/static/shuffle/shuffle.min.js', array('jquery'), LS_PLUGIN_VERSION );
 
@@ -332,7 +339,9 @@ function ls_require_builder_assets() {
 	wp_enqueue_style('minicolor', LS_ROOT_URL.'/static/minicolors/jquery.minicolors.css', false, LS_PLUGIN_VERSION );
 
 	// 3rd-party: CC Image Editor
-	wp_enqueue_script('cc-image-sdk', 'https://dme0ih8comzn4.cloudfront.net/imaging/v3/editor.js', false, LS_PLUGIN_VERSION );
+	if( get_option('layerslider-aviary-enabled', true ) ) {
+		wp_enqueue_script('cc-image-sdk', 'https://dme0ih8comzn4.cloudfront.net/imaging/v3/editor.js', false, LS_PLUGIN_VERSION );
+	}
 
 	// 3rd-party: Air Datepicker
 	wp_enqueue_style('air-datepicker', LS_ROOT_URL.'/static/air-datepicker/datepicker.min.css', false, '2.1.0' );
@@ -359,6 +368,12 @@ function ls_require_builder_assets() {
 
 
 function ls_load_google_fonts() {
+
+	// Check if Google Fonts is enabled as per the new privacy
+	// settings introduced in version 6.7.6
+	if( ! get_option('layerslider-google-fonts-enabled', true ) ) {
+		return;
+	}
 
 	// Get font list
 	$fonts = get_option('ls-google-fonts', array());

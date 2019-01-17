@@ -1115,17 +1115,32 @@ if(!function_exists('avia_new_section'))
 	        	}
 	        	$output .= $before_new;
 
-	        	$style = "style='{$bg} {$custom_margin}' ";
+	        	
+	        	//fix version 4.5.1 by Kriesi
+	        	//we cant just overwrite style since it might be passed by a function. eg the menu element passes z-index. need to merge the style strings
+	        	
+	        	$extra_style = "{$bg} {$custom_margin}";
+	        	$style = trim($style);
+	        	if(empty($style)) 
+	        	{
+		        	$style = "style='{$extra_style}' ";
+		        }
+		        else
+		        {
+			        $style = str_replace("style='", "style='{$extra_style} ", $style);
+			        $style = str_replace('style="', 'style="'.$extra_style.' ', $style);
+		        }
+	        	
 	        	
 	        	if($class == "main_color") $class .= " av_default_container_wrap";
 	        	
-	        	$output .= "<div {$id} class='{$class} container_wrap ".avia_layout_class( 'main' , false )."' {$style} {$data} {$style}>";
+	        	$output .= "<div {$id} class='{$class} container_wrap ".avia_layout_class( 'main' , false )."' {$style} {$data}>";
 	        	$output .= !empty($bg_slider) ? $bg_slider->html() : "";
 	        	$output .= $attach;
 	        	$output .= apply_filters('avf_section_container_add','',$defaults);
 	        }
 	
-	
+			
 			//this applies only for sections. other fullwidth elements dont need the container for centering
 	        if($open_structure)
 	        {

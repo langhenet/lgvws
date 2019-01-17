@@ -181,3 +181,30 @@ add_filter('avf_add_elements_wpseo_sitemap', function($elements, $postid) {
 	return array_merge($image, $elements);
 }, 10, 2);
 */
+
+
+if( ! function_exists( 'avia_wpseo_sitemap_exclude_pages' ) )
+{
+	add_filter( 'wpseo_exclude_from_sitemap_by_post_ids', 'avia_wpseo_sitemap_exclude_pages', 10, 1 );
+	
+	/**
+	 * Callback to theme to get a list of all pages that should be excluded from sitemap
+	 * 
+	 * @since 4.5.1
+	 * @param array $post_ids
+	 * @return array
+	 */
+	function avia_wpseo_sitemap_exclude_pages( array $post_ids = array() ) 
+	{
+		/**
+		 * 
+		 * @used_by				Avia_Custom_Pages							10
+		 * @used_by				enfold\config-wpml\config.php				20
+		 * @since 4.5.1
+		 */
+		$post_ids = apply_filters( 'avf_get_special_pages_ids', $post_ids, 'sitemap' );
+		
+		$post_ids = array_unique( $post_ids, SORT_NUMERIC );
+		return $post_ids;
+	}
+}

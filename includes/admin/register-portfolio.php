@@ -34,9 +34,9 @@ function portfolio_register()
 		'rewrite' => array('slug'=>_x($permalinks['portfolio_permalink_base'],'URL slug','avia_framework'), 'with_front'=>true),
 		'query_var' => true,
 		'show_in_nav_menus'=> true,
-		'show_in_rest' => true,
+		'show_in_rest' => true,				//	set to false to disallow block editor
 		'taxonomies' => array('post_tag'),
-		'supports' => array('title','thumbnail','excerpt','editor','comments'),
+		'supports' => array('title','thumbnail','excerpt','editor','comments', 'revisions' ),
 		'menu_icon' => 'dashicons-images-alt2'
 	);
 	
@@ -48,11 +48,12 @@ function portfolio_register()
 
 
 	$tax_args = array(	
-		"hierarchical" => true,
-		"label" => "Portfolio Categories",
-		"singular_label" => "Portfolio Category",
-		"rewrite" => array('slug'=>_x($permalinks['portfolio_entries_taxonomy_base'],'URL slug','avia_framework'), 'with_front'=>true),
-		"query_var" => true
+		"hierarchical"		=> true,
+		"label"				=> "Portfolio Categories",
+		"singular_label"	=> "Portfolio Category",
+		"rewrite"			=> array('slug'=>_x($permalinks['portfolio_entries_taxonomy_base'],'URL slug','avia_framework'), 'with_front'=>true),
+		"query_var"			=> true,
+		'show_in_rest'		=> true			//	set to false to disallow block editor
 	);
  
  	$avia_config['custom_taxonomy']['portfolio']['portfolio_entries']['args'] = $tax_args;
@@ -271,4 +272,41 @@ if(!function_exists('avia_permalink_settings_save'))
 		}
 	}
 	add_action('admin_init', 'avia_permalink_settings_save');
+}
+
+
+add_filter( 'avf_alb_meta_field_names', 'avia_portfolio_add_meta_field_names', 10, 3 );
+if( ! function_exists( 'avia_portfolio_add_meta_field_names' ) )
+{ 
+	/**
+	 * Add portfolio metakeys to be recognised in autosave and revisions
+	 * 
+	 * @since 4.5.1
+	 * @param array $meta_keys
+	 * @param int $post_id
+	 * @param string $context			'save' | 'restore'
+	 */
+	function avia_portfolio_add_meta_field_names( array $meta_keys, $post_id, $context )
+	{
+		$keys = array(
+						'_preview_ids',
+						'_preview_text',
+						'_preview_display',
+						'_preview_autorotation',
+						'_preview_columns',
+						'_portfolio_custom_link',
+						'_portfolio_custom_link_url',
+						'breadcrumb_parent'
+				);
+		
+		/**
+		 * Filter keys to be saved or restored
+		 * 
+		 * @used_by				currently unused
+		 * @since 4.5.1
+		 */
+		$keys = apply_filters( 'avf_portfolio_meta_field_names', $keys, $meta_keys, $post_id, $context );
+		
+		return array_merge( $meta_keys, $keys );
+	}
 }

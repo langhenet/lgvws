@@ -2012,6 +2012,68 @@ $avia_elements[] =	array(
 $avia_elements[] = array(	"slug"	=> "avia", "type" => "visual_group_end", "id" => "avia_maintain_end", "nodescription" => true);
 
 
+/**
+ * Disable block editor section - since WP 5.0
+ *
+ * @author Guenter
+ * @since 4.5.2
+ */
+global $wp_version;
+
+if( version_compare( $wp_version, '5.0', '>=' ) )
+{
+	$avia_elements[] = array(	
+						'slug'			=> 'avia', 
+						'type'			=> 'visual_group_start', 
+						'id'			=> 'avia_block_editor_start', 
+						'nodescription'	=> true
+					);
+
+	$avia_elements[] = array(
+						'name'		=> __( 'Select Your Editor', 'avia_framework' ),
+						'slug'		=> 'avia',
+						'desc'		=> __( 'Choose if you want to enable and use the built in classic editor - no plugin is needed.', 'avia_framework' ),
+						'id'		=> 'enable_wp_classic_editor',
+						'type'		=> 'select',
+						'std'		=> '',
+						'no_first'	=> true,
+						'subtype'	=> array(
+										__( 'Use Block Editor', 'avia_framework' )								=> '',
+										__( 'Use WP Classic Editor', 'avia_framework' )	=> 'enable_wp_classic_editor'
+									)
+					);
+
+	/**
+	 * As a first step we ignore the option by default - as a beta user may activate it
+	 * @since 4.5.2  
+	 */
+	if( current_theme_supports( 'avia_gutenberg_post_type_support' ) )
+	{
+		$avia_elements[] = array(
+						'slug'				=> 'avia',
+						'name'				=> __( 'Disable Block Editor For Selected Post Types:', 'avia_framework' ),
+						'desc'				=> __( 'Only the classic WP editor will be used for the selected post types. The links to WP block editor (Gutenberg) will not be available.  You can change this behaviour for certain pages/posts with Enfold&rsquo;s filter &quot;avf_use_block_editor_for_post&quot;', 'avia_framework' ),
+						'required'			=> array( 'enable_wp_classic_editor', 'enable_wp_classic_editor' ),
+						'id'				=> 'disable_block_editor_post_type',
+						'type'				=> 'select',
+						'subtype'			=> 'post_type',
+						'features'			=> array( 'editor' ),
+						'multiple'			=> true,
+						'option_none_text'	=> __( 'Allow block editor for all possible post types (= default)...', 'avia_framework' ),
+						'option_all_text'	=> __( 'Disable block editor for all listed post types...', 'avia_framework' )
+					);
+	}
+
+	$avia_elements[] = array(	
+						'slug'			=> 'avia', 
+						'type'			=> 'visual_group_end', 
+						'id'			=> 'avia_block_editor_end', 
+						'nodescription'	=> true
+					);
+}
+
+
+
 
 $avia_elements[] =	array(
 					"slug"	=> "styling",

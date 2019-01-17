@@ -449,7 +449,7 @@ $advanced['main_menu_icon'] = array(
 	"selector"		=> array(
 		"#top #wrap_all .av-burger-overlay .av-burger-overlay-scroll #av-burger-menu-ul li a" => array(
 								'color' 		=> "color:%color%;",
-								"font_family" 	=> "font-family: %font_family% ,'Helvetica Neue', Helvetica, Arial, sans-serif;", 
+								"font_family" 	=> "font-family: %font_family%;", 
 								"font_weight" 	=> "font-weight: %font_weight%;",
 								"letter_spacing" => "letter-spacing: %letter_spacing%;",
 								"text_transform" => "text-transform: %text_transform%;",
@@ -546,7 +546,8 @@ $advanced['buttons'] = array(
 	"description"	=> __("Change the styling of your buttons",'avia_framework'),
 	"selector"		=> array(
         "#top #wrap_all .avia-slideshow-button, #top .avia-button, .html_elegant-blog .more-link, .avia-slideshow-arrows a:before"=> array(
-            'color' => "color: %border_radius%;",
+//            'color' => "color: %color%;",
+			"font_family" 	=> "font-family: %font_family%;",
             'font_size' => "font-size: %font_size%;",
             'font_weight' => "font-weight: %font_weight%;",
             'text_transform' => "text-transform: %text_transform%;",
@@ -559,12 +560,12 @@ $advanced['buttons'] = array(
         "#top #wrap_all .avia-button.avia-color-light, #top #wrap_all .avia-button.avia-color-dark" => array(
             'border_width' => 'border-width:%border_width%;'
         ),
-        "#top #wrap_all .avia-button.avia-color-light" => array(
-            'opacity' => 'color:#fff; border-color:#fff; background:transparent;'
-        ),
-        "#top #wrap_all .avia-button.avia-color-dark" => array(
-            'opacity' => 'color:#000; border-color:#000; background:transparent;'
-        ),
+//        "#top #wrap_all .avia-button.avia-color-light" => array(
+//            'opacity' => 'color:#fff; border-color:#fff; background:transparent;'
+//        ),
+//        "#top #wrap_all .avia-button.avia-color-dark" => array(
+//            'opacity' => 'color:#000; border-color:#000; background:transparent;'
+//        ),
 	
 	),
 	
@@ -572,13 +573,13 @@ $advanced['buttons'] = array(
 	"hover"			=> false,
 	"edit"			=> array(
         'border_radius' => array('type' => 'size', 'range' => '0-100', 'name'=> __("Border Radius",'avia_framework')),
-        'border_width' 	=> array('type' => 'size', 'range' => array(0,10), 'increment' => 1, 'unit' => 'px',  'name'=> __("Border width and",'avia_framework')),
+        'border_width' 	=> array('type' => 'size', 'range' => array(0,10), 'increment' => 1, 'unit' => 'px',  'name'=> __("Border width",'avia_framework')),
         'padding_left_right'    => array('type' => 'size', 'range' => '0-50', 'increment' => 1, 'unit' => 'px',  'name'=> __("Padding: left/right",'avia_framework')),
         'padding_top_bottom'    => array('type' => 'size', 'range' => '0-50', 'increment' => 1, 'unit' => 'px',  'name'=> __("Padding: top/bottom",'avia_framework')),
-        'opacity' 	=> array('type' => 'select', 'name'=> __("opacity for transparent buttons",'avia_framework'),
-        'options' => array(__('Semi-transparent','avia_framework') => '' , __('Full-transparent','avia_framework') => 'off' )),
+//        'opacity' 	=> array('type' => 'select', 'name'=> __("opacity for transparent buttons",'avia_framework'),
+//					'options' => array(__('Semi-transparent','avia_framework') => '' , __('Full-transparent','avia_framework') => 'off' )),
         'font_family' 		    => array('type' => 'font', 'name'=> __("Font Family",'avia_framework'), 'options' => $google_fonts),
-        'color' 			    => array('type' => 'colorpicker', 'name'=> __("Font Color",'avia_framework')),
+//        'color' 			    => array('type' => 'colorpicker', 'name'=> __("Font Color",'avia_framework')),
         'font_size' 	    	=> array('type' => 'size', 'range' => '8-80', 'name'=> __("Font Size",'avia_framework')),
         'font_weight' 	    	=> array('type' => 'select', 'name'=> __("Font Weight",'avia_framework'), 'options' => $weight),
         'text_transform'    	=> array('type' => 'select', 'name'=> __("Text Transform",'avia_framework'), 'options' => $transform ),
@@ -731,7 +732,7 @@ $advanced['slideshow_caption'] = array(
 	"selector"		=> array(
 
 		"#top #wrap_all .avia-caption-content p" => array( 
-															"font_family" 	=> "font-family: %font_family% ,'Helvetica Neue', Helvetica, Arial, sans-serif;", 
+															"font_family" 	=> "font-family: %font_family%;", 
 															"font_weight" 	=> "font-weight: %font_weight%;",
 															"line_height" 	=> "line-height: %line_height%;",
 															"letter_spacing" => "letter-spacing: %letter_spacing%;",

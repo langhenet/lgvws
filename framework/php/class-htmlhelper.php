@@ -1071,6 +1071,68 @@ if( ! class_exists( 'avia_htmlhelper' ) )
 				$entries = get_categories('title_li=&orderby=name&hide_empty=0' . $add_taxonomy );
 				
 			}
+			else if( $element['subtype'] == 'post_type' )
+			{
+				$select = isset( $element['option_none_text'] ) ? $element['option_none_text'] : __( 'Select post types...', 'avia_framework' );
+				
+				$args = array(
+								'_builtin' => true,
+								'public'   => true
+							);
+				$post_types = get_post_types( $args, 'objects', 'or' );
+				
+				$entries = array();
+				foreach ( $post_types  as $post_type )
+				{
+					if( isset( $element['features'] ) && is_array( $element['features'] ) )
+					{
+						$skip = false;
+						foreach( $element['features'] as $feature ) 
+						{
+							if( ! post_type_supports( $post_type->name, $feature ) ) 
+							{
+								$skip = true;
+								break;
+							}
+						}
+						
+						/**
+						 * @used_by			Avia_Gutenberg					10
+						 * @since 4.5.2
+						 */
+						$skip = apply_filters( 'avf_select_post_types', $skip, $post_type, 'option_page', $element );
+						
+						if( $skip )
+						{
+							continue;
+						}
+					}
+					
+					$label = array();
+					if( $post_type->_builtin )
+					{
+						$label[] = __( 'built in', 'avia_framework' );
+					}
+					
+					/**
+					 * @used_by				Avia_Gutenberg				10
+					 * @since 4.5.2
+					 */
+					$label = apply_filters( 'avf_select_post_types_status', $label, $post_type, 'option_page', $element );
+					
+					if( empty( $label ) )
+					{
+						$label = '';
+					}
+					else
+					{
+						$label = ' (' . implode( ', ', $label ) . ')';
+					}
+					
+					$label = $post_type->label . $label;
+					$entries[ $label ] = $post_type->name;
+				}
+			}
 			else
 			{	
 				$select = __( 'Select...', 'avia_framework' );
@@ -1125,6 +1187,13 @@ if( ! class_exists( 'avia_htmlhelper' ) )
 				$element['class'] .= " avia_onchange";
 			}
 			
+			if( isset( $element['option_all_text'] ) )
+			{
+				$select_all_val = is_string( $element['option_all_text'] ) ? $element['option_all_text'] : __( 'Select all ......', 'avia_framework' );
+				$all = array( $select_all_val => 'avia_all_elements' );
+				$entries = array_merge( $all, $entries );
+			}
+			
 			$multi = $multi_class = "";
 			if(isset($element['multiple'])) 
 			{
@@ -1141,7 +1210,11 @@ if( ! class_exists( 'avia_htmlhelper' ) )
 			$output .= '<select '.$folder_data.' '.$onchange.' '.$multi.' class="'.$element['class'].'" id="'. $element['id'] .'" name="'. $element['id'] . '"> ';
 			
 			
-			if(!isset($element['no_first'])) { $output .= '<option value="">'.$select .'</option>  '; $fake_val = $select; }
+			if( ! isset( $element['no_first'] ) ) 
+			{ 
+				$output .= '<option value="">' . $select . '</option>  '; 
+				$fake_val = $select; 
+			}
 			
 			$real_entries = array();
 			foreach ($entries as $key => $entry)
@@ -1568,8 +1641,22 @@ if( ! class_exists( 'avia_htmlhelper' ) )
 		public function select_menu( array $element )
 		{
 			$locations = get_registered_nav_menus();
-			$menu_locations = array_flip( get_nav_menu_locations() );
 			$nav_menus = wp_get_nav_menus();
+			
+			/**
+			 * array_flip does not work because plugins like WPML might return '' or null for value which throws a warning
+			 * 
+			 * $menu_locations = array_flip( get_nav_menu_locations() );
+			 */
+			$menu_locations = array();
+			$temp = get_nav_menu_locations();
+			foreach ( $temp as $loc => $term_id ) 
+			{
+				if( is_numeric( $term_id ) && ( $term_id > 0 ) )
+				{
+					$menu_locations[ $term_id ] = $loc;
+				}
+			}
 			
 			if( ! isset( $element['subtype'] ) || ! is_array( $element['subtype'] ) )
 			{

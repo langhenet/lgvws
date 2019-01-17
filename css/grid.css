@@ -136,7 +136,7 @@ body .unit.alpha, body .units.alpha {
 
   .responsive #top .container .av-content-small, .responsive #top #wrap_all .flex_column, .responsive #top #wrap_all .av-flex-cells .no_margin {
     margin: 0;
-    margin-bottom: 30px;
+    margin-bottom: 1.5em;
     width: 100%;
   }
 
@@ -144,9 +144,6 @@ body .unit.alpha, body .units.alpha {
 	  display: block;
 	  margin: 0;
 	  height:auto !important;
-	  /* overflow: hidden;
-	  padding-left:8% !important;
-	  padding-right:8% !important; */
   }
 
   .responsive #top #wrap_all .av-flex-cells .no_margin .flex_cell_inner{
@@ -281,8 +278,6 @@ div .av_one_tenth {
   margin-left: 6%;
   width: 4.6%;
 }
-
-
 div .av_four_sixth {
   width: 65.812%;
   margin-left: 2.565%;

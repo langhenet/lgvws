@@ -265,7 +265,7 @@ if( ! class_exists( 'avia_auto_updates' ) )
 		{
 			$desc = __( "If you want to get update notifications for your theme and if you want to be able to update your theme from your WordPress backend you need to enter your Envato Private Token below.", 'avia_framework' );
 			$desc .= '<br /><br />';
-			$desc .= sprintf( __( 'A detailed description for generating this token can be found %s here %s', 'avia_framework' ), '<a href="https://kriesi.at/documentation/enfold/how-to-install-enfold-theme/#theme-registration" target="_blank">', '</a>' );
+			$desc .= sprintf( __( 'A detailed description for generating this token can be found %s here %s', 'avia_framework' ), '<a href="https://kriesi.at/documentation/enfold/theme-registration/" target="_blank">', '</a>' );
 			
 			$avia_elements[] = array(	
 						"name"			=> __( "Update your Theme from the WordPress Dashboard", 'avia_framework' ),
@@ -444,20 +444,28 @@ if( ! class_exists( 'avia_auto_updates' ) )
 			$log = AviaThemeUpdater()->get_updater_log();
 			
 			$has_errors = false;
+			$last_package = null;
 			
 			foreach( $log as $entry ) 
 			{
 				if( ! empty( $entry['errors'] ) )
 				{
 					$has_errors = true;
-					break;
+				}
+				
+				if( isset( $entry['package_errors'] ) )
+				{
+					$last_package = $entry;
 				}
 			}
 			
 			/**
-			 * Enable WP_DEBUG to show complete log for debugging purpose
+			 * Enable WP_DEBUG or theme support to show complete log for debugging purpose
 			 */
-			if( empty( $log ) || ( ! $has_errors && ! ( defined('WP_DEBUG') &&  WP_DEBUG ) ) )
+			$show_all_entries = ( defined('WP_DEBUG') &&  WP_DEBUG ) || current_theme_supports( 'avia_envato_extended_log' );
+			
+			
+			if( empty( $log ) || ( ! $has_errors && ! $show_all_entries ) )
 			{
 				$output  .=	"<div class='avia_backend_theme_updates_log av-updates-sucessful'>";
 				if( empty( $log ) )
@@ -477,29 +485,23 @@ if( ! class_exists( 'avia_auto_updates' ) )
 			$class = $has_errors ? 'av-updates-error' : 'av-updates-sucessful';
 			$output  .=	"<div class='avia_backend_theme_updates_log {$class}'>";
 			
-			$show_errors = ( defined('WP_DEBUG') &&  WP_DEBUG ) ? count( $log ) : 1;
-			$show_errors = apply_filters( 'avf_updater_show_errors', $show_errors, count( $log ) );
+			$show_entries = $show_all_entries ? count( $log ) : 1;
+			$show_entries = apply_filters( 'avf_updater_show_entries', $show_entries, count( $log ) );
 			
-			$cut_log = ( count( $log ) > $show_errors ) ? array_slice( $log, - $show_errors ) : $log;
+			$cut_log = ( count( $log ) > $show_entries ) ? array_slice( $log, - $show_entries ) : $log;
 			
 /*
 			if( defined('WP_DEBUG') &&  WP_DEBUG )
 			{
 				$output  .=	'<div class="avia_log_line avia_log_line_debug_mode">';
-				$output .=		__( 'Only in debug mode all log entries are shown. You can use filter avf_updater_show_errors if you want to show more than the last one only on production sites.', 'avia_framework' );
+				$output .=		__( 'Only in debug mode all log entries are shown. You can use filter avf_updater_show_entries if you want to show more than the last one only on production sites.', 'avia_framework' );
 				$output .=	'</div>';
 			}
 */
 			
 			foreach( $cut_log as $entry ) 
 			{
-				if( empty( $entry['errors'] ) )
-				{
-					$output  .=	'<div class="avia_log_line avia_log_line_success">';
-					$output .=		sprintf( __( 'Sucessful check on %s.', 'avia_framework' ), $entry['time'] );
-					$output .=	'</div>';
-				}
-				else
+				if( ! empty( $entry['errors'] ) )
 				{
 					$output  .=	'<div class="avia_log_line avia_log_line_error">';
 					$output .=		sprintf( __( 'Errors occured checking on %s:', 'avia_framework' ), $entry['time'] );
@@ -511,6 +513,28 @@ if( ! class_exists( 'avia_auto_updates' ) )
 					$output .=		'</ul>';
 					$output .=	'</div>';
 				}
+				else if( ! empty( $entry['info'] ) )
+				{
+					$output  .=	'<div class="avia_log_line avia_log_line_success">';
+					$output .=		sprintf( __( 'Info - %s:', 'avia_framework' ), $entry['time'] ) . ' ' . $entry['info'];
+					$output .=	'</div>';
+				}
+				else
+				{
+					$output  .=	'<div class="avia_log_line avia_log_line_success">';
+					$output .=		sprintf( __( 'Sucessful check on %s.', 'avia_framework' ), $entry['time'] );
+					$output .=	'</div>';
+				}
+			}
+			
+			/**
+			 * Always show packages that have returned an error in last update check
+			 */
+			if( is_array( $last_package ) && ! empty( $last_package['package_errors'] ) )
+			{
+				$output	.=	'<div class="avia_log_line avia_log_line_error">';
+				$output .=		sprintf( __( 'Errors occured for package(s): %s', 'avia_framework' ), $last_package['package_errors'] );
+				$output .=	'</div>';
 			}
 			
 /*

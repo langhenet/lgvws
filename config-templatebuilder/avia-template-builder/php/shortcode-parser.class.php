@@ -277,7 +277,8 @@ if( ! class_exists( 'ShortcodeParser' ) )
 			
 			array_unshift( $messages, $new_entry );
 				
-			update_post_meta( $post_id, $key, $messages );
+//			update_post_meta( $post_id, $key, $messages );
+			update_metadata( 'post', $post_id, $key, $messages );
 		}
 		
 		/**

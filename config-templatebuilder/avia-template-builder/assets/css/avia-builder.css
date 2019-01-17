@@ -2385,6 +2385,7 @@ border-bottom:1px solid #fff;
 
 
 .avia_layout_row > .avia_inner_shortcode{ display: table; table-layout: fixed; width: calc(100% - 2px);}
+.block-editor-page .avia_layout_row > .avia_inner_shortcode{ width:100%}
 .avia_layout_row > .avia_inner_shortcode > .avia_layout_cell{display: table-cell; float:none; vertical-align: top; }
 .avia_layout_column{background-color: #f8f8f8;}
 .avia_layout_cell {background-color: #fff;}
@@ -2652,9 +2653,4 @@ span.av-tab-title-text-wrap-full {
 .avia_inner_shortcode .av-google-maps .av-gmap-page_only .av-gmap-link-confirm_link{
 	display: none;
 }
-
-
-
-
-
 

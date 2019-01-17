@@ -276,9 +276,9 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 			
 			
 			//save and restore meta information if user restores a revision
-			add_action('wp_creating_autosave', array( $this, 'avia_builder_creating_autosave'), 10, 1 );
-			add_action('_wp_put_post_revision', array( $this, 'avia_builder_put_revision'), 10, 1 );
-	        add_action('wp_restore_post_revision', array(&$this, 'avia_builder_restore_revision'), 10, 2);
+			add_action( 'wp_creating_autosave', array( $this, 'avia_builder_creating_autosave' ), 10, 1 );
+			add_action( '_wp_put_post_revision', array( $this, 'avia_builder_put_revision' ), 10, 1 );
+	        add_action( 'wp_restore_post_revision', array( $this, 'avia_builder_restore_revision' ), 10, 2 );
 
 			add_filter( 'avia_builder_metabox_filter', array( $this, 'handler_alb_metabox_filter'), 10, 1 );
 			
@@ -476,7 +476,7 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 			
 			//default wordpress hooking
 			add_action('wp_head', array($this,'load_shortcode_assets'), 2000);
-			add_filter( 'template_include' , array($this, 'template_include'), 2000); 
+			add_filter( 'template_include' , array($this, 'template_include'), 20000); 
 		}
 		
 		/**
@@ -770,9 +770,10 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 		 * @since 4.2.1
 		 * @param string $state					'disabled' | 'check_only' | 'auto_repair'
 		 * @param int|null $post_id
+		 * @param $save_to_revision boolean
 		 * @return string
 		 */
-		public function set_posts_shortcode_parser_state( $state = '', $post_id = null )
+		public function set_posts_shortcode_parser_state( $state = '', $post_id = null, $save_to_revision = false )
 		{
 			if( ! in_array( $state, array( 'disabled', 'check_only', 'auto_repair' ) ) )
 			{
@@ -788,7 +789,14 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 			
 			if( false !== $post_id )
 			{
-				update_post_meta( $post_id, '_avia_sc_parser_state', $this->posts_shortcode_parser_state );
+				if( $save_to_revision === false )
+				{
+					update_post_meta( $post_id, '_avia_sc_parser_state', $this->posts_shortcode_parser_state );
+				}
+				else
+				{
+					update_metadata( 'post', $post_id, '_avia_sc_parser_state', $this->posts_shortcode_parser_state );
+				}
 			}
 			
 			return $this->posts_shortcode_parser_state;
@@ -856,9 +864,10 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 		 * @param string $status				'active' | ''
 		 * @param int|null $post_id
 		 * @param string $default				'active' | ''		
+		 * @param type $save_to_revision boolean 
 		 * @return boolean
 		 */
-		public function set_alb_builder_status( $status = '', $post_id = null, $default = '' ) 
+		public function set_alb_builder_status( $status = '', $post_id = null, $default = '', $save_to_revision = false ) 
 		{
 			if( ! in_array( $status, array( 'active', '' ) ) )
 			{
@@ -877,7 +886,14 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 				return false;
 			}
 			
-			update_post_meta( $id, '_aviaLayoutBuilder_active', $status );
+			if( $save_to_revision === false )
+			{
+				update_post_meta( $id, '_aviaLayoutBuilder_active', $status );
+			}
+			else
+			{
+				update_metadata( 'post', $id, '_aviaLayoutBuilder_active', $status );
+			}
 			
 			return true;
 		}
@@ -940,6 +956,12 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 			if( 'active' == $builder_stat )
 			{
 				$this->save_posts_alb_content( $post_id, $content );
+				
+				/**
+				 * @used_by			currently unused
+				 * @since 4.5.2
+				 */
+				do_action( 'ava_builder_updated_posts_alb_content', $post_id, $content );
 			}
 			else
 			{
@@ -958,14 +980,65 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 		 * @since 4.2.3
 		 * @param int $post_id
 		 * @param string $content
+		 * @param $save_to_revision boolean 
 		 * @return boolean
 		 */
-		public function save_posts_alb_content( $post_id, $content )
+		public function save_posts_alb_content( $post_id, $content, $save_to_revision = false )
 		{
-			return update_post_meta( $post_id, '_aviaLayoutBuilderCleanData', $content );
+			if( $save_to_revision === false )
+			{
+				return update_post_meta( $post_id, '_aviaLayoutBuilderCleanData', $content );
+			}
+			else 
+			{
+				return update_metadata( 'post', $post_id, '_aviaLayoutBuilderCleanData', $content );
+			}
 		}
 		
+		/**
+		 * Returns the shortcode tree postmeta
+		 * 
+		 * @since 4.5.1
+		 * @param int $post_id
+		 * @return array
+		 */
+		public function get_shortcode_tree( $post_id )
+		{
+			$tree = get_post_meta( $post_id, '_avia_builder_shortcode_tree', true );
+			return is_array( $tree ) ? $tree : array();
+		}
 		
+		/**
+		 * Saves the shortcode tree in the postmeta
+		 * 
+		 * @since 4.5.1
+		 * @param int $post_id
+		 * @param array $tree
+		 * @param $save_to_revision boolean
+		 * @return boolean
+		 */
+		public function save_shortcode_tree( $post_id, array $tree, $save_to_revision = false )
+		{
+			if( $save_to_revision === false )
+			{
+				return update_post_meta( $post_id, '_avia_builder_shortcode_tree', $tree );
+			}
+			
+			return update_metadata( 'post', $post_id, '_avia_builder_shortcode_tree', $tree );
+		}
+		
+		/**
+		 * Allows to set the post revision ID manually
+		 * (needed when posts are saved via REST API - since WP 5.0 and Gutenberg)
+		 * 
+		 * @since 4.5.1
+		 * @param int $post_id
+		 */
+		public function set_revision_id( $post_id )
+		{
+			$this->revision_id = $post_id;
+		}
+
 		/**
 		 *set fullwidth elements that need to interact with section shortcode
 		 **/
@@ -1438,14 +1511,14 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 				 * We always save this tree so we can be sure to have the correct state of the page when we load this post meta.
 				 */
 				$tree = ShortcodeHelper::build_shortcode_tree( $_POST['content'] );
-				update_post_meta( $post_id, '_avia_builder_shortcode_tree', $tree );
+				$this->save_shortcode_tree( $post_id, $tree);
 				
 				$this->element_manager->updated_post_content( $_POST['content'], $post_id );
 				
 				/**
 				 * Now we can save the postmeta data to revision post
 				 */
-				$this->save_alb_revision_data();
+				$this->save_alb_revision_data( $post_id );
             }
 		}
 		
@@ -1475,7 +1548,7 @@ if ( !class_exists( 'AviaBuilder' ) ) {
     	   	{
 				if(!empty($avia_config['builder_redirect_id'])) $post_id = $avia_config['builder_redirect_id'];
     	   	
-				ShortcodeHelper::$tree = get_post_meta($post_id, '_avia_builder_shortcode_tree', true);
+				ShortcodeHelper::$tree = $this->get_shortcode_tree( $post_id );
 				
 				$builder_template = locate_template( 'template-builder.php', false );
 				
@@ -1569,13 +1642,19 @@ if ( !class_exists( 'AviaBuilder' ) ) {
     		if(!empty($pages) && in_array($typenow, $pages))
     		{	    
 		    	//html modification of the admin area: wrap
-		    	add_action( 'edit_form_after_title', array($this, 'wrap_default_editor' ), 100000); 
-		    	add_action( 'edit_form_after_editor', array($this, 'close_default_editor_wrap' ), 1); 
+		    	add_action( 'edit_form_after_title', array( $this, 'wrap_default_editor' ), 100000, 2 ); 
+		    	add_action( 'edit_form_after_editor', array( $this, 'close_default_editor_wrap' ), 1, 1 ); 
 		    }
     	}
     	
 				
-		public function wrap_default_editor()
+		/**
+		 * Adds the ALB switch button
+		 * 
+		 * @param WP_Post $post
+		 * @param string $close_div			'' | 'close'
+		 */
+		public function wrap_default_editor( $post = null, $close_div = '' )
 		{
             global $post_ID;
 			
@@ -1602,12 +1681,25 @@ if ( !class_exists( 'AviaBuilder' ) ) {
             
             if($this->disable_drag_drop == false)
 			{
-            echo '<a id="avia-builder-button" href="#" class="avia-builder-button button-primary '.$button_class.' '.$params['button_class'].'" data-active-button="'.$params['default_label'].'" data-inactive-button="'.$params['visual_label'].'">'.$active_builder.'</a>';
+				echo '<a id="avia-builder-button" href="#" class="avia-builder-button button-primary '.$button_class.' '.$params['button_class'].'" data-active-button="'.$params['default_label'].'" data-inactive-button="'.$params['visual_label'].'">'.$active_builder.'</a>';
             }
-            if($params['note']) echo "<div class='av-builder-note ".$params['noteclass']."'>".$params['note']."</div>";
+			
+            if( $params['note'] ) 
+			{
+				echo "<div class='av-builder-note ".$params['noteclass']."'>".$params['note']."</div>";
+			}
+			
+			if( 'close' == $close_div )
+			{
+				echo '</div>';
+			}
 		}
 		
-		public function close_default_editor_wrap()
+		/**
+		 * 
+		 * @param WP_Post $post
+		 */
+		public function close_default_editor_wrap( $post = null )
 		{
 			echo "</div>";
 		}
@@ -1618,10 +1710,21 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 		 **/
 		public function visual_editor($element)
 		{
-			$output = "";
-			$title  = "";
+			$output = '';
+			$tabs_output = '';
+			$title  = '';
 			$i = 0;
 			
+			/**
+			 * @used_by				Avia_Gutenberg						10
+			 * 
+			 * @since 4.5.1
+			 */
+			$output = apply_filters( 'avf_builder_metabox_editor_before', $output, $element );
+			
+			
+			$output .= '<div class="avia-builder-main-wrap">';
+					
 			$this->shortcode_buttons = apply_filters('avia_show_shortcode_button', array());	
 			
 			
@@ -1650,17 +1753,17 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 					$i ++;
 					$title .= "<a href='#avia-tab-$i'>".$key."</a>";
 					
-					$output .= "<div class='avia-tab avia-tab-$i'>";
+					$tabs_output .= "<div class='avia-tab avia-tab-$i'>";
 					
 					foreach ($tab as $shortcode)
 					{
 						if(empty($shortcode['invisible']))
 						{
-							$output .= $this->create_shortcode_button($shortcode);
+							$tabs_output .= $this->create_shortcode_button($shortcode);
 						}
 					}
 					
-					$output .= "</div>";
+					$tabs_output .= "</div>";
 				}
 			}
 			
@@ -1671,7 +1774,7 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 			$extra = AviaBuilder::$mode != true ? "" : "avia_mode_".AviaBuilder::$mode;
 			$hotekey_info = htmlentities($element['desc'], ENT_QUOTES, get_bloginfo( 'charset' ));
 			
-			$output  = '<div class="shortcode_button_wrap avia-tab-container"><div class="avia-tab-title-container">'.$title.'</div>'.$output.'</div>';
+			$output .= '<div class="shortcode_button_wrap avia-tab-container"><div class="avia-tab-title-container">'.$title.'</div>' . $tabs_output . '</div>';
 			$output .= '<input type="hidden" value="'.$active_builder.'" name="aviaLayoutBuilder_active" id="aviaLayoutBuilder_active" />';
 			
 			if($this->disable_drag_drop == false)
@@ -1702,12 +1805,14 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 			
 			$this->alb_nonce_added = true;
 			
+			$output .= '</div>     <!-- class="avia-builder-main-wrap" -->';
+			
 			return $output;
 		}	
 		
 		/**
 		 * Function called by the metabox class that creates the interface in your wordpress backend - 
-		 * Output the Shordcode Parser Select and Info Panel below the normal Texteditor and above the ALB Editor
+		 * Output the Shortcode Parser Select and Info Panel below the normal Texteditor and above the ALB Editor
 		 * 
 		 * @since 4.2.1
 		 * @param array $element
@@ -1944,12 +2049,15 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 		}
 		
 		/**
-		 * Return the postmeta metakey names
+		 * Return the postmeta metakey names.
+		 * Can be filtered for specific posts.
 		 * 
 		 * @since 4.2.1
+		 * @param int $post_id
+		 * @param string $context			'save' | 'restore'
 		 * @return array
 		 */
-		public function get_alb_meta_key_names()
+		public function get_alb_meta_key_names( $post_id, $context )
 		{
 			$meta_keys = array(
 							'_aviaLayoutBuilder_active',
@@ -1957,15 +2065,18 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 							'_avia_builder_shortcode_tree',
 							'_alb_shortcode_status_content',
 							'_alb_shortcode_status_clean_data',
-							'_alb_shortcode_status_preview'
+							'_alb_shortcode_status_preview',
+							'_avia_sc_parser_state',
+							'_av_alb_posts_elements_state',
+							'_av_el_mgr_version'
 						);
 			
 			/**
-			 * @used_by			currently unused
+			 * @used_by			enfold\includes\admin\register-portfolio.php				10
 			 * 
 			 * @since 4.2.1
 			 */
-			$meta_keys = apply_filters( 'avf_alb_meta_field_names', $meta_keys );
+			$meta_keys = apply_filters( 'avf_alb_meta_field_names', $meta_keys, $post_id, $context );
 			
 			if( ! is_array( $meta_keys) )
 			{
@@ -1983,7 +2094,7 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 		public function avia_builder_restore_revision( $post_id, $revision_id )
 		{
 			
-			$meta_fields = $this->get_alb_meta_key_names();
+			$meta_fields = $this->get_alb_meta_key_names( $revision_id, 'restore' );
 
 			foreach( $meta_fields as $meta_field )
 			{
@@ -2075,22 +2186,26 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 		 * now save our meta data to restore when user reverts to a revision
 		 * 
 		 * @since 4.2.1
+		 * @param int $post_id
 		 */
-		protected function save_alb_revision_data()
+		public function save_alb_revision_data( $post_id = 0 )
 		{
 			if( $this->revision_id <= 0 )
 			{
 				return;
 			}
 			
-			$post_id = get_the_ID();
+			if( $post_id <= 0 )
+			{
+				$post_id = get_the_ID();
+			}
 			
 			if( false === $post_id )
 			{
 				return;
 			}
 			
-			$meta_fields = $this->get_alb_meta_key_names();
+			$meta_fields = $this->get_alb_meta_key_names( $post_id, 'save' );
 			
 			foreach( $meta_fields as $meta_field )
 			{
@@ -2117,7 +2232,6 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 		 */
 		public function compile_post_content( WP_Post $wp_post )
 		{
-			
 			/**
 			 * Save values to be able to restore in case we have recursive calls
 			 */
@@ -2135,7 +2249,7 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 				 * Filter the content for content builder elements
 				 */
 				$content = apply_filters( 'avia_builder_precompile', $this->get_posts_alb_content( $wp_post->ID ) );
-				ShortcodeHelper::$tree = get_post_meta( $wp_post->ID, '_avia_builder_shortcode_tree', true );
+				ShortcodeHelper::$tree = $this->get_shortcode_tree( $wp_post->ID );
 			}
 			else
 			{
@@ -2202,7 +2316,7 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 	} // end class
 	
 	/**
-	 * Returns the main instance of Avia_Support to prevent the need to use globals
+	 * Returns the main instance of AviaBuilder to prevent the need to use globals
 	 * 
 	 * @since 4.2.1
 	 * @return AviaBuilder

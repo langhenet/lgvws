@@ -19,7 +19,7 @@
         		save_param: {},					//@obj parameters that are passed to the callback function in addition to the form values
         		ajax_param: "",					//@string parameters that are passed to the ajax content fetching function
         		button: "save"					//@string parameter that tells the modal window which button to generate
-        }
+        };
         
         $.AviaModal.openInstance.unshift(this); 
         
@@ -306,7 +306,7 @@
    		
    		link_overlay_closed: function() //check if the tinymce link editor for wordpress (Insert/edit link button) is closed
    		{
-   			var link_overlay = $('#wp-link-wrap:visible')
+   			var link_overlay = $('#wp-link-wrap:visible');
    			return link_overlay.length ? false : true;
    		},
    		
@@ -320,7 +320,7 @@
    			this.body.trigger('avia_modal_finished', this);
    		}
    	
-   	}
+   	};
    	
    	
    	
@@ -340,10 +340,11 @@
         		modal_class: "flexscreen",				
         		modal_title: "<span class='avia-msg-"+ options.mode +"'>" + avia_modal_L10n[options.mode] + "</span>",
         		button: "close"		
-        }
+        };
+		
 		this.options = $.extend({}, defaults, options);
 		return new $.AviaModal(this.options);
-	}
+	};
    	
    	
 
@@ -382,7 +383,7 @@
 			target.sortable(params);
 			
 			
-	}
+	};
    	
    	
    	
@@ -397,7 +398,7 @@
 				},
 				clear: function() {
 	            	$(this).trigger('keyup');
-				},
+				}
 			},
 			self			= this, 
 			scope			= this.modal,
@@ -447,7 +448,7 @@
 				colorpicker.iris();
 			});
 			
-	}
+	};
    	
    	
    	$.AviaModal.register_callback.modal_load_datepicker = function()
@@ -463,7 +464,7 @@
 				}
 			});
 			
-	}
+	};
 	
 	$.AviaModal.register_callback.modal_load_multi_input = function()
 	{
@@ -501,7 +502,7 @@
 			});
 			
 			
-	}
+	};
 	
 	
 	$.AviaModal.register_callback.modal_load_tabs = function()
@@ -543,7 +544,7 @@
 					});	
 				
 			});
-	}
+	};
 	
 	
 	$.AviaModal.register_callback.modal_load_mailchimp = function()
@@ -568,17 +569,17 @@
 				//sanitize data in dropdown to circumvent inserting world list with "'" or other invalid values
 				if(current.label)
 				{
-					current.label = current.label.replace(/'/g, "&lsquo;")
+					current.label = current.label.replace(/'/g, "&lsquo;");
 				}
 				
 				if(current.options)
 				{
-					current.options = current.options.replace(/'/g, "&lsquo;")
+					current.options = current.options.replace(/'/g, "&lsquo;");
 				}
 				
 				if(current.value)
 				{
-					current.value = current.value.replace(/'/g, "&lsquo;")
+					current.value = current.value.replace(/'/g, "&lsquo;");
 				}
 				
 				
@@ -596,7 +597,7 @@
 				{
 					group.append(insert);
 				}
-			}
+			};
 			
 			
 			//if the list is empty remove all fields
@@ -709,7 +710,7 @@
 			modal    = textareas.parents('.avia-modal:eq(0)'),
 			save_btn = modal.find('.avia-modal-save'),
 			$doc	 = $(document);
-			
+	
 		textareas.each(function()
 		{
 			var el_id		= this.id,
@@ -717,11 +718,16 @@
 				parent		= current.parents('.wp-editor-wrap:eq(0)'),
 				textarea	= parent.find('textarea.avia_tinymce'),
 				switch_btn	= parent.find('.wp-switch-editor').removeAttr("onclick"),
-				settings	= {id: this.id , buttons: "strong,em,link,block,del,ins,img,ul,ol,li,code,spell,close"},
+				settings	= {
+									id: this.id , 
+									buttons: "strong,em,link,block,del,ins,img,ul,ol,li,code,spell,close",
+									menubar :	false
+							},
 				tinyVersion = false,
 				executeAdd  = "mceAddEditor",
 				executeRem	= "mceRemoveEditor",
 				open		= true;
+			
 			
 			if(window.tinyMCE) tinyVersion = window.tinyMCE.majorVersion;
 			
@@ -733,12 +739,12 @@
 			switch_btn.on('click', function()
 			{
 				var button = $(this);
-				
+
 				if(button.is('.switch-tmce'))
 				{
 					parent.removeClass('html-active').addClass('tmce-active');
 					window.tinyMCE.execCommand(executeAdd, true, el_id);
-				
+
 					/**
 					 * fixes problem with caption shortcode that manipulates the HTML and adds some custom temp structure on adding content to editor
 					 * see  wp-includes\js\tinymce\plugins\wpeditimage\plugin.js function parseShortcode 
@@ -781,8 +787,6 @@
 					textarea.val( window.switchEditors._wp_Nop( the_value ) );
 				}
 			});
-			
-			
 			
 			
 			//activate the visual editor
@@ -1005,7 +1009,7 @@
    		
    		methods.init();
    		
-   	}
+   	};
 	
 	
 	//script that generates the preview
@@ -1116,7 +1120,7 @@
 				}
 			}
 			
-		}
+		};
 		
 		methods.set_frame_content("");
 		methods.update_iframe();
@@ -1130,23 +1134,7 @@
 		_self.modal.on('av-update-preview-tinymce', 'textarea', methods.update_iframe_with_delay);
 		preview_footer.on('click', 'a', methods.change_preview_bg);
 		
-		
-		
-		
-	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	};
 	
 })(jQuery);	 
 
@@ -1316,7 +1304,7 @@
             });
           }
 
-        }
+        };
         
         var final_options = $.extend( true, {}, new_settings, default_options );
         $this.wpColorPicker( final_options );

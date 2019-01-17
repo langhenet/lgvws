@@ -688,6 +688,10 @@ overflow: hidden;
 padding: 15px;
 }
 
+#wpwrap .avia_meta_box .avia-style select{
+	max-width: 80%;
+}
+
 /*metabox slideshow*/
 .avia_meta_box h4{
 margin:0 0 10px 0;
@@ -2577,5 +2581,12 @@ margin-left:10px;
 
 #avia_options_page .avia_sidebar_active .avia_section.avia_template_builder_element_loader{
 	padding:20px 0;
+}
+
+
+/*WP 5.0*/
+
+body .wp-block{
+	max-width: 1400px;
 }
 

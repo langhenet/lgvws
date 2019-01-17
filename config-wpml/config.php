@@ -713,6 +713,92 @@ if(defined('ICL_SITEPRESS_VERSION') && defined('ICL_LANGUAGE_CODE'))
 	
 	    add_filter('avf_ratio_check_by_tag_values', 'avia_translate_check_by_tag_values', 10, 1);
 	}
+	
+	if( ! function_exists( 'avia_wpml_error404' ) )
+	{
+		/**
+		 * Add custom 404 page - needed because WPML manipulates the post query in get_headers()
+		 * 
+		 * @since 4.5.1
+		 */
+		function avia_wpml_error404()
+		{
+			global $avia_config, $wp_query;
+
+			if( ! isset( $avia_config['modified_main_query'] ) || ( ! $avia_config['modified_main_query'] instanceof WP_Query ) )
+			{
+				return;
+			}
+
+			if( 'error404_custom' == avia_get_option( 'error404_custom' ) ) 
+			{
+				$wp_query = $avia_config['modified_main_query'];
+				$wp_query->rewind_posts();
+				return;
+			}
+		}
+
+		add_filter( 'ava_builder_template_after_header', 'avia_wpml_error404', 999 );
+		add_filter( 'ava_page_template_after_header', 'avia_wpml_error404', 999 );
+	}
+	
+	
+	if( ! function_exists( 'avia_wpml_get_special_pages_ids' ) )
+	{
+		add_filter( 'avf_get_special_pages_ids', 'avia_wpml_get_special_pages_ids', 20, 2 );
+
+		/**
+		 * Returns page id's that do not belong to normal page lists 
+		 * like custom 404, custom maintainence mode page, custom footer page
+		 * Returns an array of all languages
+		 * 
+		 * @since 4.5.1
+		 * @param array $post_ids
+		 * @param string $context
+		 * @return array
+		 */
+		function avia_wpml_get_special_pages_ids( $post_ids = array(), $context = '' )
+		{
+			global $avia_config;
+
+			$langs = $avia_config['wpml']['lang'];
+
+			$maintenance_mode = avia_wpml_get_options( 'maintenance_mode' );
+			$maintenance_page = avia_wpml_get_options( 'maintenance_page' );
+			$error404_custom = avia_wpml_get_options( 'error404_custom' );
+			$error404_page = avia_wpml_get_options( 'error404_page' );
+			$display_widgets_socket = avia_wpml_get_options( 'display_widgets_socket' );
+			$footer_page = avia_wpml_get_options( 'footer_page' );
+
+			foreach( $langs as $lang_id => $lang ) 
+			{	
+						// Maintenance Page
+//				if( ( 'maintenance_mode' == $maintenance_mode[ $lang_id ] ) && is_numeric( $maintenance_page[ $lang_id ] ) && ( 0 != $maintenance_page[ $lang_id ] ) )
+				if( is_numeric( $maintenance_page[ $lang_id ] ) && ( 0 != $maintenance_page[ $lang_id ] ) )
+				{
+					$post_ids[] = $maintenance_page[ $lang_id ];
+				}
+
+						// 404 Page
+//				if( ( 'error404_custom' == $error404_custom[ $lang_id ] ) && is_numeric( $error404_page[ $lang_id ] ) && ( 0 != $error404_page[ $lang_id ] ) )
+				if( is_numeric( $error404_page[ $lang_id ] ) && ( 0 != $error404_page[ $lang_id ] ) )
+				{
+					$post_ids[] = $error404_page[ $lang_id ];
+				}		
+
+						// Footer Page
+//				if( ( strpos( $display_widgets_socket[ $lang_id ], 'page_in_footer' ) === 0 ) && is_numeric( $footer_page[ $lang_id ] ) && ( 0 != $footer_page[ $lang_id ] ) )
+				if( is_numeric( $footer_page[ $lang_id ] ) && ( 0 != $footer_page[ $lang_id ] ) )
+				{
+					$post_ids[] = $footer_page[ $lang_id ];
+				}
+			}
+
+			$post_ids = array_unique( $post_ids, SORT_NUMERIC );
+			return $post_ids;
+		}
+	}
+
 
 }
 
@@ -790,7 +876,7 @@ if( ! function_exists( 'avia_wpml_sync_avia_layout_builder_meta' ) )
 		$content = ShortcodeHelper::clean_up_shortcode( $content, 'balance_only' );
 
 		$tree = ShortcodeHelper::build_shortcode_tree( $content );
-		update_post_meta( $new_post_id, '_avia_builder_shortcode_tree', $tree );
+		Avia_Builder()->save_shortcode_tree( $new_post_id, $tree );
 	}
 }
 
@@ -858,6 +944,7 @@ if(!function_exists('avia_portfolio_compat') && defined('ICL_SITEPRESS_VERSION')
 //    add_filter( 'the_posts', 'av_error404_wpml', 999 );
 //}
 
+
 if( ! function_exists( 'av_wpml_get_fb_language_code' ) )
 {
 	/**
@@ -893,5 +980,28 @@ if( ! function_exists( 'av_wpml_get_fb_language_code' ) )
 	}
 	
 }
+
+if( ! function_exists( 'av_wpml_breadcrumbs_get_parents' ) )
+{
+	add_filter( 'avf_breadcrumbs_get_parents', 'av_wpml_breadcrumbs_get_parents', 10, 1 );
+	
+	/**
+	 * Allow to translate breadcrumb trail - fixes a problem with parent page for portfolio not being translated correctly
+	 * https://kriesi.at/support/topic/parent-page-link-works-correct-but-translation-doesnt/
+	 * https://wpml.org/forums/topic/enfold-theme-cant-copy-breadcrumb-hierarchy/#post-893784
+	 * 		
+	 * @since 4.5.1
+	 * @param int $post_id
+	 * @return int
+	 */
+	function av_wpml_breadcrumbs_get_parents( $post_id )
+	{
+		return apply_filters( 'wpml_object_id' , $post_id, 'page', true );
+	}
+
+}
+
+
+
 
 

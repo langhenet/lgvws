@@ -2,7 +2,7 @@
 	if ( !defined('ABSPATH') ){ die(); }
 	
 	global $avia_config, $post;
-
+	
 	if ( post_password_required() )
     {
 		get_template_part( 'page' ); exit();
@@ -15,13 +15,19 @@
 	 * Also hooked in 'get_header' 10 - can then be used in every page
 	 * fires add_action( 'ava_current_post_element_info_available', $this ); in 'get_header'
 	 */
-	$used_elements = Avia_Builder()->element_manager()->get_current_post_elements();
+//	$used_elements = Avia_Builder()->element_manager()->get_current_post_elements();
 	
 
 	/*
 	 * get_header is a basic wordpress function, used to retrieve the header.php file in your theme directory.
 	 */
 	get_header();
+	
+	/**
+	 * @used_by				enfold\config-wpml\config.php				10
+	 * @since 4.5.1
+	 */
+	do_action( 'ava_builder_template_after_header' );
 
 	if( false === in_the_loop() )
 	{

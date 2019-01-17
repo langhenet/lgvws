@@ -56,11 +56,27 @@ if( !class_exists( 'avia_style_generator' ) )
         
         var $stylewizard = array();	// holds all available styling rules that are defined in the config files 
         var $stylewizardIDs = array(); // holds all saved elements that contain rules
+		
+		/**
+		 *
+		 * @since 4.5.1
+		 * @var array 
+		 */
+		protected $fallback_fonts;
 
         public function __construct(&$avia_superobject, $print_styles = true, $print_extra_output = true, $addaction = true)
         {
             $this->print_styles = $print_styles;
             $this->print_extra_output = $print_extra_output;
+			
+			$this->fallback_fonts = array(
+										"'HelveticaNeue'", 
+										"'Helvetica Neue'",
+										"'Helvetica-Neue'", 
+										'Helvetica', 
+										'Arial', 
+										'sans-serif'
+								);
             
 
             //check if stylesheet exists...
@@ -87,6 +103,7 @@ if( !class_exists( 'avia_style_generator' ) )
 			unset( $this->used_fonts );
 			unset( $this->stylewizard );
 			unset( $this->stylewizardIDs );
+			unset( $this->fallback_fonts );
         }
         
         // gather styling wizard elements so the rules can be converted as well
@@ -101,8 +118,55 @@ if( !class_exists( 'avia_style_generator' ) )
         		}
         	}
         }
-
-
+		
+		/**
+		 * Returns a filterable array of fallback fonts that can be used to add to the font-family.
+		 * Default is Helvetia family
+		 * 
+		 * @since 4.5.1
+		 * @param string $selected_font_family
+		 * @return array
+		 */
+		public function get_fallback_fonts_array( $selected_font_family )
+		{
+			return apply_filters( 'avf_fallback_fonts_array', $this->fallback_fonts, $selected_font_family );
+		}
+		
+		/**
+		 * Returns the font family string extended with the fallback fonts.
+		 * Tries to filter double entries.
+		 * 
+		 * @since 4.5.1
+		 * @param string $selected_font_family
+		 * @param string $rule
+		 * @return string
+		 */
+		public function font_family_string( $selected_font_family, $rule = '' )
+		{
+			$fallback = $this->get_fallback_fonts_array( $selected_font_family );
+			
+			$plain_selected = strtolower( str_replace( array( '"', "'" ), '', $selected_font_family ) );
+			foreach( $fallback as $key => $font ) 
+			{
+				$plain_font = strtolower( str_replace( array( '"', "'" ), '', $font ) );
+				if( ( stripos( $rule, $font ) !== false ) || ( $plain_selected == $plain_font ) )
+				{
+					unset( $fallback[ $key ] );
+				}
+			}
+			
+			$family = "'{$plain_selected}'";
+			
+			if( ! empty( $fallback ) )
+			{
+				$family .= ', ';
+				$family .= implode( ', ', $fallback );
+			}
+			
+			return $family;
+		}
+				
+		
 		function create_styles()
 		{
 			global $avia_config;
@@ -288,7 +352,10 @@ if( !class_exists( 'avia_style_generator' ) )
 													$this->add_google_font( $font['family'], $font['weight'] );
 												}
 												
-												$value = "'" . $font['family'] . "', 'Helvetica Neue', Helvetica, Arial, sans-serif";
+//	replaced in 4.5.1 - can be removed in future releases:												
+//												$value = "'" . $font['family'] . "', 'Helvetica Neue', Helvetica, Arial, sans-serif";
+												
+												$value = $this->font_family_string( $font['family'], $rule_val );
 											}
 											
 											$rules .= str_replace( "%{$key}%", $value, $rule_val );
@@ -315,8 +382,12 @@ if( !class_exists( 'avia_style_generator' ) )
 											{
 												$this->add_google_font( $font['family'], $font['weight'] );
 											}
-										
-											$rules .= "font-family: '{$font['family']}', 'Helvetica Neue', Helvetica, Arial, sans-serif;"; 
+																					
+//	replaced in 4.5.1 - can be removed in future releases:
+//											$rules .= "font-family: '{$font['family']}', 'Helvetica Neue', Helvetica, Arial, sans-serif;"; 
+											
+											$family = $this->font_family_string( $font['family'] );
+											$rules .= "font-family: {$family};";
 											break;
 										default: 			
 											$rules .= "{$key}:{$value};"; 
@@ -447,7 +518,12 @@ if( !class_exists( 'avia_style_generator' ) )
 			
 			$font_css = strtolower( str_replace( " ", "_" , $font['family'] ) );
 
-			$this->output .= $rule['elements'] . ".{$font_css} {font-family:'" . $font['family'] ."', 'HelveticaNeue', 'Helvetica Neue', Helvetica, Arial, sans-serif;" . $font_weight . "}";
+//	replaced in 4.5.1 - can be removed in future releases:
+//			$this->output .= $rule['elements'] . ".{$font_css} {font-family:'" . $font['family'] ."', 'HelveticaNeue', 'Helvetica Neue', Helvetica, Arial, sans-serif;" . $font_weight . "}";
+			
+			$family = $this->font_family_string( $font['family'] );
+			$this->output .= $rule['elements'] . ".{$font_css} {font-family:{$family}; {$font_weight}}";
+			
 			if( $rule_split[1] !== 1 && $rule_split[1] ) 
 			{
 				$this->output .= $rule['elements'] . "{font-size:" . $rule_split[1]  ."em;}";

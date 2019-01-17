@@ -94,6 +94,12 @@ if ( !class_exists( 'avia_slideshow' ) )
 				$width  = $_wp_additional_image_sizes[$this->config['size']]['width'];
 				$height = $_wp_additional_image_sizes[$this->config['size']]['height'];
 				
+				/**
+				 * Avoid notices in case user manipulated image settings to 0
+				 */
+				$height = is_numeric( $height ) && $height > 0 ? $height : get_option( 'medium_size_h', 300 );
+				$width = is_numeric( $width ) && $width > 0 ? $width : get_option( 'medium_size_w', $height );
+				
 				$this->config['default-height'] = (100/$width) * $height;
 				
 			}

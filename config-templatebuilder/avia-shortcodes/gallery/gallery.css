@@ -35,7 +35,7 @@ transition:			all 1.7s cubic-bezier(0.230, 1.000, 0.320, 1.000);
 }
 .avia-gallery-animate .av-hover-grow:hover img { -webkit-transform: scale(1.1); transform: scale(1.1); }
 
-av-hide-gallery-thumbs .av-hide-gallery-thumbs .avia-gallery-thumb{display:none;}
+.av-hide-gallery-thumbs .avia-gallery-thumb{display:none;}
 
 
 #top #av-admin-preview .avia-gallery .avia-gallery-big-inner{height:auto;}

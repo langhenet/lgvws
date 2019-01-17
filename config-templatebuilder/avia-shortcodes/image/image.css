@@ -14,10 +14,27 @@ Image
 .avia-image-overlay-wrap a.avia_image{overflow: hidden; }
 .avia-image-overlay-wrap a.avia_image .image-overlay{-webkit-transform: scale(1.5); -ms-transform: scale(1.5); transform: scale(1.5);}
 
-.av-hover-grow,
-.av-hover-grow .avia-image-overlay-wrap a.avia_image 
+
+.avia-image-container .avia_image {
+    -webkit-transition: all 0.7s;
+    transition: all 0.7s;
+}
+
+.avia-image-container.av-hover-grow img:hover {
+    -webkit-transform: scale(1.1);
+    transform: scale(1.1);
+}
+
+.avia-image-container.av-hover-grow,
+.avia-image-container.av-hover-grow .avia-image-overlay-wrap a.avia_image
 {
     overflow: visible;
+}
+
+.avia-image-container.av-hover-grow.av-hide-overflow,
+.avia-image-container.av-hover-grow.av-hide-overflow .avia-image-overlay-wrap a.avia_image 
+{
+    overflow: hidden;
 }
 
 /*styling variations*/

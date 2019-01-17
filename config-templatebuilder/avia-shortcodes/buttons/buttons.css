@@ -28,7 +28,7 @@ max-width: 100%;
 }
 
 .avia-button:hover{opacity: 0.9;}
-.avia-button:active{border-bottom-width: 0px; border-top-width: 1px; border-top-style: solid;}
+.avia-button:active{border-bottom-width: 0px; border-top-width: 1px !important; border-top-style: solid;}
 .avia-button.avia-color-theme-color-subtle{background-image: none;}
 .avia-button.avia-color-theme-color-subtle:hover{}
 
