@@ -36,14 +36,14 @@ html.responsive { min-width: 0px; }
 .unit, .units {
   float: left;
   display: inline;
-  margin-left: 50px;
+  margin-left: 30px;
   position: relative;
   z-index: 1;
   min-height: 1px;
 }
 .row {
   position: relative;
-  margin-bottom: 20px;
+  margin-bottom: 30px;
   clear: both;
 }
 
@@ -72,7 +72,7 @@ body .unit.alpha, body .units.alpha {
 /* Base sizes */
 
 .container .av-content-full.units  {width: 100%}
-.container .av-content-small.units {width: 73%}
+.container .av-content-small.units {width: 74.36%!important;}
 
 
 .boxed#top, .html_boxed.html_header_sticky #header{ width: 1010px; }
@@ -84,7 +84,7 @@ body .unit.alpha, body .units.alpha {
 /* Note: Design for a width of 768px, Gutter: 30px, Unit: 32px */
 @media only screen and (min-width: 768px) and (max-width: 989px) {
   .responsive #top { overflow-x: hidden; }
-  .responsive .boxed#top , 
+  .responsive .boxed#top ,
   .responsive.html_boxed.html_header_sticky #header{ width: 782px;}
   .responsive .container{ max-width: 782px; }
   .responsive.html_mobile_menu_tablet .boxed #wrap_all { overflow: hidden; /*needed for mobile menu scrolling */ }
@@ -101,9 +101,9 @@ body .unit.alpha, body .units.alpha {
     width: 100%;
     display: block;
   }
-  
+
 .responsive #top #wrap_all .av-break-at-tablet-flextable, .responsive .av-layout-grid-container.av-break-at-tablet {
-	display: block;	
+	display: block;
   }
 
 }
@@ -113,15 +113,15 @@ body .unit.alpha, body .units.alpha {
 ================================================== */
 
 @media only screen and (max-width: 767px) {
-	
+
   .responsive .boxed #wrap_all { overflow: hidden; /*needed for mobile menu scrolling */ }
   .responsive #top { overflow-x: hidden; }
-  .responsive .boxed#top, .responsive #top.boxed .stretch_full , 
+  .responsive .boxed#top, .responsive #top.boxed .stretch_full ,
   .responsive.html_boxed.html_header_sticky #header,
   .responsive.html_boxed.html_header_transparency div #header{ width: 100%; max-width: 100%; }
   .responsive #top .flex_column_table_cell{display: block;}
   .responsive #top .flex_column_table{display:block;}
-  
+
   .responsive #top #wrap_all .container {
     width: 85%;
     max-width: 85%;
@@ -133,33 +133,33 @@ body .unit.alpha, body .units.alpha {
   .responsive .units, .responsive .unit {
     margin: 0;
   }
-  
+
   .responsive #top .container .av-content-small, .responsive #top #wrap_all .flex_column, .responsive #top #wrap_all .av-flex-cells .no_margin {
     margin: 0;
-    margin-bottom: 20px;
+    margin-bottom: 30px;
     width: 100%;
   }
-  
+
   .responsive #top #wrap_all .av-flex-cells .no_margin{
 	  display: block;
 	  margin: 0;
 	  height:auto !important;
-	  overflow: hidden;
+	  /* overflow: hidden;
 	  padding-left:8% !important;
-	  padding-right:8% !important;
+	  padding-right:8% !important; */
   }
-  
+
   .responsive #top #wrap_all .av-flex-cells .no_margin .flex_cell_inner{
 	    width: 100%;
 		max-width: 100%;
-		margin: 0 auto;  
+		margin: 0 auto;
   }
-  
+
   .responsive #top #wrap_all .av-flex-cells .no_margin.av-zero-padding{
 	  padding-left:0% !important;
 	  padding-right:0% !important;
   }
-  
+
   .responsive #top #wrap_all .flex_column:empty{margin:0;}
 }
 /* #Mobile (Landscape)
@@ -226,44 +226,44 @@ div .flex_column {
   width: 100%;
 }
 div .av_one_fifth {
-  margin-left: 6%;
-  width: 15.2%;
+  margin-left: 2.565%;
+  width: 17.948%;
 }
 div .av_one_fourth {
-  margin-left: 6%;
-  width: 20.5%;
+  margin-left: 2.564102564102564%;
+  width: 23.07692307692308%;
 }
 div .av_one_third {
-  margin-left: 6%;
-  width: 29.333333333333332%;
+  margin-left: 2.5625%;
+  width: 31.625%;
 }
 div .av_two_fifth {
-  margin-left: 6%;
-  width: 36.4%;
+  margin-left: 2.565%;
+  width: 38.461%;
 }
 div .av_one_half {
-  margin-left: 6%;
-  width: 47%;
+  margin-left: 2.565%;
+  width: 48.718%;
 }
 div .av_three_fifth {
-  margin-left: 6%;
-  width: 57.599999999999994%;
+  margin-left: 2.565%;
+  width: 58.974%;
 }
 div .av_two_third {
-  margin-left: 6%;
-  width: 64.66666666666666%;
+  margin-left: 2.5625%;
+  width: 65.518%;
 }
 div .av_three_fourth {
-  margin-left: 6%;
-  width: 73.5%;
+  margin-left: 2.5641625%;
+  width: 74.35909423076924%;
 }
 div .av_four_fifth {
   margin-left: 6%;
   width: 78.8%;
 }
 div .av_one_sixth {
-  margin-left: 6%;
-  width: 11.666666666666666%;
+  width:14.53%;
+  margin-left: 2.565%;
 }
 div .av_one_seventh {
   margin-left: 6%;
@@ -280,6 +280,12 @@ div .av_one_nineth {
 div .av_one_tenth {
   margin-left: 6%;
   width: 4.6%;
+}
+
+
+div .av_four_sixth {
+  width: 65.812%;
+  margin-left: 2.565%;
 }
 /* Columns for better content separation (no margin)
 ================================================== */
