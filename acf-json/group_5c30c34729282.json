@@ -1,0 +1,479 @@
+{
+    "key": "group_5c30c34729282",
+    "title": "Dettagli Azienda (legacy)",
+    "location": [
+        [
+            {
+                "param": "post_type",
+                "operator": "==",
+                "value": "lgbusiness"
+            },
+            {
+                "param": "post_template",
+                "operator": "==",
+                "value": "default"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": 1,
+    "description": "",
+    "fields": [
+        {
+            "key": "field_5c30c3569344e",
+            "label": "Informazioni di base",
+            "name": "",
+            "type": "tab",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placement": "top",
+            "endpoint": 0
+        },
+        {
+            "key": "field_5c30c3959344f",
+            "label": "Tipo di azienda",
+            "name": "business-type",
+            "type": "select",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "choices": {
+                "farmhouse": "Farmhouse",
+                "restaurant": "Restaurant",
+                "hotel": "Hotel",
+                "relais": "Relais",
+                "osteria": "Osteria",
+                "charme": "Charme Residence",
+                "bb": "Bed & Breakfast",
+                "house": "House",
+                "cellar": "Cellar",
+                "bar": "Bar",
+                "firm": "Business",
+                "bottega": "Workshop",
+                "studio": "Art Studio",
+                "activity": "Activity",
+                "laboratory": "Laboratory",
+                "spa": "Spa"
+            },
+            "default_value": [
+                "restaurant"
+            ],
+            "allow_null": 0,
+            "multiple": 0,
+            "ui": 1,
+            "ajax": 0,
+            "return_format": "label",
+            "placeholder": ""
+        },
+        {
+            "key": "field_5c30c48793450",
+            "label": "Titolo parte 1",
+            "name": "title_part-1",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "maxlength": ""
+        },
+        {
+            "key": "field_5c30c49c93451",
+            "label": "Titolo parte 2",
+            "name": "title_part-2",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "maxlength": ""
+        },
+        {
+            "key": "field_5c30c4b193452",
+            "label": "Orario di apertura",
+            "name": "business-hours",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "33",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "maxlength": ""
+        },
+        {
+            "key": "field_5c30c4c093453",
+            "label": "Giorno di chiusura",
+            "name": "closing-day",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "33",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "maxlength": ""
+        },
+        {
+            "key": "field_5c30c4cf93454",
+            "label": "Vacanze",
+            "name": "holidays",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "33",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "maxlength": ""
+        },
+        {
+            "key": "field_5c30c4ee93455",
+            "label": "Lingue parlate",
+            "name": "spoken-languages",
+            "type": "checkbox",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "33",
+                "class": "",
+                "id": ""
+            },
+            "choices": {
+                "en": "English",
+                "it": "Italian",
+                "de": "German",
+                "fr": "French",
+                "es": "Spanish"
+            },
+            "allow_custom": 0,
+            "default_value": [],
+            "layout": "vertical",
+            "toggle": 0,
+            "return_format": "label",
+            "save_custom": 0
+        },
+        {
+            "key": "field_5c30c5582781b",
+            "label": "Galleria",
+            "name": "gallery",
+            "type": "gallery",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "66",
+                "class": "",
+                "id": ""
+            },
+            "min": "",
+            "max": "",
+            "insert": "append",
+            "library": "all",
+            "min_width": "",
+            "min_height": "",
+            "min_size": "",
+            "max_width": "",
+            "max_height": "",
+            "max_size": "",
+            "mime_types": ""
+        },
+        {
+            "key": "field_5c30c58bd6acc",
+            "label": "Servizi",
+            "name": "",
+            "type": "tab",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placement": "top",
+            "endpoint": 0
+        },
+        {
+            "key": "field_5c30c5a2d6acd",
+            "label": "Pagamenti accettati",
+            "name": "payments",
+            "type": "checkbox",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "choices": {
+                "visa": "Visa \/ Cartasi",
+                "mc": "Mastercard",
+                "ac": "American Express",
+                "diners": "Diners"
+            },
+            "allow_custom": 0,
+            "default_value": [],
+            "layout": "horizontal",
+            "toggle": 0,
+            "return_format": "label",
+            "save_custom": 0
+        },
+        {
+            "key": "field_5c30c5bfd6ace",
+            "label": "Servizi",
+            "name": "services-options",
+            "type": "checkbox",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "choices": {
+                "ac": "Air Conditioning",
+                "pets": "Pets Allowed",
+                "meeting": "Meeting Room",
+                "terrace": "Terrace",
+                "sales": "Direct Sales",
+                "wifi": "WiFi",
+                "kids": "Kids Games \/ Playground",
+                "parking": "Parking Lot",
+                "garden": "Garden",
+                "park": "Private Park",
+                "caravan": "Caravan Parking",
+                "cafeteria": "Cafeteria",
+                "gift": "Gift Shop"
+            },
+            "allow_custom": 0,
+            "default_value": [],
+            "layout": "horizontal",
+            "toggle": 0,
+            "return_format": "label",
+            "save_custom": 0
+        },
+        {
+            "key": "field_5c30c66bd6ad0",
+            "label": "Servizi aggiuntivi (camere)",
+            "name": "lodging-services",
+            "type": "checkbox",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "choices": {
+                "elevator": "Elevator",
+                "minibar": "Minibar",
+                "shuttle": "Shuttle",
+                "bar": "Bar",
+                "custody": "Valuables Custody",
+                "garage": "Garage",
+                "restaurant": "Restaurant",
+                "swimming_pool": "Swimming Pool",
+                "nursery": "Nursery",
+                "laundry": "Laundry",
+                "room_service": "Room Service",
+                "safe": "Safe",
+                "tv": "TV",
+                "bike": "Bike Rental",
+                "spa": "Spa \/ Wellness Center"
+            },
+            "allow_custom": 0,
+            "default_value": [],
+            "layout": "horizontal",
+            "toggle": 0,
+            "return_format": "label",
+            "save_custom": 0
+        },
+        {
+            "key": "field_5c30c5f6d6acf",
+            "label": "Modulo",
+            "name": "form",
+            "type": "radio",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "choices": {
+                "room_": "Richiesta Soggiorno",
+                "table_": "Richiesta tavolo",
+                "visit_": "Richiesta Visita",
+                "contact_": "Modulo di Contatto semplice"
+            },
+            "allow_null": 0,
+            "other_choice": 0,
+            "default_value": "contact_",
+            "layout": "vertical",
+            "return_format": "value",
+            "save_other_choice": 0
+        },
+        {
+            "key": "field_5c30c6a82e63a",
+            "label": "Contatti e Indirizzo",
+            "name": "",
+            "type": "tab",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placement": "top",
+            "endpoint": 0
+        },
+        {
+            "key": "field_5c30c6b82e63b",
+            "label": "Sito web",
+            "name": "website",
+            "type": "url",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": ""
+        },
+        {
+            "key": "field_5c30c6d82e63c",
+            "label": "Email",
+            "name": "email",
+            "type": "email",
+            "instructions": "",
+            "required": 1,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_5c30c6e72e63d",
+            "label": "Telefono",
+            "name": "phone",
+            "type": "text",
+            "instructions": "",
+            "required": 1,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "maxlength": ""
+        },
+        {
+            "key": "field_5c30c6ff2e63e",
+            "label": "Cellulare",
+            "name": "mobile",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "maxlength": ""
+        },
+        {
+            "key": "field_5c30c70a2e63f",
+            "label": "Indirizzo",
+            "name": "address",
+            "type": "google_map",
+            "instructions": "",
+            "required": 1,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "center_lat": "",
+            "center_lng": "",
+            "zoom": "",
+            "height": ""
+        }
+    ],
+    "modified": 1549357502
+}

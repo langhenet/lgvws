@@ -250,3 +250,7 @@ add_filter( 'option_active_plugins', 'ea_disable_acf_on_frontend' );
  	return $api;
  }
  add_filter('acf/fields/google_map/api', 'my_acf_google_map_api');
+
+
+ // disable for post types
+add_filter('use_block_editor_for_post_type', '__return_false', 10);
