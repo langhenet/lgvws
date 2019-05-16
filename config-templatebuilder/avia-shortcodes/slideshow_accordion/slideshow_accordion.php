@@ -104,34 +104,46 @@ if ( !class_exists( 'avia_sc_slider_accordion' ) )
 					),
 					
 					array(
-						"name" 	=> __( "Sorting Options", 'avia_framework' ),
-						"desc" 	=> __( "Here you can choose how to sort the products. Default setting can be set at Woocommerce -&gt Settings -&gt Products -&gt Display -&gt Default product sorting", 'avia_framework' ),
+						"name" 	=> __( "WooCommerce Sorting Options", 'avia_framework' ),
+						"desc" 	=> __( "Here you can choose how to sort the products. Default setting can be set at Dashboard -&gt; Appearance -&gt; Customize -&gt; WooCommerce -&gt; Product Catalog -&gt; Default Product Sorting", 'avia_framework' ),
 						"id" 	=> "prod_order_by",
 						"type" 	=> "select",
 						"std" 	=> "",
 						"required" => array( 'link', 'parent_in_array', implode( ' ', get_object_taxonomies( 'product', 'names' ) ) ),
 						"subtype" => array( 
-								__('Use defaut (defined at Woocommerce -&gt; Settings -&gt Default product sorting) ', 'avia_framework' ) =>	'',
-								__('Sort alphabetically', 'avia_framework' )			=>	'title',
-								__('Sort by most recent', 'avia_framework' )			=>	'date',
-								__('Sort by price', 'avia_framework' )					=>	'price',
-								__('Sort by popularity', 'avia_framework' )				=>	'popularity',
-								__('Sort randomly', 'avia_framework' )					=>	'rand'
+								__( 'Use default (defined at Dashboard -&gt; Customize -&gt; WooCommerce) ', 'avia_framework' ) =>	'',
+								__( 'Sort alphabetically', 'avia_framework' )			=> 'title',
+								__( 'Sort by most recent', 'avia_framework' )			=> 'date',
+								__( 'Sort by price', 'avia_framework' )					=> 'price',
+								__( 'Sort by popularity', 'avia_framework' )			=> 'popularity',
+								__( 'Sort randomly', 'avia_framework' )					=> 'rand',
+								__( 'Sort by menu order and name', 'avia_framework' )	=> 'menu_order',
+								__( 'Sort by average rating', 'avia_framework' )		=> 'rating',
+								__( 'Sort by relevance', 'avia_framework' )				=> 'relevance',
+								__( 'Sort by Product ID', 'avia_framework' )			=> 'id'
 							)
 					),
 				
-				array(
-						"name" 	=> __( "Sorting Order", 'avia_framework' ),
-						"desc" 	=> __( "Here you can choose the order of the result products. Default setting can be set at Woocommerce -&gt Settings -&gt Products -&gt Display -&gt Default product sorting", 'avia_framework' ),
+					array(
+						"name" 	=> __( "WooCommerce Sorting Order", 'avia_framework' ),
+						"desc" 	=> __( "Here you can choose the order of the result products. Default setting can be set at Dashboard -&gt; Appearance -&gt; Customize -&gt; WooCommerce -&gt; Product Catalog -&gt; Default Product Sorting", 'avia_framework' ),
 						"id" 	=> "prod_order",
 						"type" 	=> "select",
 						"std" 	=> "",
 						"required" => array( 'link', 'parent_in_array', implode( ' ', get_object_taxonomies( 'product', 'names' ) ) ),
 						"subtype" => array( 
-								__('Use defaut (defined at Woocommerce -&gt Settings -&gt Default product sorting)', 'avia_framework' ) =>	'',
-								__('Ascending', 'avia_framework' )			=>	'ASC',
-								__('Descending', 'avia_framework' )			=>	'DESC'
+								__( 'Use default (defined at Dashboard -&gt; Customize -&gt; WooCommerce)', 'avia_framework' ) =>	'',
+								__( 'Ascending', 'avia_framework' )			=>	'ASC',
+								__( 'Descending', 'avia_framework' )		=>	'DESC'
 							)
+					),
+					
+					array(	
+						'type'					=> 'template',
+						'template_id'			=> 'date_query',
+						'template_required'		=> array( 
+														0	=> array( 'slide_type', 'is_empty_or', 'entry-based' )
+													)
 					),
 					
 					array(
@@ -503,42 +515,46 @@ if ( !class_exists( 'avia_sc_slider_accordion' ) )
 			{
 				extract(AviaHelper::av_mobile_sizes($atts)); //return $av_font_classes, $av_title_font_classes and $av_display_classes 
 				
-				$atts = shortcode_atts(array(
-				'slide_type'	=> 'image-based',
-				'link'			=> '',
-				'wc_prod_visible'	=>	'',
-				'prod_order_by'		=>	'',
-				'prod_order'		=>	'',
-				'size'			=> '',
-				'items'    	 	=> '',
-				'autoplay'		=> 'false',
-				'title'			=> 'active',
-				'excerpt'		=> '',
-				'interval'		=> 5,
-				'offset'		=> 0,
-				'custom_title_size' => '',
-				'custom_excerpt_size' => '',
-				'accordion_align'	=> '',
+				$atts = shortcode_atts( array(
+											'slide_type'			=> 'image-based',
+											'link'					=> '',
+											'wc_prod_visible'		=> '',
+											'prod_order_by'			=> '',
+											'prod_order'			=> '',
+											'date_filter'			=> '',	
+											'date_filter_start'		=> '',
+											'date_filter_end'		=> '',
+											'date_filter_format'	=> 'yy/mm/dd',		//	'yy/mm/dd' | 'dd-mm-yy'	| yyyymmdd
+											'size'					=> '',
+											'items'					=> '',
+											'autoplay'				=> 'false',
+											'title'					=> 'active',
+											'excerpt'				=> '',
+											'interval'				=> 5,
+											'offset'				=> 0,
+											'custom_title_size'		=> '',
+											'custom_excerpt_size'	=> '',
+											'accordion_align'		=> '',
+
+											'av-desktop-hide'	=>'',
+											'av-medium-hide'	=>'',
+											'av-small-hide'		=>'',
+											'av-mini-hide'		=>'',
+
+											'av-medium-font-size-title'	=>'',
+											'av-small-font-size-title'	=>'',
+											'av-mini-font-size-title'	=>'',
+
+											'av-medium-font-size'	=>'',
+											'av-small-font-size'	=>'',
+											'av-mini-font-size'		=>'',
+
+											'handle'		=> $shortcodename,
+											'content'		=> ShortcodeHelper::shortcode2array($content, 1)
 				
-				'av-desktop-hide'	=>'',
-				'av-medium-hide'	=>'',
-				'av-small-hide'		=>'',
-				'av-mini-hide'		=>'',
+									), $atts, $this->config['shortcode'] );
 				
-				'av-medium-font-size-title'	=>'',
-				'av-small-font-size-title'	=>'',
-				'av-mini-font-size-title'	=>'',
-				
-				'av-medium-font-size'	=>'',
-				'av-small-font-size'	=>'',
-				'av-mini-font-size'		=>'',
-								
-				'handle'		=> $shortcodename,
-				'content'		=> ShortcodeHelper::shortcode2array($content, 1)
-				
-				), $atts, $this->config['shortcode']);
-				
-				extract($atts);
+				extract( $atts );
 				$output  	= "";
 			    $class = "";
 			    
@@ -555,12 +571,12 @@ if ( !class_exists( 'avia_sc_slider_accordion' ) )
 				if($meta['index'] == 0) $params['close'] = false;
 				if(!empty($meta['siblings']['prev']['tag']) && in_array($meta['siblings']['prev']['tag'], AviaBuilder::$full_el_no_section )) $params['close'] = false;
 				
-				if($meta['index'] != 0) $params['class'] .= " slider-not-first";
+				if($meta['index'] > 0) $params['class'] .= " slider-not-first";
 				
 				$params['id'] = "accordion_slider_".avia_sc_slider_full::$slide_count;
 				
 				
-				$slider  = new aviaccordion($atts);
+				$slider  = new aviaccordion( $atts );
 				$slide_html = $slider->html();
 				
 				
@@ -768,7 +784,7 @@ if ( !class_exists( 'aviaccordion' ) )
 				if($params['offset'] == 'no_duplicates')
                 {
                     $params['offset'] = 0;
-                    if(empty($params['ignore_dublicate_rule'])) $no_duplicates = true;
+                    if(empty($params['ignore_duplicate_rule'])) $no_duplicates = true;
                 }
 							
 				if(empty($params['post_type'])) $params['post_type'] = get_post_types();
@@ -776,10 +792,17 @@ if ( !class_exists( 'aviaccordion' ) )
 									
 				$orderby = 'date';
 				$order = 'DESC';
+				
+				$date_query = array();
+				if( 'date_filter' == $params['date_filter'] )
+				{
+					$date_query = AviaHelper::add_date_query( $date_query, $params['date_filter_start'], $params['date_filter_end'], $params['date_filter_format'] );
+				}
 		
 				// Meta query - replaced by Tax query in WC 3.0.0
 				$meta_query = array();
 				$tax_query = array();
+				$ordering_args = array();
 
 				// check if taxonomy are set to product or product attributes
 				$tax = get_taxonomy( $params['taxonomy'] );
@@ -789,7 +812,7 @@ if ( !class_exists( 'aviaccordion' ) )
 					$avia_config['woocommerce']['disable_sorting_options'] = true;
 					
 					avia_wc_set_out_of_stock_query_params( $meta_query, $tax_query, $params['wc_prod_visible'] );
-					
+			
 						//	sets filter hooks !!
 					$ordering_args = avia_wc_get_product_query_order_args( $params['prod_order_by'], $params['prod_order'] );
 							
@@ -817,8 +840,14 @@ if ( !class_exists( 'aviaccordion' ) )
 								'posts_per_page' =>	$params['items'],
 								'post__not_in'	=>	( ! empty( $no_duplicates ) ) ? $avia_config['posts_on_current_page'] : array(),
 								'meta_query'	=>	$meta_query,
-								'tax_query'		=>	$tax_query
-							);				
+								'tax_query'		=>	$tax_query,
+								'date_query'	=> $date_query,
+							);
+				
+				if ( ! empty( $ordering_args['meta_key'] ) ) 
+				{
+					$query['meta_key'] = $ordering_args['meta_key'];
+				}
 				
 			}
 			else
@@ -826,12 +855,19 @@ if ( !class_exists( 'aviaccordion' ) )
 				$query = $params['custom_query'];
 			}
 
-
-			$query   = apply_filters('avf_accordion_entries_query', $query, $params);
+			/**
+			 * 
+			 * @since < 4.0
+			 * @param array $query
+			 * @param array $params
+			 * @return array
+			 */
+			$query   = apply_filters( 'avf_accordion_entries_query', $query, $params );
+			
 			$result = new WP_Query( $query );
 			$entries = $result->posts;
 			
-			if(!empty($entries) && empty($params['ignore_dublicate_rule']))
+			if(!empty($entries) && empty($params['ignore_duplicate_rule']))
 			{
 				foreach($entries as $entry)
 	            {
@@ -903,9 +939,25 @@ if ( !class_exists( 'aviaccordion' ) )
 					$title_style = !empty( $this->config['custom_title_size'] ) ? "style='font-size:".$this->config['custom_title_size']."px'" : "";
 					$excerpt_style = !empty( $this->config['custom_excerpt_size'] ) ? "style='font-size:".$this->config['custom_excerpt_size']."px'" : "";
 					
+					$default_heading = 'h3';
+					$args = array(
+								'heading'		=> $default_heading,
+								'extra_class'	=> ''
+							);
+
+					$extra_args = array( $this, $key, $slide );
+
+					/**
+					 * @since 4.5.5
+					 * @return array
+					 */
+					$args = apply_filters( 'avf_customize_heading_settings', $args, __CLASS__, $extra_args );
+
+					$heading = ! empty( $args['heading'] ) ? $args['heading'] : $default_heading;
+					$css = ! empty( $args['extra_class'] ) ? $args['extra_class'] : '';
 
 					$output .= "<div class='aviaccordion-preview-title-pos'><div class='aviaccordion-preview-title-wrap'><div class='aviaccordion-preview-title'>";
-					$output .= !empty($slide->post_title) ? "<h3 class='aviaccordion-title {$av_title_font_classes}' {$markup_title} {$title_style}>".$slide->post_title."</h3>" : "";
+					$output .= !empty($slide->post_title) ? "<{$heading} class='aviaccordion-title {$css} {$av_title_font_classes}' {$markup_title} {$title_style}>{$slide->post_title}</{$heading}>" : "";
 					$output .= !empty($slide->post_excerpt) && !empty($this->config['excerpt']) ? "<div class='aviaccordion-excerpt {$av_font_classes}' {$excerpt_style} {$markup_content}>".wpautop($slide->post_excerpt)."</div>" : "";
 					$output .= "</div></div></div>";
 				}

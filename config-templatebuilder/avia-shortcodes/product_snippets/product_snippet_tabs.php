@@ -78,10 +78,17 @@ if ( !class_exists( 'avia_sc_product_tabs' ) )
 			add_filter('woocommerce_product_tabs', array($this, 'av_advanced_tabs_remove_content_tab'));
 		
 			$output = "";
-			$meta['el_class'];
+			if( ! isset( $meta['el_class'] ) )
+			{
+				$meta['el_class'] = '';
+			}
 			
-			global $woocommerce, $product;
-			if(!is_object($woocommerce) || !is_object($woocommerce->query) || empty($product) || is_admin() ) return;
+			//	fix for seo plugins which execute the do_shortcode() function before everything is loaded
+			global $product;
+			if( ! function_exists( 'WC' ) || ! WC() instanceof WooCommerce || ! is_object( WC()->query ) || ! $product instanceof WC_Product )
+			{
+				return '';
+			}
 			
 			//$temp = get_post( $product->get_id() )->post_content;
 			//$product->post->post_content = "";
@@ -89,7 +96,13 @@ if ( !class_exists( 'avia_sc_product_tabs' ) )
 			// $product = wc_get_product();
 			$output .= "<div class='av-woo-product-review av-woo-product-tabs product ".$meta['el_class']."'>";
 			ob_start();
-			wc_clear_notices();
+			
+			//	fix a problem with SEO plugin
+			if( function_exists( 'wc_clear_notices' ) )
+			{
+				wc_clear_notices();
+			}
+			
 			woocommerce_output_product_data_tabs();
 			// comments_template('reviews');
 			$output .= ob_get_clean();

@@ -15,23 +15,27 @@ Image
 .avia-image-overlay-wrap a.avia_image .image-overlay{-webkit-transform: scale(1.5); -ms-transform: scale(1.5); transform: scale(1.5);}
 
 
-.avia-image-container .avia_image {
+.avia-image-container .avia_image,
+.avia-image-container .avia-image-overlay-wrap{
     -webkit-transition: all 0.7s;
     transition: all 0.7s;
 }
 
-.avia-image-container.av-hover-grow img:hover {
+.avia-image-container.av-hover-grow img:hover,
+.avia-image-container.av-hover-grow .avia-image-overlay-wrap:hover{
     -webkit-transform: scale(1.1);
     transform: scale(1.1);
 }
 
 .avia-image-container.av-hover-grow,
+.avia-image-container.av-hover-grow .avia-image-container-inner,
 .avia-image-container.av-hover-grow .avia-image-overlay-wrap a.avia_image
 {
     overflow: visible;
 }
 
 .avia-image-container.av-hover-grow.av-hide-overflow,
+.avia-image-container.av-hover-grow.av-hide-overflow .avia-image-container-inner,
 .avia-image-container.av-hover-grow.av-hide-overflow .avia-image-overlay-wrap a.avia_image 
 {
     overflow: hidden;
@@ -57,7 +61,7 @@ Image
 .av-image-caption-overlay-center p:last-child{margin-bottom:0;}
 
 .av-caption-image-overlay-bg{position: absolute; height:100%; width:100%; -webkit-transition: all 0.3s ease-in-out; transition: all 0.3s ease-in-out;}
-.av-overlay-hover-deactivate:hover .av-caption-image-overlay-bg{opacity: 0 !important; }
+.av-overlay-hover-deactivate .avia-image-overlay-wrap:hover .av-caption-image-overlay-bg{opacity: 0 !important; }
 .av-overlay-on-hover .av-image-caption-overlay{opacity: 0; filter:alpha(opacity=00); }
 .av-overlay-on-hover .avia-image-container-inner:hover .av-image-caption-overlay{opacity: 1; filter:alpha(opacity=100);}
 

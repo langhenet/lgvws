@@ -44,8 +44,9 @@
     	{
 			if( 'undefined' == typeof avia_framework_globals.gmap_maps_loaded || avia_framework_globals.gmap_maps_loaded == '' )
 			{
-						//	this is only a fallback setting 
-				$.AviaMapsAPI.apiFiles.src = 'https://maps.googleapis.com/maps/api/js?v=3.30&callback=aviaOnGoogleMapsLoaded';
+						//	this is only a fallback setting - should never be used
+				var gmap_version = 'string' == typeof avia_framework_globals.gmap_version ? avia_framework_globals.gmap_version : 'weekly';
+				$.AviaMapsAPI.apiFiles.src = 'https://maps.googleapis.com/maps/api/js?v=' + gmap_version + '&callback=aviaOnGoogleMapsLoaded';
 				if( typeof avia_framework_globals.gmap_api != 'undefined' && avia_framework_globals.gmap_api != "" )
 				{
 					$.AviaMapsAPI.apiFiles.src += "&key=" + avia_framework_globals.gmap_api;

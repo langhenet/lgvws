@@ -189,12 +189,23 @@ if ( !class_exists( 'avia_sc_grid_row' ) )
 							"type" 	=> "select",
 							"std" 	=> "",
 							"subtype" => array(	
-			                      __('At least 100&percnt; of Browser Window height','avia_framework' )=>'100',
-			                      __('At least 75&percnt; of Browser Window height','avia_framework' )	=>'75',
-								  __('At least 50&percnt; of Browser Window height','avia_framework' )	=>'50',
-								  __('At least 25&percnt; of Browser Window height','avia_framework' )	=>'25',
-								  __('Custom height in pixel','avia_framework' )	=>'',
-									)
+												__( 'At least 100&percnt; of Browser Window height', 'avia_framework' )	=> '100',
+												__( 'At least 75&percnt; of Browser Window height', 'avia_framework' )	=> '75',
+												__( 'At least 50&percnt; of Browser Window height', 'avia_framework' )	=> '50',
+												__( 'At least 25&percnt; of Browser Window height', 'avia_framework' )	=> '25',
+												__( 'Custom height in &percnt; based on browser windows height', 'avia_framework' )	=> 'percent',
+												__( 'Custom height in pixel', 'avia_framework' )						=> '',
+											)
+						),
+					
+					array(	
+							'name' 	=> __( 'Section minimum custom height in &percnt;', 'avia_framework' ),
+							'desc' 	=> __( 'Define a minimum height for the gridrow in &percnt; based on the browser windows height', 'avia_framework' ),
+							'id' 	=> 'min_height_pc',
+							'required'	=> array( 'min_height_percent', 'equals', 'percent' ),
+							'std' 	=> '25',
+							'type' 	=> 'select',
+							'subtype' => AviaHtmlHelper::number_array( 1, 99, 1 )
 						),
 				    
 				    
@@ -350,37 +361,46 @@ if ( !class_exists( 'avia_sc_grid_row' ) )
 				extract(AviaHelper::av_mobile_sizes($atts)); //return $av_font_classes, $av_title_font_classes and $av_display_classes 
 				
 				avia_sc_grid_row::$count++;
-			    $atts = shortcode_atts(array(
-				'color'			=> 'main_color',
-				'border'		=> '',
-				'min_height'	=> '0',
-				'min_height_percent' => '',
-				'mobile'		=> 'av-flex-cells',
-				'mobile_breaking'=>'',
-				'id'			=> ''
 				
-				), $atts, $this->config['shortcode']);
+			    $atts = shortcode_atts( array(
+											'color'					=> 'main_color',
+											'border'				=> '',
+											'min_height'			=> '0',
+											'min_height_percent'	=> '',
+											'min_height_pc'			=> 25,
+											'mobile'				=> 'av-flex-cells',
+											'mobile_breaking'		=> '',
+											'id'					=> ''
 				
-				extract($atts);
-				$output  	= "";
+										), $atts, $this->config['shortcode'] );
 				
+				if( 'percent' == $atts['min_height_percent'] )
+				{
+					$atts['min_height_percent'] = $atts['min_height_pc'];
+				}
 				
-				$params['class'] = "av-layout-grid-container entry-content-wrapper {$color} {$mobile} {$mobile_breaking} {$av_display_classes} {$border}".$meta['el_class'];
+				extract( $atts );
+				
+				$output = '';
+				$params = array();
+				
+				$params['class'] = "av-layout-grid-container entry-content-wrapper {$color} {$mobile} {$mobile_breaking} {$av_display_classes} {$border} {$meta['el_class']}";
 				$params['open_structure'] = false; 
-				$params['id'] = !empty($id) ? AviaHelper::save_string($id,'-') : "av-layout-grid-".avia_sc_grid_row::$count;
+				$params['id'] = ! empty( $id ) ? AviaHelper::save_string( $id, '-' ) : "av-layout-grid-" . avia_sc_grid_row::$count;
 				$params['custom_markup'] = $meta['custom_markup'];
+				$params['data'] = '';
 				
-				
-				
-				if($min_height_percent != "")
-					$params['class'] .= " av-cell-min-height av-cell-min-height-" .$min_height_percent;
-				
+				if( $min_height_percent != '' )
+				{
+					$params['class'] .= " av-cell-min-height av-cell-min-height-{$min_height_percent}";
+					$params['data'] .= " data-av_minimum_height_pc='{$min_height_percent}'";
+				}
 				
 				//we dont need a closing structure if the element is the first one or if a previous fullwidth element was displayed before
 				if(isset($meta['index']) && $meta['index'] == 0) $params['close'] = false;
 				if(!empty($meta['siblings']['prev']['tag']) && in_array($meta['siblings']['prev']['tag'], AviaBuilder::$full_el_no_section )) $params['close'] = false;
 				
-				if(isset($meta['index']) && $meta['index'] != 0) $params['class'] .= " submenu-not-first";
+				if(isset($meta['index']) && $meta['index'] > 0) $params['class'] .= " submenu-not-first";
 				
 				
 				

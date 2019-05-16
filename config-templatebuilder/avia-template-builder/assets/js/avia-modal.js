@@ -454,16 +454,75 @@
    	$.AviaModal.register_callback.modal_load_datepicker = function()
 	{
 		var scope			= this.modal,
-			datepicker		= scope.find('.av-datepicker').datepicker(
-			{ 
-				dateFormat: 'mm / dd / yy',
-				minDate: -0,
-				beforeShow: function(input, inst) 
+			datepickers		= scope.find('.av-datepicker'),
+			supported		= [ 'showButtonPanel', 
+								'closeText', 
+								'currentText', 
+								'nextText', 
+								'prevText', 
+								'monthNames', 
+								'monthNamesShort', 
+								'dayNames', 
+								'dayNamesShort', 
+								'dayNamesMin', 
+								'dateFormat', 
+								'firstDay', 
+								'isRTL', 
+								'changeMonth', 
+								'changeYear', 
+								'yearRange', 
+								'minDate', 
+								'maxDate' 
+								],
+			array_structur	= [
+								'monthNames', 
+								'monthNamesShort', 
+								'dayNames', 
+								'dayNamesShort', 
+								'dayNamesMin'
+								];
+		
+						    
+		datepickers.each(function()
+		{		
+			var	input = $(this),
+				settings = input.data(),
+				options = {};
+				
+			$.each( supported, function( index, value ){
+				var lc = value.toLowerCase(),
+					val = '';
+					
+				if( 'undefined' == typeof settings[lc] )
 				{
-					inst.dpDiv.addClass("avia-datepicker-div");
+					return;
 				}
+				
+				if( array_structur.includes( value ) )
+				{
+					val = settings[lc].split(',');
+					val.map( function(s) { return s.trim() });
+				}
+				else
+				{
+					val = settings[lc];
+				}
+				
+				options[ value ] = val;
 			});
 			
+			options.beforeShow = function(input, inst) 
+									{
+										inst.dpDiv.addClass("avia-datepicker-div");
+										if( 'undefined' != typeof settings.container_class )
+										{
+											inst.dpDiv.addClass( settings.container_class );
+										}
+									};
+			
+			input.datepicker( options );
+		});
+		
 	};
 	
 	$.AviaModal.register_callback.modal_load_multi_input = function()

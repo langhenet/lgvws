@@ -184,7 +184,10 @@
 				send.button.val(send.button.data('sending-label'));
 				
 				var redirect_to = form.data('avia-redirect') || false,
-					action		= form.attr('action');
+				    action = form.attr('action'),
+				    label = form.is( '.av-form-labels-style' );
+
+				    if( label ) return;
 				
 				responseContainer.load(action+' '+options.responseContainer, send.dataObj, function()
 				{

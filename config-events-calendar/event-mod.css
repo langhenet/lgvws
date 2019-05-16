@@ -181,6 +181,7 @@ padding:0;
 .single-tribe_events #tribe-events-content .tribe-events-event-meta dt{line-height: 1.5em; margin-right: 5px;}
 .single-tribe_events #tribe-events-content .tribe-events-event-meta dl{line-height: 1.5em;}
 .single-tribe_events #tribe-events-content .tribe-events-event-meta dd{line-height: 1.5em;}
+.single-tribe_events .tribe-events-cal-links{margin-bottom: 30px;}
 
 /*VENUE VIEW*/
 .tribe-events-venue .tribe-events-venue-meta{border-width: 1px; border-style: solid; padding:20px; margin:0 0 46px 0;}

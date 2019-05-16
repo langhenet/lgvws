@@ -19,10 +19,6 @@ body.block-editor-page #avia_alb_actions h2:hover{
 	cursor: pointer;
 }
 
-body.block-editor-page.avia_hide_gutenberg_popover .components-popover__content{
-	visibility: hidden;
-}
-
 body.block-editor-page #avia_builder #postdivrich_wrap_builder_meta{
 	display: none;
 }
@@ -34,7 +30,8 @@ body.block-editor-page.avia-advanced-editor-enabled .edit-post-layout__content .
 
 
 
-body.block-editor-page.avia-advanced-editor-enabled .edit-post-header .edit-post-header-toolbar{
+body.block-editor-page.avia-advanced-editor-enabled .edit-post-header .edit-post-header-toolbar,
+body.block-editor-page.avia-advanced-editor-enabled .components-popover{
 	visibility: hidden;
 }
 

@@ -119,17 +119,17 @@ if ( !class_exists( 'avia_sc_icongrid' ) )
 				
 				$this->screen_options = array();
 				$this->icon_styling = array();
-                $this->title_styling = array();
-                $this->subtitle_styling = array();
+				$this->title_styling = array();
+				$this->subtitle_styling = array();
 				$this->content_styling = array();
 				$this->flipbox_front_styling = array();
-                $this->flipbox_back_styling = array();
-                $this->wrapper_styling = array();
-                $this->list_styling = array();
+				$this->flipbox_back_styling = array();
+				$this->wrapper_styling = array();
+				$this->list_styling = array();
 
 				$this->icongrid_styling = '';
-                $this->icongrid_numrow = '';
-                $this->icongrid_borders = '';
+				$this->icongrid_numrow = '';
+				$this->icongrid_borders = '';
 				$this->custom_title_size = '';
 				$this->custom_subtitle_size = '';
 				$this->custom_content_size = '';
@@ -361,6 +361,19 @@ if ( !class_exists( 'avia_sc_icongrid' ) )
                                             __('Define Custom Colors', 'avia_framework' )=>'custom'),
                                     ),
 
+                                     array(
+	                                        "name" 	=> __("Custom Background Front",'avia_framework' ),
+	                                        "desc" 	=> __("Select the type of background.", 'avia_framework' ),
+	                                        "id" 	=> "item_custom_front_bg_type",
+	                                        "type" 	=> "select",
+	                                        "std" 	=> "bg_color",
+	                                        "required" => array('item_bg_color','equals','custom'),
+	                                        "subtype" => array(
+	                                            __('Background Color','avia_framework' ) => 'bg_color',
+	                                            __('Background Gradient','avia_framework' ) =>'bg_gradient',
+	                                        )
+	                                    ),
+
                                     array(
                                         "name" 	=> __("Custom Background Color Front", 'avia_framework' ),
                                         "desc" 	=> __("Select a custom background color. Leave empty to use the default", 'avia_framework' ),
@@ -368,8 +381,60 @@ if ( !class_exists( 'avia_sc_icongrid' ) )
                                         "type" 	=> "colorpicker",
                                         "std" 	=> "",
                                         "container_class" => 'av_half av_half_first',
-                                        "required" => array('item_bg_color','equals','custom')
+                                        "required" => array('item_custom_front_bg_type','equals','bg_color')
                                     ),
+
+                                    array(
+                                        "name" 	=> __("Front Gradient Color 1", 'avia_framework' ),
+                                        "desc" 	=> __("Select the first color for the gradient.", 'avia_framework' ),
+                                        "id" 	=> "item_custom_front_gradient_color1",
+                                        "type" 	=> "colorpicker",
+                                        "container_class" => 'av_third av_third_first',
+                                        "required" => array('item_custom_front_bg_type','equals','bg_gradient'),
+                                        "rgba" 	=> true,
+                                        "std" 	=> "",
+                                    ),
+                                    array(
+                                        "name" 	=> __("Front Gradient Color 2", 'avia_framework' ),
+                                        "desc" 	=> __("Select the second color for the gradient.", 'avia_framework' ),
+                                        "id" 	=> "item_custom_front_gradient_color2",
+                                        "type" 	=> "colorpicker",
+                                        "container_class" => 'av_third',
+                                        "required" => array('item_custom_front_bg_type','equals','bg_gradient'),
+                                        "rgba" 	=> true,
+                                        "std" 	=> "",
+                                    ),
+
+                                    array(
+                                        "name" 	=> __("Front Gradient Direction",'avia_framework' ),
+                                        "desc" 	=> __("Define the gradient direction", 'avia_framework' ),
+                                        "id" 	=> "item_custom_front_gradient_direction",
+                                        "type" 	=> "select",
+                                        "container_class" => 'av_third',
+                                        "std" 	=> "vertical",
+                                        "required" => array('item_custom_front_bg_type','equals','bg_gradient'),
+                                        "subtype" => array(
+                                            __('Vertical','avia_framework' )=>'vertical',
+                                            __('Horizontal','avia_framework' ) =>'horizontal',
+                                            __('Radial','avia_framework' ) =>'radial',
+                                            __('Diagonal Top Left to Bottom Right','avia_framework' ) =>'diagonal_tb',
+                                            __('Diagonal Bottom Left to Top Right','avia_framework' ) =>'diagonal_bt',
+                                        )
+                                    ),
+
+                                    array(
+                                        "name" 	=> __("Custom Background Back / Tooltip",'avia_framework' ),
+                                        "desc" 	=> __("Select the type of background.", 'avia_framework' ),
+                                        "id" 	=> "item_custom_back_bg_type",
+                                        "type" 	=> "select",
+                                        "std" 	=> "bg_color",
+                                        "required" => array('item_bg_color','equals','custom'),
+                                        "subtype" => array(
+                                            __('Background Color','avia_framework' ) => 'bg_color',
+                                            __('Background Gradient','avia_framework' ) =>'bg_gradient',
+                                        )
+                                    ),
+
 
                                     array(
                                         "name" 	=> __("Custom Background Color Back / Tooltip", 'avia_framework' ),
@@ -377,11 +442,57 @@ if ( !class_exists( 'avia_sc_icongrid' ) )
                                         "id" 	=> "item_custom_back_bg",
                                         "type" 	=> "colorpicker",
                                         "std" 	=> "",
-                                        "container_class" => 'av_third av_half',
-                                        "required" => array('item_bg_color','equals','custom')
+                                        "required" => array('item_custom_back_bg_type','equals','bg_color')
                                     ),
 
+                                    array(
+	                                    "name" 	=> __("Back Gradient Color 1", 'avia_framework' ),
+	                                    "desc" 	=> __("Select the first color for the gradient.", 'avia_framework' ),
+	                                    "id" 	=> "item_custom_back_gradient_color1",
+	                                    "type" 	=> "colorpicker",
+	                                    "container_class" => 'av_third av_third_first',
+	                                    "required" => array('item_custom_back_bg_type','equals','bg_gradient'),
+	                                    "rgba" 	=> true,
+	                                    "std" 	=> "",
+	                                ),
+	                                array(
+	                                    "name" 	=> __("Back Gradient Color 2", 'avia_framework' ),
+	                                    "desc" 	=> __("Select the second color for the gradient.", 'avia_framework' ),
+	                                    "id" 	=> "item_custom_back_gradient_color2",
+	                                    "type" 	=> "colorpicker",
+	                                    "container_class" => 'av_third',
+	                                    "required" => array('item_custom_back_bg_type','equals','bg_gradient'),
+	                                    "rgba" 	=> true,
+	                                    "std" 	=> "",
+	                                ),
+	
+	                                array(
+	                                    "name" 	=> __("Back Gradient Direction",'avia_framework' ),
+	                                    "desc" 	=> __("Define the gradient direction", 'avia_framework' ),
+	                                    "id" 	=> "item_custom_back_gradient_direction",
+	                                    "type" 	=> "select",
+	                                    "container_class" => 'av_third',
+	                                    "std" 	=> "vertical",
+	                                    "required" => array('item_custom_back_bg_type','equals','bg_gradient'),
+	                                    "subtype" => array(
+	                                        __('Vertical','avia_framework' )=>'vertical',
+	                                        __('Horizontal','avia_framework' ) =>'horizontal',
+	                                        __('Radial','avia_framework' ) =>'radial',
+	                                        __('Diagonal Top Left to Bottom Right','avia_framework' ) =>'diagonal_tb',
+	                                        __('Diagonal Bottom Left to Top Right','avia_framework' ) =>'diagonal_bt',
+	                                    )
+	                                ),
 
+                                    array(
+                                        "name" 	=> __("Custom Tooltip Border Color", 'avia_framework' ),
+                                        "desc" 	=> __("Select a custom background color. Leave empty to use the default", 'avia_framework' ),
+                                        "id" 	=> "item_custom_tooltip_border",
+                                        "rgba"  => true,
+                                        "type" 	=> "colorpicker",
+                                        "std" 	=> "",
+                                        "required" => array('item_bg_color','equals','custom')
+                                    ),
+                
                                     array(
                                             "type" => "close_div",
                                             'nodescription' => true
@@ -417,8 +528,19 @@ if ( !class_exists( 'avia_sc_icongrid' ) )
                             __('3 Items', 'avia_framework' ) =>'3',
                             __('4 Items', 'avia_framework' ) =>'4',
                             __('5 Items', 'avia_framework' ) =>'5',
-                        )),
+                    )),
 
+                    array(
+                        "type" 	=> "close_div",
+                        'nodescription' => true
+                    ),
+
+                    array(
+                        "type" 	=> "tab",
+                        "name"	=> __("Appearence",'avia_framework' ),
+                        'nodescription' => true
+                    ),
+                        
                     array(
                         "name" 	=> __("Grid Borders", 'avia_framework' ),
                         "desc" 	=> __("Define the appearence of the grid borders here.", 'avia_framework' ),
@@ -431,6 +553,20 @@ if ( !class_exists( 'avia_sc_icongrid' ) )
                             __('All Borders', 'avia_framework' ) =>'all',
                         )),
 
+                    array(
+                        "name" 	=> __("Items Padding", 'avia_framework' ),
+                        "desc" 	=> __("Set the padding for the search results container", 'avia_framework' ),
+                        "id" 	=> "icongrid_padding",
+                        "type" 	=> "multi_input",
+                        "std" 	=> "",
+                        "sync" 	=> true,
+                        "multi" => array(
+                            'top' 	=> __('Top-Left-Padding','avia_framework'),
+                            'right'	=> __('Top-Right-Padding','avia_framework'),
+                            'bottom'=> __('Bottom-Right-Padding','avia_framework'),
+                            'left'	=> __('Bottom-Left-Padding','avia_framework'),
+                        )
+                    ),
 
                     array(
                         "name" 	=> __("Title Font Size", 'avia_framework' ),
@@ -541,6 +677,11 @@ if ( !class_exists( 'avia_sc_icongrid' ) )
                     ),
 
                     array(
+                        "name" => __("Background Colors", 'avia_framework'),
+                        "type" => "heading",
+                    ),
+
+                    array(
                         "name" 	=> __("Background Colors", 'avia_framework' ),
                         "desc" 	=> __("Either use the themes default colors or apply some custom ones", 'avia_framework' ),
                         "id" 	=> "bg_color",
@@ -553,15 +694,79 @@ if ( !class_exists( 'avia_sc_icongrid' ) )
                     ),
 
                     array(
+                        "name" 	=> __("Custom Background Front",'avia_framework' ),
+                        "desc" 	=> __("Select the type of background.", 'avia_framework' ),
+                        "id" 	=> "custom_front_bg_type",
+                        "type" 	=> "select",
+                        "std" 	=> "bg_color",
+                        "required" => array('bg_color','equals','custom'),
+                        "subtype" => array(
+                            __('Background Color','avia_framework' ) => 'bg_color',
+                            __('Background Gradient','avia_framework' ) =>'bg_gradient',
+                        )
+                    ),
+
+                    array(
                         "name" 	=> __("Custom Background Color Front", 'avia_framework' ),
                         "desc" 	=> __("Select a custom background color. Leave empty to use the default", 'avia_framework' ),
                         "id" 	=> "custom_front_bg",
                         "rgba"  => true,
                         "type" 	=> "colorpicker",
                         "std" 	=> "",
-                        "container_class" => 'av_half av_half_first',
-                        "required" => array('bg_color','equals','custom')
+                        "required" => array('custom_front_bg_type','equals','bg_color')
                     ),
+
+                    array(
+                        "name" 	=> __("Front Gradient Color 1", 'avia_framework' ),
+                        "desc" 	=> __("Select the first color for the gradient.", 'avia_framework' ),
+                        "id" 	=> "custom_front_gradient_color1",
+                        "type" 	=> "colorpicker",
+                        "container_class" => 'av_third av_third_first',
+                        "required" => array('custom_front_bg_type','equals','bg_gradient'),
+                        "rgba" 	=> true,
+                        "std" 	=> "",
+                    ),
+                    array(
+                        "name" 	=> __("Front Gradient Color 2", 'avia_framework' ),
+                        "desc" 	=> __("Select the second color for the gradient.", 'avia_framework' ),
+                        "id" 	=> "custom_front_gradient_color2",
+                        "type" 	=> "colorpicker",
+                        "container_class" => 'av_third',
+                        "required" => array('custom_front_bg_type','equals','bg_gradient'),
+                        "rgba" 	=> true,
+                        "std" 	=> "",
+                    ),
+
+                    array(
+                        "name" 	=> __("Front Gradient Direction",'avia_framework' ),
+                        "desc" 	=> __("Define the gradient direction", 'avia_framework' ),
+                        "id" 	=> "custom_front_gradient_direction",
+                        "type" 	=> "select",
+                        "container_class" => 'av_third',
+                        "std" 	=> "vertical",
+                        "required" => array('custom_front_bg_type','equals','bg_gradient'),
+                        "subtype" => array(
+                            __('Vertical','avia_framework' )=>'vertical',
+                            __('Horizontal','avia_framework' ) =>'horizontal',
+                            __('Radial','avia_framework' ) =>'radial',
+                            __('Diagonal Top Left to Bottom Right','avia_framework' ) =>'diagonal_tb',
+                            __('Diagonal Bottom Left to Top Right','avia_framework' ) =>'diagonal_bt',
+                        )
+                    ),
+
+                    array(
+                        "name" 	=> __("Custom Background Back / Tooltip",'avia_framework' ),
+                        "desc" 	=> __("Select the type of background.", 'avia_framework' ),
+                        "id" 	=> "custom_back_bg_type",
+                        "type" 	=> "select",
+                        "std" 	=> "bg_color",
+                        "required" => array('bg_color','equals','custom'),
+                        "subtype" => array(
+                            __('Background Color','avia_framework' ) => 'bg_color',
+                            __('Background Gradient','avia_framework' ) =>'bg_gradient',
+                        )
+                    ),
+
 
                     array(
                         "name" 	=> __("Custom Background Color Back / Tooltip", 'avia_framework' ),
@@ -570,8 +775,60 @@ if ( !class_exists( 'avia_sc_icongrid' ) )
                         "rgba"  => true,
                         "type" 	=> "colorpicker",
                         "std" 	=> "",
-                        "container_class" => 'av_third av_half',
+                        "required" => array('custom_back_bg_type','equals','bg_color')
+                    ),
+
+                    array(
+                        "name" 	=> __("Back Gradient Color 1", 'avia_framework' ),
+                        "desc" 	=> __("Select the first color for the gradient.", 'avia_framework' ),
+                        "id" 	=> "custom_back_gradient_color1",
+                        "type" 	=> "colorpicker",
+                        "container_class" => 'av_third av_third_first',
+                        "required" => array('custom_back_bg_type','equals','bg_gradient'),
+                        "rgba" 	=> true,
+                        "std" 	=> "",
+                    ),
+                    array(
+                        "name" 	=> __("Back Gradient Color 2", 'avia_framework' ),
+                        "desc" 	=> __("Select the second color for the gradient.", 'avia_framework' ),
+                        "id" 	=> "custom_back_gradient_color2",
+                        "type" 	=> "colorpicker",
+                        "container_class" => 'av_third',
+                        "required" => array('custom_back_bg_type','equals','bg_gradient'),
+                        "rgba" 	=> true,
+                        "std" 	=> "",
+                    ),
+
+                    array(
+                        "name" 	=> __("Back Gradient Direction",'avia_framework' ),
+                        "desc" 	=> __("Define the gradient direction", 'avia_framework' ),
+                        "id" 	=> "custom_back_gradient_direction",
+                        "type" 	=> "select",
+                        "container_class" => 'av_third',
+                        "std" 	=> "vertical",
+                        "required" => array('custom_back_bg_type','equals','bg_gradient'),
+                        "subtype" => array(
+                            __('Vertical','avia_framework' )=>'vertical',
+                            __('Horizontal','avia_framework' ) =>'horizontal',
+                            __('Radial','avia_framework' ) =>'radial',
+                            __('Diagonal Top Left to Bottom Right','avia_framework' ) =>'diagonal_tb',
+                            __('Diagonal Bottom Left to Top Right','avia_framework' ) =>'diagonal_bt',
+                        )
+                    ),
+
+                    array(
+                        "name" 	=> __("Custom Tooltip Border Color", 'avia_framework' ),
+                        "desc" 	=> __("Select a custom background color. Leave empty to use the default", 'avia_framework' ),
+                        "id" 	=> "custom_tooltip_border",
+                        "rgba"  => true,
+                        "type" 	=> "colorpicker",
+                        "std" 	=> "",
                         "required" => array('bg_color','equals','custom')
+                    ),
+
+                    array(
+                        "name" => __("Grid Colors", 'avia_framework'),
+                        "type" => "heading",
                     ),
 
                     array(
@@ -753,41 +1010,61 @@ if ( !class_exists( 'avia_sc_icongrid' ) )
 			function shortcode_handler($atts, $content = "", $shortcodename = "", $meta = "")
 			{
 				$this->screen_options = AviaHelper::av_mobile_sizes($atts);
-				extract($this->screen_options); //return $av_font_classes, $av_title_font_classes and $av_display_classes
 				
-				extract(shortcode_atts(array(
-				    'font_color'			=> '',
-				    'custom_icon'			=> '',
-                    'custom_title'			=> '',
-                    'custom_subtitle'		=> '',
-				    'custom_content'		=> '',
-				    'bg_color'				=> '',
-				    'custom_front_bg'		=> '',
-                    'custom_back_bg'		=> '',
-                    'grid_color'			=> '',
-                    'custom_grid'			=> '',
-                    'icongrid_styling'		=> '',
-                    'icongrid_numrow'		=> '',
-                    'icongrid_borders'		=> '',
-					'custom_title_size'		=> '',
-					'custom_subtitle_size'	=> '',
-					'custom_content_size'	=> '',
-					'custom_icon_size'		=> ''
-
-				), $atts, $this->config['shortcode']));
-
 				$this->icon_styling = array();
-                $this->title_styling = array();
-                $this->subtitle_styling = array();
+				$this->title_styling = array();
+				$this->subtitle_styling = array();
 				$this->content_styling = array();
 				$this->flipbox_front_styling = array();
-                $this->flipbox_back_styling = array();
-                $this->wrapper_styling = array();
-                $this->list_styling = array();
+				$this->flipbox_back_styling = array();
+				$this->wrapper_styling = array();
+				$this->list_styling = array();
 
-                $this->icongrid_styling 	= "avia-icongrid-".$icongrid_styling;
-                $this->icongrid_numrow   	= "avia-icongrid-numrow-".$icongrid_numrow;
-                $this->icongrid_borders   	= "avia-icongrid-borders-".$icongrid_borders;
+				$this->icongrid_styling = '';
+				$this->icongrid_numrow = '';
+				$this->icongrid_borders = '';
+				
+				$this->custom_title_size = '';
+				$this->custom_subtitle_size = '';
+				$this->custom_content_size = '';
+				$this->custom_icon_size = '';
+				
+				extract($this->screen_options); //return $av_font_classes, $av_title_font_classes and $av_display_classes
+				
+				extract(shortcode_atts( array(
+								'font_color'			=> '',
+								'custom_icon'			=> '',
+								'custom_title'			=> '',
+								'custom_subtitle'		=> '',
+								'custom_content'		=> '',
+								'icongrid_padding'      => '',
+								'bg_color'				=> '',
+								'custom_front_bg_type'	=> '',
+								'custom_front_bg'		=> '',
+								'custom_front_gradient_color1'		=> '',
+								'custom_front_gradient_color2'		=> '',
+								'custom_front_gradient_direction'	=> '',
+								'custom_back_bg_type'	=> '',
+								'custom_back_bg'		=> '',
+								'custom_back_gradient_color1'		=> '',
+								'custom_back_gradient_color2'		=> '',
+								'custom_back_gradient_direction'	=> '',
+								'custom_tooltip_border' => '',
+								'grid_color'			=> '',
+								'custom_grid'			=> '',
+								'icongrid_styling'		=> '',
+								'icongrid_numrow'		=> '',
+								'icongrid_borders'		=> '',
+								'custom_title_size'		=> '',
+								'custom_subtitle_size'	=> '',
+								'custom_content_size'	=> '',
+								'custom_icon_size'		=> ''
+
+							), $atts, $this->config['shortcode'] ) );
+
+				$this->icongrid_styling = "avia-icongrid-" . $icongrid_styling;
+				$this->icongrid_numrow = "avia-icongrid-numrow-" . $icongrid_numrow;
+				$this->icongrid_borders = "avia-icongrid-borders-" . $icongrid_borders;
 				
 				$this->custom_title_size = $custom_title_size;
 				$this->custom_subtitle_size = $custom_subtitle_size;
@@ -801,15 +1078,58 @@ if ( !class_exists( 'avia_sc_icongrid' ) )
                     if ( !empty($custom_content) ) $this->content_styling['color'] = $custom_content;
                 }
 
+
                 if ($bg_color == 'custom') {
-                    if ( !empty($custom_front_bg) ) $this->flipbox_front_styling['background_color'] = $custom_front_bg;
-                    if ( !empty($custom_back_bg) ) $this->flipbox_back_styling['background_color'] = $custom_back_bg;
+                    // front
+                    if ($custom_front_bg_type == 'bg_color') {
+                        if ( !empty($custom_front_bg) ) {
+                            $this->flipbox_front_styling['background_color'] = $custom_front_bg;
+                        }
+                    }
+                    else {
+                        // gradient
+                        $front_gradient_settings = array(
+                            $custom_front_gradient_direction,
+                            $custom_front_gradient_color1,
+                            $custom_front_gradient_color2
+                        );
+
+                        // fallback
+                        $this->flipbox_front_styling['background_color'] = $custom_front_gradient_color1;
+                        // gradient
+                        $this->flipbox_front_styling['background'] = AviaHelper::css_background_string(array(), $front_gradient_settings);
+                    }
+
+                    // back
+                    if ($custom_back_bg_type == 'bg_color') {
+                        if ( !empty($custom_back_bg) ) $this->flipbox_back_styling['background_color'] = $custom_back_bg;
+                    }
+                    else {
+                        $back_gradient_settings = array(
+                            $custom_back_gradient_direction,
+                            $custom_back_gradient_color1,
+                            $custom_back_gradient_color2
+                        );
+
+                        // fallback
+                        $this->flipbox_back_styling['background_color'] = $custom_back_gradient_color1;
+                        // gradient
+                        $this->flipbox_back_styling['background'] = AviaHelper::css_background_string(array(), $back_gradient_settings);
+                    }
+
+                    // tooltip border color
+                    if(!empty($custom_tooltip_border)){
+                        $this->flipbox_back_styling['border_color'] = $custom_tooltip_border;
+                    }
                 }
 
                 if ($grid_color == 'custom'){
                     if ( !empty($custom_grid) ) $this->wrapper_styling['color'] = $custom_grid;
                     if ( !empty($custom_grid) ) $this->list_styling['border-color'] = $custom_grid;
                 }
+
+                $this->flipbox_front_styling['padding'] = AviaHelper::css_4value_helper($icongrid_padding);
+                $this->flipbox_back_styling['padding'] = AviaHelper::css_4value_helper($icongrid_padding);
 
                 $list_styling_str = "";
                 if (!empty($this->list_styling)) {
@@ -831,6 +1151,14 @@ if ( !class_exists( 'avia_sc_icongrid' ) )
 
 			function av_icongrid_item($atts, $content = "", $shortcodename = "")
 			{
+				/**
+				 * Fixes a problem when 3-rd party plugins call nested shortcodes without executing main shortcode  (like YOAST in wpseo-filter-shortcodes)
+				 */
+				if( empty( $this->screen_options ) )
+				{
+					return '';
+				}
+				
 				extract($this->screen_options); //return $av_font_classes, $av_title_font_classes and $av_display_classes
 				
                 $atts =  shortcode_atts(
@@ -848,11 +1176,20 @@ if ( !class_exists( 'avia_sc_icongrid' ) )
                         'item_custom_subtitle' => '',
                         'item_custom_content' => '',
                         'item_bg_color' => '',
+                        'item_custom_front_bg_type' => '',
+                        'item_custom_front_gradient_color1' => '',
+                        'item_custom_front_gradient_color2' => '',
+                        'item_custom_front_gradient_direction' => '',
                         'item_custom_front_bg' => '',
+                        'item_custom_back_bg_type' => '',
                         'item_custom_back_bg' => '',
+                        'item_custom_back_gradient_color1' => '',
+                        'item_custom_back_gradient_color2' => '',
+                        'item_custom_back_gradient_direction' => '',
+                        'item_custom_tooltip_border' => ''
 
                     ), $atts, 'av_icongrid_item');
-
+                
 
                 $icon_styling = array();
                 if ( !empty($this->icon_styling) ) $icon_styling = array_merge( $icon_styling, $this->icon_styling );
@@ -871,15 +1208,14 @@ if ( !class_exists( 'avia_sc_icongrid' ) )
 
                 $flipbox_back_styling = array();
                 if ( !empty($this->flipbox_back_styling) ) $flipbox_back_styling = array_merge( $flipbox_back_styling, $this->flipbox_back_styling );
-
-
+                
                 $icon_styling_str = "";
                 $title_styling_str = "";
                 $subtitle_styling_str = "";
                 $content_styling_str = "";
-                $flipbox_front_str = "";
+                $flipbox_front_styling_str = "";
                 $item_bg_str = "";
-                $flipbox_back_str = "";
+                $flipbox_back_styling_str = "";
                 $wrapper_styling_str = "";
 
                 /* item specific styling */
@@ -891,10 +1227,46 @@ if ( !class_exists( 'avia_sc_icongrid' ) )
                 }
 
                 if ($atts['item_bg_color'] == 'custom') {
-                    if ( !empty($atts['item_custom_front_bg']) ) $flipbox_front_styling['background_color'] = $atts['item_custom_front_bg'];
-                    if ( !empty($atts['item_custom_back_bg']) ) $flipbox_back_styling['background_color'] = $atts['item_custom_back_bg'];
+                    // front
+                    if ($atts['item_custom_front_bg_type'] == 'bg_color') {
+                        if ( !empty($atts['item_custom_front_bg']) ) $flipbox_front_styling['background_color'] = $atts['item_custom_front_bg'];
+                        // remove gradient if any
+                        if (array_key_exists('background',$flipbox_front_styling)) unset($flipbox_front_styling['background']);
+                    }
+                    else {
+                        $item_front_gradient_settings = array(
+                            $atts['item_custom_front_gradient_direction'],
+                            $atts['item_custom_front_gradient_color1'],
+                            $atts['item_custom_front_gradient_color2']
+                        );
+                        // fallback
+                        $flipbox_front_styling['background_color'] = $atts['item_custom_front_gradient_color1'];
+                        // gradient
+                        $flipbox_front_styling['background'] = AviaHelper::css_background_string(array(), $item_front_gradient_settings);
+                    }
+                    // back
+                    if ($atts['item_custom_back_bg_type'] == 'bg_color') {
+                        if ( !empty($atts['item_custom_back_bg']) ) $flipbox_back_styling['background_color'] = $atts['item_custom_back_bg'];
+                        // remove gradient if any
+                        if (array_key_exists('background',$flipbox_back_styling)) unset($flipbox_back_styling['background']);
+                    }
+                    else {
+                        $item_back_gradient_settings = array(
+                            $atts['item_custom_back_gradient_direction'],
+                            $atts['item_custom_back_gradient_color1'],
+                            $atts['item_custom_back_gradient_color2']
+                        );
+                        // fallback
+                        $flipbox_back_styling['background_color'] = $atts['item_custom_back_gradient_color1'];
+                        // gradient
+                        $flipbox_back_styling['background'] = AviaHelper::css_background_string(array(), $item_back_gradient_settings);
+                    }
+
+                    if (!empty($atts['item_custom_tooltip_border'])) {
+                        $flipbox_back_styling['border_color'] = $atts['item_custom_tooltip_border'];
+                    }
                 }
-				
+
 				if( is_numeric( $this->custom_title_size ) )
 				{
 					$title_styling['font-size'] = $this->custom_title_size . 'px';
@@ -933,21 +1305,60 @@ if ( !class_exists( 'avia_sc_icongrid' ) )
 				foreach( $content_styling as $key => $value ) 
 				{
 					$content_styling_str .= AviaHelper::style_string( $content_styling, $key, $key );
-				}
-
+                }
+                
                 if (!empty($flipbox_front_styling)){
-                    if ($this->icongrid_styling == 'avia-icongrid-flipbox' && array_key_exists('background_color', $flipbox_front_styling)){
-                        $flipbox_front_str = AviaHelper::style_string($flipbox_front_styling, 'background_color', 'background-color');
-                    }
-                    if ($this->icongrid_styling == 'avia-icongrid-tooltip' && array_key_exists('background_color', $flipbox_front_styling)){
-                        $item_bg_str = AviaHelper::style_string($flipbox_front_styling, 'background_color', 'background-color');
-                    }
+                    // flipbox                    
+                    if ($this->icongrid_styling == 'avia-icongrid-flipbox'){
+                        // gradients
+                        if (array_key_exists('background_color',$flipbox_front_styling) && array_key_exists('background',$flipbox_front_styling)) {
+                            $flipbox_front_styling_str .= AviaHelper::style_string($flipbox_front_styling, 'background', 'background');
+                            $flipbox_front_styling_str .= AviaHelper::style_string($flipbox_front_styling, 'background_color', 'background-color');
+                        }
+                        // solid bg color
+                        elseif (array_key_exists('background_color',$flipbox_front_styling)) {
+                            $flipbox_front_styling_str .= AviaHelper::style_string($flipbox_front_styling, 'background_color', 'background-color');
+                        }
+                    }    
+                    // tooltip
+                    if ($this->icongrid_styling == 'avia-icongrid-tooltip'){
+                        // gradients
+                        if (array_key_exists('background_color',$flipbox_front_styling) && array_key_exists('background',$flipbox_front_styling)) {
+                            $item_bg_str .= AviaHelper::style_string($flipbox_front_styling, 'background', 'background');
+                            $item_bg_str .= AviaHelper::style_string($flipbox_front_styling, 'background_color', 'background-color');
+                        }
+                        // solid bg color
+                        elseif (array_key_exists('background_color',$flipbox_front_styling)) {
+                            $item_bg_str .= AviaHelper::style_string($flipbox_front_styling, 'background_color', 'background-color');
+                        }
+                    }    
+
+                    if (array_key_exists('padding',$this->flipbox_front_styling)){
+                        $flipbox_front_styling_str .= AviaHelper::style_string($this->flipbox_front_styling, 'padding', 'padding');
+                    }                    
                 }
 
                 if (!empty($flipbox_back_styling)){
-                    if (array_key_exists('background_color', $flipbox_back_styling)){
-                        $flipbox_back_str = AviaHelper::style_string($flipbox_back_styling, 'background_color', 'background-color');
+                    // gradients
+                    if (array_key_exists('background_color',$flipbox_back_styling) && array_key_exists('background',$flipbox_back_styling)) {
+                        $flipbox_back_styling_str .= AviaHelper::style_string($flipbox_back_styling, 'background', 'background');
+                        $flipbox_back_styling_str .= AviaHelper::style_string($flipbox_back_styling, 'background_color', 'background-color');
                     }
+                    // solid bg color
+                    elseif (array_key_exists('background_color',$flipbox_back_styling)) {
+                        $flipbox_back_styling_str .= AviaHelper::style_string($flipbox_back_styling, 'background_color', 'background-color');
+                    }
+                    
+                    // tooltip border color
+                    if ($this->icongrid_styling == 'avia-icongrid-tooltip'){
+                        if (array_key_exists('border_color',$this->flipbox_back_styling)){
+                            $flipbox_back_styling_str .= AviaHelper::style_string($flipbox_back_styling, 'border_color', 'border-color');
+                        }
+                    }
+
+                    if (array_key_exists('padding',$this->flipbox_back_styling)){
+                        $flipbox_back_styling_str .= AviaHelper::style_string($this->flipbox_back_styling, 'padding', 'padding');
+                    }                    
                 }
 
                 if (!empty($this->wrapper_styling)) {
@@ -961,12 +1372,11 @@ if ( !class_exists( 'avia_sc_icongrid' ) )
                 $title_styling_str = ($title_styling_str !== "") ? AviaHelper::style_string($title_styling_str) : "";
                 $subtitle_styling_str = ($subtitle_styling_str !== "") ? AviaHelper::style_string($subtitle_styling_str) : "";
                 $content_styling_str = ($content_styling_str !== "") ? AviaHelper::style_string($content_styling_str) : "";
-                $flipbox_front_styling_str = ($flipbox_front_str !== "") ? AviaHelper::style_string($flipbox_front_str) : "";
+                $flipbox_front_styling_str = ($flipbox_front_styling_str !== "") ? AviaHelper::style_string($flipbox_front_styling_str) : "";
 
                 $item_bg_str = ($item_bg_str !== "") ? AviaHelper::style_string($item_bg_str) : "";
-                $flipbox_back_styling_str = ($flipbox_back_str !== "") ? AviaHelper::style_string($flipbox_back_str) : "";
+                $flipbox_back_styling_str = ($flipbox_back_styling_str !== "") ? AviaHelper::style_string($flipbox_back_styling_str) : "";
                 $wrapper_styling_str = ($wrapper_styling_str !== "") ? AviaHelper::style_string($wrapper_styling_str) : "";
-
 
                 $display_char = av_icon($atts['icon'], $atts['font']);
 				$display_char_wrapper = array();
@@ -978,7 +1388,6 @@ if ( !class_exists( 'avia_sc_icongrid' ) )
                     'start' => 'div',
                     'end' => 'div'
                 );
-
 
                 if(!empty($atts['link']))
                 {
@@ -993,8 +1402,7 @@ if ( !class_exists( 'avia_sc_icongrid' ) )
 
                     }
                 }
-
-
+               
                 $contentClass = "";
                 if(trim($content) == "")
                 {

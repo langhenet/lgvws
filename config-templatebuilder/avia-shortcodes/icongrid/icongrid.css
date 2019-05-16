@@ -287,10 +287,12 @@ ICONGRID
     bottom: 4em;
     width: 85%;
     left: 7.5%;
-    padding: 1em 2em;
+    padding: 1em 2em !important;
     background-color: white;
+    color: white;
     z-index: 8;
-    border: 0.3em solid rgba(0,0,0,0.07);
+    border-width: 0.3em;
+    border-style: solid;
     -webkit-transition: all 0.3s ease-in-out;
     -o-transition: all 0.3s ease-in-out;
     transition: all 0.3s ease-in-out;
@@ -298,21 +300,31 @@ ICONGRID
     box-shadow: 0 0 2em rgba(0,0,0,0.1);
 }
 
+.avia-icongrid-tooltip li .avia-icongrid-content .avia-icongrid-inner {
+    color: initial;
+}
+
 .avia-icongrid-tooltip li .avia-icongrid-content:after {
     content: "";
-    width: 1.2em;
-    height: 1.2em;
+    width: 0;
+    height: 0;
     position: absolute;
     left: 50%;
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
-    border-bottom: 0.3em solid rgba(0,0,0,0.07);
-    border-right: 0.3em solid rgba(0,0,0,0.07);
-    -webkit-transform: translateX(-50%) rotate(45deg);
-    -ms-transform: translateX(-50%) rotate(45deg);
-    transform: translateX(-50%) rotate(45deg);
+    border-left-width: 0.5em;
+    border-right-width: 0.5em;
+    border-top-width: 0.5em;
+    border-left-style: solid;
+    border-right-style: solid;
+    border-top-style: solid;
+    border-left-color: transparent;
+    border-right-color: transparent;
+    border-top-color: inherit;
+    -webkit-transform: translateX(-50%);
+    -ms-transform: translateX(-50%);
+    transform: translateX(-50%);
     bottom: -0.75em;
-    background-color: inherit;
     -webkit-box-shadow: 0 0 2em rgba(0,0,0,0.1);
     box-shadow: 0 0 2em rgba(0,0,0,0.1);
 }
@@ -320,7 +332,7 @@ ICONGRID
 .avia-icongrid-tooltip li:hover .avia-icongrid-content{
     visibility: visible;
     opacity: 1;
-    bottom: 35%;
+    bottom: 40%;
 }
 
 .avia-icongrid-tooltip li:hover .avia-icongrid-front {

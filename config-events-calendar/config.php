@@ -171,38 +171,73 @@ function avia_tribe_ref()
 }
 
 
-/*modfiy post navigation*/
-
-if(!function_exists('avia_events_custom_post_nav'))
+if( ! function_exists( 'avia_events_custom_post_nav' ) )
 {
-	add_action( 'avia_post_nav_entries', 'avia_events_custom_post_nav', 10);
+	add_filter( 'avf_post_nav_entries', 'avia_events_custom_post_nav', 10, 3 );
 
-	function avia_events_custom_post_nav($entry)
+	/**
+	 * Modfiy post navigation
+	 * 
+	 * @since < 4.0    modified 4.5.6
+	 * @param array $entry
+	 * @param array $settings
+	 * @param array $queried_entries
+	 * @return array
+	 */
+	function avia_events_custom_post_nav( array $entry, array $settings, array $queried_entries )
 	{
-		if(tribe_is_event())
+		if( tribe_is_event() )
 		{
-			$final = $links = $entry = array();
-			$links['next'] = tribe_get_next_event_link("{-{%title%}-}");
-			$links['prev'] = tribe_get_prev_event_link("{-{%title%}-}");
-				
-			foreach($links as $key => $link)
+			$final = $links = array();
+			$entry = array(
+							'prev'	=> '',
+							'next'	=> ''
+						);
+			
+			if( version_compare( Tribe__Events__Main::VERSION, '4.6.22', '>=' ) )
 			{
-				preg_match('/^<a.*?href=(["\'])(.*?)\1.*$/', $link, $m);
-				$final[$key]['link_url'] = !empty($m[2]) ? $m[2] : "";
-				
-				preg_match('/\{\-\{(.+)\}\-\}/', $link, $m2);
-				$final[$key]['link_text'] = !empty($m2[1]) ? $m2[1] : "";
-				
-				if(!empty($final[$key]['link_text']))
+				$old_prev = tribe( 'tec.adjacent-events' )->previous_event_link;
+				$old_next = tribe( 'tec.adjacent-events' )->next_event_link;
+
+				tribe( 'tec.adjacent-events' )->previous_event_link = '';
+				tribe( 'tec.adjacent-events' )->next_event_link = '';
+			}
+			
+			$links['prev'] = tribe_get_prev_event_link( '{-{%title%}-}' );
+			$links['next'] = tribe_get_next_event_link( '{-{%title%}-}' );
+						
+			foreach( $links as $key => $link )
+			{
+				if( empty( $link ) )
 				{
-					$entry[$key] = new stdClass();
-					$entry[$key]->av_custom_link  = $final[$key]['link_url'];
-					$entry[$key]->av_custom_title = $final[$key]['link_text'];
-					$entry[$key]->av_custom_image = false;
+					continue;
 				}
 				
+				preg_match( '/^<a.*?href=(["\'])(.*?)\1.*$/', $link, $m );
+				$final[ $key ]['link_url'] = ! empty( $m[2] ) ? $m[2] : '';
+				
+				preg_match( '/\{\-\{(.+)\}\-\}/', $link, $m2 );
+				$final[ $key ]['link_text'] = ! empty( $m2[1] ) ? $m2[1] : '';
+				
+				if( ! empty( $final[ $key ]['link_text'] ) )
+				{
+					$mode = 'prev' == $key ? 'previous' : 'next';
+					$event = tribe( 'tec.adjacent-events' )->get_closest_event( $mode );
+					
+					$entry[ $key ] = new stdClass();
+					$entry[ $key ]->av_custom_link  = $final[ $key ]['link_url'];
+					$entry[ $key ]->av_custom_title = $final[ $key ]['link_text'];
+					$entry[ $key ]->av_custom_image = get_the_post_thumbnail( $event->ID, 'thumbnail' );
+				}
+			}
+			
+			if( version_compare( Tribe__Events__Main::VERSION, '4.6.22', '>=' ) )
+			{
+				tribe( 'tec.adjacent-events' )->previous_event_link = $old_prev;
+				tribe( 'tec.adjacent-events' )->next_event_link = $old_next;
 			}
 		}
+		
 		return $entry;
 	}
 }
@@ -354,7 +389,3 @@ if( ! function_exists( 'avia_events_reset_recurring_event_query' ) )
 add_filter( 'avia_masonry_entries_query', 'avia_events_modify_recurring_event_query', 10, 2 );
 add_action( 'ava_after_masonry_entries_query', 'avia_events_reset_recurring_event_query', 10 );
 	
-
-
-
-

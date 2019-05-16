@@ -7,11 +7,19 @@ if($builder->disable_drag_drop == true)
 	$av_default_title = __('Page Layout','avia_framework' );
 }
 
+$alb_post_types = Avia_Builder()->get_supported_post_types();
+
+/**
+ * @since 4.5.5
+ * @return array
+ */
+$layout_post_types = apply_filters( 'avf_metabox_layout_post_types', array( 'portfolio', 'page' , 'post' ) );
+
 $boxes = array(
 	
-    array( 'title' =>$av_default_title, 'id'=>'avia_builder', 'page'=> Avia_Builder()->get_supported_post_types(), 'context'=>'normal', 'priority'=>'high', 'expandable'=>true ),
-	array( 'title' =>__('Enfold Shortcode Parser','avia_framework' ), 'id'=>'avia_sc_parser', 'page'=> Avia_Builder()->get_supported_post_types(), 'context'=>'normal', 'priority'=>'high', 'expandable'=>false ),
-    array( 'title' =>__('Layout','avia_framework' ), 'id'=>'layout', 'page'=>array('portfolio', 'page' , 'post'), 'context'=>'side', 'priority'=>'low'),
+    array( 'title' =>$av_default_title, 'id'=>'avia_builder', 'page'=> $alb_post_types, 'context'=>'normal', 'priority'=>'high', 'expandable'=>true ),
+	array( 'title' =>__('Enfold Shortcode Parser','avia_framework' ), 'id'=>'avia_sc_parser', 'page'=> $alb_post_types, 'context'=>'normal', 'priority'=>'high', 'expandable'=>false ),
+    array( 'title' =>__('Layout','avia_framework' ), 'id'=>'layout', 'page'=> $layout_post_types, 'context'=>'side', 'priority'=>'low'),
     array( 'title' =>__('Additional Portfolio Settings','avia_framework' ), 'id'=>'preview', 'page'=>array('portfolio'), 'context'=>'normal', 'priority'=>'high' ),
     array( 'title' =>__('Breadcrumb Hierarchy','avia_framework' ), 'id'=>'hierarchy', 'page'=>array('portfolio'), 'context'=>'side', 'priority'=>'low'),
 );
@@ -345,12 +353,12 @@ $elements = array(
 
 
 /**
- * @used_by:		enfold\functions-enfold.php		avia_add_feature_image_checkbox()						10
- * @used_by:		enfold\functions-enfold.php		av_builder_meta_box_elements_content()					10
- * @used_by:		enfold\config-woocommerce\admin-options.php  avia_woocommerce_product_options()			10
+ * @used_by:		enfold\functions-enfold.php		avia_add_hide_featured_image_select()					10
  * @used_by:		enfold\config-gutenberg\class-avia-gutenberg.php										20
+ * @used_by:		enfold\config-woocommerce\admin-options.php  avia_woocommerce_product_options()			500
+ * @used_by:		enfold\functions-enfold.php		av_builder_meta_box_elements_content()					10000
  */
-$elements = apply_filters('avf_builder_elements', $elements);
+$elements = apply_filters( 'avf_builder_elements', $elements );
 
 
 

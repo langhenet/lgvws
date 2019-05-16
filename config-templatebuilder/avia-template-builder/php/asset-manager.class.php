@@ -26,7 +26,7 @@ if ( !class_exists( 'aviaAssetManager' ) ) {
 		var $compress_files = array('css' => true, 'js' => true);
 		
 		//files to exclude
-		var $exclude_files	= array('css' => array('admin-bar','dashicons'), 'js' => array('jquery-core','admin-bar','comment-reply'));
+		var $exclude_files	= array('css' => array('admin-bar','dashicons'), 'js' => array( 'jquery-core', 'admin-bar','comment-reply', 'avia-recaptcha-api' ) );
 		
 		//collect all files to deregister
 		var $deregister_files = array('css' => array(), 'js' => array());
@@ -234,7 +234,7 @@ if ( !class_exists( 'aviaAssetManager' ) ) {
 			
 			
 			//generate the name string for all the files included. store the data of those files so we can properly include them later and then dequeue them
-			foreach($enqueued->to_do as $file)
+			foreach( $enqueued->to_do as $enqueued_index => $file )
 			{
 				$force_print = in_array($file, $this->force_print_to_head[$file_type]);
 				
@@ -242,7 +242,9 @@ if ( !class_exists( 'aviaAssetManager' ) ) {
 				if( ('all' == $this->which_files[$file_type] ) || 
 					('avia-module' == $this->which_files[$file_type] && strpos($file, 'avia-module') !== false ) ||
 					('avia' == $this->which_files[$file_type] && strpos($file, 'avia') !== false ) ||
-					( $force_print )) 
+					( $force_print ) ||
+					( in_array( $file, $this->force_include[ $file_type ] ) ) 
+				   ) 
 					{
 						//dont use excluded files like admin bar or already used files
 						if(in_array($file, $this->exclude_files[$file_type])) continue;
@@ -267,6 +269,14 @@ if ( !class_exists( 'aviaAssetManager' ) ) {
 							'type' => $file_type,
 							'file_content' => "" //only gets generated on new asset file creation or when a file is not stored in the db and required
 						);
+						
+						/**
+						 * @used_by			currently unused
+						 * @since 4.5.6
+						 * @return array
+						 */
+						$data = apply_filters( 'avf_asset_mgr_get_file_data', $data, $enqueued_index, $file_type, $file_group_name, $enqueued, $conditions );
+						
 						
 						//check if the file already exists in our database of stored files. if not add it for future re-use
 						if( !isset( $stored_assets[$key] ) || $this->testmode)
@@ -323,7 +333,15 @@ if ( !class_exists( 'aviaAssetManager' ) ) {
 			//try to retrieve the data by accessing the server
 			if( ! empty( $path ) )
 			{
-				$new_content = file_get_contents( trailingslashit( ABSPATH ) . $path  );
+				/**
+				 * @used_by				currently unused
+				 * @since 4.5.6
+				 * @return string
+				 */
+				$check_path = trailingslashit( ABSPATH ) . $path;
+				$check_path = apply_filters( 'avf_compress_file_content_path', $check_path, $path , $file_type , $fallback_url );
+				
+				$new_content = file_get_contents( $check_path );
 			}
 			
 			//we got a file that we cant read, lets try to access it via remote get
@@ -334,7 +352,14 @@ if ( !class_exists( 'aviaAssetManager' ) ) {
 					return '';
 				}
 				
-				$response = wp_remote_get( esc_url_raw( $fallback_url ) );
+				/**
+				 * @used_by				currently unused
+				 * @since 4.5.6
+				 * @return string
+				 */
+				$check_fallback_url = apply_filters( 'avf_compress_file_content_fallback_url', $fallback_url, $path , $file_type );
+				
+				$response = wp_remote_get( esc_url_raw( $check_fallback_url ) );
 				
 				if( ! is_wp_error( $response ) && ( $response['response']['code'] === 200 ) )
 				{
@@ -471,51 +496,104 @@ if ( !class_exists( 'aviaAssetManager' ) ) {
 		}
 		
 		#################
-		//switch relative urls in the stylesheet to absolute urls
-		public function rel_to_abs_url($content, $path)
+		/**
+		 * Switch relative urls in the stylesheet to absolute urls
+		 * For relative paths: https://css-tricks.com/quick-reminder-about-file-paths/
+		 * Full paths: are returned unchanged
+		 *					start with // or http:// or https:// 
+		 * 
+		 * @since 4.2.4  modified 4.5.5
+		 * @param string $content
+		 * @param string $path
+		 * @return string
+		 */
+		public function rel_to_abs_url( $content, $path )
 		{
 			
 			// test drive for the regexp : https://regexr.com/3kq8q
+			// @since 4.5.5 supports UNICODE characters &#8216; - &#8221;
 			
-			$this->base_url = trailingslashit(dirname( get_site_url(NULL, $path) ));
-			$reg_exUrl 		= '/url\s*?\([\"|\'|\s|\/]*([^\:]+?)[\"|\'|\s]*\)/im';
+			$this->base_url = trailingslashit(dirname( get_site_url( NULL, $path ) ) );
+			$reg_exUrl 		= '/url\s*?\([\"|\'|\s|\/|\x{2018}|\x{2019}|\x{201C}|\x{201D}]*([^\:]+?)[\"|\'|\s|\x{2018}|\x{2019}|\x{201C}|\x{201D}]*\)/imu';
 			
-			$content = preg_replace_callback($reg_exUrl, array($this, '_url_callback'), $content);
+			$content = preg_replace_callback( $reg_exUrl, array( $this, '_url_callback'), $content );
 			
 			return $content;
 		}
 		
 		
-				//callback function. todo once wp switches to 5.3: make it anonymous again
-				//remove ../../ from urls and iterate into higher folder from the baseurl
+				/**
+				 * callback function. todo once wp switches to 5.3: make it anonymous again
+				 * remove ../../ from urls and iterate into higher folder from the baseurl
+				 * 
+				 * $match[0]: url( path_to_file )
+				 * $match[1]: path_to_file, { ", ', &#8216; - &#8221; } removed and trailing / or \ removed
+				 * 
+				 * @since 4.2.4  modified 4.5.5, 4.5.6
+				 * @param array $match
+				 * @return string
+				 */
 				public function _url_callback( $match )
 				{
 					/**
 					 * Check if we have already an absolute url
 					 * (localhost is a special url - starts with //localhost
 					 */
+					if( ( false !== stripos( $match[1], 'http://' ) ) || ( false !== stripos( $match[1], 'https://' ) ) )
+					{
+						return $match[0];
+					}
+					
 					$base_url = str_replace( array( 'http:', 'https:' ), '', get_home_url() );
-					if( ( false !== stripos( $match[1], 'http://' ) ) || ( false !== stripos( $match[1], 'https://' ) ) || ( false !== stripos( $match[0], $base_url ) ) )
+					
+					/**
+					 * Check if user enters URL to the root directory (starts with / or \ for windows systems)
+					 * or an absolute URL
+					 * 
+					 * e.g. /wp-content/themes/enfold/imgages/xxx.jpg
+					 */
+					$start = strpos( $match[0], $match[1] );
+					if( false === $start )
 					{
 						return $match[0];
 					}
-					else if ( false !== stripos( $match[0], '//localhost' ) )
+					
+					$absolute = substr( $match[0], $start - 2, 2 );	
+					if( in_array( $absolute, array( '//', '\\\\' ) ) )
 					{
+						/**
+						 * Cross server references currently returned with protocol-relative URL because it had been removed in avia_style_generator::create_styles
+						 */
+						if( false !== stripos( $match[0], $base_url ) )
+						{
+							$match[0] = str_ireplace( $base_url, get_home_url(), $match[0] );
+						}
+						else
+						{
+							$match[0] = "url('//" . trim( $match[1] ) . "')";
+						}
+						
 						return $match[0];
 					}
 					
-					$current_base 	= $this->base_url;
-					$segments 		= explode("../", $match[1]);
-					$seg_count		= count($segments) - 1;
-					
-					for($i = $seg_count; $i > 0; $i--)
+					$root = substr( $match[0], $start - 1, 1 );
+					if( in_array( $root, array( '/', '\\' ) ) )
 					{
-						$current_base = dirname($current_base);
+						return "url('" . trailingslashit( get_home_url() ) . trim( $match[1] ) . "')";
 					}
 					
-					$new_url = trailingslashit($current_base) . end($segments);
+					$current_base = $this->base_url;
+					$segments = explode( "../", $match[1] );
+					$seg_count = count($segments) - 1;
 					
-					return "url('".$new_url."')";
+					for( $i = $seg_count; $i > 0; $i-- )
+					{
+						$current_base = dirname( $current_base );
+					}
+					
+					$new_url = trailingslashit( $current_base ) . end( $segments );
+					
+					return "url('{$new_url}')";
 				}
 		
 		#################

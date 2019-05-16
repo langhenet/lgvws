@@ -568,7 +568,8 @@ $advanced['buttons'] = array(
 //        ),
 	
 	),
-	
+
+
 	"sections"		=> false,
 	"hover"			=> false,
 	"edit"			=> array(
@@ -637,18 +638,15 @@ $advanced['widget_links'] = array(
     "description"	=> __("Change the styling of your widget links",'avia_framework'),
     "hover"			=> true,
     "selector"		=> array(
-        ".sidebar .widget a[hover]" => array(
-            "color" => "color: %color%;",
-            "text_transform" => "text-transform: %text_transform%;",
-            "font_size" => "font-size: %font_size%;",
-            "font_weight" => "font-weight: %font_weight%;",
-            "letter_spacing" => "letter-spacing: %letter_spacing%;",
-            "padding_top" => "padding-top: %padding_top_bottom%;",
-            "padding_right" => "padding-right: %padding_left_right%;",
-            "padding_bottom" => "padding-bottom: %padding_top_bottom%;",
-            "padding_left" => "padding-left: %padding_left_right%;",
+        "#top [sections] .widget a[hover]" => array(
+            "color" => "color: %color%;", "text_transform" => "text-transform: %text_transform%;", "font_size" => "font-size: %font_size%;", "font_weight" => "font-weight: %font_weight%;", "letter_spacing" => "letter-spacing: %letter_spacing%;", "padding_top" => "padding-top: %padding_top_bottom%;", "padding_right" => "padding-right: %padding_left_right%;", "padding_bottom" => "padding-bottom: %padding_top_bottom%;", "padding_left" => "padding-left: %padding_left_right%;",
         ),
-
+        "html #top [sections] .widget a[hover]" => array(
+            "color" => "color: %color%;", "text_transform" => "text-transform: %text_transform%;", "font_size" => "font-size: %font_size%;", "font_weight" => "font-weight: %font_weight%;", "letter_spacing" => "letter-spacing: %letter_spacing%;", "padding_top" => "padding-top: %padding_top_bottom%;", "padding_right" => "padding-right: %padding_left_right%;", "padding_bottom" => "padding-bottom: %padding_top_bottom%;", "padding_left" => "padding-left: %padding_left_right%;",
+        ),
+        "body#top [sections] .widget a[hover]" => array(
+            "color" => "color: %color%;", "text_transform" => "text-transform: %text_transform%;", "font_size" => "font-size: %font_size%;", "font_weight" => "font-weight: %font_weight%;", "letter_spacing" => "letter-spacing: %letter_spacing%;", "padding_top" => "padding-top: %padding_top_bottom%;", "padding_right" => "padding-right: %padding_left_right%;", "padding_bottom" => "padding-bottom: %padding_top_bottom%;", "padding_left" => "padding-left: %padding_left_right%;",
+        ),
     ),
     "sections"		=> true,
     "edit"			=> array(

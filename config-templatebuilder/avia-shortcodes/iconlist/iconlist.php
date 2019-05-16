@@ -6,10 +6,82 @@
  */
 if ( ! defined( 'ABSPATH' ) ) {  exit;  }    // Exit if accessed directly
 
-if ( !class_exists( 'avia_sc_iconlist' ) )
+if ( ! class_exists( 'avia_sc_iconlist' ) )
 {
 	class avia_sc_iconlist extends aviaShortcodeTemplate
 	{
+			
+		/**
+		 *
+		 * @since 4.5.5
+		 * @var array 
+		 */
+		protected $screen_options;
+		
+		/**
+		 * @since 4.5.5
+		 * @var string 
+		 */
+		protected $icon_html_styling;
+		
+		/**
+		 * @since 4.5.5
+		 * @var string 
+		 */
+		protected $title_styling;
+		
+		/**
+		 * @since 4.5.5
+		 * @var string 
+		 */
+		protected $content_styling;
+		
+		/**
+		 * @since 4.5.5
+		 * @var string 
+		 */
+		protected $content_class;
+		
+		/**
+		 * @since 4.5.5
+		 * @var string 
+		 */
+		protected $title_class;
+		
+		/**
+		 * @since 4.5.5
+		 * @var string 
+		 */
+		protected $iconlist_styling;
+		
+		/**
+		 * 
+		 * @since 4.5.5
+		 * @param AviaBuilder $builder
+		 */
+		public function __construct( $builder ) 
+		{
+			$this->screen_options = array();
+			$this->icon_html_styling = '';
+			$this->title_styling = '';
+			$this->content_styling = '';
+			$this->content_class = '';
+			$this->title_class = '';
+			$this->iconlist_styling = '';
+				
+			parent::__construct( $builder );
+		}
+		
+		/**
+		 * @since 4.5.5
+		 */
+		public function __destruct() 
+		{
+			parent::__destruct();
+			
+			unset( $this->screen_options );
+		}
+		
 			/**
 			 * Create the config array for the shortcode button
 			 */
@@ -444,34 +516,34 @@ if ( !class_exists( 'avia_sc_iconlist' ) )
 			 */
 			function shortcode_handler($atts, $content = "", $shortcodename = "", $meta = "")
 			{
-				$this->screen_options = AviaHelper::av_mobile_sizes($atts);
-				extract($this->screen_options); //return $av_font_classes, $av_title_font_classes and $av_display_classes
+				$this->screen_options = AviaHelper::av_mobile_sizes( $atts );
 				
-				extract(shortcode_atts(array('position'=>'left',
+				$this->icon_html_styling = '';
+				$this->title_styling = '';
+				$this->content_styling = '';
+				$this->content_class = '';
+				$this->title_class = '';
+				$this->iconlist_styling = '';
 				
-				'color'=>'', 
-				'custom_bg'=>'', 
-				'custom_border'=>'', 
-				'custom_font'=>'',
+				extract( $this->screen_options ); //return $av_font_classes, $av_title_font_classes and $av_display_classes
 				
-				'font_color' => "",
-				'custom_title' => '',
-				'custom_content' => '',
-				'custom_title_size' => '',
-				'custom_content_size' => '',
+				extract( shortcode_atts( array(
+											'position'				=> 'left',
+											'color'					=> '', 
+											'custom_bg'				=> '', 
+											'custom_border'			=> '', 
+											'custom_font'			=> '',
+											'font_color'			=> "",
+											'custom_title'			=> '',
+											'custom_content'		=> '',
+											'custom_title_size'		=> '',
+											'custom_content_size'	=> '',
+											'iconlist_styling'		=> '',
+											'animation'				=> ''
+				
+									), $atts, $this->config['shortcode'] ) );
 				
 				
-				'iconlist_styling' => '',
-                'animation' => ''
-				
-				), $atts, $this->config['shortcode']));
-				
-				
-				$this->icon_html_styling 	= "";
-				$this->title_styling 		= "";
-				$this->content_styling 		= "";
-				$this->content_class 		= "";
-				$this->title_class 			= "";
 				$this->iconlist_styling 	= $iconlist_styling == 'av-iconlist-small' ? "av-iconlist-small" : "av-iconlist-big";
 				
 				if($color == "custom")
@@ -538,12 +610,26 @@ if ( !class_exists( 'avia_sc_iconlist' ) )
 
 			function av_iconlist_item($atts, $content = "", $shortcodename = "")
 			{
+				/**
+				 * Fixes a problem when 3-rd party plugins call nested shortcodes without executing main shortcode  (like YOAST in wpseo-filter-shortcodes)
+				 */
+				if( empty( $this->screen_options ) )
+				{
+					return '';
+				}
 				
-				extract($this->screen_options); //return $av_font_classes, $av_title_font_classes and $av_display_classes
+				extract( $this->screen_options ); //return $av_font_classes, $av_title_font_classes and $av_display_classes
 				
-                $atts =  shortcode_atts(array('title' => '', 'link' => '', 'icon' => '', 'font' =>'', 'linkelement' =>'', 'linktarget' => '', 'custom_markup' => '', 
+                $atts =  shortcode_atts( array(
+								'title'			=> '', 
+								'link'			=> '', 
+								'icon'			=> '', 
+								'font'			=> '', 
+								'linkelement'	=> '', 
+								'linktarget'	=> '', 
+								'custom_markup' => '', 
                 
-                ), $atts, 'av_iconlist_item');
+							), $atts, 'av_iconlist_item' );
                 
 				$display_char = av_icon($atts['icon'], $atts['font']);
 				$display_char_wrapper = array();

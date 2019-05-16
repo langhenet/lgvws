@@ -269,17 +269,20 @@ if ( !class_exists( 'aviaShortcodeTemplate' ) ) {
 				die();
 			}
 			
-			if(current_theme_supports('avia_template_builder_custom_css'))
-			{
-				$this->elements = $this->avia_custom_class_for_element($this->elements);
-			}
+			/**
+			 * We add this field by default and hide it, if option is not activated. Helps to create an element with a custom class and
+			 * keep it when this option is deactivated later to avoid modifing it
+			 * 
+			 * @since 4.5.6.1
+			 */
+			$this->elements = $this->avia_custom_class_for_element( $this->elements );
 			
-			if( !empty($this->config['preview']) )
+			if( ! empty( $this->config['preview'] ) )
 			{
 				$this->elements = $this->avia_custom_preview_bg($this->elements);
 			}
 			
-			$elements = apply_filters('avf_template_builder_shortcode_elements', $this->elements);
+			$elements = apply_filters( 'avf_template_builder_shortcode_elements', $this->elements );
 
 			//if the ajax request told us that we are fetching the subfunction iterate over the array elements and
 			if(!empty($_POST['params']['subelement']))
@@ -301,42 +304,291 @@ if ( !class_exists( 'aviaShortcodeTemplate' ) ) {
 			
 			die();
 		}
+		
+		/**
+		 * Returns a default meta array to avoid undefined index notices in shortcode processing
+		 * Make sure to add all needed array elements initialised with default values.
+		 * 
+		 * @since 4.5.6
+		 * @return array
+		 */
+		protected function default_shortcode_meta()
+		{
+			$meta = array(
+							'el_class'		=> '',
+							'custom_class'	=> '',
+							'custom_markup'	=> '',
+							'index'			=> -1,
+							'this'			=> array(),
+							'siblings'		=> array(
+											'next'	=> array(),
+											'prev'	=> array()
+										)
+						);
+			
+			return apply_filters( 'avf_default_shortcode_meta', $meta );
+		}
+		
 
 		/**
-		* function that sets some internal variables and counters, then calls the actual shortcode handling function
-		*/
-		public function shortcode_handler_prepare($atts, $content = "", $shortcodename = "", $fake = false)
+		 * Sets some internal variables and counters, then calls the actual shortcode handling function
+		 * 
+		 * @since < 4.0
+		 * @param array $atts
+		 * @param string $content
+		 * @param string $shortcodename
+		 * @param boolean $fake					true if called directly
+		 * @return string
+		 */
+		public function shortcode_handler_prepare( $atts, $content = '', $shortcodename = '', $fake = false )
 		{
+			global $post;
+			
+			$current_post = $post instanceof WP_Post ? $post : null;
+
 			/**
-			 * WP5.0 with gutenberg make REST_API calls to save post content which makes problems with $meta['index'].
-			 * As we do not need the output we can skip it.
+			 * Allows to return base page/post in case a second query alters global $post
 			 * 
-			 * @used_by				Avia_Gutenberg						10
+			 * @used_by					config-woocommerce\config.php avia_woocommerce_shortcode_current_post		10
+			 * @since 4.5.6
+			 * @return null|WP_Post
+			 */
+			$current_post = apply_filters( 'avf_shortcode_handler_prepare_current_post', $current_post );
+
+			/**
+			 * 
+			 * @used_by				aviaElementManager					10
 			 * @since 4.5.1
+			 * @return array
 			 */
 			$args = array( true, $this, $atts, $content, $shortcodename, $fake );
-			$continue = apply_filters_ref_array( 'avf_in_shortcode_handler_prepare', array( &$args ) );
-			if( ! $continue )
+			apply_filters_ref_array( 'avf_in_shortcode_handler_prepare_start', array( &$args ) );
+			if( true !== $args[0] )
 			{
-				return;
+				return '';
+			}
+			
+			/**
+			 * In modal popup preview mode in backend we only need to execute the shortcode
+			 */
+			if( ! Avia_Builder()->in_text_to_preview_mode() )
+			{
+				/**
+				 * In frontend we ignore requests to shortcodes before header is finished
+				 * Fixes problems with plugins that run shortcodes in header (like All In One SEO)
+				 * Running shortcodes twice might break the behaviour and layout.
+				 * 
+				 * But there are frontend requests that do not need of a header. To allow 3rd party plugins to hook
+				 * we add a filter (e.g. GraphQL).
+				 * 
+				 * @used_by					currently unused
+				 * @since 4.5.6
+				 * @param boolean
+				 * @param aviaShortcodeTemplate $this
+				 * @param array $atts
+				 * @param string $content
+				 * @param string $shortcodename
+				 * @param boolean $fake
+				 * @return boolean
+				 */
+				$no_header_request = ( defined( 'REST_REQUEST' ) && true === REST_REQUEST ) || is_feed() || is_comment_feed();
+				$no_header_request = apply_filters( 'avf_shortcode_no_header_request', $no_header_request, $this, $atts, $content, $shortcodename, $fake );
+				
+				if( ! is_admin() && ! Avia_Builder()->wp_head_done && ! $no_header_request )
+				{
+					$meta = $this->default_shortcode_meta();
+					$out = '';
+					
+					/**
+					 * Allow SEO plugins to get content of shortcodes - Styling might be broken, also elements that use filter 'avia_builder_precompile'
+					 * SEO plugins can filter shortcodes that make problems by returning anything != 'preprocess_shortcodes_in_header'.
+					 * To create their own output they can return a custom value and use 'avf_shortcode_handler_prepare_in_wp_head' later.
+					 * 
+					 * @used_by					currently unused
+					 * @since 4.5.6
+					 * @param string
+					 * @param aviaShortcodeTemplate $this
+					 * @param array $atts
+					 * @param string $content
+					 * @param string $shortcodename
+					 * @param boolean $fake
+					 * @return string						'' | 'preprocess_shortcodes_in_header'
+					 */
+					$preprocess = apply_filters( 'avf_preprocess_shortcode_in_header', avia_get_option( 'preprocess_shortcodes_in_header', '' ), $this, $atts, $content, $shortcodename, $fake );
+					
+					if( 'preprocess_shortcodes_in_header' == $preprocess )
+					{
+						$out .= $this->shortcode_handler( $atts, $content, $shortcodename, $meta );
+					}
+					
+					/**
+					 * Allow SEO plugins to manipulate the shortcodes to get their own content
+					 * 
+					 * @used_by					currently unused
+					 * @since 4.5.5
+					 * @param string
+					 * @param array $atts
+					 * @param string $content
+					 * @param string $shortcodename
+					 * @param boolean $fake
+					 * @param aviaShortcodeTemplate $this		@added 4.5.6
+					 * @param string $preprocess				@added 4.5.6
+					 * @return string
+					 */
+					return apply_filters( 'avf_shortcode_handler_prepare_in_wp_head', $out, $atts, $content, $shortcodename, $fake, $this, $preprocess );
+				}
+				
+				/**
+				 * First we have to check if post for shortcode tree has changed (happens in loops like archive, REST API calls, ...).
+				 * In this case we invalidate the tree and reset index. 
+				 * Only needed for frontend.
+				 */
+				if( ! is_admin() && $current_post instanceof WP_Post )
+				{
+					if( ! ShortcodeHelper::$current_post_in_tree instanceof WP_Post )
+					{
+						ShortcodeHelper::$current_post_in_tree = $current_post;
+					}
+					else if( $current_post->ID != ShortcodeHelper::$current_post_in_tree->ID )
+					{
+						/**
+						 * When finished a loop posts might have been reset to 1st post
+						 */
+						if( ! ( Avia_Builder()->wp_sidebar_started || Avia_Builder()->wp_footer_started ) )
+						{
+							ShortcodeHelper::$current_post_in_tree = $current_post;
+							ShortcodeHelper::$tree = array();
+							ShortcodeHelper::$shortcode_index = 0;
+						}
+					}
+				}
+				
+				/**
+				 * Fixes problems with $meta['index] = undefined notices because shortcode tree is not initialised
+				 * 
+				 *	- WP5.0 with Gutenberg make REST_API calls to save post content and activates shortcodes (via content filter)
+				 *	- A fallback situation for 3-rd party plugins like YOAST which call shortcodes to execute for analysis and
+				 *	  no shortcode tree has been initialised
+				 *	- API calls to fetch content like REST API, GraphQL
+				 * 
+				 * @since 4.5.4
+				 */
+				if( ! is_array( ShortcodeHelper::$tree ) || empty( ShortcodeHelper::$tree ) )
+				{
+					$return = false;
+
+					if( ! is_admin() )
+					{
+						$out = '';
+
+						/**
+						 * In front we try to init if we have a post id
+						 */
+						if( $current_post instanceof WP_Post )
+						{
+							$tree = Avia_Builder()->get_shortcode_tree( $current_post->ID );
+							if( ! empty( $tree ) )
+							{
+								ShortcodeHelper::$tree = $tree;
+								ShortcodeHelper::$shortcode_index = 0;
+							}
+							else 
+							{
+								/**
+								 * To allow manual usage of ALB shortcode structures on non ALB pages we allow to build a temporary shortcode tree
+								 * e.g. for Tribe Events Calendar
+								 * 
+								 * @since 4.5.5
+								 */
+								if( false === apply_filters( 'avf_shortcode_handler_prepare_no_tree', false, $current_post->ID, $current_post ) )
+								{
+									Avia_Builder()->get_shortcode_parser()->set_builder_save_location( 'content' );
+									$temp_cont = ShortcodeHelper::clean_up_shortcode( trim( $current_post->post_content ), 'balance_only' );
+									ShortcodeHelper::$tree = ShortcodeHelper::build_shortcode_tree( $temp_cont );
+									ShortcodeHelper::$shortcode_index = 0;
+								}
+							}
+						}
+						else
+						{
+							/**
+							 * return nothing if we have not finished header - should allow plugins to preprocess page content in header 
+							 * (without executing shortcodes - might not work for some shortcodes like codeblock).
+							 */
+							if( ! Avia_Builder()->wp_head_done )
+							{
+								$return = true; 
+							}
+						}
+					}
+					else
+					{
+						/**
+						 * In backend we return the shortcode as self closing shortcode only as we might have no reliable info about content
+						 * (e.g. YOAST calls shortcodes without content in ajax call wpseo_filter_shortcodes)
+						 */
+						$args = array();
+						if( is_array( $atts ) )
+						{
+							foreach( $atts as $key => $value ) 
+							{
+								$args[] = is_numeric( $key ) ? $value : "{$key}='{$value}'";
+							}
+						}
+
+						$args = ! empty( $args ) ? ' ' . implode( ' ', $args ) : '';
+						$out = "[{$shortcodename}{$args}]";
+						
+						$return = true; 
+					}
+
+					if( $return )
+					{
+						/**
+						 * 
+						 * @since 4.5.4
+						 * @param string
+						 * @param array $atts
+						 * @param string $content
+						 * @param string $shortcodename
+						 * @param boolean $fake
+						 * @return string
+						 */
+						return apply_filters( 'avf_shortcode_handler_prepare_fallback', $out, $atts, $content, $shortcodename, $fake );
+					}
+				}
 			}
 			
 			//dont use any shortcodes in backend
-			$meta = array();
-
-			if(empty($this->config['inline'])) //inline shortcodes like dropcaps are basically nested shortcodes and should therefore not be counted
+			$meta = $this->default_shortcode_meta();
+			
+			$tree_item = ShortcodeHelper::find_tree_item( ShortcodeHelper::$shortcode_index );
+			
+			$is_valid = false;
+			if( is_array( $tree_item ) && isset( $tree_item['tag'] ) && $tree_item['tag'] == $shortcodename && ! ShortcodeHelper::$is_direct_call && ! $fake )
 			{
-			    $meta    = array( 'el_class' => " avia-builder-el-".ShortcodeHelper::$shortcode_index." ",
-			    				  'index' => ShortcodeHelper::$shortcode_index,
-			                      'this'  => ShortcodeHelper::find_tree_item(ShortcodeHelper::$shortcode_index),
+				$is_valid = true;
+			}
 
-								'siblings'=>array(
-			                          'next'  => ShortcodeHelper::find_tree_item(ShortcodeHelper::$shortcode_index, 1),
-			                          'prev'  => ShortcodeHelper::find_tree_item(ShortcodeHelper::$shortcode_index, -1)
-			                      )
-
-			              );
-
+			/**
+			 * inline shortcodes like dropcaps are basically nested shortcodes and should therefore not be counted
+			 * Also shortcodes that are before or after content and when called directly (e.g. codeblock)
+			 */
+			if( empty( $this->config['inline'] ) )
+			{
+				if( $is_valid )
+				{
+					$meta = array(	
+								'el_class'	=> ' avia-builder-el-' . ShortcodeHelper::$shortcode_index . ' ',
+								'index'		=> ShortcodeHelper::$shortcode_index,
+								'this'		=> $tree_item,
+								'siblings'	=> array(
+												'next'	=> ShortcodeHelper::find_tree_item( ShortcodeHelper::$shortcode_index, 1 ),
+												'prev'	=> ShortcodeHelper::find_tree_item( ShortcodeHelper::$shortcode_index, -1 )
+												)
+							);
+				}
+				
 				if(!empty($meta['siblings']['prev']['tag']))
 				{
 					$meta['el_class'] .= " el_after_".$meta['siblings']['prev']['tag']." ";
@@ -383,54 +635,83 @@ if ( !class_exists( 'aviaShortcodeTemplate' ) ) {
 				if( empty($meta['this']['tag'] ) || $shortcodename != $meta['this']['tag'] || ShortcodeHelper::$is_direct_call || $fake )
 				{
 						//	increment theme shortcodes only, because these are in the shorcode tree
-					if( in_array( $shortcodename, ShortcodeHelper::$allowed_shortcodes ) )
+					if( in_array( $shortcodename, ShortcodeHelper::$allowed_shortcodes ) && ShortcodeHelper::$is_direct_call )
 					{
 						ShortcodeHelper::$direct_calls++;
 					}
 					
 					$fake = true;
-					$meta = array('el_class'=>'');
+					$meta['el_class'] = '';
 				}
 				
-	            //fake is set when we manually call one shortcode inside another
-	            if(!$fake) ShortcodeHelper::$shortcode_index ++;
-    		}
+				//fake is set when we manually call one shortcode inside another
+				if( ! $fake ) 
+				{
+					ShortcodeHelper::$shortcode_index ++;
+				}
+			}
 			
-			if(isset($atts['custom_class'])) 
+			if( ( ! $current_post instanceof WP_Post ) || ( ! in_array( $current_post->post_type, Avia_Builder()->get_supported_post_types() ) ) || $fake || ! $is_valid )
 			{
-				$meta['el_class'] .= " ". $atts['custom_class'];
+				/**
+				 * Reset as prior to version 4.5.3 to avoid breaking layout
+				 */
+				$meta = $this->default_shortcode_meta();
+			}
+			
+			if( isset( $atts['custom_class'] ) ) 
+			{
+				$meta['el_class'] .= ' ' . $atts['custom_class'];
 				$meta['custom_class'] = $atts['custom_class'];
 			}
 			
-			if(!isset($meta['custom_markup'])) $meta['custom_markup'] = "";
-			
-			
-			$meta = apply_filters('avf_template_builder_shortcode_meta', $meta, $atts, $content, $shortcodename);
-			
-		
-			//if the element is disabled do load a notice for admins but do not show the info for other visitors)
-			
-			if(empty( $this->builder->disabled_assets[ $this->config['shortcode'] ]) || empty( $this->config['disabling_allowed'] ) )
+			if( ! isset( $meta['custom_markup'] ) ) 
 			{
-				$content = $this->shortcode_handler($atts, $content, $shortcodename, $meta);
+				$meta['custom_markup'] = '';
 			}
-			else if (current_user_can('edit_posts'))
+			
+			/**
+			 * a fallback only to avoid undefined index notice
+			 */
+			if( ! isset( $meta['index'] ) )
 			{
-				$content = "";
-				$default_msg = 	'<strong>'.__('Admin notice for:' )."</strong><br>".
+				$meta['index'] = ( $fake || ! is_valid ) ? -1 : ShortcodeHelper::$shortcode_index;
+			}
+			
+			$meta = apply_filters( 'avf_template_builder_shortcode_meta', $meta, $atts, $content, $shortcodename );
+			
+			/**
+			 * if the element is disabled do load a notice for admins but do not show the info for other visitors)
+			 */
+			if( empty( $this->builder->disabled_assets[ $this->config['shortcode'] ] ) || empty( $this->config['disabling_allowed'] ) )
+			{
+				$out = $this->shortcode_handler( $atts, $content, $shortcodename, $meta );
+			}
+			else if( current_user_can( 'edit_posts' ) )
+			{
+				$default_msg = 	'<strong>'.__( 'Admin notice for:', 'avia_framework' )."</strong><br>".
 								$this->config['name']."<br><br>".
-								__('This element was disabled in your theme settings. You can activate it here:' )."<br>".
-							   '<a target="_blank" href="'.admin_url('admin.php?page=avia#goto_performance').'">'.__("Performance Settings",'avia_framework' )."</a>";
+								__( 'This element was disabled in your theme settings. You can activate it here:', 'avia_framework' )."<br>".
+							   '<a target="_blank" href="'.admin_url( 'admin.php?page=avia#goto_performance' ).'">'.__( 'Performance Settings', 'avia_framework' )."</a>";
 				
-				$msg 		= isset($this->config['shortcode_disabled_msg']) ? $this->config['shortcode_disabled_msg'] : $default_msg;
-				$content 	= "<span class='av-shortcode-disabled-notice'>{$msg}</span>";
+				$msg 		= isset( $this->config['shortcode_disabled_msg'] ) ? $this->config['shortcode_disabled_msg'] : $default_msg;
+				$out		= "<span class='av-shortcode-disabled-notice'>{$msg}</span>";
 			}
 			else
 			{
-				$content 	= "";
+				$out		= '';
 			}
+			
+			/**
+			 * Also allows to manipulate internal variables if necessary
+			 * 
+			 * @since 4.5.4
+			 * @return array
+			 */
+			$args = array( $out, $this, $atts, $content, $shortcodename, $fake );
+			apply_filters_ref_array( 'avf_in_shortcode_handler_prepare_content', array( &$args ) );
 
-            return $content;
+			return $args[0];
 		}
 
 
@@ -447,11 +728,20 @@ if ( !class_exists( 'aviaShortcodeTemplate' ) ) {
 
 
 			//if we got elements for the popup editor activate it
-			if(method_exists($this, 'popup_elements') && is_admin())
+			if( method_exists( $this, 'popup_elements' ) && is_admin() )
 			{
 				$this->popup_elements();
+				$this->elements = $this->replace_popup_templates( $this->elements );
+				
+				/**
+				 * Allows to extend option fields for shortcode
+				 * 
+				 * @since 4.5.6.1
+				 * @param aviaShortcodeTemplate $this
+				 */
+				do_action( 'ava_popup_elements_loaded', $this );
 
-				if(!empty($this->elements))
+				if( ! empty( $this->elements ) )
 				{
 					$this->config['popup_editor'] = true;
 
@@ -467,10 +757,9 @@ if ( !class_exists( 'aviaShortcodeTemplate' ) ) {
 
 		}
 
-
 		/**
-		* register shortcode and if available nested shortcode
-		*/
+		 * register shortcode and if available nested shortcode
+		 */
 		protected function register_shortcodes()
 		{
 			if(isset($_REQUEST['params']['_ajax_nonce'])) $_REQUEST['_ajax_nonce'] = $_REQUEST['params']['_ajax_nonce'];
@@ -646,37 +935,44 @@ if ( !class_exists( 'aviaShortcodeTemplate' ) ) {
 		}
 		
 		/**
-		* add a custom css class to each element
-		*/
-		public function avia_custom_class_for_element($elements)
+		 * Add a custom css class to each element
+		 * 
+		 * @since < 4.0
+		 * @param array $elements
+		 * @return array
+		 */
+		public function avia_custom_class_for_element( array $elements )
 		{
+			$class = current_theme_supports( 'avia_template_builder_custom_css' ) ? '' : 'avia-hidden';
+
 			$elements[] = array(	
-				"name" 	=> __("Custom Css Class",'avia_framework' ),
-				"desc" 	=> __("Add a custom css class for the element here. Make sure to only use allowed characters (latin characters, underscores, dashes and numbers)",'avia_framework' ),
-				"id" 	=> "custom_class",
-				"type" 	=> "input",
-				"std" 	=> "");
+								'name'				=> __( 'Custom Css Class', 'avia_framework' ),
+								'desc'				=> __( 'Add a custom css class for the element here. Make sure to only use allowed characters (latin characters, underscores, dashes and numbers)', 'avia_framework' ),
+								'id'				=> 'custom_class',
+								'container_class'	=> $class,
+								'type'				=> 'input',
+								'std'				=> ''
+							);
 		
 			return $elements;
 		}
 		
 		/**
-		* add a custom field for the background of the preview
-		*/
-		public function avia_custom_preview_bg($elements)
+		 * Add a custom field for the background of the preview
+		 * @param array $elements
+		 * @return array
+		 */
+		public function avia_custom_preview_bg( array $elements )
 		{
 			$elements[] = array(	
-				"id" 	=> "admin_preview_bg",
-				"type" 	=> "hidden",
-				"std" 	=> "");
+								'id' 	=> 'admin_preview_bg',
+								'type' 	=> 'hidden',
+								'std' 	=> ''
+							);
 		
 			return $elements;
 		}
-
-
-			
-
-
+		
 
 		/**
 		* default code to create a sortable item for your editor
@@ -989,6 +1285,157 @@ if ( !class_exists( 'aviaShortcodeTemplate' ) ) {
 
 
 
+		/**
+		 * Replaces predefined templates for easier maintainnance of code
+		 * Recursive function. Also supports nested templates.
+		 * 
+		 * @since 4.5.6.1
+		 * @param array $elements
+		 * @return array
+		 */
+		protected function replace_popup_templates( array $elements )
+		{
+			$start_check = true;
+			
+			while( $start_check )
+			{
+				$offset = 0;
+				foreach( $elements as $key => $element ) 
+				{
+					if( isset( $element['subelements'] ) )
+					{
+						$element['subelements'] = $this->replace_popup_templates( $element['subelements'] );
+					}
+					
+					if( ! isset( $element['type'] ) || $element['type'] != 'template' )
+					{
+						$offset++;
+						if( $offset >= count( $elements ) )
+						{
+							$start_check = false;
+							break;
+						}
+						continue;
+					}
+
+					$replace = $this->get_popup_template( $element );
+					if( false === $replace )
+					{
+						$offset++;
+						if( $offset >= count( $elements ) )
+						{
+							$start_check = false;
+							break;
+						}
+						continue;
+					}
+
+					array_splice( $elements, $offset, 1, $replace );
+					break;
+				}
+			}
+			
+			return $elements;
+		}
+		
+		/**
+		 * 
+		 * @since 4.5.6.1
+		 * @param array $element
+		 * @return array|false
+		 */
+		protected function get_popup_template( array $element )
+		{
+			if( ! isset( $element['template_id'] ) )
+			{
+				return false;
+			}
+			
+			switch( $element['template_id'] )
+			{
+				case 'date_query':
+					$result = $this->template_date_query( $element );
+					break;
+				default:
+					$result = false;
+					break;
+			}
+			
+			return $result;
+		}
+		
+		/**
+		 * Date Query Template
+		 * 
+		 * @since 4.5.6.1
+		 * @param array $element
+		 * @return array
+		 */
+		protected function template_date_query( array $element )
+		{
+			$template = array(
+				
+					array(	'name' 		=> __( 'Do you want to filter entries by date?', 'avia_framework' ),
+							'desc' 		=> __( 'Do you want to display entries within date boundaries only? Can be used e.g. to create archives.', 'avia_framework' ),
+							'id' 		=> 'date_filter',
+							'type' 		=> 'select',
+							'std'		=> '',
+							'subtype'	=> array( 
+												__( 'Display all entries', 'avia_framework' )		=> '',
+												__( 'Filter entries by date', 'avia_framework' )	=> 'date_filter'
+											)
+						),
+					
+					array(	
+							'name'		=> __( 'Start Date', 'avia_framework' ),
+							'desc'		=> __( 'Pick a start date.', 'avia_framework' ),
+							'id'		=> 'date_filter_start',
+							'type'		=> 'datepicker',
+							'required'	=> array( 'date_filter', 'equals', 'date_filter' ),
+							'container_class'	=> 'av_third av_third_first',
+							'std'		=> '',
+							'dp_params'	=> array(
+												'dateFormat'        => 'yy/mm/dd',
+												'changeMonth'		=> true,
+												'changeYear'		=> true,
+												'container_class'	=> 'select_dates_30'
+											)
+						),
+					
+					array(	
+							'name'		=> __( 'End Date', 'avia_framework' ),
+							'desc'		=> __( 'Pick the end date. Leave empty to display all entries after the start date.', 'avia_framework' ),
+							'id'		=> 'date_filter_end',
+							'type'		=> 'datepicker',
+							'required'	=> array( 'date_filter', 'equals', 'date_filter' ),
+							'container_class'	=> 'av_2_third',
+							'std'		=> '',
+							'dp_params'	=> array(
+												'dateFormat'        => 'yy/mm/dd',
+												'changeMonth'		=> true,
+												'changeYear'		=> true,
+												'container_class'	=> 'select_dates_30'
+											)
+						),
+					
+					array(	
+							'name'			=> __( 'Date Formt','avia_framework' ),
+							'desc'			=> __( 'Define the same date format as used in date picker', 'avia_framework' ),
+							'id'			=> 'date_filter_format',
+							'container_class'	=> 'avia-hidden',
+							'type'			=> 'input',
+							'std'			=> 'yy/mm/dd'
+						)
+									
+				);
+			
+				if( ! empty ( $element['template_required'][0] ) )
+				{
+					$template[0]['required'] = $element['template_required'][0];
+				}
+				
+			return $template;
+		}
 
 
 	} // end class

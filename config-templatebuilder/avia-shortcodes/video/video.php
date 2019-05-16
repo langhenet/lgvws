@@ -77,10 +77,11 @@ if ( !class_exists( 'avia_sc_video' ) )
 				{
 					$text = __("Please link to an external video by URL",'avia_framework' )."<br/><br/>".
 							__("A list of all supported Video Services can be found on",'avia_framework' ).
-							" <a target='_blank' href='http://codex.wordpress.org/Embeds#Okay.2C_So_What_Sites_Can_I_Embed_From.3F'>WordPress.org</a><br/><br/>".
-							__("Working examples:",'avia_framework' ). "<br/>".
-							"<strong>https://vimeo.com/1084537</strong><br/>".
-							"<strong>https://www.youtube.com/watch?v=G0k3kHtyoqc</strong><br/><br/>"."<strong class='av-builder-note'>".									__("Using self hosted videos is currently disabled. You can enable it in Enfold &raquo; Performance",'avia_framework' )."</strong><br/>";
+							" <a target='_blank' href='http://codex.wordpress.org/Embeds#Okay.2C_So_What_Sites_Can_I_Embed_From.3F'>WordPress.org</a>. Youtube videos will display additional info like title, share link, related videos, ...<br/><br/>".
+							__( 'Working examples:', 'avia_framework' ) . "<br/>" .
+							"<strong>https://vimeo.com/1084537</strong><br/>" .
+							"<strong>https://www.youtube.com/watch?v=G0k3kHtyoqc</strong><br/><br/>".
+							"<strong class='av-builder-note'>" . __( 'Using self hosted videos is currently disabled. You can enable it in Enfold &raquo; Performance', 'avia_framework' ) . "</strong><br/>";
 
 				}
 				//if youtube/vimeo is disabled
@@ -96,7 +97,7 @@ if ( !class_exists( 'avia_sc_video' ) )
 				{
 					$text = __("Either upload a new video, choose an existing video from your media library or link to a video by URL",'avia_framework' )."<br/><br/>".
 										__("A list of all supported Video Services can be found on",'avia_framework' ).
-										" <a target='_blank' href='http://codex.wordpress.org/Embeds#Okay.2C_So_What_Sites_Can_I_Embed_From.3F'>WordPress.org</a><br/><br/>".
+										" <a target='_blank' href='http://codex.wordpress.org/Embeds#Okay.2C_So_What_Sites_Can_I_Embed_From.3F'>WordPress.org</a>. YouTube videos will display additional info like title, share link, related videos, ...<br/><br/>".
 										__("Working examples, in case you want to use an external service:",'avia_framework' ). "<br/>".
 										"<strong>https://vimeo.com/1084537</strong><br/>".
 										"<strong>https://www.youtube.com/watch?v=G0k3kHtyoqc</strong><br/><br/>".

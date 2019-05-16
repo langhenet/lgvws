@@ -90,7 +90,7 @@
 		if($.fn.avia_html5_activation && $.fn.mediaelementplayer)
 		$(".avia_video, .avia_audio", container).avia_html5_activation({ratio:'16:9'});
 
-	}
+	};
 	
 	// -------------------------------------------------------------------------------------------
 	// Error log helper
@@ -98,9 +98,9 @@
 	
 	$.avia_utilities.log = function(text, type, extra)
 	{
-		if(typeof console == 'undefined'){return;} if(typeof type == 'undefined'){type = "log"} type = "AVIA-" + type.toUpperCase(); 
+		if(typeof console == 'undefined'){return;} if(typeof type == 'undefined'){type = "log";} type = "AVIA-" + type.toUpperCase(); 
 		console.log("["+type+"] "+text); if(typeof extra != 'undefined') console.log(extra); 
-	}
+	};
 
 
 
@@ -155,7 +155,7 @@
 		
 		if($('.avia_mega_div').length > 0 || $('.av-layout-tab-inner').length > 0 || $('.av-submenu-container').length > 0)
 		{
-			css_block = $("<style type='text/css' id='av-browser-width-calc'></style>").appendTo('head:first')
+			css_block = $("<style type='text/css' id='av-browser-width-calc'></style>").appendTo('head:first');
 			win.on( 'debouncedresize', calc_dimensions);
 			calc_dimensions();
 		}
@@ -193,13 +193,13 @@
 		    var process = $.proxy(self.process, self)
 		      , refresh = $.proxy(self.refresh, self)
 		      , $element = $(element).is('body') ? $(window) : $(element)
-		      , href
-		    self.$body = $('body')
-		    self.$win = $(window)
-		    self.options = $.extend({}, $.fn.avia_scrollspy.defaults, options)
+		      , href;
+		    self.$body = $('body');
+		    self.$win = $(window);
+		    self.options = $.extend({}, $.fn.avia_scrollspy.defaults, options);
 		    self.selector = (self.options.target
 		      || ((href = $(element).attr('href')) && href.replace(/.*(?=#[^\s]+$)/, '')) //strip for ie7
-		      || '')
+		      || '');
 		    
 		   	self.activation_true = false;
 		   	
@@ -213,8 +213,8 @@
 		    	
 		    	setTimeout(function()
 	  			{
-		    		self.refresh()
-		    		self.process()
+		    		self.refresh();
+		    		self.process();
 		    		
 		    	},100);
 		    }
@@ -234,10 +234,10 @@
 	    if(!this.activation_true) return;
 	    
 	        var self = this
-	          , $targets
+	          , $targets;
 	
-	        this.offsets = $([])
-	        this.targets = $([])
+	        this.offsets = $([]);
+	        this.targets = $([]);
 	
 	        $targets = this.$body
 	          .find(this.selector)
@@ -246,17 +246,17 @@
 	              , href = $el.data('target') || $el.attr('href')
 	              , hash = this.hash
 	              , hash = hash.replace(/\//g, "")
-	              , $href = /^#\w/.test(hash) && $(hash)
+	              , $href = /^#\w/.test(hash) && $(hash);
 	             
 	            return ( $href
 	              && $href.length
-	              && [[ $href.position().top + (!$.isWindow(self.$scrollElement.get(0)) && self.$scrollElement.scrollTop()), href ]] ) || null
+	              && [[ $href.position().top + (!$.isWindow(self.$scrollElement.get(0)) && self.$scrollElement.scrollTop()), href ]] ) || null;
 	          })
-	          .sort(function (a, b) { return a[0] - b[0] })
+	          .sort(function (a, b) { return a[0] - b[0]; })
 	          .each(function () {
-	            self.offsets.push(this[0])
-	            self.targets.push(this[1])
-	          })
+	            self.offsets.push(this[0]);
+	            self.targets.push(this[1]);
+	          });
 	          
 	      }
 	
@@ -271,49 +271,49 @@
 	          , offsets = this.offsets
 	          , targets = this.targets
 	          , activeTarget = this.activeTarget
-	          , i
+	          , i;
 
 	        if (scrollTop >= maxScroll) {
 	          return activeTarget != (i = targets.last()[0])
-	            && this.activate ( i )
+	            && this.activate ( i );
 	        }
 			
 	        for (i = offsets.length; i--;) {
 	          activeTarget != targets[i]
 	            && scrollTop >= offsets[i]
 	            && (!offsets[i + 1] || scrollTop <= offsets[i + 1])
-	            && this.activate( targets[i] )
+	            && this.activate( targets[i] );
 	        }
 	      }
 	
 	    , activate: function (target) {
 	        var active
-	          , selector
+	          , selector;
 	
-	        this.activeTarget = target
+	        this.activeTarget = target;
 	
 	        $(this.selector)
 	          .parent('.' + this.options.applyClass)
-	          .removeClass(this.options.applyClass)
+	          .removeClass(this.options.applyClass);
 	
 	        selector = this.selector
 	          + '[data-target="' + target + '"],'
-	          + this.selector + '[href="' + target + '"]'
+	          + this.selector + '[href="' + target + '"]';
 	
 	
 	
 	        active = $(selector)
 	          .parent('li')
-	          .addClass(this.options.applyClass)
+	          .addClass(this.options.applyClass);
 			  
 	        if (active.parent('.sub-menu').length)  {
-	          active = active.closest('li.dropdown_ul_available').addClass(this.options.applyClass)
+	          active = active.closest('li.dropdown_ul_available').addClass(this.options.applyClass);
 	        }
 	
-	        active.trigger('activate')
+	        active.trigger('activate');
 	      }
 	
-	  }
+	  };
 	
 	
 	 /* AviaScrollSpy PLUGIN DEFINITION
@@ -323,13 +323,13 @@
 	    return this.each(function () {
 	      var $this = $(this)
 	        , data = $this.data('scrollspy')
-	        , options = typeof option == 'object' && option
-	      if (!data) $this.data('scrollspy', (data = new AviaScrollSpy(this, options)))
-	      if (typeof option == 'string') data[option]()
-	    })
-	  }
+	        , options = typeof option == 'object' && option;
+	      if (!data) $this.data('scrollspy', (data = new AviaScrollSpy(this, options)));
+	      if (typeof option == 'string') data[option]();
+	    });
+	  };
 	
-	  $.fn.avia_scrollspy.Constructor = AviaScrollSpy
+	  $.fn.avia_scrollspy.Constructor = AviaScrollSpy;
 	
 	  $.fn.avia_scrollspy.calc_offset = function()
 	  {
@@ -341,13 +341,13 @@
 		  		offset_6 = parseInt($('.av-frame-top ').outerHeight(),10) || 0;
 		  
 		  return offset_1 + offset_2 + offset_3 + offset_4 + offset_5 + offset_6;
-	  }
+	  };
 	
 	  $.fn.avia_scrollspy.defaults = 
 	  {
 	    offset: $.fn.avia_scrollspy.calc_offset(),
 	    applyClass: 'current-menu-item'
-	  }
+	  };
 	  
 
 	
@@ -418,7 +418,7 @@
             if(current_browser.browser) bodyclass += ' avia-' + current_browser.browser + ' avia-' +current_browser.browser +'-' + version + ' ';
         }
 		
-        if(outputClassElement) $(outputClassElement).addClass(bodyclass)
+        if(outputClassElement) $(outputClassElement).addClass(bodyclass);
         
         return bodyclass;
     }
@@ -516,7 +516,7 @@
 			});
 				
 			});
-		}
+	};
 
 
 
@@ -862,7 +862,7 @@
              	}
              };
 
-   		 win.on( 'scroll',  function(){ window.requestAnimationFrame( set_status )} );
+   		 win.on( 'scroll',  function(){ window.requestAnimationFrame( set_status ); } );
          set_status();
 	}
 	
@@ -1194,6 +1194,24 @@
 		});
 		
 		
+		//	close mobile menu if click on active menu item
+		$('.html_av-submenu-display-click').on( 'click', '.av-burger-overlay a', function (e) 
+		{ 
+			var loc = window.location.href.match(/(^[^#]*)/)[0];
+			var cur = $(this).attr('href').match(/(^[^#]*)/)[0];
+
+			if( cur == loc ) 
+			{
+				e.preventDefault();
+				e.stopImmediatePropagation();
+				
+				burger.parents('a').eq(0).trigger('click');
+				return false;
+			}
+			return true;
+		});		
+		
+		
 		function toggle_submenu( menu, e )
 		{
 			e.preventDefault();
@@ -1474,7 +1492,7 @@
                     top: currentField_position.top + currentField_height,
                     left: currentField_position.left,
                     width: currentField_width
-				}
+				};
 
 				// make sure default stylesheet is applied
 				results.addClass('main_color');
@@ -1593,6 +1611,8 @@
 	};
 
 	$.AviaTooltip.openTTs = [];
+	$.AviaTooltip.openTT_Elements = [];
+	
     $.AviaTooltip.prototype =
     {
         bind_events: function()
@@ -1609,6 +1629,7 @@
             if(this.options.event != 'click')
             {
                 this.scope.on('mouseleave', default_tooltips, $.proxy( this.hide_tooltip, this) );
+				this.scope.on('click', default_tooltips, $.proxy( this.hide_on_click_tooltip, this) );
             }
             else
             {
@@ -1620,16 +1641,22 @@
         start_countdown: function(e)
         {
             clearTimeout(this.timer);
+			
+			var target 		= this.options.event == "click" ? e.target : e.currentTarget,
+            	element 	= $(target);
 
             if(e.type == this.options.event)
             {
                 var delay = this.options.event == 'click' ? 0 : this.open ? 0 : this.options.delay;
 
-                this.timer = setTimeout($.proxy( this.display_tooltip, this, e), delay);
+                this.timer = setTimeout($.proxy( this.display_tooltip, this, e), delay );
             }
             else if(e.type == 'mouseleave')
             {
-                this.timer = setTimeout($.proxy( this.stop_instant_open, this, e), this.options.delayOut);
+				if( ! element.hasClass( 'av-close-on-click-tooltip' ) )
+				{
+					this.timer = setTimeout($.proxy( this.stop_instant_open, this, e), this.options.delayOut);
+				}
             }
             e.preventDefault();
         },
@@ -1646,13 +1673,15 @@
             	target 		= this.options.event == "click" ? e.target : e.currentTarget,
             	element 	= $(target),
                 text    	= element.data(this.options.data),
-                newTip  	= element.data('avia-created-tooltip'),
+                tip_index  	= element.data('avia-created-tooltip'),
             	extraClass 	= element.data('avia-tooltip-class'),
                 attach  	= this.options.attach == 'element' ? element : this.body,
                 offset  	= this.options.attach == 'element' ? element.position() : element.offset(),
                 position	= element.data('avia-tooltip-position'),
                 align		= element.data('avia-tooltip-alignment'),
-                force_append= false;
+                force_append= false,
+				newTip		= false,
+				is_new_tip	= false;
            
             text = $.trim(text);
             
@@ -1667,14 +1696,15 @@
 			if(position == "" || typeof position == 'undefined') position = this.options.position;
 			if(align == "" || typeof align == 'undefined') align = 'center';
 			
-			if(typeof newTip != 'undefined')
+			if(typeof tip_index != 'undefined')
 			{
-				newTip = $.AviaTooltip.openTTs[newTip];
+				newTip = $.AviaTooltip.openTTs[tip_index];
 			}
 			else
 			{
 				this.inner.html(text); 
 				newTip = this.tooltip.clone();
+				is_new_tip = true;
 				
 				if(this.options.attach == 'element' && force_append !== true)
 				{
@@ -1686,6 +1716,16 @@
 				}
                 
                 if(extraClass != "") newTip.addClass(extraClass);
+			}
+				
+			if( this.open && this.active == newTip )
+			{
+				return;
+			}
+			
+			if( element.hasClass( 'av-close-on-click-tooltip' ) )
+			{
+				this.hide_all_tooltips();
 			}
 			
             this.open = true;
@@ -1714,8 +1754,6 @@
 					}
 					
 				}
-				
-				
 			}
 			else
 			{
@@ -1758,16 +1796,72 @@
 
             newTip.css(animate1).stop().animate(animate2,200);
             newTip.find('input, textarea').focus();
-            $.AviaTooltip.openTTs.push(newTip);
-            element.data('avia-created-tooltip', $.AviaTooltip.openTTs.length - 1);
-
+			if( is_new_tip )
+			{
+				$.AviaTooltip.openTTs.push(newTip);
+				$.AviaTooltip.openTT_Elements.push(element);
+				element.data('avia-created-tooltip', $.AviaTooltip.openTTs.length - 1);
+			}
         },
+		
+		hide_on_click_tooltip: function(e)
+		{
+			if( this.options.event == "click" )
+			{
+				return;
+			}
+			
+			var element = $( e.currentTarget );
+			
+			if( ! element.hasClass('av-close-on-click-tooltip') )
+			{
+				return;
+			}
+			
+			if( ! element.find( 'a' ) )
+			{
+				e.preventDefault();
+			}
+			
+			//	Default behaviour when using mouse - click on active tooltip closes it (moving mouse to another tooltip close others automatically
+			//	On mobile devices or when using touchscreen we show element on click (= old behaviour) and hide when same element
+			var ttip_index = element.data('avia-created-tooltip');
+			
+			if( 'undefined' != typeof ttip_index )
+			{
+				var current = $.AviaTooltip.openTTs[ttip_index];
+				if( 'undefined' != typeof current && current == this.active )
+				{
+					this.hide_all_tooltips();
+				}
+			}
+
+		},
+		
+		hide_all_tooltips: function()
+		{
+			var ttip,
+				position,
+				element;
+			
+			for(var index = 0; index < $.AviaTooltip.openTTs.length; ++index) 
+			{
+				ttip = $.AviaTooltip.openTTs[index];
+				element = $.AviaTooltip.openTT_Elements[index];
+				position = element.data('avia-tooltip-position'),
+				this.animate_hide_tooltip( ttip, position );
+			}
+			
+			this.open = false;
+			this.active  = false;
+		},
 
         hide_tooltip: function(e)
         {
             var element 	= $(e.currentTarget) , newTip, animateTo, 
             	position	= element.data('avia-tooltip-position'),
-                align		= element.data('avia-tooltip-alignment');
+                align		= element.data('avia-tooltip-alignment'),
+				newTip		= false;
                 
             if(position == "" || typeof position == 'undefined') position = this.options.position;
 			if(align == "" || typeof align == 'undefined') align = 'center';
@@ -1783,36 +1877,44 @@
             }
             else
             {
-                newTip = element.data('avia-created-tooltip');
-                newTip = typeof newTip != 'undefined' ? $.AviaTooltip.openTTs[newTip] : false;
+				if( ! element.hasClass( 'av-close-on-click-tooltip' ) )
+				{
+					newTip = element.data('avia-created-tooltip');
+					newTip = typeof newTip != 'undefined' ? $.AviaTooltip.openTTs[newTip] : false;
+				}
             }
 
-            if(newTip)
+            this.animate_hide_tooltip( newTip, position );
+        },
+		
+		animate_hide_tooltip: function( ttip, position )
+		{
+			if(ttip)
             {
             	var animate = {opacity:0};
-            	
+				
             	switch(position)
             	{
             		case "top": 	
-						animate['top'] = parseInt(newTip.css('top'),10) - 10;	
+						animate['top'] = parseInt(ttip.css('top'),10) - 10;	
 					break;
 					case "bottom": 	
-						animate['top'] = parseInt(newTip.css('top'),10) + 10;	
+						animate['top'] = parseInt(ttip.css('top'),10) + 10;	
 					break;
 					case "left": 	
-						animate['left'] = parseInt(newTip.css('left'), 10) - 10;
+						animate['left'] = parseInt(ttip.css('left'), 10) - 10;
 					break;
 					case "right": 	
-						animate['left'] = parseInt(newTip.css('left'), 10) + 10;
+						animate['left'] = parseInt(ttip.css('left'), 10) + 10;
 					break;
             	}
             	
-                newTip.animate(animate, 200, function()
+                ttip.animate(animate, 200, function()
                 {
-                    newTip.css({display:'none'});
+                    ttip.css({display:'none'});
                 });
-            }
-        },
+			}
+		},
 
         stop_instant_open: function(e)
         {

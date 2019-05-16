@@ -14,7 +14,38 @@ if ( !class_exists( 'avia_sc_table' ) )
 	class avia_sc_table extends aviaShortcodeTemplate
 	{
 			static $table_count = 0;
-	
+			
+			/**
+			 *
+			 * @since 4.5.6
+			 * @var array 
+			 */
+			protected $screen_options;
+
+			/**
+			 * 
+			 * @since 4.5.6
+			 * @param AviaBuilder $builder
+			 */
+			public function __construct( $builder ) 
+			{
+				$this->screen_options = array();
+
+				parent::__construct( $builder );
+			}
+
+			
+			/**
+			 * @since 4.5.6
+			 */
+			public function __destruct() 
+			{	
+				parent::__destruct();
+				
+				unset( $this->screen_options );
+			}
+
+			
 			/**
 			 * Create the config array for the shortcode button
 			 */

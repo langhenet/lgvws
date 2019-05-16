@@ -7,7 +7,7 @@
 if ( ! defined( 'ABSPATH' ) ) {  exit;  }    // Exit if accessed directly
 
 
-if( !class_exists( 'Tribe__Events__Main' ) )
+if( ! class_exists( 'Tribe__Events__Main' ) )
 {
 	if(!function_exists('av_countdown_events_fallback'))
 	{
@@ -23,7 +23,7 @@ if( !class_exists( 'Tribe__Events__Main' ) )
 }
 
  
-if ( !class_exists( 'avia_sc_events_countdown' ) ) 
+if ( ! class_exists( 'avia_sc_events_countdown' ) ) 
 {
 	
 	class avia_sc_events_countdown extends aviaShortcodeTemplate
@@ -36,6 +36,15 @@ if ( !class_exists( 'avia_sc_events_countdown' ) )
 			protected $time_array;
 			
 			
+			/**
+			 * UTC startdate of first event
+			 * 
+			 * @since 4.5.6
+			 * @var string 
+			 */
+			protected $start_date_utc;
+
+
 			/**
 			 * 
 			 * @since 4.2.1
@@ -58,28 +67,28 @@ if ( !class_exists( 'avia_sc_events_countdown' ) )
 				 */
 				$this->config['self_closing']	=	'yes';
 				
-				$this->config['name']		= __('Events Countdown', 'avia_framework' );
-				$this->config['tab']		= __('Plugin Additions', 'avia_framework' );
-				$this->config['icon']		= AviaBuilder::$path['imagesURL']."sc-countdown.png";
+				$this->config['name']		= __( 'Events Countdown', 'avia_framework' );
+				$this->config['tab']		= __( 'Plugin Additions', 'avia_framework' );
+				$this->config['icon']		= AviaBuilder::$path['imagesURL'] . 'sc-countdown.png';
 				$this->config['order']		= 14;
 				$this->config['target']		= 'avia-target-insert';
 				$this->config['shortcode'] 	= 'av_events_countdown';
-				$this->config['tooltip'] 	= __('Display a countdown to the next upcoming event', 'avia_framework' );
+				$this->config['tooltip'] 	= __( 'Display a countdown to the next upcoming event', 'avia_framework' );
 				$this->config['disabling_allowed'] = true;
 				
 				$this->time_array = array(
-								__('Second',  	'avia_framework' ) 	=>'1',
-								__('Minute',  	'avia_framework' ) 	=>'2',	
-								__('Hour',  	'avia_framework' ) 	=>'3',
-								__('Day',  		'avia_framework' ) 	=>'4',
-								__('Week',  	'avia_framework' ) 	=>'5',
+								__( 'Second',  	'avia_framework' ) 	=> '1',
+								__( 'Minute',  	'avia_framework' ) 	=> '2',	
+								__( 'Hour',  	'avia_framework' ) 	=> '3',
+								__( 'Day',  	'avia_framework' ) 	=> '4',
+								__( 'Week',  	'avia_framework' ) 	=> '5',
 								/*
-								__('Month',  	'avia_framework' ) 	=>'6',
-								__('Year',  	'avia_framework' ) 	=>'7'
+								__( 'Month',  	'avia_framework' ) 	=>'6',
+								__( 'Year',  	'avia_framework' ) 	=>'7'
 								*/
 							);
 							
-				
+				$this->start_date_utc = '';
 			}
 			
 			function extra_assets()
@@ -91,29 +100,60 @@ if ( !class_exists( 'avia_sc_events_countdown' ) )
 				wp_enqueue_script( 'avia-module-countdown' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/countdown/countdown.js' , array('avia-shortcodes'), false, TRUE );
 			}
 			
-			function fetch_upcoming($offset = 0)
+			/**
+			 * 
+			 * @since < 4.0
+			 * @param int $offset
+			 * @return WP_Query
+			 */
+			protected function fetch_upcoming( $offset = 0 )
 			{
-				$query 		= array('paged'=> false, 'posts_per_page' => 1, 'eventDisplay' => 'list', 'offset'=> $offset);
-				$upcoming 	= Tribe__Events__Query::getEvents( $query, true);
+				$query = array(
+								'paged'				=> 1, 
+								'posts_per_page'	=> 1, 
+								'eventDisplay'		=> 'list', 
+								'offset'			=> $offset,
+								'start_date'		=> date( 'Y-m-d' )
+							);
+				
+				$upcoming = Tribe__Events__Query::getEvents( $query, true );
 				
 				return $upcoming;
 			}
 			
-			function already_started($next)
+			/**
+			 * 
+			 * @since < 4.0
+			 * @param WP_Query $next
+			 * @return boolean
+			 */
+			protected function already_started( WP_Query $next )
 			{
-				if(empty( $next->posts[0]->EventStartDate) ) return true;
+				$this->start_date_utc = '';
 				
-				$today = date("Y-m-d H:i:s");
-				$start = $next->posts[0]->EventStartDate;
-				
-				if($today > $start)
-				{
-					return false;
-				}
-				else
+				//	backwards compatibility
+				if( empty( $next->posts[0]->EventStartDate ) && empty( $next->posts[0]->event_date ) ) 
 				{
 					return true;
 				}
+				
+				/**
+				 * Compare UTC times ( https://www.php.net/manual/en/function.time.php#100220 )
+				 */
+				$today = date( 'Y-m-d H:i:s' );
+				$this->start_date_utc = get_post_meta( $next->posts[0]->ID, '_EventStartDateUTC', true );
+				
+				if( empty( $this->start_date_utc ) )
+				{
+					return true;
+				}
+				 
+				if( $today < $this->start_date_utc )
+				{
+					return false;
+				}
+				
+				return true;
 			}
 		
 		
@@ -240,35 +280,51 @@ if ( !class_exists( 'avia_sc_events_countdown' ) )
 			 * @param string $shortcodename the shortcode found, when == callback name
 			 * @return string $output returns the modified html string 
 			 */
-			function shortcode_handler($atts, $content = "", $shortcodename = "", $meta = "")
+			public function shortcode_handler( $atts, $content = '', $shortcodename = '', $meta = '' )
 			{
 				$find_post = true;
 				$offset = 0;
 				
-				while($find_post)
+				while( $find_post )
 				{
-					$next = $this->fetch_upcoming($offset);
+					$next = $this->fetch_upcoming( $offset );
 					$offset ++;
 					
-					if(empty( $next->posts[0] ) || $this->already_started($next) )
+					if( empty( $next->posts[0] ) || ! $this->already_started( $next ) )
 					{
 						$find_post = false;
 					}
 				}
 				
-				
-				if(empty( $next->posts[0] ) || empty( $next->posts[0]->EventStartDate) ) return;
-				
-				$events_date = explode(" ", $next->posts[0]->EventStartDate );
-				
-				if(isset($events_date[0]))
+				if( ! empty( $next->posts[0]->EventStartDate ) )
 				{
-					$atts['date'] = date("m/d/Y", strtotime($events_date[0]));
+					//	backwards compatibility
+					$event_date = $next->posts[0]->EventStartDate;
+				}
+				else if( ! empty( $next->posts[0]->event_date ) )
+				{
+					$event_date = $next->posts[0]->event_date;
+				}
+				else
+				{
+					$event_date = '';
 				}
 				
-				if(isset($events_date[1]))
+				if( empty( $next->posts[0] ) || empty( $event_date ) || empty( $this->start_date_utc ) ) 
 				{
-					$events_date = explode(":", $events_date[1] );
+					return '';
+				}
+				
+				$events_date = explode( ' ', $this->start_date_utc );
+				
+				if( isset( $events_date[0] ) )
+				{
+					$atts['date'] = date( 'm/d/Y', strtotime( $events_date[0] ) );
+				}
+				
+				if( isset( $events_date[1] ) )
+				{
+					$events_date = explode( ':', $events_date[1] );
 					$atts['hour'] = $events_date[0];
 					$atts['minute'] = $events_date[1];
 				}
@@ -276,21 +332,18 @@ if ( !class_exists( 'avia_sc_events_countdown' ) )
 				$atts['link'] 	= get_permalink( $next->posts[0]->ID );
 				$title 			= get_the_title( $next->posts[0]->ID );
 				
-				if(!empty( $atts['title'] ))
+				if( ! empty( $atts['title'] ) )
 				{
-					$atts['title']  = array( $atts['title'] => __("Upcoming",'avia_framework') .": " . $title );
+					$atts['title']  = array( $atts['title'] => __( 'Upcoming','avia_framework' ) . ': ' . $title );
 				}
 				
-				$timer  = new avia_sc_countdown( $this->builder );
-				$output = $timer->shortcode_handler( $atts , $content, $shortcodename, $meta);
+				$atts['timezone'] = 'UTC';
 				
+				$timer  = new avia_sc_countdown( $this->builder );
+				$output = $timer->shortcode_handler( $atts , $content, $shortcodename, $meta );
 				
 				return $output;
 			}
 	}
 }
-
-
-
-
 

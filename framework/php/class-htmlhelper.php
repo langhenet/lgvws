@@ -343,13 +343,19 @@ if( ! class_exists( 'avia_htmlhelper' ) )
 		}
 
 		
-		
-		function verification_field( $element )
+		/**
+		 * Output a verification field with a callback button
+		 * 
+		 * @since < 4.0
+		 * @param array $element
+		 * @return string
+		 */
+		public function verification_field( $element )
 		{
 			$callback 			= $element['ajax'];
 			$js_callback 		= isset($element['js_callback']) ? $element['js_callback'] : "";
 			$element['simple'] 	= true;
-			$output  			= "";
+			$output  			= '';
 			$ajax				= false;
 			
 			if(isset($element['button-relabel']) && !empty($element['std']))
@@ -357,23 +363,41 @@ if( ! class_exists( 'avia_htmlhelper' ) )
 				$element['button-label'] = $element['button-relabel'];
 			}
 			
-			$output .= '<span class="avia_style_wrap avia_verify_input avia_upload_style_wrap">';
-			$output .= $this->text($element);
-			$output .= '<a href="#" data-av-verification-callback="'.$callback.'" data-av-verification-callback-javascript="'.$js_callback.'" class="avia_button avia_verify_button" id="avia_check'.$element['id'].'">'.$element['button-label'].'</a>';
-			$output .= '</span>';
-			$output .= isset($element['help']) ? "<small>".$element['help']."</small>" : "";
+			$input_field = $this->text($element);
 			
-			$output .= "<div class='av-verification-result'>";
-			
-			if( ( $element['std'] != "") || ( ! empty( $element['force_callback'] ) ) )
+			/**
+			 * Filter to replace normal input field with a password input field
+			 * 
+			 * @since 4.5.6.2
+			 * @param boolean
+			 * @param array $element
+			 * @return boolean
+			 */
+			if( false !== apply_filters( 'avf_verification_password_field', false, $element ) )
 			{
-				$output .= str_replace('avia_trigger_save' ,"", $callback( $element['std'] , $ajax));
+				$input_field = str_replace( 'type="text"', 'type="password"', $input_field );
 			}
 			
-			$output .= "</div>";
+			$output .=	'<span class="avia_style_wrap avia_verify_input avia_upload_style_wrap">';
+			$output .=		$input_field;
+			$output .=		'<a href="#" data-av-verification-callback="'.$callback.'" data-av-verification-callback-javascript="'.$js_callback.'" class="avia_button avia_verify_button" id="avia_check'.$element['id'].'">'.$element['button-label'].'</a>';
+			$output .=	'</span>';
+			
+			$output .= isset($element['help']) ? "<small>{$element['help']}</small>" : "";
+			
+			$output .=	"<div class='av-verification-result'>";
+			
+			if( ( $element['std'] != "" ) || ( ! empty( $element['force_callback'] ) ) )
+			{
+				$output .= str_replace( 'avia_trigger_save', '', $callback( $element['std'] , $ajax ) );
+			}
+			
+			$output .=	'</div>';
 			
 			return $output;
 		}
+				
+
 		
 		
 		

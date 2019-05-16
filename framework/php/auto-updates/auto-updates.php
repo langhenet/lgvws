@@ -3,6 +3,7 @@
  * Base class for theme updates
  * 
  * @since 4.4.3 - supports the new Envato API 3.0
+ * @since 4.5.3 - change logic to get package download url when performing the actual update process only
  */
 if ( ! defined( 'ABSPATH' ) ) {  exit;  }    // Exit if accessed directly
 
@@ -56,13 +57,13 @@ if( ! class_exists( 'avia_auto_updates' ) )
 		protected $envato_token_state;
 
 		/**
-		 * Current theme name
+		 * Current theme directory name - in case of child theme the parent theme folder
 		 * 
 		 * @var string 
 		 */
 		protected $themename;
 		
-		
+
 		/**
 		 * @since < 4.4.3
 		 */
@@ -77,8 +78,8 @@ if( ! class_exists( 'avia_auto_updates' ) )
 			$this->author 		= "Kriesi";
 			$this->personal_token = trim( avia_get_option( 'updates_envato_token' ) );	
 			$this->envato_token_state = trim( avia_get_option( 'updates_envato_token_state' ) );
-			
 			$this->themename 	= self::get_themename();
+			
 			$this->includes();
 			$this->hooks();
 		}
@@ -444,18 +445,13 @@ if( ! class_exists( 'avia_auto_updates' ) )
 			$log = AviaThemeUpdater()->get_updater_log();
 			
 			$has_errors = false;
-			$last_package = null;
 			
 			foreach( $log as $entry ) 
 			{
 				if( ! empty( $entry['errors'] ) )
 				{
 					$has_errors = true;
-				}
-				
-				if( isset( $entry['package_errors'] ) )
-				{
-					$last_package = $entry;
+					break;
 				}
 			}
 			
@@ -525,16 +521,26 @@ if( ! class_exists( 'avia_auto_updates' ) )
 					$output .=		sprintf( __( 'Sucessful check on %s.', 'avia_framework' ), $entry['time'] );
 					$output .=	'</div>';
 				}
-			}
-			
-			/**
-			 * Always show packages that have returned an error in last update check
-			 */
-			if( is_array( $last_package ) && ! empty( $last_package['package_errors'] ) )
-			{
-				$output	.=	'<div class="avia_log_line avia_log_line_error">';
-				$output .=		sprintf( __( 'Errors occured for package(s): %s', 'avia_framework' ), $last_package['package_errors'] );
-				$output .=	'</div>';
+				
+				if( ! empty( $entry['package_errors'] ) )
+				{
+					if( ! is_array( $entry['package_errors'] ) )
+					{
+						$entry['package_errors'] = array( $entry['package_errors'] );
+					}
+					
+					$output	.=	'<div class="avia_log_line avia_log_line_error">';
+					$output .=			__( 'Following Envato package errors occured:', 'avia_framework' );
+					$output .=		'<ul>';
+					foreach ( $entry['package_errors'] as $value ) 
+					{
+						$output .=		'<li>' . $value . '</li>';
+					}
+					$output .=		'</ul>';
+					$output .=	'</div>';
+				}
+				
+				$output .=	'<hr class="avia_log_line_seperator" />';
 			}
 			
 /*
@@ -553,34 +559,37 @@ if( ! class_exists( 'avia_auto_updates' ) )
 		}
 		
 		/**
-		 * Returns theme name depending on $which.
-		 * Defaults to child theme name if activated
+		 * Returns theme directory name depending on $which.
+		 * Defaults to parent theme directory name
 		 * 
 		 * @since < 4.4.3
 		 * @param string $which				'parent' | 'child'
 		 * @return string
 		 */
-		public static function get_themename( $which = 'child' )
+		public static function get_themename( $which = 'parent' )
 		{
 			$theme = wp_get_theme();
 			
 			if( is_child_theme() && ( 'child' == $which ) )
 			{
-				$theme = wp_get_theme( $theme->get('Template') );
+				return $theme->get_stylesheet();
 			}
 			
 			return $theme->get_template();
 		}
 		
 		/**
+		 * Returns the theme version or the parent theme version in case of a child theme
+		 * 
 		 * @since < 4.4.3
+		 * @param string $which				'parent' | 'child'
 		 * @return string
 		 */
-		public static function get_version()
+		public static function get_version( $which = 'parent' )
 		{
 			$theme = wp_get_theme();
 			
-			if(is_child_theme())
+			if( is_child_theme() && ( $which != 'child' ) )
 			{
 				$theme = wp_get_theme( $theme->get('Template') );
 			}
@@ -588,7 +597,87 @@ if( ! class_exists( 'avia_auto_updates' ) )
 			return $theme->get('Version');
 		}
 		
+		/**
+		 * Returns the theme name found in stye.css "Theme Name"
+		 * 
+		 * @since 4.5.4
+		 * @param string $which				'parent' | 'child'
+		 * @return string
+		 */
+		public static function get_theme_name( $which = 'parent' )
+		{
+			$theme = wp_get_theme();
+			
+			if( is_child_theme() && ( $which != 'child' ) )
+			{
+				$theme = wp_get_theme( $theme->get('Template') );
+			}
+			
+			return $theme->Name;
+		}
 		
+
+		/**
+		 * Adds the current theme key to the cached theme keys - structure of array as returned by envato - but only filled with info we need
+		 * to verify for update. Also makes sure that the actual version of theme is synchronised.
+		 * 
+		 * @added_by Günter
+		 * @since 4.5.3
+		 * @return array
+		 */
+		public static function get_theme_keys()
+		{
+			$theme_keys = get_option( 'avia_envato_keys', array() );
+			
+			$changed = false;
+			$installed_themes = wp_get_themes();
+			
+			foreach ( $installed_themes as $theme ) 
+			{
+				$id = $theme->get( 'Envato_ID' );
+				if( empty( $id ) )
+				{
+					continue;
+				}
+			
+				$name = $theme->Name;
+				$author = $theme->{'Author Name'};
+				$stylesheet = $theme->get_stylesheet();
+				$version = $theme->Version;
+				
+				/**
+				 * Ensure the datastructure and content is correct for already cached info 
+				 */
+				if( isset( $theme_keys[ $name ] ) && isset( $theme_keys[ $name ]['item']['id'] ) && ( $theme_keys[ $name ]['item']['id'] == $id ) )
+				{
+					if( isset( $theme_keys[ $name ]['item']['wordpress_theme_metadata']['version'] ) && ( $theme_keys[ $name ]['item']['wordpress_theme_metadata']['version'] == $version ) && 
+						isset( $theme_keys[ $name ]['item']['wordpress_theme_metadata']['theme_name'] ) && ( $theme_keys[ $name ]['item']['wordpress_theme_metadata']['theme_name'] == $name ) &&
+						isset( $theme_keys[ $name ]['item']['wordpress_theme_metadata']['stylesheet'] ) && ( $theme_keys[ $name ]['item']['wordpress_theme_metadata']['stylesheet'] == $stylesheet ) )
+					{
+						continue;
+					}
+				}
+
+				$changed = true;
+				
+				$new_item = array();
+				$new_item['item']['wordpress_theme_metadata']['theme_name'] = $name;
+				$new_item['item']['wordpress_theme_metadata']['stylesheet'] = $stylesheet;
+				$new_item['item']['wordpress_theme_metadata']['version'] = $version;
+			
+				$new_item['item']['id'] = $id;
+	
+				$theme_keys[ $name ] = $new_item;
+			}
+			
+			if( $changed )
+			{
+				update_option( 'avia_envato_keys', $theme_keys );
+			}
+
+			return $theme_keys;
+		}
+
 		/**
 		 * 
 		 */
@@ -596,6 +685,7 @@ if( ! class_exists( 'avia_auto_updates' ) )
 		{
 			new avia_auto_updates();
 		}
+		
 	}
 
 }

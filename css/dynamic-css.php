@@ -989,35 +989,48 @@ $output = preg_replace('/\r|\n|\t/', '', $output);
 $avia_config['style'] = array(
 
 		array(
-		'key'	=>	'direct_input',
-		'value'		=> $output
+			'key'	=> 'direct_input',
+			'value'	=> $output
 		),
 
 		array(
-		'key'	=>	'direct_input',
-		'value'	=> ".html_header_transparency #top .avia-builder-el-0 .container, .html_header_transparency #top .avia-builder-el-0 .slideshow_caption{padding-top:".avia_get_header_scroll_offset()."px;}"
-		),
-
-		//google webfonts
-		array(
-		'elements'	=> 'h1, h2, h3, h4, h5, h6, #top .title_container .main-title, tr.pricing-row td, #top .portfolio-title, .callout .content-area, .avia-big-box .avia-innerbox, .av-special-font, .av-current-sort-title, .html_elegant-blog #top .minor-meta, #av-burger-menu-ul li',
-		'key'	=>	'google_webfont',
-		'value'		=> avia_get_option('google_webfont')
+			'key'	=> 'direct_input',
+			'value'	=> ".html_header_transparency #top .avia-builder-el-0 .container, .html_header_transparency #top .avia-builder-el-0 .slideshow_caption{padding-top:".avia_get_header_scroll_offset()."px;}"
 		),
 
 		//google webfonts
 		array(
-		'elements'	=> 'body',
-		'key'	=>	'google_webfont',
-		'value'		=> avia_get_option('default_font')
+			'elements'			=> 'h1, h2, h3, h4, h5, h6, #top .title_container .main-title, tr.pricing-row td, #top .portfolio-title, .callout .content-area, .avia-big-box .avia-innerbox, .av-special-font, .av-current-sort-title, .html_elegant-blog #top .minor-meta, #av-burger-menu-ul li',
+			'key'				=> 'google_webfont',
+			'value'				=> avia_get_option( 'google_webfont' ),
+			'font_source'		=> 'google_webfont',
+			'add_font_class'	=> false
 		),
-		
+
+		//google webfonts
 		array(
-		'key'	=>	'direct_input',
-		'value'		=> avia_get_option('quick_css')
+			'elements'			=> 'body',
+			'key'				=> 'google_webfont',
+			'value'				=> avia_get_option( 'default_font' ),
+			'font_source'		=> 'default_font',
+			'add_font_class'	=> true
 		),
 );
 
+$quick_css = avia_get_option( 'quick_css' );
+if( ! empty( $quick_css ) )
+{
+	$avia_config['style'][] =
+			array(
+					'key'	=> 'direct_input',
+					'value'	=> avia_get_option( 'quick_css' )
+				);
+}
 
+
+/**
+ * @used_by		functions-enfold.php	avia_generate_grid_dimension()
+ * @used_by		functions-enfold.php	avia_framed_layout()
+ */
 do_action('ava_generate_styles', $options, $color_set, $styles);
 

@@ -324,7 +324,8 @@ if ( !class_exists( 'avia_sc_button' ) )
 			function shortcode_handler($atts, $content = "", $shortcodename = "", $meta = "")
 			{
 				extract(AviaHelper::av_mobile_sizes($atts)); //return $av_font_classes, $av_title_font_classes and $av_display_classes 
-			   $atts =  shortcode_atts(array('label' => 'Click me', 
+				
+				$atts =  shortcode_atts(array('label' => 'Click me', 
 			                                 'link' => '', 
 			                                 'link_target' => '',
 			                                 'color' => 'theme-color',

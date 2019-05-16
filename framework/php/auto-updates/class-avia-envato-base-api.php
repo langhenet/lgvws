@@ -24,6 +24,20 @@ if( ! class_exists( 'Avia_Envato_Base_API' ) )
 		protected $personal_token;
 		
 		/**
+		 *
+		 * @since 4.5.4
+		 * @var string 
+		 */
+		protected $envato_theme_name;
+		
+		/**
+		 *
+		 * @since 4.5.4
+		 * @var string 
+		 */
+		protected $theme_version;
+
+		/**
 		 * Default array with HTTP values for wp_remote_get
 		 * 
 		 * @since 4.4.3
@@ -62,10 +76,14 @@ if( ! class_exists( 'Avia_Envato_Base_API' ) )
 		 * 
 		 * @since 4.4.3
 		 * @param string $personal_token
+		 * @param string $theme_name
+		 * @param string $theme_version
 		 */
-		public function __construct( $personal_token = '' ) 
+		public function __construct( $personal_token = '', $theme_name = '', $theme_version = '' ) 
 		{
 			$this->personal_token = $personal_token;
+			$this->envato_theme_name = $theme_name;
+			$this->theme_version = $theme_version;
 			$this->default_http = array();
 			$this->errors = new WP_Error();
 			
@@ -278,8 +296,17 @@ if( ! class_exists( 'Avia_Envato_Base_API' ) )
 			
 			if( empty( $this->default_http ) )
 			{
+				/**
+				 * Include additional info in user agent
+				 */
+				$extended_info = '';
+				if( ! empty( $this->envato_theme_name ) && ! empty( $this->theme_version ) )
+				{
+					$extended_info .= "; {$this->envato_theme_name}/{$this->theme_version }";
+				}
+			
 				$this->default_http = array(
-					'user-agent'	=>	'WordPress/' . $wp_version . '; ' . get_bloginfo( 'url' ),
+					'user-agent'	=>	'WordPress/' . $wp_version . '; ' . get_bloginfo( 'url' ) . $extended_info,
 					'timeout'		=> apply_filters( 'avf_envato_get_default_http_timeout', 300 ),
 					'httpversion'	=>	'1.0',
 					'blocking'		=>	true,
@@ -382,6 +409,56 @@ if( ! class_exists( 'Avia_Envato_Base_API' ) )
 			}
 		}
 		
+		/**
+		 * Gets an array of envato products and gets the current version available
+		 * 
+		 * @since 4.5.3
+		 * @param array $products
+		 * @return array
+		 */
+		public function get_product_infos( array $products )
+		{
+			$errors = false;
+			
+			foreach( $products as $theme => $product ) 
+			{
+				$products[ $theme ]['item']['wordpress_theme_metadata']['version'] = false;
+				
+				try 
+				{
+					$http_args = $this->set_token_http_header( 'personal_token' );
+//					$url = 'https://api.envato.com/v3/market/catalog/item-version?id=' . $product['item']['id'];
+					$url = 'https://api.envato.com/v3/market/catalog/item?id=' . $product['item']['id'];
+					
+					$response = $this->envato_remote_get( $url, $http_args );
+				
+					$code = wp_remote_retrieve_response_code( $response );
+					$body = json_decode( $response['body'], true );
+					
+					if( 200 != $code )
+					{
+						$this->add_envato_api_error( $response, $body, __( 'Get Product Version:', 'avia_framework' ) ); 
+						throw new Avia_Envato_Exception( '', $code );
+					}
+				
+					if( ! isset( $body['wordpress_theme_metadata']['version'] ) )
+					{
+						$this->errors->add( 'Envato wrong datastructure', __( 'Get Product Version: Envato returned a wrong datastructure. Unable to get latest version to check for updates: ', 'avia_framework' ) . print_r( $body, true ) );
+						throw new Avia_Envato_Exception();
+					}
+					
+					$products[ $theme ]['item']['wordpress_theme_metadata'] = $body['wordpress_theme_metadata'];
+					$products[ $theme ]['item']['url'] = $body['url'];
+				} 
+				catch ( Avia_Envato_Exception $ex ) 
+				{
+					$errors = true;
+				}
+			}
+			
+			return $products;
+		}
+
 		/**
 		 * Returns the URL to the WP theme download file
 		 * 

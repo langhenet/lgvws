@@ -402,6 +402,27 @@ if ( !class_exists( 'avia_sc_columns' ) )
 						),
 					
 					array(
+							'name' 			=> __( 'Title Attribut', 'avia_framework' ),
+							'desc' 			=> __( 'Add a title attribut for screen reader', 'avia_framework' ),
+							'id' 			=> 'title_attr',
+							'container_class' => 'av_half av_half_first',
+							'required'		=> array( 'link', 'not', '' ),
+							'type' 			=> 'input',
+							'std' 			=> ''
+						),
+
+
+					array(
+							'name' 			=> __( 'Alt Attribut', 'avia_framework' ),
+							'desc' 			=> __( 'Add an alt attribut for screen reader','avia_framework' ),
+							'id' 			=> 'alt_attr',
+							'required'		=> array( 'link', 'not', '' ),
+							'container_class' => 'av_half',
+							'type' 			=> 'input',
+							'std' 			=> ''
+						),
+					
+					array(
 							"type"			=> "close_div",
 							'nodescription' => true
 						),
@@ -430,7 +451,7 @@ if ( !class_exists( 'avia_sc_columns' ) )
 
                     array(
                         "name" 	=> __("Highlight Column",'avia_framework' ),
-                        "desc" 	=> __("Hightlight this column by making is slightly bigger",'avia_framework' ),
+                        "desc" 	=> __("Hightlight this column by making it slightly bigger",'avia_framework' ),
                         "id" 	=> "highlight",
                         "type" 	=> "checkbox",
                         "std" 	=> "",
@@ -827,6 +848,8 @@ array(
 								'link'					=> '',
 								'linktarget'			=> '',
 								'link_hover'			=> '',
+								'title_attr'			=> '',
+								'alt_attr'				=> '',
 								'mobile_display'		=> '',
 								'mobile_breaking'		=> '',
                                 'highlight' => '',
@@ -1131,6 +1154,16 @@ array(
 					{
 						$link_data .= ' data-link-column-rel="nofollow" ';
 						$screen_reader .= ' rel="nofollow" ';
+					}
+					
+					if( ! empty( $atts['title_attr'] ) )
+					{
+						$screen_reader .= ' title="' . esc_attr( $atts['title_attr'] ) . '"';
+					}
+					
+					if( ! empty( $atts['alt_attr'] ) )
+					{
+						$screen_reader .= ' alt="' . esc_attr( $atts['alt_attr'] ) . '"';
 					}
 					
 					/**

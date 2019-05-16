@@ -106,34 +106,43 @@ if ( !class_exists( 'avia_sc_masonry_entries' ) )
 					),
 					
 				array(
-						"name" 	=> __( "Sorting Options", 'avia_framework' ),
-						"desc" 	=> __( "Here you can choose how to sort the products. Default setting can be set at Woocommerce -&gt Settings -&gt Products -&gt Display -&gt Default product sorting", 'avia_framework' ),
+						"name" 	=> __( "WooCommerce Sorting Options", 'avia_framework' ),
+						"desc" 	=> __( "Here you can choose how to sort the products. Default setting can be set at Dashboard -&gt; Appearance -&gt; Customize -&gt; WooCommerce -&gt; Product Catalog -&gt; Default Product Sorting", 'avia_framework' ),
 						"id" 	=> "prod_order_by",
 						"type" 	=> "select",
 						"std" 	=> "",
 						"required" => array( 'link', 'parent_in_array', implode( ' ', get_object_taxonomies( 'product', 'names' ) ) ),
 						"subtype" => array( 
-								__('Use defaut (defined at Woocommerce -&gt; Settings -&gt Default product sorting) ', 'avia_framework' ) =>	'',
-								__('Sort alphabetically', 'avia_framework' )			=>	'title',
-								__('Sort by most recent', 'avia_framework' )			=>	'date',
-								__('Sort by price', 'avia_framework' )					=>	'price',
-								__('Sort by popularity', 'avia_framework' )				=>	'popularity',
-								__('Sort randomly', 'avia_framework' )					=>	'rand'
+								__( 'Use default (defined at Dashboard -&gt; Customize -&gt; WooCommerce)', 'avia_framework' )	=> '',
+								__( 'Sort alphabetically', 'avia_framework' )			=>	'title',
+								__( 'Sort by most recent', 'avia_framework' )			=>	'date',
+								__( 'Sort by price', 'avia_framework' )					=>	'price',
+								__( 'Sort by popularity', 'avia_framework' )			=>	'popularity',
+								__( 'Sort randomly', 'avia_framework' )					=>	'rand',
+								__( 'Sort by menu order and name', 'avia_framework' )	=>	'menu_order',
+								__( 'Sort by average rating', 'avia_framework' )		=>	'rating',
+								__( 'Sort by relevance', 'avia_framework' )				=>	'relevance',
+								__( 'Sort by Product ID', 'avia_framework' )			=>	'id'
 							)
 					),
 				
 				array(
-						"name" 	=> __( "Sorting Order", 'avia_framework' ),
-						"desc" 	=> __( "Here you can choose the order of the result products. Default setting can be set at Woocommerce -&gt Settings -&gt Products -&gt Display -&gt Default product sorting", 'avia_framework' ),
+						"name" 	=> __( "WooCommerce Sorting Order", 'avia_framework' ),
+						"desc" 	=> __( "Here you can choose the order of the result products. Default setting can be set at Dashboard -&gt; Appearance -&gt; Customize -&gt; WooCommerce -&gt; Product Catalog -&gt; Default Product Sorting", 'avia_framework' ),
 						"id" 	=> "prod_order",
 						"type" 	=> "select",
 						"std" 	=> "",
 						"required" => array( 'link', 'parent_in_array', implode( ' ', get_object_taxonomies( 'product', 'names' ) ) ),
 						"subtype" => array( 
-								__('Use defaut (defined at Woocommerce -&gt Settings -&gt Default product sorting)', 'avia_framework' ) =>	'',
+								__('Use default (defined at Dashboard -&gt; Customize -&gt; WooCommerce)', 'avia_framework' ) =>	'',
 								__('Ascending', 'avia_framework' )			=>	'ASC',
 								__('Descending', 'avia_framework' )			=>	'DESC'
 							)
+					),
+					
+				array(	
+						'type'			=> 'template',
+						'template_id' 	=> 'date_query',
 					),
 					
 				array(
@@ -174,16 +183,18 @@ if ( !class_exists( 'avia_sc_masonry_entries' ) )
 				
 				
 				array(
-					"name" 	=> __("Pagination", 'avia_framework' ),
-					"desc" 	=> __("Should a pagination or load more option be displayed to view additional entries?", 'avia_framework' ),
-					"id" 	=> "paginate",
-					"type" 	=> "select",
-					"std" 	=> "yes",
-					"required" => array('items','not','-1'),
-					"subtype" => array(
-						__('Display Pagination',  'avia_framework' ) =>'pagination',
-						__('Display "Load More" Button',  'avia_framework' ) =>'load_more',
-						__('No option to view additional entries',  'avia_framework' ) =>'none')),
+					'name' 	=> __( 'Pagination', 'avia_framework' ),
+					'desc' 	=> __( 'Should a pagination or load more option be displayed to view additional entries?', 'avia_framework' ),
+					'id' 	=> 'paginate',
+					'type' 	=> 'select',
+					'std' 	=> 'none',
+					'required' => array( 'items', 'not', '-1' ),
+					'subtype' => array(
+										__( 'Display Pagination', 'avia_framework' )					=> 'pagination',
+										__( 'Display &quot;Load More&quot; Button', 'avia_framework' )	=> 'load_more',
+										__( 'No option to view additional entries', 'avia_framework' )	=> 'none'
+									)
+						),
 				
 				array(
             			    "name" => __("Order by",'avia_framework' ),
@@ -191,6 +202,7 @@ if ( !class_exists( 'avia_sc_masonry_entries' ) )
             			    "id"   => "query_orderby",
             			    "type" 	=> "select",
             			    "std" 	=> "date",
+							"required" => array( 'link', 'parent_not_in_array', implode( ' ', get_object_taxonomies( 'product', 'names' ) ) ),
             			    "subtype" => array(
             			        __('Date',  'avia_framework' ) =>'date',
             			        __('Title',  'avia_framework' ) =>'title',
@@ -202,16 +214,18 @@ if ( !class_exists( 'avia_sc_masonry_entries' ) )
             			        __('Page Order',  'avia_framework' ) =>'menu_order')
             			),
             			
-                  array(
-                    "name" => __("Display order",'avia_framework' ),
-			        "desc" 	=> __("Display the results either in ascending or descending order", 'avia_framework' ),
-                    "id"   => "query_order",
-                    "type" 	=> "select",
-                    "std" 	=> "DESC",
-                    "subtype" => array(
-                        __('Ascending Order',  'avia_framework' ) =>'ASC',
-                        __('Descending Order',  'avia_framework' ) =>'DESC')
-              	),
+				array(
+						"name" => __("Display order",'avia_framework' ),
+						"desc" 	=> __("Display the results either in ascending or descending order", 'avia_framework' ),
+						"id"   => "query_order",
+						"type" 	=> "select",
+						"std" 	=> "DESC",
+						"required" => array( 'link', 'parent_not_in_array', implode( ' ', get_object_taxonomies( 'product', 'names' ) ) ),
+						"subtype" => array(
+											__( 'Ascending Order',  'avia_framework' )	=> 'ASC',
+											__( 'Descending Order',  'avia_framework' )	=> 'DESC'
+										)
+					),
               			
               				
 				array(
@@ -579,7 +593,7 @@ if ( !class_exists( 'avia_sc_masonry_entries' ) )
 				if($meta['index'] == 0) $params['close'] = false;
 				if(!empty($meta['siblings']['prev']['tag']) && in_array($meta['siblings']['prev']['tag'], AviaBuilder::$full_el_no_section )) $params['close'] = false;
 				
-				if($meta['index'] != 0) $params['class'] .= " masonry-not-first";
+				if($meta['index'] > 0) $params['class'] .= " masonry-not-first";
 				if($meta['index'] == 0 && get_post_meta(get_the_ID(), 'header', true) != "no") $params['class'] .= " masonry-not-first";
 				
 				/**
@@ -590,7 +604,7 @@ if ( !class_exists( 'avia_sc_masonry_entries' ) )
 					$atts['custom_class'] = '';
 				}
 				
-		                $masonry  = new avia_masonry($atts);
+				$masonry  = new avia_masonry( $atts );
 				$masonry->extract_terms();
 				$masonry->query_entries();
 				$masonry_html = $masonry->html();

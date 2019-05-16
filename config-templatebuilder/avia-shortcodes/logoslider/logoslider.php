@@ -558,13 +558,31 @@ if ( !class_exists( 'avia_partner_logo' ) )
 
 
             extract($this->config);
+			
+			$default_heading = 'h3';
+			$args = array(
+						'heading'		=> $default_heading,
+						'extra_class'	=> ''
+					);
 
+			$extra_args = array( $this );
+
+			/**
+			 * @since 4.5.5
+			 * @return array
+			 */
+			$args = apply_filters( 'avf_customize_heading_settings', $args, __CLASS__, $extra_args );
+
+			$heading = ! empty( $args['heading'] ) ? $args['heading'] : $default_heading;
+			$css = ! empty( $args['extra_class'] ) ? $args['extra_class'] : '';
+
+				
             $extraClass 		= 'first';
             $grid 				= 'one_third';
             $slide_loop_count 	= 1;
             $loop_counter		= 1;
             $total				= $columns % 2 ? "odd" : "even";
-			$heading 			= !empty($this->config['heading']) ? '<h3>'.$this->config['heading'].'</h3>' : "&nbsp;";
+			$heading 			= !empty($this->config['heading']) ? "<{$heading} class='{$css}'>{$this->config['heading']}</{$heading}>" : "&nbsp;";
 
             switch($columns)
             {

@@ -96,34 +96,43 @@ if ( !class_exists( 'avia_sc_featureimage_slider' ))
 					),
 
 				array(
-						"name" 	=> __( "Sorting Options", 'avia_framework' ),
-						"desc" 	=> __( "Here you can choose how to sort the products. Default setting can be set at Woocommerce -&gt Settings -&gt Products -&gt Display -&gt Default product sorting", 'avia_framework' ),
+						"name" 	=> __( "WooCommerce Sorting Options", 'avia_framework' ),
+						"desc" 	=> __( "Here you can choose how to sort the products. Default setting can be set at Dashboard -&gt; Appearance -&gt; Customize -&gt; WooCommerce -&gt; Product Catalog -&gt; Default Product Sorting", 'avia_framework' ),
 						"id" 	=> "prod_order_by",
 						"type" 	=> "select",
 						"std" 	=> "",
 						"required" => array( 'link', 'parent_in_array', implode( ' ', get_object_taxonomies( 'product', 'names' ) ) ),
 						"subtype" => array( 
-								__('Use defaut (defined at Woocommerce -&gt; Settings -&gt Default product sorting) ', 'avia_framework' ) =>	'',
-								__('Sort alphabetically', 'avia_framework' )			=>	'title',
-								__('Sort by most recent', 'avia_framework' )			=>	'date',
-								__('Sort by price', 'avia_framework' )					=>	'price',
-								__('Sort by popularity', 'avia_framework' )				=>	'popularity',
-								__('Sort randomly', 'avia_framework' )					=>	'rand'
+								__( 'Use default (defined at Dashboard -&gt; Customize -&gt; WooCommerce) ', 'avia_framework' ) =>	'',
+								__( 'Sort alphabetically', 'avia_framework' )			=> 'title',
+								__( 'Sort by most recent', 'avia_framework' )			=> 'date',
+								__( 'Sort by price', 'avia_framework' )					=> 'price',
+								__( 'Sort by popularity', 'avia_framework' )			=> 'popularity',
+								__( 'Sort randomly', 'avia_framework' )					=> 'rand',
+								__( 'Sort by menu order and name', 'avia_framework' )	=> 'menu_order',
+								__( 'Sort by average rating', 'avia_framework' )		=> 'rating',
+								__( 'Sort by relevance', 'avia_framework' )				=> 'relevance',
+								__( 'Sort by Product ID', 'avia_framework' )			=> 'id'
 							)
 					),
 				
 				array(
-						"name" 	=> __( "Sorting Order", 'avia_framework' ),
-						"desc" 	=> __( "Here you can choose the order of the result products. Default setting can be set at Woocommerce -&gt Settings -&gt Products -&gt Display -&gt Default product sorting", 'avia_framework' ),
+						"name" 	=> __( "WooCommerce Sorting Order", 'avia_framework' ),
+						"desc" 	=> __( "Here you can choose the order of the result products. Default setting can be set at Dashboard -&gt; Appearance -&gt; Customize -&gt; WooCommerce -&gt; Product Catalog -&gt; Default Product Sorting", 'avia_framework' ),
 						"id" 	=> "prod_order",
 						"type" 	=> "select",
 						"std" 	=> "",
 						"required" => array( 'link', 'parent_in_array', implode( ' ', get_object_taxonomies( 'product', 'names' ) ) ),
 						"subtype" => array( 
-								__('Use defaut (defined at Woocommerce -&gt Settings -&gt Default product sorting)', 'avia_framework' ) =>	'',
+								__('Use default (defined at Dashboard -&gt; Customize -&gt; WooCommerce)', 'avia_framework' ) =>	'',
 								__('Ascending', 'avia_framework' )			=>	'ASC',
 								__('Descending', 'avia_framework' )			=>	'DESC'
 							)
+					),
+				
+				array(	
+						'type'			=> 'template',
+						'template_id' 	=> 'date_query',
 					),
 				
 				array(
@@ -528,12 +537,12 @@ if ( !class_exists( 'avia_sc_featureimage_slider' ))
 			if($meta['index'] == 0) $params['close'] = false;
 			if(!empty($meta['siblings']['prev']['tag']) && in_array($meta['siblings']['prev']['tag'], AviaBuilder::$full_el_no_section )) $params['close'] = false;
 			
-			if($meta['index'] != 0) $params['class'] .= " slider-not-first";
+			if($meta['index'] > 0) $params['class'] .= " slider-not-first";
 			
 			$params['id'] = "avia_feature_image_slider_".avia_sc_slider_full::$slide_count;
 			
 			
-			$slider  = new avia_feature_image_slider($atts);
+			$slider  = new avia_feature_image_slider( $atts );
 			$slider->query_entries();
 			$slide_html = $slider->html();
 			
@@ -574,18 +583,47 @@ if ( !class_exists( 'avia_sc_featureimage_slider' ))
 }
 
 
-if ( !class_exists( 'avia_feature_image_slider' ) )
+if ( ! class_exists( 'avia_feature_image_slider' ) )
 {
 	class avia_feature_image_slider
 	{
-		static  $slider = 0;
-		protected $slide_count = 0;
+		/**
+		 * @since < 4.0
+		 * @var int 
+		 */
+		static public $slider = 0;
+		
+		/**
+		 * @since < 4.0
+		 * @var int 
+		 */
+		protected $slide_count;
+		
+		/**
+		 * @since < 4.0
+		 * @var array 
+		 */
 		protected $atts;
+		
+		/**
+		 * @since < 4.0
+		 * @var array 
+		 */
 		protected $entries;
+		
+		/**
+		 * @since 4.5.6.1
+		 * @var array 
+		 */
+		protected $screen_options;
 
-		function __construct($atts = array())
+		/**
+		 * @since < 4.0
+		 * @param array $atts
+		 */
+		public function __construct( $atts = array() )
 		{
-			
+			$this->slide_count = 0;
 			$this->screen_options = AviaHelper::av_mobile_sizes($atts); //return $av_font_classes, $av_title_font_classes and $av_display_classes 
 			
 			$this->atts = shortcode_atts(array(	'items' 		=> '16',
@@ -598,33 +636,54 @@ if ( !class_exists( 'avia_feature_image_slider' ) )
 												'animation' 	=> 'fade',
 												'paginate'		=> 'no',
                                                 'use_main_query_pagination' => 'no',
-												'interval'  	=> 5,
-												'class'			=> '',
-		                                 		'categories'	=> array(),
-												'wc_prod_visible'	=>	'',
-												'prod_order_by'		=>	'',
-												'prod_order'		=>	'',
-		                                 		'custom_query'	=> array(),
-		                                 		'lightbox_size' => 'large',
-                                                'offset' 		=> 0,
-                                                'bg_slider'		=>true,
-                                                'keep_pading' 	=> true,
-                                                'custom_markup' => '',
-                                                'slider_size' 	=> '16:9',
-                                                'control_layout'	=> '',
-                                                'overlay_enable' 	=> '',
-				    							'overlay_opacity' 	=> '',
-				    							'overlay_color' 	=> '',
-				    							'overlay_pattern' 	=> '',
+												'interval'				=> 5,
+												'class'					=> '',
+		                                 		'categories'			=> array(),
+												'wc_prod_visible'		=>	'',
+												'prod_order_by'			=>	'',
+												'prod_order'			=>	'',
+		                                 		'custom_query'			=> array(),
+		                                 		'lightbox_size'			=> 'large',
+                                                'offset'				=> 0,
+                                                'bg_slider'				=> true,
+                                                'keep_pading'			=> true,
+                                                'custom_markup'			=> '',
+                                                'slider_size'			=> '16:9',
+                                                'control_layout'		=> '',
+                                                'overlay_enable'		=> '',
+				    							'overlay_opacity'		=> '',
+				    							'overlay_color'			=> '',
+				    							'overlay_pattern'		=> '',
 				    							'overlay_custom_pattern' => '',
+												'date_filter'			=> '',	
+												'date_filter_start'		=> '',
+												'date_filter_end'		=> '',
+												'date_filter_format'	=> 'yy/mm/dd',		//	'yy/mm/dd' | 'dd-mm-yy'	| yyyymmdd
                                                 
-		                                 		), $atts, 'av_feature_image_slider');
+		                                 		), $atts, 'av_feature_image_slider' );
 		                                 		
-		   if($this->atts['autoplay'] == "no")   
-		   	$this->atts['autoplay'] = false;                               		
-		                                 		
+			
+			if($this->atts['autoplay'] == "no")   
+			{
+				$this->atts['autoplay'] = false;
+			}
+
+		}
+		
+		/**
+		 * @since 4.5.6.1
+		 */
+		public function __destruct() 
+		{
+			unset( $this->atts );
+			unset( $this->entries );
+			unset( $this->screen_options );
 		}
 
+		/**
+		 * 
+		 * @return string
+		 */
 		public function html()
 		{
 			$html 		= "";
@@ -634,7 +693,10 @@ if ( !class_exists( 'avia_feature_image_slider' ) )
 			$style 		= "";
 			avia_feature_image_slider::$slider++;
 			
-			if($this->slide_count == 0) return $html;
+			if( $this->slide_count == 0 ) 
+			{
+				return $html;
+			}
 			
 			if(!empty($this->atts['default-height']))
 			{
@@ -705,7 +767,7 @@ if ( !class_exists( 'avia_feature_image_slider' ) )
 
             $markup_url = avia_markup_helper(array('context' => 'image_url','echo'=>false, 'custom_markup'=>$this->atts['custom_markup']));
 
-			foreach ($this->entries->posts as $slide)
+			foreach ($this->entries->posts as $index => $slide)
 			{
 					$counter ++;
 					$thumb_id = get_post_thumbnail_id( $slide->ID );
@@ -715,13 +777,30 @@ if ( !class_exists( 'avia_feature_image_slider' ) )
 					$link	 = get_post_meta( $slide->ID ,'_portfolio_custom_link', true ) != "" ? get_post_meta( $slide->ID ,'_portfolio_custom_link_url', true ) : get_permalink( $slide->ID );
 					$title	 = get_the_title( $slide->ID );
 					
+					$default_heading = 'h2';
+					$args = array(
+								'heading'		=> $default_heading,
+								'extra_class'	=> ''
+							);
+
+					$extra_args = array( $this, $slide, $index, __METHOD__ );
+
+					/**
+					 * @since 4.5.5
+					 * @return array
+					 */
+					$args = apply_filters( 'avf_customize_heading_settings', $args, __CLASS__, $extra_args );
+
+					$heading = ! empty( $args['heading'] ) ? $args['heading'] : $default_heading;
+					$css = ! empty( $args['extra_class'] ) ? $args['extra_class'] : '';
+					
 					$caption  = "";
  					$caption .= ' <div class="caption_fullwidth av-slideshow-caption caption_center">';
 					$caption .= ' <div class="container caption_container">';
 					$caption .= ' <div class="slideshow_caption">';
 					$caption .= ' <div class="slideshow_inner_caption">';
 					$caption .= ' <div class="slideshow_align_caption">';
-					$caption .= ' <h2 class="avia-caption-title '.$av_title_font_classes.'"><a href="'.$link.'">'.$title.'</a></h2>';
+					$caption .= " <{$heading} class='avia-caption-title {$css} {$av_title_font_classes}'><a href='{$link}'>{$title}</a></{$heading}>";
 			
 					if(strpos($this->atts['contents'], 'excerpt')  !== false)
 					{
@@ -818,12 +897,20 @@ if ( !class_exists( 'avia_feature_image_slider' ) )
 			return $overlay;
 		}
 
-		//fetch new entries
-		public function query_entries($params = array())
+		/**
+		 * fetch new entries
+		 * 
+		 * @since < 4.0
+		 * @param array $params
+		 */
+		public function query_entries( $params = array() )
 		{
 			global $avia_config;
 
-			if(empty($params)) $params = $this->atts;
+			if( empty( $params ) ) 
+			{
+				$params = $this->atts;
+			}
 
 			if(empty($params['custom_query']))
             {
@@ -887,9 +974,16 @@ if ( !class_exists( 'avia_feature_image_slider' ) )
 				$orderby = 'date';
 				$order = 'DESC';
 				
+				$date_query = array();
+				if( 'date_filter' == $params['date_filter'] )
+				{
+					$date_query = AviaHelper::add_date_query( $date_query, $params['date_filter_start'], $params['date_filter_end'], $params['date_filter_format'] );
+				}
+				
 				// Meta query - replaced by Tax query in WC 3.0.0
 				$meta_query = array();
 				$tax_query = array();
+				$ordering_args = array();
 
 				// check if taxonomy are set to product or product attributes
 				$tax = get_taxonomy( $params['taxonomy'] );
@@ -926,8 +1020,14 @@ if ( !class_exists( 'avia_feature_image_slider' ) )
 								'posts_per_page' =>	$params['items'],
 								'post__not_in'	=>	( ! empty( $no_duplicates ) ) ? $avia_config['posts_on_current_page'] : array(),
 								'meta_query'	=>	$meta_query,
-								'tax_query'		=>	$tax_query
+								'tax_query'		=>	$tax_query,
+								'date_query'	=> $date_query,
 							);
+				
+				if ( ! empty( $ordering_args['meta_key'] ) ) 
+				{
+					$query['meta_key'] = $ordering_args['meta_key'];
+				}
 				
 			}
 			else
@@ -935,12 +1035,18 @@ if ( !class_exists( 'avia_feature_image_slider' ) )
 				$query = $params['custom_query'];
 			}
 
-
-			$query = apply_filters('avia_feature_image_slider_query', $query, $params);
+			/**
+			 * 
+			 * @since < 4.0
+			 * @param array $query
+			 * @param array $params
+			 * @return array
+			 */
+			$query = apply_filters( 'avia_feature_image_slider_query', $query, $params );
 
 			$this->entries = new WP_Query( $query );
 			
-			$this->slide_count = count($this->entries->posts);
+			$this->slide_count = count( $this->entries->posts );
 			
 		    // store the queried post ids in
             if( $this->entries->have_posts() && $params['offset'] != 'enforce_duplicates')

@@ -6,6 +6,7 @@
  */
 if ( ! defined( 'ABSPATH' ) ) {  exit;  }    // Exit if accessed directly
 
+
 if ( ! class_exists( 'avia_sc_gmaps' ) ) 
 {
 	class avia_sc_gmaps extends aviaShortcodeTemplate
@@ -30,6 +31,11 @@ if ( ! class_exists( 'avia_sc_gmaps' ) )
 				$this->config['tooltip'] 	    = __('Display a google map with one or multiple locations', 'avia_framework' );
 				$this->config['drag-level'] 	= 3;
 				$this->config['disabling_allowed'] = true;
+				
+				$this->config['disabled']		= array(
+												'condition'	=> apply_filters( 'avf_load_google_map_api_prohibited', false ), 
+												'text'		=> __( 'This element has been disabled with a filter', 'avia_framework' )
+												);
 			}
 			
 			
@@ -236,7 +242,7 @@ if ( ! class_exists( 'avia_sc_gmaps' ) )
 								"type" 	=> "select",
 								"std" 	=> '',
 								"subtype" => array(
-										__( 'Show Google Maps immediatly',  'avia_framework' )				=>	'',
+										__( 'Show Google Maps immediately',  'avia_framework' )				=>	'',
 										__( 'User must accept to show Google Maps',  'avia_framework' )		=>	'confirm_link',
 										__( 'Only open Google Maps in new window',  'avia_framework' )		=>	'page_only'
 									)
@@ -421,6 +427,25 @@ if ( ! class_exists( 'avia_sc_gmaps' ) )
 			 */
 			public function shortcode_handler( $atts, $content = "", $shortcodename = "", $meta = "" )
 			{
+				/**
+				 * If disabled with filter - only show a message to editors 
+				 */
+				if( apply_filters( 'avf_load_google_map_api_prohibited', false ) )
+				{
+					$out = '';
+					
+					if( current_user_can( 'edit_posts' ) )
+					{
+						$out .=	'<span class="av-shortcode-disabled-notice">';
+						$out .=		'<strong>' . __( 'Admin notice for:', 'avia_framework' ) . '</strong><br>';
+						$out .=		__( 'This element was disabled with filter &quot;avf_load_google_map_api_prohibited&quot;', 'avia_framework' ) . '<br>';
+						$out .=	'</span>';
+					}
+					
+					return $out;
+				}
+
+				
 		       	extract(AviaHelper::av_mobile_sizes($atts)); //return $av_font_classes, $av_title_font_classes and $av_display_classes 
 				
 				$atts = shortcode_atts( array(

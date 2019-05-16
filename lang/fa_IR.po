@@ -28484,7 +28484,7 @@ msgid ""
 "custom.css file"
 msgstr ""
 "اینجا میتوانید کدهای css دلخواه خود را وارد کنید ولی ما پیشنهاد میکنیم که از تم "
-"فرزند استفاده کنید. تم فرزند همراه پکیجی که از گروه سورین دانلود کرده اید وجود "
+"فرزند استفاده کنید. تم فرزند همراه پکیجی که از دانلود کرده اید وجود "
 "دارد. شما میتوانید از آن برای سفارشی سازی سایت استفاده کنید."
 
 #: includes/admin/register-admin-options.php:2580
@@ -29200,7 +29200,7 @@ msgid ""
 "like the Theme Demo you can import dummy posts and pages here that will "
 "definitely help to understand how those tasks are done."
 msgstr ""
-"برای داشتن دمو میتوانید فایل دمویی که همراه قالب توسط گروه سورین ارائه شده "
+"برای داشتن دمو میتوانید فایل دمویی که همراه قالب توسط ارائه شده "
 "ایمپورت نمایید."
 
 #: includes/admin/register-admin-options.php:3601

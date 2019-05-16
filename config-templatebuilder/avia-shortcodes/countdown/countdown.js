@@ -2,6 +2,8 @@
 // 
 // AVIA Countdown
 // 
+// @since 4.5.6  Countdown is UTC based to reflect different browser timezones
+// 
 // -------------------------------------------------------------------------------------------
 (function($)
 { 
@@ -16,7 +18,8 @@
 		ticker	= function(_self)
 		{
 			var _time		= {},
-				_now 		= new Date(),
+				tmLoc 		= new Date();
+			var	_now		= new Date( tmLoc.getTime() + tmLoc.getTimezoneOffset() * 60000 ),		//	get UTC time
 				_timestamp  = _self.end - _now;
 			
 			if(_timestamp <= 0)
@@ -76,6 +79,11 @@
 			_self.container		= $(this);
 			_self.data			= _self.container.data();
 			_self.end			= new Date(_self.data.year, _self.data.month, _self.data.day, _self.data.hour, _self.data.minute );
+			
+			if( _self.data.timezone != '0' )
+			{
+				_self.end = new Date( _self.end.getTime() - _self.data.timezone * 60000 );
+			}
 			
 			for (var i in _units)
 			{

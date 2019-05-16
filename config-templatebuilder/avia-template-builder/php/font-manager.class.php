@@ -504,8 +504,17 @@ class avia_font_manager{
 			
 				$fstring 		= $font_list['folder'].'/'.$font_name;
 				
+				/**
+				 * Allow to change default behaviour of browsers when loading external fonts
+				 * https://developers.google.com/web/updates/2016/02/font-display
+				 * 
+				 * @since 4.5.6
+				 * @return string			auto | block | swap | fallback | optional
+				 */
+				$font_display = apply_filters( 'avf_font_display', 'auto', $font_name );
+				
 				$output .="
-@font-face {font-family: '{$font_name}'; font-weight: normal; font-style: normal;
+@font-face {font-family: '{$font_name}'; font-weight: normal; font-style: normal; font-display: {$font_display};
 src: url('{$fstring}.eot{$append}');
 src: url('{$fstring}.eot{$qmark}#iefix') format('embedded-opentype'), 
 url('{$fstring}.woff{$append}') format('woff'), 
@@ -518,7 +527,12 @@ url('{$fstring}.svg{$append}#{$font_name}') format('svg');
 		$output .="</style>";
 		
 		}
-		return $output;
+		
+		/**
+		 * @since 4.5.5
+		 * @return string
+		 */
+		return apply_filters( 'avf_font_manager_load_font', $output );
 	}
 	
 	

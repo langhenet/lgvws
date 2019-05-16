@@ -433,7 +433,10 @@ border:none;
 .avia-modal .av_third_first {clear:both;}
 .avia-modal .av_third .avia-form-element, .avia-modal .av_third .avia-name-description{width:100%; float:none;}
 
-
+/*2 third sized elements*/
+.avia-modal .av_2_third {width:66%; float:left; position: relative;  clear:none;}
+.avia-modal .av_2_third_first {clear:both;}
+.avia-modal .av_2_third .avia-form-element, .avia-modal .av_2_third .avia-name-description{width:100%; float:none;}
 
 
 /*google maps*/
@@ -540,6 +543,8 @@ div .av-builder-note > div{
 .wp-admin .avia-datepicker-div.ui-datepicker .ui-datepicker-buttonpane button { float: right; margin: .5em .2em .4em; cursor: pointer; padding: 10px 20px; width:auto; overflow:visible; border: none; border-radius: 3px;}
 .wp-admin .avia-datepicker-div.ui-datepicker .ui-datepicker-buttonpane button.ui-datepicker-current { float:left; }
 
+.wp-admin .avia-datepicker-div.ui-datepicker.select_dates_30 select.ui-datepicker-month,
+.wp-admin .avia-datepicker-div.ui-datepicker.select_dates_30 select.ui-datepicker-year { width: 30%;}
 
 /* RTL support */
 .wp-admin .avia-datepicker-div.ui-datepicker-rtl { direction: rtl; }

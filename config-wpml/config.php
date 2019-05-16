@@ -249,37 +249,53 @@ if(defined('ICL_SITEPRESS_VERSION') && defined('ICL_LANGUAGE_CODE'))
 	/*
 	* styleswitcher for the avia framework
 	*/
-	if(!function_exists('avia_wpml_language_switch'))
+	if( ! function_exists( 'avia_wpml_language_switch' ) )
 	{
-		add_action( 'avia_meta_header', 'avia_wpml_language_switch', 10);
-		add_action( 'ava_main_header_sidebar', 'avia_wpml_language_switch', 10);
+		add_action( 'avia_meta_header', 'avia_wpml_language_switch', 10 );
+		add_action( 'ava_main_header_sidebar', 'avia_wpml_language_switch', 10 );
 
 		function avia_wpml_language_switch()
 		{
 			global $sitepress, $avia_config;
             
-            if(empty($avia_config['wpml_language_menu_position'])) $avia_config['wpml_language_menu_position'] = apply_filters('avf_wpml_language_switcher_position', 'sub_menu');
-            if($avia_config['wpml_language_menu_position'] != 'sub_menu') return;
+            if( empty( $avia_config['wpml_language_menu_position'] ) ) 
+			{
+				$avia_config['wpml_language_menu_position'] = apply_filters( 'avf_wpml_language_switcher_position', 'sub_menu' );
+			}
+			
+            if( $avia_config['wpml_language_menu_position'] != 'sub_menu' ) 
+			{
+				return;
+			}
 
 			// icl_get_languages deprecated since 3.2
 			$languages = function_exists( 'wpml_get_active_languages_filter' ) ? wpml_get_active_languages_filter( '', 'skip_missing=0&orderby=custom' ) : icl_get_languages( 'skip_missing=0&orderby=custom' );
-			$output = "";
+			$output = '';
 
-			if(is_array($languages))
+			if( is_array( $languages ) )
 			{
 				$output .= "<ul class='avia_wpml_language_switch avia_wpml_language_switch_extra'>";
 
-				foreach($languages as $lang)
+				foreach( $languages as $lang )
 				{
-					$currentlang = (ICL_LANGUAGE_CODE == $lang['language_code']) ? 'avia_current_lang' : '';
+					$currentlang = ( ICL_LANGUAGE_CODE == $lang['language_code'] ) ? 'avia_current_lang' : '';
 
-					if(!avia_is_overview() && (is_home() || is_front_page())) $lang['url'] = $sitepress->language_url($lang['language_code']);
+					if( ! avia_is_overview() && ( is_home() || is_front_page() ) )
+					{
+						$url = $sitepress->language_url( $lang['language_code'] );
+						
+						/**
+						 * @since 4.5.6.1
+						 * @return string
+						 */
+						$lang['url'] = apply_filters( 'avf_wpml_language_switcher_url', $url, $lang['language_code'], $avia_config['wpml_language_menu_position'] );
+					}
 					         
-					$output .= "<li class='language_".$lang['language_code']." $currentlang'><a href='".$lang['url']."'>";
-					$output .= "	<span class='language_flag'><img title='".$lang['native_name']."' src='".$lang['country_flag_url']."' alt='".$lang['native_name']."' /></span>";
-					$output .= "	<span class='language_native'>".$lang['native_name']."</span>";
-					$output .= "	<span class='language_translated'>".$lang['translated_name']."</span>";
-					$output .= "	<span class='language_code'>".$lang['language_code']."</span>";
+					$output .= "<li class='language_" . $lang['language_code'] . " $currentlang'><a href='" . esc_url( $lang['url'] ) . "'>";
+					$output .= "	<span class='language_flag'><img title='" . $lang['native_name'] . "' src='". esc_url( $lang['country_flag_url'] ) . "' alt='" . $lang['native_name'] . "' /></span>";
+					$output .= "	<span class='language_native'>{$lang['native_name']}</span>";
+					$output .= "	<span class='language_translated'>{$lang['translated_name']}</span>";
+					$output .= "	<span class='language_code'>{$lang['language_code']}</span>";
 					$output .= "</a></li>";
 				}
 
@@ -421,7 +437,7 @@ if(defined('ICL_SITEPRESS_VERSION') && defined('ICL_LANGUAGE_CODE'))
 	                $linkurl = admin_url($current_page . $query .'lang=' . $lang['language_code']);
 
 					$output .= "<li class='language_".$lang['language_code']."'><a href='".$linkurl."'>";
-					$output .= "	<span class='language_flag'><img title='".$lang['native_name']."' src='".$lang['country_flag_url']."' alt='".$lang['native_name']."' /></span>";
+					$output .= "	<span class='language_flag'><img title='".$lang['native_name']."' src='". esc_url( $lang['country_flag_url'] ) ."' alt='".$lang['native_name']."' /></span>";
 					$output .= "	<span class='language_native'>".$lang['native_name']."</span>";
 					$output .= "</a></li>";
 				}
@@ -490,13 +506,25 @@ if(defined('ICL_SITEPRESS_VERSION') && defined('ICL_LANGUAGE_CODE'))
         
         
         
-        if(!function_exists('avia_change_wpml_home_link'))
+	if( ! function_exists( 'avia_change_wpml_home_link' ) )
 	{
-		add_filter('WPML_filter_link','avia_change_wpml_home_link', 10, 2);
-		function avia_change_wpml_home_link($url, $lang)
+		add_filter( 'WPML_filter_link', 'avia_change_wpml_home_link', 10, 2 );
+		
+		function avia_change_wpml_home_link( $url, $lang )
 		{
 		    global $sitepress;
-		    if(is_front_page()) $url = $sitepress->language_url($lang['language_code']);
+			
+		    if( is_front_page() ) 
+			{
+				$new_url = $sitepress->language_url( $lang['language_code'] );
+				
+				/**
+				 * @since 4.5.6.1
+				 * @return string
+				 */
+				$url = apply_filters( 'avf_wpml_change_home_link', $new_url, $url, $lang );
+			}
+			
 		    return $url;
 		}
 	}
@@ -569,7 +597,7 @@ if(defined('ICL_SITEPRESS_VERSION') && defined('ICL_LANGUAGE_CODE'))
 
 
 
-	if(!function_exists('avia_append_lang_flags'))
+	if( ! function_exists( 'avia_append_lang_flags' ) )
 	{
 		//first append search item to main menu
 		add_filter( 'wp_nav_menu_items', 'avia_append_lang_flags', 9998, 2 );
@@ -577,30 +605,47 @@ if(defined('ICL_SITEPRESS_VERSION') && defined('ICL_LANGUAGE_CODE'))
 		
 		function avia_append_lang_flags( $items, $args )
 		{
-		    if ((is_object($args) && $args->theme_location == 'avia'))
+		    if ( ( is_object( $args ) && $args->theme_location == 'avia' ) )
 		    {
 		        global $avia_config, $sitepress;
 
-		        if(empty($avia_config['wpml_language_menu_position'])) $avia_config['wpml_language_menu_position'] = apply_filters('avf_wpml_language_switcher_position', 'main_menu');
-		        if($avia_config['wpml_language_menu_position'] != 'main_menu') return $items;
+		        if( empty( $avia_config['wpml_language_menu_position'] ) ) 
+				{
+					$avia_config['wpml_language_menu_position'] = apply_filters( 'avf_wpml_language_switcher_position', 'main_menu' );
+				}
+				
+		        if( $avia_config['wpml_language_menu_position'] != 'main_menu' ) 
+				{
+					return $items;
+				}
 		
 				// icl_get_languages deprecated since 3.2
-		        $languages = function_exists( 'wpml_get_active_languages_filter' ) ? wpml_get_active_languages_filter( '', 'skip_missing=0&orderby=custom' ) : icl_get_languages('skip_missing=0&orderby=custom');
+		        $languages = function_exists( 'wpml_get_active_languages_filter' ) ? wpml_get_active_languages_filter( '', 'skip_missing=0&orderby=custom' ) : icl_get_languages( 'skip_missing=0&orderby=custom' );
 		
-		        if(is_array($languages))
+		        if( is_array( $languages ) )
 		        {
-		            foreach($languages as $lang)
+		            foreach( $languages as $lang )
 		            {
-		                $currentlang = (ICL_LANGUAGE_CODE == $lang['language_code']) ? 'avia_current_lang' : '';
+		                $currentlang = ( ICL_LANGUAGE_CODE == $lang['language_code'] ) ? 'avia_current_lang' : '';
 		
-		                if(is_front_page()) $lang['url'] = $sitepress->language_url($lang['language_code']);
+						if( is_front_page() ) 
+						{
+							$url = $sitepress->language_url( $lang['language_code'] );
+						
+							/**
+							 * @since 4.5.6.1
+							 * @return string
+							 */
+							$lang['url'] = apply_filters( 'avf_wpml_language_switcher_url', $url, $lang['language_code'], $avia_config['wpml_language_menu_position'] );
+						}
 		
-		                $items .= "<li class='av-language-switch-item language_".$lang['language_code']." $currentlang'><a href='".$lang['url']."'>";
-		                $items .= "	<span class='language_flag'><img title='".$lang['native_name']."' src='".$lang['country_flag_url']."' /></span>";
+						$items .= "<li class='av-language-switch-item language_{$lang['language_code']} {$currentlang}'><a href='" . esc_url( $lang['url'] ) . "'>";
+		                $items .= "	<span class='language_flag'><img title='" . $lang['native_name'] . "' src='" . esc_url( $lang['country_flag_url'] ) . "' /></span>";
 		                $items .= "</a></li>";
 		            }
 		        }
 		    }
+			
 		    return $items;
 		}
 	}
@@ -678,16 +723,22 @@ if(defined('ICL_SITEPRESS_VERSION') && defined('ICL_LANGUAGE_CODE'))
 	
 	
 	
-	if(!function_exists('avia_translate_check_by_tag_values'))
+	if( ! function_exists( 'avia_translate_check_by_tag_values' ) )
 	{
-	    function avia_translate_check_by_tag_values($value)
+		/**
+		 * Translate tag values for attachments (av-helper-mayonry.php)
+		 * 
+		 * @since < 4.0
+		 * @param array $value
+		 * @return array
+		 */
+	    function avia_translate_check_by_tag_values( $value )
 	    {
-	        if(!empty($value) && is_array($value))
+	        if( ! empty( $value ) && is_array( $value ) )
 	        {
-	            foreach($value as $key => $data)
+	            foreach( $value as $key => $data )
 	            {
-	                $orig_term = get_term_by('slug', $data, 'post_tag');
-	                
+	                $orig_term = get_term_by( 'slug', $data, 'post_tag' );
 	                if( false === $orig_term ) 
 					{
 						continue;
@@ -695,51 +746,30 @@ if(defined('ICL_SITEPRESS_VERSION') && defined('ICL_LANGUAGE_CODE'))
 						
 					//	icl_object_id deprecated since 3.2 - backward comp only
 					$translated_id = function_exists( 'wpml_object_id_filter' ) ? wpml_object_id_filter( $orig_term->term_id, 'post_tag', true ) : icl_object_id( $orig_term->term_id, 'post_tag', true );
-					if( is_null( $translated_id ) || ( false === $translated_id ) )
+					if( is_null( $translated_id ) || ( ! is_numeric( $translated_id ) ) )
 					{
 						continue;
 					}
 					
-					$translated_term = function_exists( 'wpml_object_id_filter' ) ? wpml_object_id_filter( $translated_id->term_id, 'post_tag', true ) : icl_object_id(  $translated_id->term_id, 'post_tag', true );
-					if( is_null( $translated_term ) || ( false === $translated_term ) )
+					if( $orig_term->term_id == $translated_id )
 					{
 						continue;
 					}
-					$value[$key] = $translated_term->slug;	                
+					
+					$translated_term = get_term_by( 'id', $translated_id, 'post_tag' );
+					if( false === $translated_term ) 
+					{
+						continue;
+					}
+					
+					$value[ $key ] = $translated_term->slug;	                
 	            }
 	        }
+			
 	        return $value;
 	    }
 	
-	    add_filter('avf_ratio_check_by_tag_values', 'avia_translate_check_by_tag_values', 10, 1);
-	}
-	
-	if( ! function_exists( 'avia_wpml_error404' ) )
-	{
-		/**
-		 * Add custom 404 page - needed because WPML manipulates the post query in get_headers()
-		 * 
-		 * @since 4.5.1
-		 */
-		function avia_wpml_error404()
-		{
-			global $avia_config, $wp_query;
-
-			if( ! isset( $avia_config['modified_main_query'] ) || ( ! $avia_config['modified_main_query'] instanceof WP_Query ) )
-			{
-				return;
-			}
-
-			if( 'error404_custom' == avia_get_option( 'error404_custom' ) ) 
-			{
-				$wp_query = $avia_config['modified_main_query'];
-				$wp_query->rewind_posts();
-				return;
-			}
-		}
-
-		add_filter( 'ava_builder_template_after_header', 'avia_wpml_error404', 999 );
-		add_filter( 'ava_page_template_after_header', 'avia_wpml_error404', 999 );
+	    add_filter( 'avf_ratio_check_by_tag_values', 'avia_translate_check_by_tag_values', 10, 1 );
 	}
 	
 	
@@ -761,6 +791,14 @@ if(defined('ICL_SITEPRESS_VERSION') && defined('ICL_LANGUAGE_CODE'))
 		{
 			global $avia_config;
 
+			/**
+			 * Return anything except true to hide inactive special pages
+			 * 
+			 * @since 4.5.5
+			 * @return boolean
+			 */
+			$show_inactive = apply_filters( 'avf_show_inactive_special_pages', true, $post_ids, $context ) === true ? true : false;
+			
 			$langs = $avia_config['wpml']['lang'];
 
 			$maintenance_mode = avia_wpml_get_options( 'maintenance_mode' );
@@ -772,25 +810,34 @@ if(defined('ICL_SITEPRESS_VERSION') && defined('ICL_LANGUAGE_CODE'))
 
 			foreach( $langs as $lang_id => $lang ) 
 			{	
-						// Maintenance Page
-//				if( ( 'maintenance_mode' == $maintenance_mode[ $lang_id ] ) && is_numeric( $maintenance_page[ $lang_id ] ) && ( 0 != $maintenance_page[ $lang_id ] ) )
-				if( is_numeric( $maintenance_page[ $lang_id ] ) && ( 0 != $maintenance_page[ $lang_id ] ) )
+						// Maintenance Page				
+				$active = in_array( $maintenance_mode[ $lang_id ], array( 'maintenance_mode', 'maintenance_mode_redirect' ) );
+				if( is_numeric( $maintenance_page[ $lang_id ] ) && ( (int) $maintenance_page[ $lang_id ] > 0 ) )
 				{
-					$post_ids[] = $maintenance_page[ $lang_id ];
+					if( $active || $show_inactive )
+					{	
+						$post_ids[] = (int) $maintenance_page[ $lang_id ];
+					}
 				}
 
 						// 404 Page
-//				if( ( 'error404_custom' == $error404_custom[ $lang_id ] ) && is_numeric( $error404_page[ $lang_id ] ) && ( 0 != $error404_page[ $lang_id ] ) )
-				if( is_numeric( $error404_page[ $lang_id ] ) && ( 0 != $error404_page[ $lang_id ] ) )
+				$active = in_array( $error404_custom[ $lang_id ], array( 'error404_custom', 'error404_redirect' ) );
+				if( is_numeric( $error404_page[ $lang_id ] ) && ( (int) $error404_page[ $lang_id ] > 0 ) )
 				{
-					$post_ids[] = $error404_page[ $lang_id ];
+					if( $active || $show_inactive )
+					{
+						$post_ids[] = (int) $error404_page[ $lang_id ];
+					}
 				}		
 
 						// Footer Page
-//				if( ( strpos( $display_widgets_socket[ $lang_id ], 'page_in_footer' ) === 0 ) && is_numeric( $footer_page[ $lang_id ] ) && ( 0 != $footer_page[ $lang_id ] ) )
-				if( is_numeric( $footer_page[ $lang_id ] ) && ( 0 != $footer_page[ $lang_id ] ) )
+				$active = in_array( $display_widgets_socket[ $lang_id ], array( 'page_in_footer', 'page_in_footer_socket' ) );
+				if( is_numeric( $footer_page[ $lang_id ] ) && ( (int) $footer_page[ $lang_id ] > 0 ) )
 				{
-					$post_ids[] = $footer_page[ $lang_id ];
+					if( $active || $show_inactive )
+					{
+						$post_ids[] = (int) $footer_page[ $lang_id ];
+					}
 				}
 			}
 
@@ -1000,8 +1047,4 @@ if( ! function_exists( 'av_wpml_breadcrumbs_get_parents' ) )
 	}
 
 }
-
-
-
-
 

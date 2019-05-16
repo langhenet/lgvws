@@ -83,7 +83,7 @@ if ( !class_exists( 'avia_sc_productgrid' ) )
 						"id" 	=> "items",
 						"type" 	=> "select",
 						"std" 	=> "9",
-						"subtype" => AviaHtmlHelper::number_array(1,100,1, array('All'=>'-1'))),
+						"subtype" => AviaHtmlHelper::number_array( 1, 100, 1, array( 'All' => '-1' ) ) ),
 
 				array(
 						"name" 	=> __("WooCommerce Out of Stock Products visibility", 'avia_framework' ),
@@ -121,6 +121,18 @@ if ( !class_exists( 'avia_sc_productgrid' ) )
 							__('Show featured products only', 'avia_framework' )	=> 'show')
 					),
 				
+				array(
+						'name' 	=> __( 'WooCommerce Sidebar Filters', 'avia_framework' ),
+						'desc' 	=> __( 'Allow to filter products for this element using the 3 WooCommerce sidebar filters: Filter Products by Price, Rating, Attribute. These filters are only shown on the selected WooCommerce Shop page (WooCommerce -&gt; Settings -&gt; Products -&gt; General -&gt; Shop Page) or on product category pages. You may also use a custom widget area for the sidebar.', 'avia_framework' ),
+						'id' 	=> 'wc_prod_additional_filter',
+						'type' 	=> 'select',
+						'std' 	=> '',
+						'subtype' => array(
+										__('Ignore filters', 'avia_framework' )		=> '',
+										__('Use filters', 'avia_framework' )		=> 'use_additional_filter'
+									)
+					),
+				
                 array(
                     "name" 	=> __("Offset Number", 'avia_framework' ),
                     "desc" 	=> __("The offset determines where the query begins pulling products. Useful if you want to remove a certain number of products because you already query them with another product grid. Attention: Use this option only if the product sorting of the product grids match and do not allow the user to pick the sort order!", 'avia_framework' ),
@@ -130,18 +142,38 @@ if ( !class_exists( 'avia_sc_productgrid' ) )
                     "subtype" => AviaHtmlHelper::number_array(1,100,1, array(__('Deactivate offset','avia_framework')=>'0', __('Do not allow duplicate posts on the entire page (set offset automatically)', 'avia_framework' ) =>'no_duplicates'))),
 
 				array(
-						"name" 	=> __("Sorting Options", 'avia_framework' ),
-						"desc" 	=> __("Here you can choose how to sort the products. Default setting can be set at Woocommerce -&gt Settings -&gt Products -&gt Display -&gt Default product sorting", 'avia_framework' ),
+						"name" 	=> __("WooCommerce Sorting Options", 'avia_framework' ),
+						"desc" 	=> __("Here you can choose how to sort the products. Default setting can be set at Dashboard -&gt; Appearance -&gt; Customize -&gt; WooCommerce -&gt; Product Catalog -&gt; Default Product Sorting", 'avia_framework' ),
 						"id" 	=> "sort",
 						"type" 	=> "select",
 						"std" 	=> "dropdown",
-						"no_first"=>true,
-						"subtype" => array( __('Let user pick by displaying a dropdown with sort options (default value is defined at Default product sorting)', 'avia_framework' )=>'dropdown',
-											__('Use defaut (defined at Woocommerce -&gt; Settings -&gt Default product sorting) ', 'avia_framework' ) =>'0',
-											__('Sort alphabetically', 'avia_framework' ) =>'title',
-											__('Sort by most recent', 'avia_framework' ) =>'date',
-											__('Sort by price', 'avia_framework' ) =>'price',
-											__('Sort by popularity', 'avia_framework' ) =>'popularity')),
+						"no_first" => true,
+						"subtype" => array( __( 'Let user pick by displaying a dropdown with sort options (default value is defined at Default product sorting)', 'avia_framework' )	=> 'dropdown',
+											__( 'Use default (defined at Dashboard -&gt; Customize -&gt; WooCommerce) ', 'avia_framework' ) => '0',
+											__( 'Sort alphabetically', 'avia_framework' )			=> 'title',
+											__( 'Sort by most recent', 'avia_framework' )			=> 'date',
+											__( 'Sort by price', 'avia_framework' )					=> 'price',
+											__( 'Sort by popularity', 'avia_framework' )			=> 'popularity',
+											__( 'Sort randomly', 'avia_framework' )					=> 'rand',
+											__( 'Sort by menu order and name', 'avia_framework' )	=> 'menu_order',
+											__( 'Sort by average rating', 'avia_framework' )		=> 'rating',
+											__( 'Sort by relevance', 'avia_framework' )				=> 'relevance',
+											__( 'Sort by Product ID', 'avia_framework' )			=> 'id'
+										)
+						),
+				
+				array(
+						'name' 	=> __( 'WooCommerce Sorting Order', 'avia_framework' ),
+						'desc' 	=> __( 'Here you can choose the order of the result products. Default setting can be set at Dashboard -&gt; Appearance -&gt; Customize -&gt; WooCommerce -&gt; Product Catalog -&gt; Default Product Sorting', 'avia_framework' ),
+						'id' 	=> 'prod_order',
+						'type' 	=> 'select',
+						'std' 	=> '',
+						'subtype' => array( 
+								__( 'Use default (defined at Dashboard -&gt; Customize -&gt; WooCommerce)', 'avia_framework' ) => '',
+								__( 'Ascending', 'avia_framework' )			=> 'ASC',
+								__( 'Descending', 'avia_framework' )		=> 'DESC'
+							)
+					),
 
 				array(
 							"name" 	=> __("Pagination", 'avia_framework' ),
@@ -149,9 +181,11 @@ if ( !class_exists( 'avia_sc_productgrid' ) )
 							"id" 	=> "paginate",
 							"type" 	=> "select",
 							"std" 	=> "yes",
+							'required' => array( 'items', 'not', '-1' ),
 							"subtype" => array(
-								__('yes',  'avia_framework' ) =>'yes',
-								__('no',  'avia_framework' ) =>'no')),
+												__( 'yes',  'avia_framework' )	=> 'yes',
+												__( 'no',  'avia_framework' )	=> 'no')
+					),
 				
 				
 				array(

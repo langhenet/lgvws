@@ -876,6 +876,12 @@ if (!class_exists('avia_newsbox'))
 			$cat = empty($instance['cat']) ? '' : $instance['cat'];
 			$excerpt = empty($instance['excerpt']) ? '' : $instance['excerpt'];
 			$image_size = isset($avia_config['widget_image_size']) ? $avia_config['widget_image_size'] : 'widget';
+			
+			/**
+			 * @since 4.5.4
+			 * @return string
+			 */
+			$image_size = apply_filters( 'avf_newsbox_image_size', $image_size, $args, $instance );
 
 			if ( !empty( $title ) ) { echo $before_title . $title . $after_title; };
 
@@ -1911,11 +1917,23 @@ if( ! class_exists('avia_google_maps') )
 
 		/**
 		 * Output the content of the widget
+		 * 
 		 * @param array $args
 		 * @param array $instance
 		 */
 		public function widget( $args, $instance ) 
 		{
+			if( true === apply_filters( 'avf_load_google_map_api_prohibited', false ) )
+			{
+				if( current_user_can( 'edit_posts' ) )
+				{
+					echo '<p style="font-weight: 700;color: red;">' . __( 'Widget Google Maps is disabled with filter &quot;avf_load_google_map_api_prohibited&quot;.', 'avia_framework' ) . '</p>';
+					echo '<p style="font-weight: 400;color: red;">' . __( '(Visible to admins only.)', 'avia_framework' ) . '</p>';
+				}
+				
+				return;
+			}
+			
 			$instance = $this->parse_args_instance( $instance );
 			$fields = $this->get_field_names();
 			
@@ -2303,7 +2321,7 @@ if( ! class_exists('avia_google_maps') )
 				<p>
 					<label for="<?php echo $this->get_field_id( 'google_link' ); ?>"><?php _e( 'Link to Google Maps', 'avia_framework' ); ?>:</label>
 					<select id="<?php echo $this->get_field_id( 'google_link' ); ?>" name="<?php echo $this->get_field_name( 'google_link' ); ?>" class="widefat avia-coditional-widget-select">
-						<option value="" <?php selected( '', $google_link ) ?>><?php _e( 'Show Google Maps immediatly', 'avia_framework' ); ?></option>
+						<option value="" <?php selected( '', $google_link ) ?>><?php _e( 'Show Google Maps immediately', 'avia_framework' ); ?></option>
 						<option value="confirm_link" <?php selected( 'confirm_link', $google_link ) ?>><?php _e( 'User must accept to show Google Maps', 'avia_framework' ); ?></option>
 						<option value="page_only" <?php selected( 'page_only', $google_link ) ?>><?php _e( 'Only open Google Maps in new window', 'avia_framework' ); ?></option>
 					</select>
@@ -2322,7 +2340,12 @@ if( ! class_exists('avia_google_maps') )
 				<div class="avia_gm_fallback_upload avia_google_fallback av-widgets-upload">
 					<?php echo $html->render_single_element( $fallback_element );?>
 				</div>
-				
+<?php 
+				if( true === apply_filters( 'avf_load_google_map_api_prohibited', false ) )
+				{
+					echo '<p style="font-weight: 700;color: red;">' . __( 'This element is disabled in frontend with filter &quot;avf_load_google_map_api_prohibited&quot;', 'avia_framework' ) . '</p>';
+				}
+?>
 			</div>
 			<?php
 		}
@@ -2626,7 +2649,24 @@ if( ! class_exists('avia_instagram_widget') )
 		{
 			if( is_null( $this->cache ) )
 			{
-				$this->cache = get_option( 'avia_instagram_widgets_cache', array() );
+				$cache = get_option( 'avia_instagram_widgets_cache', '' );
+				
+				/**
+				 * backwards comp only
+				 */
+				if( is_array( $cache ) )
+				{
+					$this->cache = $cache;
+				}
+				else if( ! is_string( $cache ) || empty( $cache ) )
+				{
+					$this->cache = null;
+				}
+				else
+				{
+					$cache = json_decode( $cache, true );
+					$this->cache = is_array( $cache ) ? $cache : null;
+				}
 
 				if( empty( $this->cache ) )
 				{
@@ -2653,8 +2693,9 @@ if( ! class_exists('avia_instagram_widget') )
 			{
 				$this->cache = $cache;
 			}
-
-			update_option( 'avia_instagram_widgets_cache', $this->cache );
+			
+			$save = json_encode( $this->cache );
+			update_option( 'avia_instagram_widgets_cache', $save );
 		}
 
 
@@ -3160,9 +3201,15 @@ if( ! class_exists('avia_instagram_widget') )
 				return new WP_Error( 'site_down', __( 'Unable to communicate with Instagram.', 'avia_framework' ) );
 			}
 
-			if ( 200 != wp_remote_retrieve_response_code( $remote ) )
+			$code = wp_remote_retrieve_response_code( $remote );
+			if ( 200 != $code )
 			{
-				return new WP_Error( 'invalid_response', __( 'Instagram did not return a 200.', 'avia_framework' ) );
+				$msg = wp_remote_retrieve_response_message( $remote );
+				if( empty( $msg ) )
+				{
+					$msg = __( 'Unknown error code', 'avia_framework' );
+				}
+				return new WP_Error( 'invalid_response', sprintf( __( 'Instagram returned error %d (= %s).', 'avia_framework' ), $code, $msg ) );
 			}
 
 			$shards = explode( 'window._sharedData = ', $remote['body'] );
@@ -3848,7 +3895,10 @@ if( ! class_exists('avia_instagram_widget') )
 			foreach( $this->cached_file_sizes as $size ) 
 			{
 				$file_array = array();
-				$file_array['name'] = basename( $instagram_file[ $size ] );
+				
+				//	instagram returns link to file with ?......
+				$fn = explode( '?', basename( $instagram_file[ $size ] ) );
+				$file_array['name'] = $fn[0];
 
 				// Download file to temp location - include file if called from frontend.
 				if( ! function_exists( 'download_url' ) )

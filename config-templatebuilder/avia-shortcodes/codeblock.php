@@ -211,7 +211,17 @@ if ( !class_exists( 'avia_sc_codeblock' ) )
          */
         public function shortcode_handler($atts, $content = "", $shortcodename = "", $meta = "")
         {
-	        
+			/**
+			 * Fix in case shortcode is called before extraction has taken place. Occurs if post content is
+			 * preprocessed by 3rd party plugins e.g. in get_header().
+			 * 
+			 * @since 4.5.3
+			 */
+			if( empty( avia_sc_codeblock::$codeblocks ) || ( ( count( avia_sc_codeblock::$codeblocks ) - 1 ) < avia_sc_codeblock::$codeblock_id ) )
+			{
+				return '';
+			}
+			
 	        extract(AviaHelper::av_mobile_sizes($atts)); //return $av_font_classes, $av_title_font_classes and $av_display_classes 
 
             $custom_class = !empty($meta['custom_class']) ? $meta['custom_class'] : "";
@@ -372,7 +382,7 @@ if ( !class_exists( 'avia_sc_codeblock' ) )
 		 */
 		public function code_block_injection( $content )
 		{	
-			if( empty( self::$codeblocks ) ) 
+			if( empty( avia_sc_codeblock::$codeblocks ) ) 
 			{
 				return $content;
 			}
@@ -383,14 +393,14 @@ if ( !class_exists( 'avia_sc_codeblock' ) )
 			
 			if( ! empty( $matches) && is_array( $matches ) )
 			{
-			    foreach($matches[0] as $key => $placeholder )
+			    foreach( $matches[0] as $key => $placeholder )
 			    {
 			        if( ! empty( $matches[3][ $key ] ) ) 
 					{
 						$atts = shortcode_parse_atts( $matches[3][ $key ] );
 					}
 					
-			        $id = !empty($atts['uid']) ? $atts['uid'] : 0;
+			        $id = ! empty( $atts['uid'] ) ? $atts['uid'] : 0;
 			
 			        $codeblock = ! empty( self::$codeblocks[ $id ] ) ? self::$codeblocks[ $id ] : '';
 			        $content = str_replace( $placeholder, $codeblock, $content );
@@ -401,8 +411,4 @@ if ( !class_exists( 'avia_sc_codeblock' ) )
 		}
 	}
   }
-
-
-
-
 

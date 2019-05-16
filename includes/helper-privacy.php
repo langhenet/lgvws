@@ -1,4 +1,6 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) {  exit;  }    // Exit if accessed directly
+
 	
 	/**
 	* File was added with version 4.4 and holds functions that are related to the user privacy

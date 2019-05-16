@@ -11,6 +11,37 @@ if ( !class_exists( 'avia_sc_catalogue' ) )
 {
 	class avia_sc_catalogue extends aviaShortcodeTemplate
 	{
+		
+		/**
+		 *
+		 * @since 4.5.5
+		 * @var array 
+		 */
+		protected $screen_options;
+		
+		/**
+		 * 
+		 * @since 4.5.5
+		 * @param AviaBuilder $builder
+		 */
+		public function __construct( $builder ) 
+		{
+			$this->screen_options = array();
+				
+			parent::__construct( $builder );
+		}
+		
+		/**
+		 * @since 4.5.5
+		 */
+		public function __destruct() 
+		{
+			parent::__destruct();
+			
+			unset( $this->screen_options );
+		}
+		
+		
 			/**
 			 * Create the config array for the shortcode button
 			 */
@@ -237,7 +268,10 @@ if ( !class_exists( 'avia_sc_catalogue' ) )
 			 */
 			function shortcode_handler($atts, $content = "", $shortcodename = "", $meta = "")
 			{
-	       		extract(AviaHelper::av_mobile_sizes($atts)); //return $av_font_classes, $av_title_font_classes and $av_display_classes 
+				$this->screen_options = AviaHelper::av_mobile_sizes( $atts );
+				
+	       		extract( $this->screen_options ); //return $av_font_classes, $av_title_font_classes and $av_display_classes 
+				
 				extract(shortcode_atts(array('title'=>''), $atts, $this->config['shortcode']));
 
 				$output	 = "";
@@ -254,6 +288,14 @@ if ( !class_exists( 'avia_sc_catalogue' ) )
 
 			function av_catalogue_item($atts, $content = "", $shortcodename = "")
 			{
+				/**
+				 * Fixes a problem when 3-rd party plugins call nested shortcodes without executing main shortcode  (like YOAST in wpseo-filter-shortcodes)
+				 */
+				if( empty( $this->screen_options ) )
+				{
+					return '';
+				}
+				
 				extract(shortcode_atts(array('title'=>'', 'price'=>'', 'link'=>'', 'target'=>'', 'disabled'=>'', 'id' => ''), $atts, $this->config['shortcode_nested'][0]));
 				
 				if($disabled) return;

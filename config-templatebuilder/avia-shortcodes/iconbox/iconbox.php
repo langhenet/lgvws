@@ -513,8 +513,29 @@ if ( !class_exists( 'avia_sc_icon_box' ) )
         		$output .= 		'<div class="iconbox_content">';
                 $output .= 			'<header class="entry-content-header">';
         		$output .= 			$icon_html;
+				
                 $markup = avia_markup_helper(array('context' => 'entry_title','echo'=>false, 'custom_markup'=>$meta['custom_markup']));
-        		if($title) $output .= 			"<h3 class='iconbox_content_title {$av_title_font_classes}' {$markup} {$title_styling}>".$title."</h3>";
+				$default_heading = 'h3';
+				$args = array(
+							'heading'		=> $default_heading,
+							'extra_class'	=> ''
+						);
+
+				$extra_args = array( $this, $atts, $content, 'title' );
+
+				/**
+				 * @since 4.5.5
+				 * @return array
+				 */
+				$args = apply_filters( 'avf_customize_heading_settings', $args, __CLASS__, $extra_args );
+
+				$heading = ! empty( $args['heading'] ) ? $args['heading'] : $default_heading;
+				$css = ! empty( $args['extra_class'] ) ? $args['extra_class'] : '';
+					
+        		if( $title ) 
+				{
+					$output .= 			"<{$heading} class='iconbox_content_title {$css} {$av_title_font_classes}' {$markup} {$title_styling}>".$title."</{$heading}>";
+				}
                 $output .= 			'</header>';
 
                 $markup = avia_markup_helper(array('context' => 'entry_content','echo'=>false, 'custom_markup'=>$meta['custom_markup']));

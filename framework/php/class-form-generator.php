@@ -143,7 +143,6 @@ if( ! class_exists( 'avia_form' ) )
 			$this->length = apply_filters('avf_form_el_name_length', 30, $this->formID, $this->form_params);
 			$this->length = (int)$this->length;
 
-
 			if(!isset($_POST) || !count($_POST) || empty($_POST['avia_generated_form'.$this->formID]))
 			{
 				$this->submit_form = false; //dont submit the form
@@ -475,11 +474,11 @@ if( ! class_exists( 'avia_form' ) )
                 'currentText'       => __( 'Today', 'avia_framework' ),
                 'nextText'			=> __( 'Next', 'avia_framework' ),
 				'prevText'			=> __( 'Prev', 'avia_framework' ),
-                'monthNames'        => $this->helper_strip_array_indices( $wp_locale->month ),
-                'monthNamesShort'   => $this->helper_strip_array_indices( $wp_locale->month_abbrev ),
-                'dayNames'          => $this->helper_strip_array_indices( $wp_locale->weekday ),
-                'dayNamesShort'     => $this->helper_strip_array_indices( $wp_locale->weekday_abbrev ),
-                'dayNamesMin'       => $this->helper_strip_array_indices( $wp_locale->weekday_initial ),
+                'monthNames'        => array_values( $wp_locale->month ),
+                'monthNamesShort'   => array_values( $wp_locale->month_abbrev ),
+                'dayNames'          => array_values( $wp_locale->weekday ),
+                'dayNamesShort'     => array_values( $wp_locale->weekday_abbrev ),
+                'dayNamesMin'       => array_values( $wp_locale->weekday_initial ),
                 'dateFormat'        => $date_format,
                 'firstDay'          => get_option( 'start_of_week' ),
                 'isRTL'             => $wp_locale->is_rtl()
@@ -518,15 +517,6 @@ if( ! class_exists( 'avia_form' ) )
             }); });';
 			echo "\n</script>\n";
         }
-
-        function helper_strip_array_indices( $ArrayToStrip ) {
-            foreach( $ArrayToStrip as $objArrayItem) {
-                $NewArray[] = $objArrayItem;
-            }
-
-            return( $NewArray );
-        }
-
 
 		/**
          * checkbox
@@ -778,7 +768,7 @@ if( ! class_exists( 'avia_form' ) )
 		{
 			$this->elements_html .= '<input type="hidden" name="'.$id.'" id="'.$id.'" value="'.$element['value'].'" />';
 		}
-
+		
 
 		/**
          * Send the form
@@ -793,7 +783,6 @@ if( ! class_exists( 'avia_form' ) )
 				$new_post[str_replace('avia_','',$key)] = $post;
 			}
 			
-			
 			$mymail 	= empty($this->form_params['myemail']) ? $new_post['myemail'] : $this->form_params['myemail'];
 			$myblogname = empty($this->form_params['myblogname']) ? $new_post['myblogname'] : $this->form_params['myblogname'];
 
@@ -802,10 +791,17 @@ if( ! class_exists( 'avia_form' ) )
 
 			$default_from = parse_url(home_url());
 
-
 			//hook to stop execution here and do something different with the data
 			$proceed = apply_filters( 'avf_form_send', true, $new_post, $this->form_params, $this );
-
+			
+			if( $this->is_recaptcha() ) {
+				$proceed = $this->check_recaptcha_token( $new_post['label_input'] );
+				
+				if( $proceed ) {
+					delete_transient( 'avia_recaptcha_transient_' . $proceed );
+				}
+			}
+ 
 			if( ! $proceed )
 			{
 				if( is_null( $proceed ) )
@@ -902,7 +898,6 @@ if( ! class_exists( 'avia_form' ) )
 				}
 			}
 
-
 			$use_wpmail = apply_filters("avf_form_use_wpmail", true, $new_post, $this->form_params);
 
 			//$header  = 'MIME-Version: 1.0' . "\r\n";
@@ -997,6 +992,42 @@ if( ! class_exists( 'avia_form' ) )
 
 		}
 
+		/**
+         * Check if Google reCAPTCHA is enabled.
+         *
+         */
+		function is_recaptcha()
+		{
+			$active = false;
+			$api_vn = avia_get_option( 'avia_recaptcha_version' );
+
+			if( $api_vn == 'avia_recaptcha_v3' || $api_vn == 'avia_recaptcha_v2' ) {
+				$active = true;
+			}
+
+			return $active;
+		}
+
+		/**
+		 * Check recaptcha transients and decoy input
+		 * 
+		 */
+		function check_recaptcha_token( $input ) {
+			$proceed = false;		
+			$name = 'avia_recaptcha_transient_' . $input;
+			$token = get_transient( $name ); 
+
+			if( ! $token ) {
+				$proceed = false;
+			}
+
+			if( $token && $token == $input ) {
+				$proceed = $token;	
+			}
+
+			return $proceed;
+		}
+
 
 		/**
          * Check the value of an element
@@ -1075,12 +1106,3 @@ if( ! class_exists( 'avia_form' ) )
 		}
 	}
 }
-
-
-
-
-
-
-
-
-

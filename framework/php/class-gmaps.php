@@ -4,7 +4,7 @@
  * 
  * @since 4.3.2 extended by Günter
  */
-if ( ! defined('AVIA_FW')) { exit('No direct script access allowed'); }
+if ( ! defined('AVIA_FW') ) { exit( 'No direct script access allowed' ); }
 
 
 if( ! class_exists( 'av_google_maps' ) )
@@ -14,7 +14,7 @@ if( ! class_exists( 'av_google_maps' ) )
 	{
 			//	maintain URL and version number here for all objects using this element
 		const API_URL			=	'https://maps.googleapis.com/maps/api/js';
-		const API_VERSION		=	'3.30';				
+		const API_VERSION		=	'3.35';				
 		const MAPS_SEARCH_URL	=	'https://www.google.com/maps/search/';
 		
 		const AJAX_NONCE		=	'av_google_maps_nonce';
@@ -45,7 +45,7 @@ if( ! class_exists( 'av_google_maps' ) )
 		protected $usage_count;
 		
 		/**
-		 * Number of maps to be displayed immediatly on pageload
+		 * Number of maps to be displayed immediately on pageload
 		 * 
 		 * @since 4.3.2
 		 * @var int
@@ -342,7 +342,8 @@ if( ! class_exists( 'av_google_maps' ) )
 <script id='avia_gmaps_framework_globals' type='text/javascript'>
  /* <![CDATA[ */  
 var avia_framework_globals = avia_framework_globals || {};
-	avia_framework_globals.gmap_api = '" .$api_key . "';
+	avia_framework_globals.gmap_api = '" . $api_key . "';
+	avia_framework_globals.gmap_version = '" . av_google_maps::API_VERSION . "';	
 	avia_framework_globals.gmap_maps_loaded = '".$api_maps_loaded."';
 	avia_framework_globals.gmap_builder_maps_loaded = '" . $api_builder . "';
 	avia_framework_globals.gmap_backend_maps_loaded = '" . $api_builder_backend . "';

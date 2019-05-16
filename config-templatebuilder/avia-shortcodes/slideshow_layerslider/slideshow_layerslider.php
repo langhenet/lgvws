@@ -150,10 +150,12 @@ if ( ! class_exists( 'avia_sc_layerslider' ) )
 				$params['open_structure'] = false;
 				
 				//we dont need a closing structure if the element is the first one or if a previous fullwidth element was displayed before
-				if(empty($meta['index'])) $params['close'] = false;
+//				if(empty($meta['index'])) $params['close'] = false;
+				if( $meta['index'] == 0 ) $params['close'] = false;
 				if(!empty($meta['siblings']['prev']['tag']) && in_array($meta['siblings']['prev']['tag'], AviaBuilder::$full_el_no_section )) $params['close'] = false;
 				
-				if(!empty($meta['index'])) $params['class'] .= " slider-not-first";
+//				if(!empty($meta['index'])) $params['class'] .= " slider-not-first";
+				if( $meta['index'] > 0 ) $params['class'] .= " slider-not-first";
 				$params['id'] = "layer_slider_".( avia_sc_layerslider::$slide_count );
 				
 				

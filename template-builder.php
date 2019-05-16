@@ -8,15 +8,6 @@
 		get_template_part( 'page' ); exit();
     }
 	
-	/**
-	 * Temporary: Get all used elements for this post. Creates the option entries if they do not exist for this post
-	 * ==========
-	 * 
-	 * Also hooked in 'get_header' 10 - can then be used in every page
-	 * fires add_action( 'ava_current_post_element_info_available', $this ); in 'get_header'
-	 */
-//	$used_elements = Avia_Builder()->element_manager()->get_current_post_elements();
-	
 
 	/*
 	 * get_header is a basic wordpress function, used to retrieve the header.php file in your theme directory.
@@ -44,10 +35,13 @@
 		 */
 		setup_postdata( $post );
 	}
-	 
+
 
 	//check if we want to display breadcumb and title
-	if( get_post_meta(get_the_ID(), 'header', true) != 'no') echo avia_title();
+	if( get_post_meta( get_the_ID(), 'header', true ) != 'no' ) 
+	{
+		echo avia_title();
+	}
 	 
 	do_action( 'ava_after_main_title' );
 
@@ -128,11 +122,22 @@
 		echo "</div>$cm <!-- section close by builder template -->";
 
 		//get the sidebar
-		if (is_singular('post')) {
+		if( is_singular( 'post' ) ) 
+		{
 		    $avia_config['currently_viewing'] = 'blog';
-		}else{
+		}
+		else
+		{
 		    $avia_config['currently_viewing'] = 'page';
 		}
+		
+		/**
+		 * Allows to filter e.g. $avia_config
+		 * 
+		 * @used_by			config-woocommerce\config.php  avia_before_get_sidebar_template_builder				10
+		 * @since 4.5.5
+		 */
+		do_action( 'ava_before_get_sidebar_template_builder' );
 		
 		get_sidebar();
 		

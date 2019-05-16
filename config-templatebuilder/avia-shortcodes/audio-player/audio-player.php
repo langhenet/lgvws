@@ -32,7 +32,7 @@ if ( ! class_exists( 'avia_sc_audio_player' ) )
 		 * @since 4.1.3
 		 * @var string 
 		 */
-		protected $non_ajax_style;
+		static protected $non_ajax_style = '';
 		
 		
 		/**
@@ -52,7 +52,6 @@ if ( ! class_exists( 'avia_sc_audio_player' ) )
 			parent::__construct( $builder );
 			
 			$this->extra_style = '';
-			$this->non_ajax_style = '';
 			$this->atts = array();
 		}
 		
@@ -669,7 +668,7 @@ if ( ! class_exists( 'avia_sc_audio_player' ) )
 		{
 			extract( AviaHelper::av_mobile_sizes( $atts ) ); //return $av_font_classes, $av_title_font_classes and $av_display_classes 
 			
-			$this->extra_style = "";
+			$this->extra_style = '';
 			$this->atts = shortcode_atts( array(
 								'handle'			=> $shortcodename,
 								'id'				=> '',
@@ -828,8 +827,11 @@ if ( ! class_exists( 'avia_sc_audio_player' ) )
 					}
 					else
 					{
-						$this->non_ajax_style .= $this->extra_style;
-						add_action('wp_footer', array($this, 'print_extra_style'));
+						avia_sc_audio_player::$non_ajax_style .= $this->extra_style;
+						if( false === has_action( 'wp_footer', array( $this, 'print_extra_style' ) ) )
+						{
+							add_action( 'wp_footer', array( $this, 'print_extra_style' ) );
+						}
 					}
 				}
 				
@@ -940,9 +942,12 @@ if ( ! class_exists( 'avia_sc_audio_player' ) )
 			return $image[0];
 		}
 		
+		/**
+		 * @since 4.1.3
+		 */
 		public function print_extra_style()
 		{
-			echo $this->non_ajax_style;
+			echo avia_sc_audio_player::$non_ajax_style;
 		}
 
 	}		//	end class definition

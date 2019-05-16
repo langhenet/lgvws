@@ -10,38 +10,39 @@ if ( !defined('ABSPATH') ) { die('-1'); }
 
 
 
-if ( !class_exists( 'avia_sc_comments_list' ) )
+if ( ! class_exists( 'avia_sc_comments_list' ) )
 {
-	class avia_sc_comments_list extends aviaShortcodeTemplate{
+	class avia_sc_comments_list extends aviaShortcodeTemplate
+	{		
+		/**
+		 * Create the config array for the shortcode button
+		 */
+		function shortcode_insert_button()
+		{
+			$this->config['self_closing']	=	'yes';
+
+			$this->config['name']			= __('Comments', 'avia_framework' );
+			$this->config['tab']			= __('Content Elements', 'avia_framework' );
+			$this->config['icon']			= AviaBuilder::$path['imagesURL']."sc-comments.png";
+			$this->config['order']			= 5;
+			$this->config['target']			= 'avia-target-insert';
+			$this->config['shortcode']		= 'av_comments_list';
+			$this->config['tinyMCE']		= array('disable' => "true");
+			$this->config['tooltip']		= __('Add a comment form and comments list to the template', 'avia_framework' );
+			//$this->config['drag-level']	= 1;
+			$this->config['disabling_allowed'] = "manually";
+			$this->config['disabled']		= array(
+										'condition'	=> ( avia_get_option( 'disable_blog' ) == 'disable_blog' ), 
+										'text'		=> __( 'This element is disabled in your theme options. You can enable it in Enfold &raquo; Performance', 'avia_framework' )
+											);
+		}
 			
-			/**
-			 * Create the config array for the shortcode button
-			 */
-			function shortcode_insert_button()
-			{
-				$this->config['self_closing']	=	'yes';
-				
-				$this->config['name']		= __('Comments', 'avia_framework' );
-				$this->config['tab']		= __('Content Elements', 'avia_framework' );
-				$this->config['icon']		= AviaBuilder::$path['imagesURL']."sc-comments.png";
-				$this->config['order']		= 5;
-				$this->config['target']		= 'avia-target-insert';
-				$this->config['shortcode'] 	= 'av_comments_list';
-                $this->config['tinyMCE'] 	= array('disable' => "true");
-				$this->config['tooltip'] 	= __('Add a comment form and comments list to the template', 'avia_framework' );
-                //$this->config['drag-level'] = 1;
-				$this->config['disabling_allowed'] = "manually";
-				$this->config['disabled'] 	= array(
-				'condition' =>( avia_get_option('disable_blog') == 'disable_blog' ), 
-				'text' => __( 'This element is disabled in your theme options. You can enable it in Enfold &raquo; Performance', 'avia_framework' ));
-			}
 			
-			
-			function extra_assets()
-			{
-				//load css
-				wp_enqueue_style( 'avia-module-comments' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/comments/comments.css' , array('avia-layout'), false );
-			}
+		function extra_assets()
+		{
+			//load css
+			wp_enqueue_style( 'avia-module-comments' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/comments/comments.css' , array('avia-layout'), false );
+		}
 			
 		/**
          * Popup Elements
@@ -147,11 +148,52 @@ if ( !class_exists( 'avia_sc_comments_list' ) )
 			 */
 			function shortcode_handler($atts, $content = "", $shortcodename = "", $meta = "")
 			{
+				global $post;
+				
 	        	extract(AviaHelper::av_mobile_sizes($atts)); //return $av_font_classes, $av_title_font_classes and $av_display_classes 
+				
+				$output = '';
+				
+				$need_moderation = get_option( 'comment_moderation', 0 );
+				if( is_numeric( $need_moderation ) && ( 1 == (int) $need_moderation ) )
+				{
+					$comment_entries = get_comments( array( 'type' => 'comment', 'post_id' => $post->ID ) );
+					
+					$total = 0;
+					$first = 0;
+					
+					foreach( $comment_entries as $index => $entry ) 
+					{
+						if( is_numeric( $entry->comment_approved ) && ( 0 === (int) $entry->comment_approved ) )
+						{
+							( 0 == $index ) ? $first ++ : $total ++;
+						}
+					}
+					
+					if( ( $first != 0 ) || ( $total != 0 ) )
+					{
+						if( ( $first != 0 ) && ( $total != 0 ) )
+						{
+							$info = sprintf( __( 'The last comment and %d other comment(s) need to be approved.', 'avia_framework' ), $total );
+						}
+						else if( $first != 0 )
+						{
+							$info = __( 'The last comment needs to be approved.', 'avia_framework' );
+						}
+						else
+						{
+							$info = sprintf( __( '%d comment(s) need to be approved.', 'avia_framework' ), $total );
+						}
+						
+						$output .=	'<div class="av-buildercomment-unapproved">';
+						$output .=		'<span>' . $info . '</span>';
+						$output .=	'</div>';
+					}
+				}
 				
                 ob_start(); //start buffering the output instead of echoing it
                 comments_template(); //wordpress function that loads the comments template "comments.php"
-                $output = ob_get_clean();
+                $output .= ob_get_clean();
 				$class  = "";
 				
 				if(function_exists('avia_blog_class_string'))
@@ -160,10 +202,8 @@ if ( !class_exists( 'avia_sc_comments_list' ) )
 				}
 				$output = "<div class='av-buildercomment {$class} {$av_display_classes}'>{$output}</div>";
 				
-				
         		return $output;
         	}
-			
-			
+
 	}
 }

@@ -7,7 +7,7 @@
 if ( ! defined( 'ABSPATH' ) ) {  exit;  }    // Exit if accessed directly
 
 
-if ( !class_exists( 'avia_sc_blog' ) )
+if ( ! class_exists( 'avia_sc_blog' ) )
 {
 	class avia_sc_blog extends aviaShortcodeTemplate
 	{
@@ -27,9 +27,10 @@ if ( !class_exists( 'avia_sc_blog' ) )
 				$this->config['tooltip'] 	= __('Displays Posts from your Blog', 'avia_framework' );
 				$this->config['preview'] 	= false;
 				$this->config['disabling_allowed'] = "manually";
-				$this->config['disabled']		= array(
-				'condition' =>( avia_get_option('disable_blog') == 'disable_blog' ), 
-				'text' => __( 'This element is disabled in your theme options. You can enable it in Enfold &raquo; Performance', 'avia_framework' ));
+				$this->config['disabled']	= array(
+												'condition'	=> ( avia_get_option( 'disable_blog' ) == 'disable_blog' ), 
+												'text'		=> __( 'This element is disabled in your theme options. You can enable it in Enfold &raquo; Performance', 'avia_framework' )
+												);
 				
 			}
 			
@@ -63,13 +64,15 @@ if ( !class_exists( 'avia_sc_blog' ) )
 							'nodescription' => true
 						),
 					
-                    array(	"name" 		=> __("Do you want to display blog posts?", 'avia_framework' ),
-                        "desc" 		=> __("Do you want to display blog posts or entries from a custom taxonomy?", 'avia_framework' ),
-                        "id" 		=> "blog_type",
-                        "type" 		=> "select",
-                        "std" 	=> "posts",
-                        "subtype" => array( __('Display blog posts', 'avia_framework') =>'posts',
-                                            __('Display entries from a custom taxonomy', 'avia_framework') =>'taxonomy')),
+                    array(	'name' 		=> __( 'Do you want to display blog posts?', 'avia_framework' ),
+							'desc' 		=> __( 'Do you want to display blog posts or entries from a custom taxonomy?', 'avia_framework' ),
+							'id' 		=> 'blog_type',
+							'type' 		=> 'select',
+							'std'		=> 'posts',
+							'subtype'	=> array( 
+												__( 'Display blog posts', 'avia_framework' )						=> 'posts',
+												__( 'Display entries from a custom taxonomy', 'avia_framework' )	=> 'taxonomy')
+											),
 											
 											
 
@@ -92,7 +95,12 @@ if ( !class_exists( 'avia_sc_blog' ) )
                         "required" 	=> array('blog_type', 'equals', 'taxonomy'),
                         "std" 	=> "category"
                     ),
-
+					
+					array(	
+						'type'			=> 'template',
+						'template_id' 	=> 'date_query',
+					),
+					
 					array(
 							"name" 	=> __("Blog Style", 'avia_framework' ),
 							"desc" 	=> __("Choose the default blog layout here.", 'avia_framework' ),
@@ -203,7 +211,7 @@ if ( !class_exists( 'avia_sc_blog' ) )
 
 					array(
 							"name" 	=> __("Pagination", 'avia_framework' ),
-							"desc" 	=> __("Should a pagination be displayed?", 'avia_framework' ),
+							"desc" 	=> __("Should a pagination be displayed? Pagination might not work as expected when there is more than one blog posts element on a page, a post or on the blog page.", 'avia_framework' ),
 							"id" 	=> "paginate",
 							"type" 	=> "select",
 							"std" 	=> "yes",
@@ -390,25 +398,33 @@ if ( !class_exists( 'avia_sc_blog' ) )
                     }
                 }
 
-				$atts = shortcode_atts(array('blog_style'	=> '',
-											 'bloglist_width' => '',
-											 'columns' 		=> 3,
-                                             'blog_type'    => 'posts',
-			                                 'items' 		=> '16',
-			                                 'paginate' 	=> 'yes',
-			                                 'categories' 	=> '',
-			                                 'preview_mode' => 'auto',
-											 'image_size' => 'portfolio',
-			                                 'taxonomy'		=> 'category',
-			                                 'post_type'=> get_post_types(),
-                                             'contents'     => 'excerpt',
-			                                 'content_length' => 'content',
-                                             'offset' => '0',
-                                             'conditional' => ''
-			                                 ), $atts, $this->config['shortcode']);
+				$atts = shortcode_atts( array(
+											'blog_style'		=> '',
+											'bloglist_width'	=> '',
+											'columns'			=> 3,
+											'blog_type'			=> 'posts',
+											'items'				=> '16',
+											'paginate'			=> 'yes',
+											'categories'		=> '',
+											'preview_mode'		=> 'auto',
+											'image_size'		=> 'portfolio',
+											'taxonomy'			=> 'category',
+											'post_type'			=> get_post_types(),
+											'contents'			=> 'excerpt',
+											'content_length'	=> 'content',
+											'offset'			=> '0',
+											'conditional'		=> '',
+											'date_filter'		=> '',
+											'date_filter_start'	=> '',
+											'date_filter_end'	=> '',
+											'date_filter_format'	=> 'mm / dd / yy'
+										), $atts, $this->config['shortcode'] );
 				
 				$page = get_query_var( 'paged' ) ? get_query_var( 'paged' ) : get_query_var( 'page' );
-				if(!$page) $page = 1;
+				if( ! $page ) 
+				{
+					$page = 1;
+				}
 				
 				/**
 				 * Skip blog queries, if element will not be displayed
@@ -418,19 +434,81 @@ if ( !class_exists( 'avia_sc_blog' ) )
 					return '';
 				}
 				
-				if($atts['blog_style'] == "blog-grid")
+				if( $atts['blog_style'] == 'blog-grid' )
 				{
 					$atts['class'] = $meta['el_class'];
 					$atts['type']  = 'grid';
 					$atts = array_merge($atts, $screen_sizes);
+					
+					/**
+					 * @since 4.5.5
+					 * @return array
+					 */
+					$atts = apply_filters( 'avf_post_slider_args', $atts, $this->config['shortcode'], $this );
+					
 					//using the post slider with inactive js will result in displaying a nice post grid
-					$slider = new avia_post_slider($atts);
+					$slider = new avia_post_slider( $atts );
+					
+					$old_page = null;
+					$is_single = is_single();
+					
+					if( 'yes' == $atts['paginate'] )
+					{
+						if( $is_single && isset( $_REQUEST['av_sc_blog_page'] ) && is_numeric( $_REQUEST['av_sc_blog_page'] ) )
+						{
+							$old_page = get_query_var( 'paged' );
+							set_query_var( 'paged', $_REQUEST['av_sc_blog_page'] );
+						}
+					}
+					
 					$slider->query_entries();
-			
-					return $slider->html();
+					
+					if( 'yes' == $atts['paginate'] && $is_single )
+					{
+						add_filter( 'avf_pagination_link_method', array( $this, 'handler_pagination_link_method'), 10, 3 );
+					}
+					
+					$html = $slider->html();
+					
+					if( 'yes' == $atts['paginate'] && $is_single )
+					{
+						remove_filter( 'avf_pagination_link_method', array( $this, 'handler_pagination_link_method'), 10 );
+					}
+					
+					if( ! is_null( $old_page ) )
+					{
+						if( $old_page != 0 )
+						{
+							set_query_var( 'paged', $old_page );
+						}
+						else
+						{
+							remove_query_arg( 'paged' );
+						}
+					}
+					
+					return $html;
+				}
+				
+				$old_page = null;
+				$is_single = is_single();
+				
+				if( 'yes' == $atts['paginate'] )
+				{
+					if( $is_single && isset( $_REQUEST['av_sc_blog_page'] ) && is_numeric( $_REQUEST['av_sc_blog_page'] ) )
+					{
+						$old_page = get_query_var( 'paged' );
+						set_query_var( 'paged', $_REQUEST['av_sc_blog_page'] );
+					}
 				}
 
-				$this->query_entries($atts);
+				$this->query_entries( $atts );
+				
+				if( 'yes' == $atts['paginate'] && $is_single )
+				{
+					add_filter( 'avf_pagination_link_method', array( $this, 'handler_pagination_link_method'), 10, 3 );
+				}
+					
 
 				$avia_config['blog_style'] = $atts['blog_style'];
 				$avia_config['preview_mode'] = $atts['preview_mode'];
@@ -451,6 +529,24 @@ if ( !class_exists( 'avia_sc_blog' ) )
 				get_template_part( 'includes/loop', 'index' );
 				$output = ob_get_clean();
 				wp_reset_query();
+				
+				if( 'yes' == $atts['paginate'] && $is_single )
+				{
+					remove_filter( 'avf_pagination_link_method', array( $this, 'handler_pagination_link_method'), 10 );
+				}
+
+				if( ! is_null( $old_page ) )
+				{
+					if( $old_page != 0 )
+					{
+						set_query_var( 'paged', $old_page );
+					}
+					else
+					{
+						remove_query_arg( 'paged' );
+					}
+				}
+				
 				avia_set_layout_array();
 
 				if($output)
@@ -465,15 +561,21 @@ if ( !class_exists( 'avia_sc_blog' ) )
 			}
 
 
-			function query_entries($params)
+			/**
+			 * 
+			 * @since < 4.0
+			 * @param array $params
+			 */
+			protected function query_entries( array $params )
 			{
 				global $avia_config;
+				
 				$query = array();
 
-				if(!empty($params['categories']) && is_string($params['categories']))
+				if( ! empty($params['categories']) && is_string($params['categories'] ) )
 				{
 					//get the categories
-					$terms 	= explode(',', $params['categories']);
+					$terms 	= explode( ',', $params['categories'] );
 				}
 
 				$page = get_query_var( 'paged' ) ? get_query_var( 'paged' ) : get_query_var( 'page' );
@@ -499,33 +601,55 @@ if ( !class_exists( 'avia_sc_blog' ) )
 					//if the offset is set the paged param is ignored. therefore we need to factor in the page number
 					$params['offset'] = $params['offset'] + ( ($page -1 ) * $params['items']);
 				}
-		
+				
+				$date_query = array();
+				if( 'date_filter' == $params['date_filter'] )
+				{
+					$date_query = AviaHelper::add_date_query( $date_query, $params['date_filter_start'], $params['date_filter_end'], $params['date_filter_format'] );
+				}
+				
 				//if we find categories perform complex query, otherwise simple one
 				if(isset($terms[0]) && !empty($terms[0]) && !is_null($terms[0]) && $terms[0] != "null" && !empty($params['taxonomy']))
 				{
-					$query = array(	'paged' 	=> $page,
-									'posts_per_page' => $params['items'],
-                                    'offset' => $params['offset'],
-                                    'post__not_in' => (!empty($no_duplicates)) ? $avia_config['posts_on_current_page'] : array(),
-                                    'post_type' => $params['post_type'],
-									'tax_query' => array( 	array( 	'taxonomy' 	=> $params['taxonomy'],
-																	'field' 	=> 'id',
-																	'terms' 	=> $terms,
-																	'operator' 	=> 'IN'))
-																	);
+					$query = array(	
+								'paged'			=> $page,
+								'posts_per_page' => $params['items'],
+								'offset'		=> $params['offset'],
+								'post__not_in'	=> ( ! empty( $no_duplicates ) ) ? $avia_config['posts_on_current_page'] : array(),
+								'post_type'		=> $params['post_type'],
+								'date_query'	=> $date_query,
+								'tax_query'		=> array( 	
+													array( 	
+															'taxonomy' 	=> $params['taxonomy'],
+															'field' 	=> 'id',
+															'terms' 	=> $terms,
+															'operator' 	=> 'IN'
+														)
+													)
+								);
 				}
                 else
 				{
-					$query = array(	'paged'=> $page,
-                                    'posts_per_page' => $params['items'],
-                                    'offset' => $params['offset'],
-                                    'post__not_in' => (!empty($no_duplicates)) ? $avia_config['posts_on_current_page'] : array(),
-                                    'post_type' => $params['post_type']);
+					$query = array(	
+								'paged'				=> $page,
+								'posts_per_page'	=> $params['items'],
+								'offset'			=> $params['offset'],
+								'post__not_in'		=> ( ! empty( $no_duplicates ) ) ? $avia_config['posts_on_current_page'] : array(),
+								'post_type'			=> $params['post_type'],
+								'date_query'		=> $date_query
+								);
 				}
 
-				$query = apply_filters('avia_blog_post_query', $query, $params);
+				/**
+				 * 
+				 * @since < 4.0
+				 * @param array $query
+				 * @param array $params
+				 * @return array
+				 */
+				$query = apply_filters( 'avia_blog_post_query', $query, $params );
 
-				$results = query_posts($query);
+				$results = query_posts( $query );
 
                 // store the queried post ids in
                 if( have_posts() )
@@ -537,9 +661,50 @@ if ( !class_exists( 'avia_sc_blog' ) )
                     }
                 }
 			}
-
-
-
-
+			
+			/**
+			 * Using this element not in a page ( = is_single() ) returns a wrong pagination
+			 * 
+			 * @since 4.5.6
+			 * @param string $method
+			 * @param type $pages
+			 * @param type $wrapper
+			 * @return string
+			 */
+			public function handler_pagination_link_method( $method, $pages, $wrapper )
+			{
+				if( is_single() || ( 'get_pagenum_link' == $method ) )
+				{
+					$method = 'avia_sc_blog::add_blog_pageing';
+				}
+				
+				return $method;
+			}
+			
+			/**
+			 * Called when this element not in a page ( = is_single() ). 
+			 * Add our custom page parameter.
+			 * 
+			 * @since 4.5.6
+			 * @param int $page
+			 * @return string
+			 */
+			static public function add_blog_pageing( $page )
+			{
+				$link = get_pagenum_link( 1 );
+				
+				if( $page != 1 )
+				{
+					$link = add_query_arg( array( 'av_sc_blog_page' => $page ), $link );
+				}
+				else
+				{
+					$link = remove_query_arg( 'av_sc_blog_page', $link );
+				}
+				
+				return $link;
+			}
+		
 	}
+	
 }

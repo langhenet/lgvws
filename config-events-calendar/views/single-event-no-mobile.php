@@ -18,7 +18,7 @@ $event_id = get_the_ID();
 
 ?>
 
-<div id="tribe-events-content" class="tribe-events-single vevent hentry">
+<div id="tribe-events-content" class="tribe-events-single">
 
 	<p class="tribe-events-back"><a href="<?php echo tribe_get_events_link() ?>"> <?php _e( '&laquo; All Events', 'avia_framework' ) ?></a></p>
 
@@ -35,13 +35,30 @@ $event_id = get_the_ID();
 		?>
 
 
-	<?php while ( have_posts() ) :  the_post(); ?>
+	<?php while ( have_posts() ) :  the_post(); 
+	
+			$default_heading = 'h2';
+			$args = array(
+						'heading'		=> $default_heading,
+						'extra_class'	=> ''
+					);
+			
+			/**
+			 * @since 4.5.5
+			 * @return array
+			 */
+			$args = apply_filters( 'avf_customize_heading_settings', $args, 'single-event-no-mobile', array() );
+			
+			$heading = ! empty( $args['heading'] ) ? $args['heading'] : $default_heading;
+			$css = ! empty( $args['extra_class'] ) ? $args['extra_class'] : '';
+	
+	?>
 		<div id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 			<!-- Event featured image, but exclude link -->
 						
 			<div class='av-single-event-content'>
 				
-				<?php the_title( '<h2 class="tribe-events-single-event-title summary entry-title">', '</h2>' ); ?>
+				<?php the_title( "<{$heading} class='tribe-events-single-event-title summary entry-title {$css}'>", "</{$heading}>" ); ?>
 	
 				<div class="tribe-events-schedule updated published tribe-clearfix">
 					<?php echo tribe_events_event_schedule_details( $event_id, '<h3>', '</h3>'); ?>

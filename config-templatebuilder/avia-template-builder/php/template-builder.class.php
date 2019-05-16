@@ -48,7 +48,6 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 		 */
 		protected $supported_post_status;
 		
-
 		/**
 		 *
 		 * @var array 
@@ -97,7 +96,6 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 		 */
 		protected $posts_shortcode_parser_state;
 
-		
 		/**
 		 *
 		 * @since 4.3
@@ -175,7 +173,6 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 		 */
 		protected $alb_magic_wand_button;
 
-
 		/**
 		 * Flag to add the nonce input field on non alb supported pages that provide the ALB magic wand shortcode button
 		 * 
@@ -189,19 +186,52 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 		 * 
 		 * @kriesi
 		 * @since 4.3
-		 * @var boolean 
+		 * @var array 
 		 */
-		public $may_be_disabled_automatically = array();
+		public $may_be_disabled_automatically;
 		
 		/**
 		 * Array that contains all the names of shortcodes with disabled assets that should not be loaded on the frontend
 		 * 
 		 * @kriesi
 		 * @since 4.3
+		 * @var array 
+		 */
+		public $disabled_assets;
+		
+		/**
+		 * Flag if we have an ajax callback to prepare modal preview 
+		 * 
+		 * @since 4.5.4
+		 * @var boolean
+		 */
+		protected $in_text_to_preview;
+		
+		/**
+		 * Flag if action wp_head has been executed
+		 * 
+		 * @since 4.5.5
 		 * @var boolean 
 		 */
-		public $disabled_assets = array();
+		public $wp_head_done;
 		
+		/**
+		 * Flag if action get_sidebar has been executed
+		 * 
+		 * @since 4.5.5
+		 * @var boolean 
+		 */
+		public $wp_sidebar_started;
+		
+		/**
+		 * Flag if action get_footer has been executed
+		 * 
+		 * @since 4.5.5
+		 * @var boolean 
+		 */
+		public $wp_footer_started;
+
+
 		/**
 		 * Return the instance of this class
 		 * 
@@ -245,6 +275,12 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 			$this->alb_nonce_added = false;
 			$this->supported_post_types = array( 'post', 'portfolio', 'page', 'product' );
 			$this->supported_post_status = array( 'publish', 'private', 'future', 'draft', 'pending' );
+			$this->may_be_disabled_automatically = array();
+			$this->disabled_assets = array();
+			$this->in_text_to_preview = false;
+			$this->wp_head_done = false;
+			$this->wp_sidebar_started = false;
+			$this->wp_footer_started = false;
 			
 			$this->paths['pluginPath'] 	= trailingslashit( dirname( dirname(__FILE__) ) );
 			$this->paths['pluginDir'] 	= trailingslashit( basename( $this->paths['pluginPath'] ) );
@@ -273,6 +309,10 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 			add_action('init', array(&$this, 'loadLibraries') , 5 ); 
 			add_action('init', array(&$this, 'init') , 10 );
 			add_action('wp', array(&$this, 'frontend_asset_check') , 5 );
+			
+			add_action( 'wp_head', array( $this, 'handler_wp_head'), 99999999 );
+			add_action( 'get_sidebar', array( $this, 'handler_get_sidebar'), 1, 1 );
+			add_action( 'get_footer', array( $this, 'handler_get_footer'), 1, 1 );
 			
 			
 			//save and restore meta information if user restores a revision
@@ -305,9 +345,47 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 			unset( $this->builderTemplate );
 			unset( $this->supported_post_types );
 			unset( $this->supported_post_status );
+			unset( $this->may_be_disabled_automatically );
+			unset( $this->disabled_assets );
 		}
 		
-				
+		/**
+		 * Flag that wp_head has been executed (hooks with very low priority so other plugins may perform a precompile
+		 * and that does not break our shortcode tree count
+		 * 
+		 * @since 4.5.5
+		 */
+		public function handler_wp_head()
+		{
+			$this->wp_head_done = true;
+			ShortcodeHelper::$shortcode_index = 0;
+		}
+		
+		/**
+		 * Flag that get_sidebar has been executed (hooks with very high priority)
+		 * This allows us to ignore changing of post id's after loop has finished and we can leave the last shortcode tree
+		 * 
+		 * @since 4.5.5
+		 * @param string $name
+		 */
+		public function handler_get_sidebar( $name )
+		{
+			$this->wp_sidebar_started = true;
+		}
+		
+		/**
+		 * Flag that get_footer has been executed (hooks with very high priority)
+		 * This allows us to ignore changing of post id's after loop has finished and we can leave the last shortcode tree
+		 * 
+		 * @since 4.5.5
+		 * @param string $name
+		 */
+		public function handler_get_footer( $name )
+		{
+			$this->wp_footer_started = true;
+		}
+		
+
 		/**
 		 * After all metaboxes have been added we check if hidden input field avia_nonce_loader had been set.
 		 * If not we have to add it. If user adds a shortcode (like tabs) with magic wand that need to call backend 
@@ -908,7 +986,11 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 		 */
 		public function get_posts_alb_content( $post_id )
 		{
-			return get_post_meta( $post_id, '_aviaLayoutBuilderCleanData', true );
+			/**
+			 * @since 4.5.5
+			 * @return string
+			 */
+			return apply_filters( 'avf_posts_alb_content', get_post_meta( $post_id, '_aviaLayoutBuilderCleanData', true ), $post_id );
 		}
 		
 		/**
@@ -1066,13 +1148,30 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 			//activate helper function hooks
 			AviaHelper::backend();
 			
+			/**
+			 * Create the linebreak button
+			 */
+			$tiny_lb = array(
+				'id'					=> 'av_builder_linebreak',
+				'title'					=> __( 'Permanent Line Break', 'avia_framework' ),
+				'access_key'			=> apply_filters( 'avf_access_key_tinymce', 'ctrl+alt+n', 'av_builder_linebreak' ),
+				'content_open'			=> '\r\n<br class="avia-permanent-lb" />',
+				'image'					=> $this->paths['imagesURL'] . 'tiny_line_break.png',
+				'js_plugin_file'		=> $this->paths['assetsURL'] . 'js/avia-tinymce-linebreak.js',
+				'qtag_content_open'		=> '\r\n<br class="avia-permanent-lb" />',
+				'qtag_display'			=> __( 'Line Break', 'avia_framework' ),
+				'shortcodes'			=> array()
+			);
+			
+			new avia_tinyMCE_button( $tiny_lb );
+			
 			//create tiny mce button
 			$tiny = array(
-				'id'			 => 'avia_builder_button',
-				'title'			 => __('Insert Theme Shortcode','avia_framework' ),
-				'image'			 => $this->paths['imagesURL'].'tiny-button.png',
-				'js_plugin_file' => $this->paths['assetsURL'].'js/avia-tinymce-buttons.js',
-				'shortcodes'	 => array_map(array($this, 'fetch_configs'), $this->shortcode_class)
+				'id'				=> 'avia_builder_button',
+				'title'				=> __('Insert Theme Shortcode','avia_framework' ),
+				'image'				=> $this->paths['imagesURL'].'tiny-button.png',
+				'js_plugin_file'	=> $this->paths['assetsURL'].'js/avia-tinymce-buttons.js',
+				'shortcodes'		=> array_map(array($this, 'fetch_configs'), $this->shortcode_class)
 			);
 			
 			//if we are using tinymce 4 or higher change the javascript file
@@ -1543,7 +1642,7 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 				return $original_template;
 			}
 		
-    	   	
+
     	   	if(($post_id && is_singular()) || isset($avia_config['builder_redirect_id']))
     	   	{
 				if(!empty($avia_config['builder_redirect_id'])) $post_id = $avia_config['builder_redirect_id'];
@@ -1951,30 +2050,58 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 			}
 		}
 		
-		public function text_to_preview($text = NULL)
+		/**
+		 * Ajax callback to return preview output in modal popup
+		 * 
+		 * @param string $text
+		 */
+		public function text_to_preview( $text = NULL )
 		{
-			if(!current_user_can('edit_posts')) die();
-			check_ajax_referer('avia_nonce_loader', '_ajax_nonce' );
+			if( ! current_user_can( 'edit_posts' ) ) 
+			{
+				die();
+			}
 			
-			$text = ""; 
-			if(isset($_POST['text'])) $text = stripslashes( $_POST['text'] ); 
+			check_ajax_referer( 'avia_nonce_loader', '_ajax_nonce' );
+			
+			$text = ''; 
+			if( isset( $_POST['text'] ) ) 
+			{
+				$text = stripslashes( $_POST['text'] );
+			}
 	        
-			$text = do_shortcode($text);
+			$this->in_text_to_preview = true;
+			
+			$preview = do_shortcode( $text );
 			
 			/**
 			 * Allow third party to modify content
 			 * 
 			 * @since 4.3.1
 			 */
-			$text = apply_filters( 'avf_text_to_preview', $text );
+			$preview = apply_filters( 'avf_text_to_preview', $preview, $text );
 			
-			echo $text;
+			$this->in_text_to_preview = false;
+			
+			echo $preview;
 			exit();
-			
 		}
 		
+		/**
+		 * Returns if we are in ajax callback for preview
+		 * 
+		 * @since 4.5.4
+		 * @return boolean
+		 */
+		public function in_text_to_preview_mode()
+		{
+			return $this->in_text_to_preview;
+		}
+
 		
-		
+
+
+
 		public function do_shortcode_backend($text)
 		{
 			return preg_replace_callback( "/".ShortcodeHelper::$pattern."/s", array($this, 'do_shortcode_tag'), $text );

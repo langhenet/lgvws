@@ -71,17 +71,27 @@ if ( !class_exists( 'avia_sc_produc_price' ) )
         function shortcode_handler($atts, $content = "", $shortcodename = "", $meta = "")
         {
             $output = "";
-            $meta['el_class'];
+            if( ! isset( $meta['el_class'] ) )
+			{
+				$meta['el_class'] = '';
+			}
+			
+			//	fix for seo plugins which execute the do_shortcode() function before everything is loaded
+			global $product;
+			if( ! function_exists( 'WC' ) || ! WC() instanceof WooCommerce || ! is_object( WC()->query ) || ! $product instanceof WC_Product )
+			{
+				return '';
+			}
 
-            global $woocommerce, $product;
-            if(!is_object($woocommerce) || !is_object($woocommerce->query) || empty($product) || is_admin() ) return;
-
-            $output .= "<div class='av-woo-price ".$meta['el_class']."'>";
-
-            $output .=	'<p class="price">' . $product->get_price_html() . '</p>';
-
-            ob_start();
-            wc_clear_notices();
+			$output .=	"<div class='av-woo-price {$meta['el_class']}'>";
+			$output .=		'<p class="price">' . $product->get_price_html() . '</p>';
+			$output .=	'</div>';
+			
+//			//	fix a problem with SEO plugin
+//			if( function_exists( 'wc_clear_notices' ) )
+//			{
+//				wc_clear_notices();
+//			}
 
             return $output;
         }

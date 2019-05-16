@@ -1,4 +1,7 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) {  exit;  }    // Exit if accessed directly
+
+
 /*
  * Returns the schema.org markup based on the context value.
  * $args: context (string), echo (boolean) and post_type (string)
@@ -105,7 +108,7 @@ if(!function_exists('avia_markup_helper'))
                 break;
 
             case 'image':
-		$attributes['itemprop']  = 'ImageObject';
+		$attributes['itemprop']  = 'image';
                 $attributes['itemscope'] = 'itemscope';
                 $attributes['itemtype']  = 'https://schema.org/ImageObject';
                 break;

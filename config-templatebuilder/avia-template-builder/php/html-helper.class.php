@@ -131,7 +131,10 @@ if ( ! class_exists( 'AviaHtmlHelper' ) )
 				$output .= "<div class='avia-form-element ".$element['class']."'>";
 				//$output .= self::{$element['type']}($element, $parent_class);
 				
-				$output .= call_user_func(array('self', $element['type']), $element, $parent_class);
+				if( method_exists( __CLASS__, $element['type'] ) )
+				{
+					$output .= call_user_func(array('self', $element['type']), $element, $parent_class);
+				}
 				
 				if(!empty($element['fetchTMPL']))
 				{
@@ -147,7 +150,10 @@ if ( ! class_exists( 'AviaHtmlHelper' ) )
 			else
 			{
 				//$output .= self::{$element['type']}($element, $parent_class);
-				$output .= call_user_func(array('self', $element['type']), $element, $parent_class);
+				if( method_exists( __CLASS__, $element['type'] ) )
+				{
+					$output .= call_user_func(array('self', $element['type']), $element, $parent_class);
+				}
 			}
 			
 			if( $element['builder_active'] )
@@ -728,14 +734,57 @@ if ( ! class_exists( 'AviaHtmlHelper' ) )
 		}
 		
 		/**
-         * 
-         * The datepicker method renders a datepicker element that allows you to select a date of your choice
-         * @param array $element the array holds data like type, value, id, class, description which are necessary to render the whole option-section
-         * @return string $output the string returned contains the html code generated within the method
-         */
-		static function datepicker($element)
+		 * The datepicker method renders a datepicker element that allows you to select a date of your choice.
+		 * See http://api.jqueryui.com/datepicker/ for possible parameters and values. If you want to extend parmeters also adjust list in 
+		 * enfold\config-templatebuilder\avia-template-builder\assets\js\avia-modal.js function $.AviaModal.register_callback.modal_load_datepicker.
+		 * 
+		 * Add parameters to modify to array 'dp_params' when defining the datepicker in popup editor. 
+		 * Values are rendered 1:1 with js. Arrays must be defined as array.
+		 * Default parameters do not need to be set.
+		 * 
+		 * @since < 4.0  
+		 * @modified 4.5.6.1  by Günter
+		 * @param array $element the array holds data like type, value, id, class, description which are necessary to render the whole option-section
+		 * @return string $output the string returned contains the html code generated within the method
+		 */
+		static public function datepicker( array $element )
 		{
-			$output = '<input type="text" class="av-datepicker av-no-autoselect '.$element['class'].'" value="'.$element['std'].'" id="'.$element['id'].'" name="'.$element['id'].'"/>';
+			global $wp_locale;
+			
+			/**
+			 * Default values are set to be backwards comp. befor
+			 */
+			$args = array(
+						'showButtonPanel'	=> false,
+						'closeText'         => __( 'Close', 'avia_framework' ),
+						'currentText'       => __( 'Today', 'avia_framework' ),
+						'nextText'			=> __( 'Next', 'avia_framework' ),
+						'prevText'			=> __( 'Prev', 'avia_framework' ),
+						'monthNames'        => array_values( $wp_locale->month ),
+						'monthNamesShort'   => array_values( $wp_locale->month_abbrev ),
+						'dayNames'          => array_values( $wp_locale->weekday ),
+						'dayNamesShort'     => array_values( $wp_locale->weekday_abbrev ),
+						'dayNamesMin'       => array_values( $wp_locale->weekday_initial ),
+						'dateFormat'        => 'mm / dd / yy',
+						'firstDay'          => get_option( 'start_of_week' ),
+						'isRTL'             => $wp_locale->is_rtl(),
+						'changeMonth'		=> false,
+						'changeYear'		=> false,
+//						'minDate'			=> -0,						//	'mm / dd / yy' | number
+//						'maxDate'			=> '',						//
+//						'yearRange'			=> "c-80:c+10",
+//						'container_class'	=> ''						//	'select_dates_30' | ''
+					);
+			
+			if( is_array( $element['dp_params'] ) )
+			{
+				$args = array_merge( $args, $element['dp_params'] );
+			}
+	
+			$data_params = AviaHelper::create_data_string( $args );
+		
+			$output = '<input type="text" class="av-datepicker av-no-autoselect '.$element['class'].'" value="'.$element['std'].'" id="'.$element['id'].'" name="'.$element['id'].'" ' . $data_params . ' />';
+			
 			return $output;
 		}
 		
@@ -1222,11 +1271,11 @@ if ( ! class_exists( 'AviaHtmlHelper' ) )
 			/**
 			 * Allow to add info for non public post status
 			 */
-			add_filter( 'list_pages', __CLASS__ . '::handler_wp_list_pages', 10, 2 );
+			add_filter( 'list_pages', __CLASS__ . '::handler_wp_list_pages', 99, 2 );
 			
 			$html = wp_dropdown_pages( $dropdown_args );
 			
-			remove_filter( 'list_pages', __CLASS__ . '::handler_wp_list_pages', 10, 2 );
+			remove_filter( 'list_pages', __CLASS__ . '::handler_wp_list_pages', 99, 2 );
 
 			$html = str_replace( '<select', '<select ' . $multi . $data_string, $html );
 			
@@ -1236,21 +1285,20 @@ if ( ! class_exists( 'AviaHtmlHelper' ) )
 		
 		/**
 		 * Add post status in case of non public 
+		 * WP hooks into this filter with _wp_privacy_settings_filter_draft_page_titles since 4.9.8 with WP_Post as $page 
+		 * and adds (Draft)
 		 * 
 		 * @since 4.2.7
 		 * @added_by Günter
 		 * @param string $title
-		 * @param object $page
+		 * @param WP_Post $page
 		 * @return string
 		 */
-		static public function handler_wp_list_pages( $title, $page )
+		static public function handler_wp_list_pages( $title, WP_Post $page )
 		{
-			if( $page instanceof WP_Post || ( isset( $page->ID ) && isset( $page->post_status ) ) )
+			if(  ! in_array( $page->post_status, array( 'publish' ) ) )
 			{
-				if( 'publish' != $page->post_status )
-				{
-					$title .= ' (' . ucfirst( get_post_status( $page->ID ) ) . ')';
-				}
+				$title .= ' (' . ucfirst( $page->post_status ) . ')';
 			}
 			
 			return $title;
@@ -1355,7 +1403,7 @@ if ( ! class_exists( 'AviaHtmlHelper' ) )
 			
 			return $html;
 		}
-
+		
 
 		/**
          * 
@@ -1364,7 +1412,7 @@ if ( ! class_exists( 'AviaHtmlHelper' ) )
          * @return string $output the string returned contains the html code generated within the method
          */
         
-		static function select( $element )
+		static public function select( $element )
 		{	
 			$select 	= __('Select','avia_framework' );
 			$parents 	= array();
@@ -1416,16 +1464,20 @@ if ( ! class_exists( 'AviaHtmlHelper' ) )
 					 * 
 					 * @since 4.2.7
 					 */
-					add_filter( 'list_pages', __CLASS__ . '::handler_wp_list_pages', 10, 2 );
+					add_filter( 'list_pages', __CLASS__ . '::handler_wp_list_pages', 99, 2 );
 			
 					foreach ( $entries as &$entry ) 
 					{
-						$entry->post_title = apply_filters( 'list_pages', $entry->post_title, $entry );
+						$p = get_post( $entry->ID );
+						if( $p instanceof WP_Post && ( $p->ID == $entry->ID ) )
+						{
+							$entry->post_title = apply_filters( 'list_pages', $entry->post_title, $p );
+						}
 					}
 				
 					unset( $entry );
 					
-					remove_filter( 'list_pages', __CLASS__ . '::handler_wp_list_pages', 10, 2 );
+					remove_filter( 'list_pages', __CLASS__ . '::handler_wp_list_pages', 99, 2 );
 					
 					AviaHtmlHelper::$cache['entry_' . $limit][$element['subtype']] = $entries;
 	    		}	
@@ -1535,7 +1587,19 @@ if ( ! class_exists( 'AviaHtmlHelper' ) )
 			return $output;
 		}
 		
-		static function create_select_option($element, $entries, $fake_val, $parents, $level)
+		
+		/**
+		 * Returns the options part of a select box
+		 * 
+		 * @since < 4.0
+		 * @param array $element
+		 * @param array $entries
+		 * @param string $fake_val
+		 * @param array $parents
+		 * @param int $level
+		 * @return string
+		 */
+		static protected function create_select_option( $element, $entries, $fake_val, $parents, $level )
 		{	
 			$output = "";
 			
@@ -1602,7 +1666,91 @@ if ( ! class_exists( 'AviaHtmlHelper' ) )
 			return $output;	
 		}
 		
+		/**
+		 * Based on wp_timezone_override_offset() and get_timezone_info()
+		 * Returns the timezone offset from UTC. Defaults to UTC if not available
+		 * 
+		 * @since 4.5.6
+		 * @param string $timezone_string
+		 * @return float						UTC offset in hours
+		 */
+		static public function get_timezone_offset( $timezone_string = '' )
+		{
+			$timezone_string = AviaHtmlHelper::default_wp_timezone_string( $timezone_string );
+			
+			if( false !== stripos( $timezone_string, 'UTC' ) )
+			{
+				$tz = trim( str_ireplace( 'UTC', '', $timezone_string ) );
+				if( empty( $tz ) || ! is_numeric( $tz ) )
+				{
+					$tz = 0;
+				}
+				return (float) $tz;
+			}
+			
+			$timezone_object = timezone_open( $timezone_string );
+			$datetime_object = date_create();
+			if ( false === $timezone_object || false === $datetime_object ) 
+			{
+				return 0.0;
+			}
+			
+			return round( timezone_offset_get( $timezone_object, $datetime_object ) / HOUR_IN_SECONDS, 2 );
+		}
 		
+		/**
+		 * Returns a valid timezone_string for the selectbox.
+		 * Checks for WP default setting if empty.
+		 * 
+		 * @since 4.5.6
+		 * @param string $timezone_string
+		 * @return string
+		 */
+		static public function default_wp_timezone_string( $timezone_string = '' )
+		{
+			if( ! empty( $timezone_string ) )
+			{
+				return $timezone_string;
+			}
+			
+			$timezone_string = get_option( 'timezone_string', '' );
+			if( ! empty( $timezone_string ) )
+			{
+				return $timezone_string;
+			}
+			
+			$offset = get_option( 'gmt_offset', '' );
+			if( '' == trim( $offset ) || ! is_numeric( $offset ) || 0 == $offset )
+			{
+				return 'UTC';
+			}
+			
+			return $offset <= 0 ? 'UTC' . $offset : 'UTC+' . $offset;
+		}
+			
+
+		/**
+		 * Returns a timezone selectbox and preselects the default WP timezone
+		 * 
+		 * @since 4.5.6
+		 * @param array $element
+		 * @return string
+		 */
+		static public function timezone_choice( array $element )
+		{
+			$html = '';
+			
+			$id_string = empty( $element['id'] ) ? '' : "id='{$element['id']}'";
+			$name_string = empty( $element['id'] ) ? '' : "name='{$element['id']}'";
+			$timezone_string = AviaHtmlHelper::default_wp_timezone_string( $element['std'] );
+			
+			$html .=	'<select class="' . $element['class'] . '" ' . $id_string . ' ' . $name_string . '>';
+			$html .=		wp_timezone_choice( $timezone_string );
+			$html .=	'</select>';
+			
+			return $html;
+		}
+
 		
 		/**
          * 

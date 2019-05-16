@@ -11,9 +11,23 @@ if ( !class_exists( 'avia_sc_gallery' ) )
 {
 	class avia_sc_gallery extends aviaShortcodeTemplate
 	{
-			static $gallery = 0;
-			var $extra_style = "";
-			var $non_ajax_style = "";
+			/**
+			 *
+			 * @var int 
+			 */
+			static public $gallery = 0;
+			
+			/**
+			 *
+			 * @var string 
+			 */
+			public $extra_style = "";
+			
+			/**
+			 *
+			 * @var string 
+			 */
+			public $non_ajax_style = "";
 
 			/**
 			 * Create the config array for the shortcode button

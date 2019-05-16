@@ -4,9 +4,10 @@
 */
 
 // Don't load directly
-if ( !defined('ABSPATH') ) { die('-1'); }
+if ( ! defined( 'ABSPATH' ) ) { die( '-1' ); }
 
-if ( !class_exists( 'AviaHelper' ) ) {
+if ( ! class_exists( 'AviaHelper' ) ) 
+{
 	
 	class AviaHelper
 	{
@@ -620,6 +621,34 @@ if ( !class_exists( 'AviaHelper' ) ) {
 			return $style_string;
 		}
 
+		
+        /**
+		 * Helper function for css declaration with 4 values such as margin/padding/border-radius
+		 * @param $value string padding/margin/border-radius
+		 */
+
+		static function css_4value_helper( $value = "" ){
+
+			if ( !empty ( $value ) ) {
+
+				$css = "";
+				$explode_value = explode( ',', $value );
+
+				foreach ( $explode_value as $v ) {
+					if ( !empty( $v ) ) {
+						$css .= $v.' ';
+					}
+					else {
+						$css .= '0 ';
+					}
+				}
+				return $css;
+			}
+		}
+
+
+
+
 
         /**
          * Helper function that builds background css styling strings
@@ -631,9 +660,8 @@ if ( !class_exists( 'AviaHelper' ) ) {
          *        direction: vertical, horizontal, radial, diagonal_tb, diagonal_bt
          *
          */
-
-
-        static function css_background_string($bg_image = array(), $bg_gradient = array()){
+        static public function css_background_string( $bg_image = array(), $bg_gradient = array() )
+		{
 
 
             $background = array();
@@ -728,138 +756,282 @@ if ( !class_exists( 'AviaHelper' ) ) {
                 return false;
 
             }
-
         }
 
+		/**
+		 * 
+		 * @since < 4.0
+		 * @return string
+		 */
+        static public function backend_post_type()
+		{
+			global $post, $typenow, $current_screen;
 
-        static function backend_post_type()
-	{
-		global $post, $typenow, $current_screen;
-		
-		$posttype = "";
-		
-		//we have a post so we can just get the post type from that
-		if ($post && $post->post_type)
-		{
-			$posttype = $post->post_type;
-		}
-		//check the global $typenow - set in admin.php
-		elseif($typenow)
-		{
-			$posttype = $typenow;
-		}
-		//check the global $current_screen object - set in sceen.php
-		elseif($current_screen && $current_screen->post_type)
-		{
-			$posttype = $current_screen->post_type;
-		}
-		//lastly check the post_type querystring
-		elseif(isset($_REQUEST['post_type']))
-		{
-			$posttype = sanitize_key($_REQUEST['post_type']);
-		}
-		
-		return $posttype;	
-	}
-	
-	
-	
-	static function av_mobile_sizes($atts = array())
-	{
-		$result		= array('av_font_classes'=>'', 'av_title_font_classes'=>'', 'av_display_classes' => '', 'av_column_classes' => '');
-		$fonts 		= array('av-medium-font-size', 'av-small-font-size', 'av-mini-font-size'); 
-		$title_fonts= array('av-medium-font-size-title', 'av-small-font-size-title', 'av-mini-font-size-title'); 
-		$displays	= array('av-desktop-hide', 'av-medium-hide', 'av-small-hide', 'av-mini-hide');
-		$columns	= array('av-medium-columns', 'av-small-columns', 'av-mini-columns');
-		
-		
-		if(empty($atts)) $atts = array();
-		
-		foreach($atts as $key => $attribute)
-		{
-			if(in_array($key, $fonts) && $attribute != "")
-			{
-				$result['av_font_classes'] .= " ".$key."-overwrite";
-				$result['av_font_classes'] .= " ".$key."-".$attribute;
-				
-				if($attribute != "hidden") self::$mobile_styles['av_font_classes'][$key][$attribute] = $attribute;
-			}
-			
-			if(in_array($key, $title_fonts) && $attribute != "")
-			{
-				$newkey = str_ireplace('-title', "", $key);
-				
-				$result['av_title_font_classes'] .= " ".$newkey."-overwrite";
-				$result['av_title_font_classes'] .= " ".$newkey."-".$attribute;
-				
-				
-				if($attribute != "hidden") 
-				{ 
-					self::$mobile_styles['av_font_classes'][$newkey][$attribute] = $attribute;
-				}
-			}
-			
-			if(in_array($key, $displays) && $attribute != "")
-			{
-				$result['av_display_classes'] .= " ".$key;
-			}
-			
-			if(in_array($key, $columns) && $attribute != "")
-			{
-				$result['av_column_classes'] .= " ".$key."-overwrite";
-				$result['av_column_classes'] .= " ".$key."-".$attribute;
-			}
-		}
+			$posttype = "";
 
-		return $result;
-	}
-	
-	
-	
-	static function av_print_mobile_sizes()
-	{
-		$print 			= "";
-		
-		//rules are created dynamically, otherwise we would need to predefine more than 500 csss rules of which probably only 2-3 would be used per page
-		$media_queries 	= apply_filters('avf_mobile_font_size_queries' , array(
-			
-			"av-medium-font-size" 	=> "only screen and (min-width: 768px) and (max-width: 989px)",
-			"av-small-font-size" 	=> "only screen and (min-width: 480px) and (max-width: 767px)",
-			"av-mini-font-size" 	=> "only screen and (max-width: 479px)",  
-
- 		));
-		
-
-		if(isset(self::$mobile_styles['av_font_classes']) && is_array(self::$mobile_styles['av_font_classes']))
-		{
-			$print .="<style type='text/css'>\n";
-			
-			foreach($media_queries as $key => $query)
+			//we have a post so we can just get the post type from that
+			if ($post && $post->post_type)
 			{
-				if( isset(self::$mobile_styles['av_font_classes'][$key]) )
+				$posttype = $post->post_type;
+			}
+			//check the global $typenow - set in admin.php
+			elseif($typenow)
+			{
+				$posttype = $typenow;
+			}
+			//check the global $current_screen object - set in sceen.php
+			elseif($current_screen && $current_screen->post_type)
+			{
+				$posttype = $current_screen->post_type;
+			}
+			//lastly check the post_type querystring
+			elseif(isset($_REQUEST['post_type']))
+			{
+				$posttype = sanitize_key($_REQUEST['post_type']);
+			}
+
+			return $posttype;	
+		}
+	
+		/**
+		 * Returns an array of ALB font size classes
+		 * 
+		 * @since < 4.0
+		 * @param array $atts
+		 * @return array
+		 */
+		static public function av_mobile_sizes( $atts = array() )
+		{
+			$result		= array('av_font_classes'=>'', 'av_title_font_classes'=>'', 'av_display_classes' => '', 'av_column_classes' => '');
+			$fonts 		= array('av-medium-font-size', 'av-small-font-size', 'av-mini-font-size'); 
+			$title_fonts= array('av-medium-font-size-title', 'av-small-font-size-title', 'av-mini-font-size-title'); 
+			$displays	= array('av-desktop-hide', 'av-medium-hide', 'av-small-hide', 'av-mini-hide');
+			$columns	= array('av-medium-columns', 'av-small-columns', 'av-mini-columns');
+
+
+			if(empty($atts)) $atts = array();
+
+			foreach($atts as $key => $attribute)
+			{
+				if(in_array($key, $fonts) && $attribute != "")
 				{
-					$print .="@media {$query} { \n";
-					
-					if( isset(self::$mobile_styles['av_font_classes'][$key]))
-					{
-						foreach(self::$mobile_styles['av_font_classes'][$key] as $size)
-						{
-							$print .= ".responsive #top #wrap_all .{$key}-{$size}{font-size:{$size}px !important;} \n";
-						}
+					$result['av_font_classes'] .= " ".$key."-overwrite";
+					$result['av_font_classes'] .= " ".$key."-".$attribute;
+
+					if($attribute != "hidden") self::$mobile_styles['av_font_classes'][$key][$attribute] = $attribute;
+				}
+
+				if(in_array($key, $title_fonts) && $attribute != "")
+				{
+					$newkey = str_ireplace('-title', "", $key);
+
+					$result['av_title_font_classes'] .= " ".$newkey."-overwrite";
+					$result['av_title_font_classes'] .= " ".$newkey."-".$attribute;
+
+
+					if($attribute != "hidden") 
+					{ 
+						self::$mobile_styles['av_font_classes'][$newkey][$attribute] = $attribute;
 					}
+				}
+
+				if(in_array($key, $displays) && $attribute != "")
+				{
+					$result['av_display_classes'] .= " ".$key;
+				}
+
+				if(in_array($key, $columns) && $attribute != "")
+				{
+					$result['av_column_classes'] .= " ".$key."-overwrite";
+					$result['av_column_classes'] .= " ".$key."-".$attribute;
+				}
+			}
+
+			return $result;
+		}
+	
+		/**
+		 * Return CSS for media queries
+		 * 
+		 * @since < 4.0
+		 * @return string
+		 */
+		static public function av_print_mobile_sizes()
+		{
+			$print 			= "";
+
+			//rules are created dynamically, otherwise we would need to predefine more than 500 csss rules of which probably only 2-3 would be used per page
+			$media_queries 	= apply_filters('avf_mobile_font_size_queries' , array(
+
+				"av-medium-font-size" 	=> "only screen and (min-width: 768px) and (max-width: 989px)",
+				"av-small-font-size" 	=> "only screen and (min-width: 480px) and (max-width: 767px)",
+				"av-mini-font-size" 	=> "only screen and (max-width: 479px)",  
+
+			));
+
+
+			if(isset(self::$mobile_styles['av_font_classes']) && is_array(self::$mobile_styles['av_font_classes']))
+			{
+				$print .= "<style type='text/css'>\n";
+
+				foreach($media_queries as $key => $query)
+				{
+					if( isset(self::$mobile_styles['av_font_classes'][$key]) )
+					{
+						$print .="@media {$query} { \n";
+
+						if( isset(self::$mobile_styles['av_font_classes'][$key]))
+						{
+							foreach(self::$mobile_styles['av_font_classes'][$key] as $size)
+							{
+								$print .= ".responsive #top #wrap_all .{$key}-{$size}{font-size:{$size}px !important;} \n";
+							}
+						}
+
+						$print .= "} \n";
+					}
+				}
+
+				$print .="</style>";
+			}
+
+			return $print; 
+		}
+		
+		/**
+		 * Creates a date query for a standard WP query with the given dates and adds it to an existing query
+		 * 
+		 * @since 4.5.6.1
+		 * @param array $query
+		 * @param string $start_date
+		 * @param string $end_date
+		 * @param string $format
+		 * @param string $relation				'AND' | 'OR' | ''
+		 * @return array
+		 */
+		static public function add_date_query( array $query, $start_date, $end_date = '', $format = 'yy/mm/dd', $relation = '' )
+		{
+			if( empty( $start_date ) && empty( $end_date ) )
+			{
+				return $query;
+			}
+			
+			if( empty( $start_date ) )
+			{
+				$start_date = $end_date;
+				$end_date = '';
+			}
+			
+			if( ! empty( $start_date ) )
+			{
+				$start_date = AviaHelper::default_date_string( $start_date, $format );
+			}
+			
+			if( ! empty( $end_date ) )
+			{
+				$end_date = AviaHelper::default_date_string( $end_date, $format );
+			}
+			
+			if( ! empty( $end_date ) && $start_date > $end_date )
+			{
+				$temp = $start_date;
+				$start_date = $end_date;
+				$end_date = $temp;
+			}
+			
+			$q = array(
+						'after'		=> array(
+									'year'	=> substr( $start_date, 0, 4 ),
+									'month'	=> substr( $start_date, 4, 2 ),
+									'day'	=> substr( $start_date, 6, 2 ),
+								),
+						'inclusive'	=> true
+					);
+			
+			if( ! empty( $end_date ) )
+			{
+				$q['before'] = array(
+									'year'	=> substr( $end_date, 0, 4 ),
+									'month'	=> substr( $end_date, 4, 2 ),
+									'day'	=> substr( $end_date, 6, 2 ),
+								);
+			}
+			
+			if( ! empty( $relation ) )
+			{
+				$q['relation '] = $relation;
+			}
 					
-					$print .= "} \n";
+			$query[] = $q;
+					
+			return $query;
+		}
+		
+		/**
+		 * Accespts a formatted datestring. In case of empty format uses default php function strtotime
+		 * https://www.php.net/manual/de/function.strtotime.php
+		 * 
+		 * Returns time() if invalid
+		 * 
+		 * @since 4.5.6.1
+		 * @param string $date_string		'yy/mm/dd' | 'dd-mm-yy' | 'yyyymmdd' | any valid php date format
+		 * @param string $format			
+		 * @return string					YYYYMMDD | ''
+		 */
+		static public function default_date_string( $date_string, $format = '' )
+		{
+			if( empty( $format ) || ( false === strpos( $format, '/' ) && false === strpos( $format, '-' ) ) )
+			{
+				$time = strtotime( $date_string );
+				if( false == $time )
+				{
+					$time = time();
+				}
+				
+				return date( 'Ymd', $time );
+			}
+			
+			$sep = false === strpos( $format, '/' ) ? '-' : '/';
+			
+			$date_parts = explode( $sep, $date_string );
+			$format_parts = explode( $sep, $format );
+			$date = array();
+			
+			foreach( $format_parts as $key => $value ) 
+			{
+				$value = substr( trim( strtolower( $value ) ), 0, 2 );
+				
+				if( ! isset( $date_parts[ $key ] ) || ! is_numeric( $date_parts[ $key ] ) )
+				{
+					continue;
+				}
+				
+				switch( $value )
+				{
+					case 'yy':
+						if( strlen( $date_parts[ $key ] ) == 4 )
+						{
+							$date[ $value ] = $date_parts[ $key ];
+						}
+						break;
+					case 'dd':
+					case 'mm':
+						if( strlen( $date_parts[ $key ] ) == 2 )
+						{
+							$date[ $value ] = $date_parts[ $key ];
+						}
+						break;
 				}
 			}
 			
-			$print .="</style>";
+			if( count( $date ) != 3 )
+			{
+				return date( 'Ymd' );
+			}
+			
+			return $date['yy'] . $date['mm'] . $date['dd'];
 		}
-		
-		return $print; 
-	}
-		
-		
-		
+	
 	}
 	
 }

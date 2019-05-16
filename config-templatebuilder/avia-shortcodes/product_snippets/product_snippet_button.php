@@ -71,10 +71,17 @@ if ( !class_exists( 'avia_sc_produc_button' ) )
 		function shortcode_handler($atts, $content = "", $shortcodename = "", $meta = "")
 		{
 			$output = "";
-			$meta['el_class'];
+			if( ! isset( $meta['el_class'] ) )
+			{
+				$meta['el_class'] = '';
+			}
 			
-			global $woocommerce, $product;
-			if(!is_object($woocommerce) || !is_object($woocommerce->query) || empty($product) || is_admin() ) return;
+			//	fix for seo plugins which execute the do_shortcode() function before everything is loaded
+			global $product;
+			if( ! function_exists( 'WC' ) || ! WC() instanceof WooCommerce || ! is_object( WC()->query ) || ! $product instanceof WC_Product )
+			{
+				return '';
+			}
 
 			/**
 			 * @since WC 3.0
@@ -101,16 +108,36 @@ if ( !class_exists( 'avia_sc_produc_button' ) )
 			$output .= "<div class='av-woo-purchase-button ".$meta['el_class']."'>";
 			
 			/**
-			 * Fix for plugin German Market that outputs the price (not a clean solution but easier to maintain). Can alos be placed in shortcode.css.
+			 * Fix for plugins (not a clean solution but easier to maintain). Could also be placed in shortcode.css.
 			 */
-			$output .= '<style>';
-			$output .=		'#top .av-woo-purchase-button > div > p.price {display: none;}';
-			$output .= '</style>';
+			if( class_exists( 'Woocommerce_German_Market' ) )
+			{
+				/**
+				 * German Market also outputs the price 
+				 */
+				$output .= '<style>';
+				$output .=		'#top .av-woo-purchase-button > div > p.price {display: none;}';
+				$output .= '</style>';
+			}
+			else if( class_exists( 'WooCommerce_Germanized' ) )
+			{
+				/**
+				 * Hides variation price with js
+				 */
+				$output .= '<style>';
+				$output .=		'#top form.variations_form.cart .woocommerce-variation-price > .price {display: block !important;}';
+				$output .= '</style>';
+			}
 			
 			$output .=		'<p class="price">' . $product->get_price_html() . '</p>';
 			
 			ob_start();
-			wc_clear_notices();
+			
+			//	fix a problem with SEO plugin
+			if( function_exists( 'wc_clear_notices' ) )
+			{
+				wc_clear_notices();
+			}
 			
 			/**
 			 * hooked by: add_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_add_to_cart', 30 );

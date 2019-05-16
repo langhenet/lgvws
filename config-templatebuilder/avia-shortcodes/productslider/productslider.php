@@ -140,6 +140,18 @@ if ( !class_exists( 'avia_sc_productslider' )  && class_exists( 'woocommerce' ) 
 							__('Show featured products only', 'avia_framework' )	=> 'show')
 					),
 				
+				array(
+						'name' 	=> __( 'WooCommerce Sidebar Filters', 'avia_framework' ),
+						'desc' 	=> __( 'Allow to filter products for this element using the 3 WooCommerce sidebar filters: Filter Products by Price, Rating, Attribute. These filters are only shown on the selected WooCommerce Shop page (WooCommerce -&gt; Settings -&gt; Products -&gt; General -&gt; Shop Page) or on product category pages. You may also use a custom widget area for the sidebar.', 'avia_framework' ),
+						'id' 	=> 'wc_prod_additional_filter',
+						'type' 	=> 'select',
+						'std' 	=> '',
+						'subtype' => array(
+										__('Ignore filters', 'avia_framework' )		=> '',
+										__('Use filters', 'avia_framework' )		=> 'use_additional_filter'
+									)
+					),
+				
                 array(
                     "name" 	=> __("Offset Number", 'avia_framework' ),
                     "desc" 	=> __("The offset determines where the query begins pulling products. Useful if you want to remove a certain number of products because you already query them with another product slider. Attention: Use this option only if the product sorting of the product sliders match!", 'avia_framework' ),
@@ -150,18 +162,38 @@ if ( !class_exists( 'avia_sc_productslider' )  && class_exists( 'woocommerce' ) 
 
 
 				array(
-						"name" 	=> __("Sorting Options", 'avia_framework' ),
-						"desc" 	=> __("Here you can choose how to sort the products. Default setting can be set at Woocommerce -&gt Settings -&gt Products -&gt Display -&gt Default product sorting", 'avia_framework' ),
+						"name" 	=> __("WooCommerce Sorting Options", 'avia_framework' ),
+						"desc" 	=> __("Here you can choose how to sort the products. Default setting can be set at Dashboard -&gt; Appearance -&gt; Customize -&gt; WooCommerce -&gt; Product Catalog -&gt; Default Product Sorting", 'avia_framework' ),
 						"id" 	=> "sort",
 						"type" 	=> "select",
 						"std" 	=> "0",
 						"no_first"=>true,
 						"subtype" => array( /*__('Let user pick by displaying a dropdown with sort options (default value is defined at Woocommerce -> Settings -> Catalog)', 'avia_framework' )=>'dropdown', */
-											__('Use defaut (defined at Woocommerce -&gt; Settings -&gt Default product sorting) ', 'avia_framework' ) =>'0',
-											__('Sort alphabetically', 'avia_framework' ) =>'title',
-											__('Sort by most recent', 'avia_framework' ) =>'date',
-											__('Sort by price', 'avia_framework' ) =>'price',
-											__('Sort by popularity', 'avia_framework' ) =>'popularity')),
+											__( 'Use default (defined at Dashboard -&gt; Customize -&gt; WooCommerce) ', 'avia_framework' ) =>'0',
+											__( 'Sort alphabetically', 'avia_framework' )			=> 'title',
+											__( 'Sort by most recent', 'avia_framework' )			=> 'date',
+											__( 'Sort by price', 'avia_framework' )					=> 'price',
+											__( 'Sort by popularity', 'avia_framework' )			=> 'popularity',
+											__( 'Sort randomly', 'avia_framework' )					=> 'rand',
+											__( 'Sort by menu order and name', 'avia_framework' )	=> 'menu_order',
+											__( 'Sort by average rating', 'avia_framework' )		=> 'rating',
+											__( 'Sort by relevance', 'avia_framework' )				=> 'relevance',
+											__( 'Sort by Product ID', 'avia_framework' )			=> 'id'
+										)
+						),
+				
+				array(
+						"name" 	=> __( "WooCommerce Sorting Order", 'avia_framework' ),
+						"desc" 	=> __( "Here you can choose the order of the result products. Default setting can be set at Dashboard -&gt; Appearance -&gt; Customize -&gt; WooCommerce -&gt; Product Catalog -&gt; Default Product Sorting", 'avia_framework' ),
+						"id" 	=> "prod_order",
+						"type" 	=> "select",
+						"std" 	=> "",
+						"subtype" => array( 
+								__( 'Use default (defined at Dashboard -&gt; Customize -&gt; WooCommerce)', 'avia_framework' )	=> '',
+								__( 'Ascending', 'avia_framework' )			=>	'ASC',
+								__( 'Descending', 'avia_framework' )		=>	'DESC'
+							)
+					),
 
 				array(
 						"name" 	=> __("Autorotation active?",'avia_framework' ),
@@ -305,7 +337,7 @@ if ( !class_exists( 'avia_sc_productslider' )  && class_exists( 'woocommerce' ) 
 }
 
 
-if ( !class_exists( 'avia_product_slider' ) )
+if ( ! class_exists( 'avia_product_slider' ) )
 {
 	class avia_product_slider
 	{
@@ -313,31 +345,38 @@ if ( !class_exists( 'avia_product_slider' ) )
 		protected $atts;
 		protected $entries;
 
-		function __construct($atts = array())
+		function __construct( $atts = array() )
 		{
 			
-			$this->atts = shortcode_atts(array(	'type'		=> 'slider', // can also be used as grid
-												'style'		=> '', //no_margin
-										 		'columns' 	=> '4',
-		                                 		'items' 	=> '16',
+			$this->atts = shortcode_atts(array(	'type'				=> 'slider', // can also be used as grid
+												'style'				=> '', //no_margin
+										 		'columns'			=> '4',
+		                                 		'items'				=> '16',
 												'wc_prod_visible'	=>	'',
 												'wc_prod_hidden'	=>	'',
 												'wc_prod_featured'	=>	'',
-		                                 		'taxonomy'  => 'product_cat',
-		                                 		'post_type' => 'product',
-		                                 		'contents' 	=> 'excerpt',
-		                                 		'autoplay'  => 'no',
-												'animation' => 'fade',
-												'paginate'	=> 'no',
-												'interval'  => 5,
-												'class'		=> '',
-												'sort'		=> '',
-                                                'offset' => 0,
-                                                'link_behavior' => '',
-                                                'show_images'	=> 'yes',
-		                                 		'categories'=> array(),
-                                                'av_display_classes' => ''
+												'wc_prod_additional_filter'		=> '',
+		                                 		'taxonomy'			=> 'product_cat',
+		                                 		'post_type'			=> 'product',
+		                                 		'contents'			=> 'excerpt',
+		                                 		'autoplay'			=> 'no',
+												'animation'			=> 'fade',
+												'paginate'			=> 'no',
+												'interval'			=> 5,
+												'class'				=> '',
+												'sort'				=> '',
+												'prod_order'		=> '',
+                                                'offset'			=> 0,
+                                                'link_behavior'		=> '',
+                                                'show_images'		=> 'yes',
+		                                 		'categories'		=> array(),
+                                                'av_display_classes'	=> ''
 		                                 		), $atts, 'av_productslider');
+			
+			if( $this->atts['items'] < 0 )
+			{
+				$this->atts['paginate'] = 'no';
+			}
 		}
 
 		public function html()
@@ -345,7 +384,7 @@ if ( !class_exists( 'avia_product_slider' ) )
 			global $woocommerce, $woocommerce_loop, $avia_config;
 			$output = "";
 
-			avia_post_slider::$slide ++;
+			avia_product_slider::$slide ++;
 			extract($this->atts);
 
 			$extraClass 		= 'first';
@@ -373,7 +412,7 @@ if ( !class_exists( 'avia_product_slider' ) )
 
 				if ( have_posts() ) :
 
-				echo "<div {$data} class='template-shop avia-content-slider avia-content-{$type}-active avia-content-slider".avia_post_slider::$slide." avia-content-slider-{$total} {$class} {$av_display_classes} shop_columns_{$columns}' >";
+				echo "<div {$data} class='template-shop avia-content-slider avia-content-{$type}-active avia-product-slider" . avia_product_slider::$slide . " avia-content-slider-{$total} {$class} {$av_display_classes} shop_columns_{$columns}' >";
 
 				if($sort == "dropdown") avia_woocommerce_frontend_search_params();
 
@@ -460,7 +499,6 @@ if ( !class_exists( 'avia_product_slider' ) )
 			global $woocommerce, $avia_config, $wp_query;
 			$output = "";
 
-			avia_post_slider::$slide ++;
 			extract($this->atts);
 
 			$extraClass 		= 'first';
@@ -485,6 +523,7 @@ if ( !class_exists( 'avia_product_slider' ) )
 				
 				while ( have_posts() ) : the_post();
 				
+				avia_product_slider::$slide ++;
 				$post_loop_count ++;
 				$loop_counter ++;
 				if($loop_counter === 1)
@@ -504,8 +543,18 @@ if ( !class_exists( 'avia_product_slider' ) )
 					$content = 	get_the_excerpt();
 					$price = 	$product->get_price_html();
 					$rel   = "";
+					$product_type = $product->get_type();
 					
-					if(empty($link_behavior))
+					/**
+					 * Choose product types that link to single product pages when clicked and not ajax add to cart
+					 * (currently only class avia_sc_productlist supports this option)
+					 * 
+					 * @since 4.5.4
+					 * @return array
+					 */
+					$force_product_page_array = apply_filters( 'avf_slider_add_to_cart_via_product_page', array( 'variable' ), $this );
+					
+					if( empty($link_behavior) || in_array( $product_type, $force_product_page_array ) )
 					{
 						$cart_url = get_the_permalink();
 						$ajax_class = "";
@@ -533,13 +582,14 @@ if ( !class_exists( 'avia_product_slider' ) )
 					//coppied from templates/loop/add-to-cart.php - class and rel attr changed, as well as text
 					
 					echo apply_filters( 'woocommerce_loop_add_to_cart_link',
-						sprintf( '<a %s href="%s" data-product_id="%s" data-product_sku="%s" class="av-catalogue-item %s product_type_%s">%s</a>',
+						sprintf( '<a %s href="%s" data-product_id="%s" data-product_sku="%s" class="av-catalogue-item %s product_type_%s product-nr-%d">%s</a>',
 							$rel,
 							esc_url( $cart_url ),
 							esc_attr( $product_id ),
 							esc_attr( $product->get_sku() ),
 							$ajax_class,
 							esc_attr( $product_type ),
+							avia_product_slider::$slide,
 							$text
 						),
 					$product );
@@ -589,7 +639,7 @@ if ( !class_exists( 'avia_product_slider' ) )
 		}
 
 		//fetch new entries
-		public function query_entries($params = array())
+		public function query_entries( $params = array() )
 		{
 			global $woocommerce, $avia_config;
 
@@ -636,37 +686,27 @@ if ( !class_exists( 'avia_product_slider' ) )
 				}
 			}
 
-
-			if($params['sort'] == 'dropdown')
+			if( $params['sort'] == 'dropdown' )
 			{
 				$avia_config['woocommerce']['default_posts_per_page'] = $params['items'];
 				$ordering 	= $woocommerce->query->get_catalog_ordering_args();
 				$order 		= $ordering['order'];
 				$orderBY 	= $ordering['orderby'];
 
-				if(!empty($avia_config['shop_overview_products_overwritten']))
+				if( ! empty( $avia_config['shop_overview_products_overwritten'] ) && $params['items'] != -1 )
+				{
 					$params['items'] = $avia_config['shop_overview_products'];
-
+				}
 			}
 			else
 			{
 				$avia_config['woocommerce']['disable_sorting_options'] = true;
 
-				$order = "DESC";
-				if(empty($params['sort']) || $params['sort'] == "0")
-				{
-					$ordering 	= $woocommerce->query->get_catalog_ordering_args();
-					$order 		= $ordering['order'];
-					$orderBY 	= $ordering['orderby'];
-				}
-				else
-				{
-					$orderBY = $params['sort'];
-				}
+				$chk_sort = ( empty( $params['sort'] ) || $params['sort'] == '0' ) ? '' : $params['sort'];
+				$ordering 	= avia_wc_get_product_query_order_args( $chk_sort, $params['prod_order'] );
 
-				if(!$orderBY) $orderBY = "menu_order";
-
-				if($orderBY == 'price' || $orderBY == 'title'){ $order = "ASC"; }
+				$order 		= $ordering['order'];
+				$orderBY 	= $ordering['orderby'];
 			}
 
 
@@ -689,12 +729,17 @@ if ( !class_exists( 'avia_product_slider' ) )
 			avia_wc_set_out_of_stock_query_params( $meta_query, $tax_query, $params['wc_prod_visible'] );
 			avia_wc_set_hidden_prod_query_params( $meta_query, $tax_query, $params['wc_prod_hidden'] );
 			avia_wc_set_featured_prod_query_params( $meta_query, $tax_query, $params['wc_prod_featured'] );
-
-				//	Reset any previously set filter hooks before calling query->get_catalog_ordering_args
-			avia_wc_clear_catalog_ordering_args_filters();
 			
-			$ordering_args = $woocommerce->query->get_catalog_ordering_args( $orderBY, $order );
- 			
+			if( 'use_additional_filter' == $params['wc_prod_additional_filter'] )
+			{
+				avia_wc_set_additional_filter_args( $meta_query, $tax_query );
+			}
+
+			$avia_config['woocommerce']['disable_sorting_options'] = true;
+			
+			//	sets filter hooks !!
+			$ordering_args = avia_wc_get_product_query_order_args( $orderBY, $order );
+			
 			if( ! empty( $terms ) )
 			{
 				$tax_query[] =  array( 	
@@ -720,12 +765,21 @@ if ( !class_exists( 'avia_product_slider' ) )
 												);
 			
 			
-			if ( isset( $ordering_args['meta_key'] ) ) 
+			if ( ! empty( $ordering_args['meta_key'] ) ) 
 			{
 	 			$query['meta_key'] = $ordering_args['meta_key'];
 	 		}
 
-			$query = apply_filters( 'avia_product_slide_query', $query, $params );
+			/**
+			 * @used_by			currently unused
+			 * 
+			 * @since < 4.0
+			 * @param array $query
+			 * @param array $params
+			 * @param array $ordering_args
+			 * @return array 
+			 */
+			$query = apply_filters( 'avia_product_slide_query', $query, $params, $ordering_args );
 			query_posts( $query );
 			
 		    // store the queried post ids in
@@ -740,6 +794,7 @@ if ( !class_exists( 'avia_product_slider' ) )
 			
 				//	remove all filters
 			avia_wc_clear_catalog_ordering_args_filters();
+			$avia_config['woocommerce']['disable_sorting_options'] = false;
 		}
 	}
 }

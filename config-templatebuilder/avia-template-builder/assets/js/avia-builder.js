@@ -1585,7 +1585,8 @@ function avia_nl2br (str, is_xhtml)
 		
 		
 		/**
-		* function that gets executed by send_to_datastorage and creates the actual shortcode string out of the arguments and content
+		* Function that gets executed by send_to_datastorage or from tinyMCE shortcode wand button onSave callback. 
+		* Creates the actual shortcode string out of the arguments and content
 		*/
 		createShortcode: function(values, shortcode, tag, force_content_close)
 		{

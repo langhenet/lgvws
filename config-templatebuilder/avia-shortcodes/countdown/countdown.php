@@ -39,6 +39,7 @@ if ( !class_exists( 'avia_sc_countdown' ) )
 								__('Year',  	'avia_framework' ) 	=>'7'
 								*/
 							);
+
 			}
 			
 			function extra_assets()
@@ -79,7 +80,12 @@ if ( !class_exists( 'avia_sc_countdown' ) )
 							"id" 	=> "date",
 							"type" 	=> "datepicker",
 							"container_class" => 'av_third av_third_first',
-							"std" 	=> ""),
+							"std" 	=> "",
+							'dp_params'	=> array(
+												'dateFormat'        => 'mm / dd / yy',
+												'minDate'			=> 0
+											)
+						),
 					
 					array(	
 							"name" 	=> __("Hour", 'avia_framework' ),
@@ -99,6 +105,13 @@ if ( !class_exists( 'avia_sc_countdown' ) )
 							"container_class" => 'av_third',
 							"subtype" => AviaHtmlHelper::number_array(0,59,1,array(),' min')),
 								
+					array(	
+							'name' 	=> __( 'Timezone', 'avia_framework' ),
+							'desc' 	=> __( 'Select the timezone of your date.', 'avia_framework' ),
+							'id' 	=> 'timezone',
+							'type' 	=> 'timezone_choice',
+							'std' 	=> ''
+						),
 					
 					array(	
 							"name" 	=> __("Smallest time unit", 'avia_framework' ),
@@ -292,7 +305,8 @@ if ( !class_exists( 'avia_sc_countdown' ) )
 				extract(AviaHelper::av_mobile_sizes($atts)); //return $av_font_classes, $av_title_font_classes and $av_display_classes 
 				extract(shortcode_atts(array(	'date' 		=> '', 
 											 	'hour' 		=> '12', 
-											 	'minute' 	=> '0', 
+											 	'minute' 	=> '0',
+												'timezone'	=> '',
 											 	'min' 		=> '1', 
 											 	'max' 		=> '5',
 											 	'align'		=> 'center',
@@ -315,7 +329,7 @@ if ( !class_exists( 'avia_sc_countdown' ) )
 				
 				);
 				
-
+				$offset = AviaHtmlHelper::get_timezone_offset( $timezone ) * 60;
 				$interval 	= $this->full_time_array[$min]['interval'];
 				$final_time = "";
 				$output  	= "";
@@ -331,17 +345,33 @@ if ( !class_exists( 'avia_sc_countdown' ) )
 					$final_time .= " data-day='".$date[1]."'";
 					$final_time .= " data-hour='".$hour."'";
 					$final_time .= " data-minute='".$minute."'";
+					$final_time .= " data-timezone='".$offset."'";
 					
 					if(!empty($size)) $digit_style = "font-size:{$size}px; ";
 					$tags = !empty($link) ? array( "a href='{$link}' ", "a") : array('span', 'span');
 					
-					
+					$default_heading = 'h3';
+					$args = array(
+								'heading'		=> $default_heading,
+								'extra_class'	=> ''
+							);
+
+					$extra_args = array( $this, $atts, $content, 'title' );
+
+					/**
+					 * @since 4.5.5
+					 * @return array
+					 */
+					$args = apply_filters( 'avf_customize_heading_settings', $args, __CLASS__, $extra_args );
+
+					$heading = ! empty( $args['heading'] ) ? $args['heading'] : $default_heading;
+					$css = ! empty( $args['extra_class'] ) ? $args['extra_class'] : '';
 					
 					$output .= "<div class='av-countdown-timer {$av_display_classes} {$align} {$style} {$el}' {$final_time} data-interval='{$interval}' data-maximum='{$max}' >";
 					
 					if( is_array( $title ) && isset( $title['top'] ) )
 					{
-						$output .= "<h3><{$tags[0]} class='av-countdown-timer-title av-countdown-timer-title-top'>".$title['top']."</{$tags[1]}></h3>";
+						$output .= "<{$heading}><{$tags[0]} class='av-countdown-timer-title av-countdown-timer-title-top {$css}'>".$title['top']."</{$tags[1]}></{$heading}>";
 					}
 					
 					
@@ -370,7 +400,7 @@ if ( !class_exists( 'avia_sc_countdown' ) )
 					
 					if( is_array( $title ) && isset( $title['bottom'] ) )
 					{
-						$output .= "<h3><{$tags[0]} class='av-countdown-timer-title av-countdown-timer-title-bottom'>".$title['bottom']."</{$tags[1]}></h3>";
+						$output .= "<{$heading}><{$tags[0]} class='av-countdown-timer-title av-countdown-timer-title-bottom {$css}'>".$title['bottom']."</{$tags[1]}></{$heading}>";
 					}
 					
 					

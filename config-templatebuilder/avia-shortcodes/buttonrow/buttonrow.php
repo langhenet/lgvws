@@ -12,9 +12,64 @@
 
 
 
-if (!class_exists('avia_sc_buttonrow')) {
+if ( ! class_exists( 'avia_sc_buttonrow' ) ) 
+{
     class avia_sc_buttonrow extends aviaShortcodeTemplate
     {
+		
+		/**
+		 *
+		 * @since 4.5.5
+		 * @var array 
+		 */
+		protected $screen_options;
+		
+		/**
+		 *
+		 * @since 4.5.5
+		 * @var array 
+		 */
+		protected $alignment;
+		
+		/**
+		 *
+		 * @since 4.5.5
+		 * @var array 
+		 */
+		protected $spacing;
+		
+		/**
+		 *
+		 * @since 4.5.5
+		 * @var array 
+		 */
+		protected $spacing_unit;
+		
+		/**
+		 * 
+		 * @since 4.5.5
+		 * @param AviaBuilder $builder
+		 */
+		public function __construct( $builder ) 
+		{
+			$this->screen_options = array();
+			$this->alignment = '';
+            $this->spacing = '';
+            $this->spacing_unit = '';
+			
+			parent::__construct( $builder );
+		}
+		
+		/**
+		 * @since 4.5.5
+		 */
+		public function __destruct() 
+		{
+			parent::__destruct();
+			
+			unset( $this->screen_options );
+		}
+		
         /**
          * Create the config array for the shortcode button
          */
@@ -378,8 +433,24 @@ if (!class_exists('avia_sc_buttonrow')) {
             return $params;
 
         }
+		
+		/**
+		 * 
+		 * @since 4.5.5
+		 * @param string $shortcode
+		 * @return boolean
+		 */
+		public function is_nested_self_closing( $shortcode ) 
+		{
+			if( in_array( $shortcode, $this->config['shortcode_nested'] ) )
+			{
+				return true;
+			}
+				
+			return false;
+		}
 
-        /**
+		/**
          * Frontend Shortcode Handler
          *
          * @param array $atts array of attributes
@@ -390,7 +461,11 @@ if (!class_exists('avia_sc_buttonrow')) {
         function shortcode_handler($atts, $content = "", $shortcodename = "", $meta = "")
         {
 	        
-            $this->screen_options = AviaHelper::av_mobile_sizes($atts);
+            $this->screen_options = AviaHelper::av_mobile_sizes( $atts );
+			
+			$this->alignment = '';
+            $this->spacing = '';
+            $this->spacing_unit = '';
 
             extract($this->screen_options); //return $av_font_classes, $av_title_font_classes and $av_display_classes
 
@@ -416,6 +491,14 @@ if (!class_exists('avia_sc_buttonrow')) {
 
         function av_buttonrow_item($atts, $content = "", $shortcodename = "")
         {
+			/**
+			 * Fixes a problem when 3-rd party plugins call nested shortcodes without executing main shortcode  (like YOAST in wpseo-filter-shortcodes)
+			 */
+			if( empty( $this->screen_options ) )
+			{
+				return '';
+			}
+			
             extract($this->screen_options); //return $av_font_classes, $av_title_font_classes and $av_display_classes
 
             $atts = shortcode_atts(

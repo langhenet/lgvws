@@ -64,13 +64,36 @@ if ( !class_exists( 'avia_sc_animated_numbers' ) )
 						),
 													
 					array(	
-							"name" 	=> __("Number",'avia_framework' ),
-							"desc" 	=> __("Add a Number here. It will be animated. You can also add non numerical characters. Valid examples: 24/7, 99.9$, 90&percnt;, 35k, 200mm etc ",'avia_framework' ),
-							"id" 	=> "number",
-							"type" 	=> "input",
-							"std" 	=> __("100",'avia_framework' )),
-
-										
+							'name' 	=> __( 'Number', 'avia_framework' ),
+							'desc' 	=> __( 'Add a number here. It will be animated. You can also add non numerical characters. Valid examples: 24/7, 50.45, 99.9$, 90&percnt;, 35k, 200mm etc. Leading 0 will be kept, seperated numbers will be animated individually.', 'avia_framework' ),
+							'id' 	=> 'number',
+							'type' 	=> 'input',
+							'std' 	=> __( '100', 'avia_framework' )
+						),
+					
+					array(	
+							'name' 	=> __( 'Format Number', 'avia_framework' ),
+							'desc' 	=> __( 'Select the thousands separator', 'avia_framework' ),
+							'id' 	=> 'number_format',
+							'type' 	=> 'select',
+							'std' 	=> '',
+							'subtype' => array(
+												__( 'No thousands seperator',  'avia_framework' )	=> '',
+												__( '123.350',  'avia_framework' )					=> '.',	
+												__( '123,350',  'avia_framework' )					=> ',',
+												__( '123 350',  'avia_framework' )					=> ' '
+											)
+						),	
+					
+					array(	
+							'name' 	=> __( 'Animation Duration', 'avia_framework' ),
+							'desc' 	=> __( 'For large numbers higher values allow to slow down the animation from 0 to the given value. For smaller numbers minimum speed depends on the refresh cicle of the client screen.', 'avia_framework' ),
+							'id' 	=> 'timer',
+							'type' 	=> 'select',
+							'std' 	=> '',
+							'subtype' => AviaHtmlHelper::number_array( 1, 600, 1, array( 'Default (3)' => '' ) ),
+						),
+					
 					array(	
 							"name" 	=> __("Description",'avia_framework' ),
 							"desc" 	=> __("Add some content to be displayed below the number",'avia_framework' ),
@@ -368,55 +391,63 @@ if ( !class_exists( 'avia_sc_animated_numbers' ) )
 			function shortcode_handler($atts, $content = "", $shortcodename = "", $meta = "")
 			{
 				
-	        	extract(AviaHelper::av_mobile_sizes($atts)); //return $av_font_classes, $av_title_font_classes and $av_display_classes 
-				extract(shortcode_atts(array(	'number' 		=> '100', 
-											 	'icon' 			=> '1', 
-											 	'position' 		=> 'left', 
-											 	'link' 			=> '', 
-											 	'linktarget'	=> 'no', 
-											 	'color' 		=> '', 
-											 	'custom_color'	=> '', 
-											 	'icon_select'	=> '', 
-											 	'icon' 			=> 'no',
-											 	'font'			=> '',
-											 	'font_size'		=> '',
-                                                'font_size_description'=>'',
-                                                'circle'=>'',
-                                                'circle_custom'=>'',
-                                                'circle_border_color' => '',
-                                                'circle_bg_color' => '',
-                                                'circle_border_width' => '',
-                                                'circle_size' => '',
-											 	)
-											 , $atts));
+	        	extract( AviaHelper::av_mobile_sizes( $atts ) ); //return $av_font_classes, $av_title_font_classes and $av_display_classes 
 				
-				$tags  		= array('div', 'div');
+				$atts = shortcode_atts( array(	
+											'number' 		=> '100', 
+											'number_format'	=> '',
+											'timer'			=> '',			//	defaults to 3 - set in numbers.js
+											'icon' 			=> '1', 
+											'position' 		=> 'left', 
+											'link' 			=> '', 
+											'linktarget'	=> 'no', 
+											'color' 		=> '', 
+											'custom_color'	=> '', 
+											'icon_select'	=> '', 
+											'icon' 			=> 'no',
+											'font'			=> '',
+											'font_size'		=> '',
+											'font_size_description'	=>'',
+											'circle'		=> '',
+											'circle_custom'	=> '',
+											'circle_border_color'	=> '',
+											'circle_bg_color'		=> '',
+											'circle_border_width'	=> '',
+											'circle_size'	=> ''
+					
+										), $atts, $this->config['shortcode'] );
+				
+				extract( $atts );
+				
+				$timer = ! empty( $timer ) ? (int) $timer * 1000 : 3000;
+				
+				$tags  		= array( 'div', 'div' );
 				$style 		= "";
 				$font_style = "";
 				$font_style2= "";
-                $linktarget = ($linktarget == 'no') ? '' : 'target="_blank"';
-                $link 		= aviaHelper::get_url($link);
+                $linktarget = ( $linktarget == 'no' ) ? '' : 'target="_blank"';
+                $link 		= aviaHelper::get_url( $link );
                 $display_char = $before = $after = "";
                 
-                if(!empty($link))
+                if( ! empty( $link ) )
                 {
-                    $tags[0] = "a href='$link' title='' $linktarget";
+					$tags[0] = "a href='{$link}' title='' {$linktarget}";
                     $tags[1] = "a";
                 }
                 
                 if($color == "font-custom")
                 {
-                	$style = "style='color:{$custom_color}'";
+                	$style = "style='color:{$custom_color};'";
                 }
                 
                 if($font_size)
                 {
-                	$font_style = "style='font-size:{$font_size}px'";
+                	$font_style = "style='font-size:{$font_size}px;'";
                 }
                 
                 if($font_size_description)
                 {
-                	$font_style2 = "style='font-size:{$font_size_description}px'";
+                	$font_style2 = "style='font-size:{$font_size_description}px;'";
                 }
 
 				
@@ -460,26 +491,45 @@ if ( !class_exists( 'avia_sc_animated_numbers' ) )
 
 
         		// add blockquotes to the content
-        		$output  = '<'.$tags[0].' '.$style.' class="avia-animated-number av-force-default-color '.$av_display_classes.' avia-color-'.$color.' '.$meta['el_class'].' avia_animate_when_visible" '.$style.'>';
+        		$output  = '<' . $tags[0] . ' class="avia-animated-number av-force-default-color ' . $av_display_classes . ' avia-color-' . $color . ' ' . $meta['el_class'] . ' avia_animate_when_visible" ' . $style . ' data-timer="' . $timer . '">';
                 $output .= $circle_markup;
 
 
-        		$output .= 		'<strong class="heading avia-animated-number-title" '.$font_style.'>';
-        		$output .= 		$before.$this->extract_numbers($number).$after;
+        		$output .= 		'<strong class="heading avia-animated-number-title" ' . $font_style . '>';
+        		$output .= 		$before . $this->extract_numbers( $number, $number_format, $atts ) . $after;
         		$output .= 		"</strong>";
         		$output .= 		"<div class='avia-animated-number-content' {$font_style2}>";
         		$output .= 		wpautop( ShortcodeHelper::avia_remove_autop( $content ) );
-        		$output .= 	'</div></'.$tags[1].'>';
+        		$output .= 	'</div></' . $tags[1] . '>';
         		
         		return $output;
 			}
 			
-			
-			function extract_numbers($number)
+			/**
+			 * Split string into animatable numbers and fixed string
+			 * 
+			 * @since < 4.0
+			 * @param string $number
+			 * @param string $number_format
+			 * @param array $atts
+			 * @return string
+			 */
+			protected function extract_numbers( $number, $number_format, &$atts )
 			{
-				$number = strip_tags(apply_filters('avf_big_number', $number));
-				$number = preg_replace('!(\D+)!','<span class="avia-no-number">$1</span>',$number);
-				$number = preg_replace('!(\d+)!','<span class="avia-single-number __av-single-number" data-number="$1">$1</span>',$number);
+				$number = strip_tags( apply_filters( 'avf_big_number', $number ) );
+				
+				/**
+				 * @used_by				currently unused
+				 * @since 4.5.6
+				 * @return string
+				 */
+				$number_format = apply_filters( 'avf_animated_numbers_separator', $number_format, $number, $atts );
+				
+				$replace = '<span class="avia-single-number __av-single-number" data-number_format="' . $number_format . '" data-number="$1">$1</span>';
+				
+				$number = preg_replace( '!(\D+)!', '<span class="avia-no-number">$1</span>', $number );
+				$number = preg_replace( '!(\d+)!', $replace, $number );
+				
 				return $number;
 			}
 			

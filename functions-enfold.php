@@ -1,4 +1,5 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) {  exit;  }    // Exit if accessed directly
 
 /*
  * The function within this file are theme specific:
@@ -119,9 +120,19 @@ if(!function_exists('avia_append_search_nav'))
 	        ob_start();
 	        get_search_form();
 	        $form =  htmlspecialchars(ob_get_clean()) ;
+			
+			/**
+			 * Avoid duplicate indexing or empty search page
+			 * 
+			 * @since 4.5.3
+			 * @param string $items
+			 * @param array $args 
+			 * @return string
+			 */
+			$nofollow = apply_filters( 'avf_nav_search_icon_nofollow', 'rel="nofollow"', $items, $args );
 
 	        $items .= '<li id="menu-item-search" class="noMobile menu-item menu-item-search-dropdown menu-item-avia-special">
-							<a href="?s=" rel="nofollow" data-avia-search-tooltip="'.$form.'" '.av_icon_string('search').'><span class="avia_hidden_link_text">'.__('Search','avia_framework').'</span></a>
+							<a href="?s=" '. $nofollow . ' data-avia-search-tooltip="'.$form.'" '.av_icon_string('search').'><span class="avia_hidden_link_text">'.__('Search','avia_framework').'</span></a>
 	        		   </li>';
 	    }
 	    return $items;
@@ -435,11 +446,12 @@ if(!function_exists('avia_title'))
 			'subtitle' 		=> "", //avia_post_meta($id, 'subtitle'),
 			'link'			=> get_permalink($id),
 			'html'			=> "<div class='{class} title_container'><div class='container'>{heading_html}{additions}</div></div>",
-			'heading_html'	=> "<{heading} class='main-title entry-title'>{title}</{heading}>",
+			'heading_html'	=> "<{heading} class='main-title entry-title {heading_class}'>{title}</{heading}>",
 			'class'			=> 'stretch_full container_wrap alternate_color '.avia_is_dark_bg('alternate_color', true),
 			'breadcrumb'	=> true,
 			'additions'		=> "",
-			'heading'		=> 'h1' //headings are set based on this article: http://yoast.com/blog-headings-structure/
+			'heading'		=> 'h1', //headings are set based on this article: http://yoast.com/blog-headings-structure/
+			'heading_class'	=> ''
 		);
 
 		if ( is_tax() || is_category() || is_tag() )
@@ -457,7 +469,13 @@ if(!function_exists('avia_title'))
 		
 		// Parse incomming $args into an array and merge it with $defaults
 		$args = wp_parse_args( $args, $defaults );
-		$args = apply_filters('avf_title_args', $args, $id);
+		
+		/**
+		 * @used_by		config-woocommerce\config.php avia_title_args_woopage()				10
+		 * @since < 4.0
+		 * @return array
+		 */
+		$args = apply_filters( 'avf_title_args', $args, $id );
 
 		//disable breadcrumb if requested
 		if($header_settings['header_title_bar'] == 'title_bar') $args['breadcrumb'] = false;
@@ -480,12 +498,11 @@ if(!function_exists('avia_title'))
 		$html = str_replace('{heading_html}', $heading_html, $html);
 		
 		
-		$html = str_replace('{class}', $class, $html);
-		$html = str_replace('{title}', $title, $html);
-		$html = str_replace('{additions}', $additions, $html);
-		$html = str_replace('{heading}', $heading, $html);
-
-
+		$html = str_replace( '{class}', $class, $html );
+		$html = str_replace( '{title}', $title, $html );
+		$html = str_replace( '{additions}', $additions, $html );
+		$html = str_replace( '{heading}', $heading, $html );
+		$html = str_replace( '{heading_class}', $heading_class, $html );
 
 		if(!empty($avia_config['slide_output']) && !avia_is_dynamic_template($id) && !avia_is_overview())
 		{
@@ -502,65 +519,233 @@ if(!function_exists('avia_title'))
 
 
 
-if(!function_exists('avia_post_nav'))
+if( ! function_exists( 'avia_post_nav' ) )
 {
-	function avia_post_nav($same_category = false, $taxonomy = 'category')
+	/**
+	 * Add navigation link elements for single post pages
+	 * 
+	 * @since < 4.0
+	 * @param boolean $same_category
+	 * @param string $taxonomy
+	 * @return string
+	 */
+	function avia_post_nav( $same_category = false, $taxonomy = 'category' )
 	{
-		global $wp_version;
-	        $settings = array();
-	        $settings['same_category'] = $same_category;
-	        $settings['excluded_terms'] = '';
-			$settings['wpversion'] = $wp_version;
-        
-		//dont display if a fullscreen slider is available since they overlap 
-		if((class_exists('avia_sc_layerslider') && !empty(avia_sc_layerslider::$slide_count)) || 
-			class_exists('avia_sc_slider_full') && !empty(avia_sc_slider_full::$slide_count) ) $settings['is_fullwidth'] = true;
-
+		global $post, $wp_version;
+		
+		/**
+		 * Create a settings array to allow filtering and change behaviour
+		 */
+		$settings = array();
+		
+		$settings['disable_post_nav_option'] = avia_get_option('disable_post_nav');
+		$settings['skip_output'] = ! is_singular() || 'disable_post_nav' == $settings['disable_post_nav_option'];
+		$settings['loop_post_nav'] = 'loop_post_nav' == $settings['disable_post_nav_option'];
+				
+		$settings['same_category'] = $same_category;
+		$settings['excluded_terms'] = '';
+		$settings['wpversion'] = $wp_version;
 		$settings['type'] = get_post_type();
-		$settings['taxonomy'] = ($settings['type'] == 'portfolio') ? 'portfolio_entries' : $taxonomy;
-
-		if(!is_singular() || is_post_type_hierarchical($settings['type'])) $settings['is_hierarchical'] = true;
-		if($settings['type'] === 'topic' || $settings['type'] === 'reply') $settings['is_bbpress'] = true;
-
-	        $settings = apply_filters('avia_post_nav_settings', $settings);
-	        if(!empty($settings['is_bbpress']) || !empty($settings['is_hierarchical']) || !empty($settings['is_fullwidth'])) return;
-	
-	        if(version_compare($settings['wpversion'], '3.8', '>=' ))
-	        {
-	            $entries['prev'] = get_previous_post($settings['same_category'], $settings['excluded_terms'], $settings['taxonomy']);
-	            $entries['next'] = get_next_post($settings['same_category'], $settings['excluded_terms'], $settings['taxonomy']);
-	        }
-	        else
-	        {
-	            $entries['prev'] = get_previous_post($settings['same_category']);
-	            $entries['next'] = get_next_post($settings['same_category']);
-	        }
-	        
-		$entries = apply_filters('avia_post_nav_entries', $entries, $settings);
-        $output = "";
-
-
-		foreach ($entries as $key => $entry)
+		$settings['taxonomy'] = ( $settings['type'] == 'portfolio' ) ? 'portfolio_entries' : $taxonomy;
+		
+		/**
+		 * Don't display if a fullscreen slider is available since they overlap
+		 */
+		$settings['is_fullwidth'] = false;
+		if( ( class_exists( 'avia_sc_layerslider' ) && ! empty( avia_sc_layerslider::$slide_count ) ) || 
+			( class_exists( 'avia_sc_slider_full' ) && ! empty( avia_sc_slider_full::$slide_count ) )  )
 		{
-            if(empty($entry)) continue;
-			$the_title 	= isset($entry->av_custom_title) ? $entry->av_custom_title : avia_backend_truncate(get_the_title($entry->ID),75," ");
-			$link 		= isset($entry->av_custom_link)  ? $entry->av_custom_link  : get_permalink($entry->ID);
-			$image 		= isset($entry->av_custom_image) ? $entry->av_custom_image : get_the_post_thumbnail($entry->ID, 'thumbnail');
-			
-            $tc1   = $tc2 = "";
-            $class = $image ? "with-image" : "without-image";
-
-            $output .= "<a class='avia-post-nav avia-post-{$key} {$class}' href='{$link}' >";
-		    $output .= "    <span class='label iconfont' ".av_icon_string($key)."></span>";
-		    $output .= "    <span class='entry-info-wrap'>";
-		    $output .= "        <span class='entry-info'>";
-		    $tc1     = "            <span class='entry-title'>{$the_title}</span>";
-if($image)  $tc2     = "            <span class='entry-image'>{$image}</span>";
-            $output .= $key == 'prev' ?  $tc1.$tc2 : $tc2.$tc1;
-            $output .= "        </span>";
-            $output .= "    </span>";
-		    $output .= "</a>";
+			 $settings['is_fullwidth'] = true;
 		}
+		
+		$settings['is_hierarchical'] = is_post_type_hierarchical( $settings['type'] );
+		
+		/**
+		 * Check if we need to skip output
+		 */
+		if( ! $settings['skip_output'] )
+		{
+			$settings['skip_output'] = $settings['is_hierarchical'] || $settings['is_fullwidth'];
+		}
+		
+		/**
+		 * Backwards compatibility - next 2 lines will be removed in a future version
+		 */
+		$settings = apply_filters_deprecated( 'avia_post_nav_settings', array( $settings ), '4.5.6', 'avf_post_nav_settings', __( 'Return values handling has changed', 'avia_framework' ) );
+		$settings['skip_output'] = $settings['skip_output'] || ! empty( $settings['is_hierarchical'] ) || ! empty( $settings['is_fullwidth'] );
+		
+		
+		/**
+		 * $settings['skip_output'] = true if you want to skip output
+		 * $settings['same_category'] = true|false
+		 * $settings['excluded_terms'] = array|comma speerated string of id's
+		 * 
+		 * @used_by			config-bbpress\config.php  avia_bbpress_avf_post_nav_settings		10
+		 * @since 4.5.6
+		 * @return array
+		 */
+		$settings = apply_filters( 'avf_post_nav_settings', $settings );
+			
+		if( true === $settings['skip_output'] )
+		{
+			return '';
+		}
+			
+		if(version_compare( $settings['wpversion'], '3.8', '>=' ) )
+		{
+			$entries['prev'] = get_previous_post( $settings['same_category'], $settings['excluded_terms'], $settings['taxonomy'] );
+			$entries['next'] = get_next_post( $settings['same_category'], $settings['excluded_terms'], $settings['taxonomy'] );
+		}
+		else
+		{
+			$entries['prev'] = get_previous_post( $settings['same_category'] );
+			$entries['next'] = get_next_post( $settings['same_category'] );
+		}
+		
+		$queried_entries = $entries;
+		if( true === $settings['loop_post_nav'] && ( ! $entries['prev'] instanceof WP_Post || ! $entries['next'] instanceof WP_Post ) )
+		{
+			$order = ! $entries['prev'] instanceof WP_Post ? 'DESC' : 'ASC';
+			$args = array(
+						'post_type'			=> $settings['type'],
+						'post_status'		=> 'publish',
+						'posts_per_page'	=> 1,
+						'orderby'			=> array( 'post_date' => $order, 'ID' => $order )
+					);
+			
+			
+			$tax_query = array();
+			
+			if( $settings['same_category'] )
+			{
+				$ids_in = array();
+				$terms = get_the_terms( $post, $settings['taxonomy'] );
+				if( is_array( $terms ) && ! empty( $terms ) )
+				{
+					foreach( $terms as $term )
+					{
+						$ids_in[] = $term->term_id;
+					}
+				}
+				
+				if( ! empty( $ids_in ) )
+				{
+					$tax_query[] = array(
+											'taxonomy'	=> $settings['taxonomy'],
+											'field'		=> 'term_id',
+											'terms'		=> $ids_in,
+											'operator'	=> 'IN',
+									);
+				}
+			}
+			
+			if( ! empty( $settings['excluded_terms'] ) )
+			{
+				$ids_not_in = array();
+				if( is_array( $settings['excluded_terms'] ) )
+				{
+					$ids_not_in = $settings['excluded_terms'];
+				}
+				else
+				{
+					$ids_not_in = explode( ',', $settings['excluded_terms'] );
+				}
+				
+				if( ! empty( $ids_not_in ) )
+				{
+					$tax_query[] = array(
+											'taxonomy'	=> $settings['taxonomy'],
+											'field'		=> 'term_id',
+											'terms'		=> $ids_not_in,
+											'operator'	=> 'NOT IN',
+									);
+				}
+			}
+			
+			if( count( $tax_query ) > 1 )
+			{
+				$tax_query['relation'] = 'AND';
+			}
+			
+			if( count( $tax_query ) >= 1 )
+			{
+				$args['tax_query'] = $tax_query;
+			}
+			
+			/**
+			 * Allows e.g. to change sort order of posts (see WP filter "get_{$adjacent}_post_sort") in get_adjacent_post()
+			 * 
+			 * @since 4.5.6.2
+			 * @param array $args
+			 * @param array $settings
+			 * @return array
+			 */
+			$args = apply_filters( 'avf_post_nav_loop_args', $args, $settings );
+			
+			$looped = new WP_Query( $args );
+			if( $looped->post_count >= 1 )
+			{
+				if( ! $entries['prev'] instanceof WP_Post )
+				{
+					$entries['prev'] = $looped->posts[0];
+				}
+				else
+				{
+					$entries['next'] = $looped->posts[0];
+				}
+			}
+		}
+		
+		/**
+		 * Backwards comp. only, will be removed in future
+		 * @since < 4.0
+		 * @added 4.5.6
+		 */
+		$entries = apply_filters_deprecated( 'avia_post_nav_entries', array( $entries, $settings, $queried_entries ), '4.5.6', 'avf_post_nav_entries', __( 'Filter name has changed', 'avia_framework' ) );
+
+		/**
+		 * @used_by		config-events-calendar\config.php avia_events_custom_post_nav()			10
+		 * 
+		 * @since 4.5.6
+		 * @return array
+		 */
+		$entries = apply_filters( 'avf_post_nav_entries', $entries, $settings, $queried_entries );
+		
+		
+		$output = '';
+
+		foreach( $entries as $key => $entry )
+		{
+			if( empty( $entry ) ) 
+			{
+				continue;
+			}
+			
+			$the_title 	= isset($entry->av_custom_title) ? $entry->av_custom_title : avia_backend_truncate(get_the_title( $entry->ID), 75, ' ' );
+			$link 		= isset($entry->av_custom_link)  ? $entry->av_custom_link  : get_permalink( $entry->ID );
+			$image 		= isset($entry->av_custom_image) ? $entry->av_custom_image : get_the_post_thumbnail( $entry->ID, 'thumbnail' );
+			
+			$tc1   = $tc2 = '';
+			$class = $image ? 'with-image' : 'without-image';
+
+			$output .= "<a class='avia-post-nav avia-post-{$key} {$class}' href='{$link}' >";
+			$output .= "    <span class='label iconfont' " . av_icon_string( $key ) . "></span>";
+			$output .= "    <span class='entry-info-wrap'>";
+			$output .= "        <span class='entry-info'>";
+			
+			$tc1     = "            <span class='entry-title'>{$the_title}</span>";
+			if( $image )
+			{ 
+				$tc2 = "            <span class='entry-image'>{$image}</span>";
+			}
+			
+			$output .= $key == 'prev' ?  $tc1 . $tc2 : $tc2 . $tc1;
+
+			$output .= "        </span>";
+			$output .= "    </span>";
+			$output .= "</a>";
+		}
+		
 		return $output;
 	}
 }
@@ -933,7 +1118,6 @@ if(!function_exists('avia_header_setting_sidebar'))
 								'bottom_menu'	=> false,
 								'header_style' 	=> '',
 								'menu_display' 	=> '',
-								'alternate_menu'	=> '',
 								'submenu_clone'		=> 'av-submenu-noclone',
 							  );
 		
@@ -1295,49 +1479,65 @@ if(!function_exists('avia_add_compat_header'))
 }
 
 
-/* 
-Add a checkbox to the featured image metabox 
-*/
-if(!function_exists('avia_theme_featured_image_meta'))
-{
-	add_filter( 'admin_post_thumbnail_html', 'avia_theme_featured_image_meta');
-	
-	function avia_theme_featured_image_meta( $content ) 
-	{
-		global $post, $post_type;
-	
-		if($post_type == "post")
+if( ! function_exists( 'avia_add_hide_featured_image_select' ) )
+{	
+	/**
+	 * Add a selectbox to hide featured image on single post
+	 * 
+	 * @param array $elements
+	 * @return array
+	 */
+	function avia_add_hide_featured_image_select( array $elements )
+	{	
+		if( ! is_admin() || ! function_exists( 'get_current_screen' ) )
 		{
-		    $text = __( "Don't display image on single post", 'avia_framework' );
-		    $id = '_avia_hide_featured_image';
-		    $value = esc_attr( get_post_meta( $post->ID, $id, true ) );
-		    $selected = !empty($value) ? "checked='checked'" : "";
-		    
-		    $label = '</div><div class="av-meta-extra-inside"><label for="' . $id . '" class="selectit"><input '.$selected.' name="' . $id . '" type="checkbox" id="' . $id . '" value="1" > ' . $text .'</label>';
-		    return $content .= $label;
+			return $elements;
 		}
 		
-		return $content;
-	}
-}
+		$screen = get_current_screen();
+		if( ! $screen instanceof WP_Screen )
+		{
+			return $elements;
+		}
 
-/* 
-Make sure the checkbox above is saved properly 
-*/
-if(!function_exists('avia_add_feature_image_checkbox'))
-{	
-	add_filter( 'avf_builder_elements', 'avia_add_feature_image_checkbox');
-
-	function avia_add_feature_image_checkbox($elements)
-	{	
-			$elements[] =  array(
-		        "slug"  => "layout",
-		        "id"    => "_avia_hide_featured_image",
-		        "type"  => "fake",
-		    );
+		$hide_pt = apply_filters( 'avf_display_featured_image_posttypes', array( 'post', 'portfolio' ) );
+		
+		if( ! in_array( $screen->post_type, $hide_pt ) )
+		{
+			return $elements;
+		}
+		
+		switch( $screen->post_type )
+		{
+			case 'post':
+				$desc = __( 'Select to display featured image for a single post entry.', 'avia_framework' );
+				break;
+			case 'portfolio':
+				$desc = __( 'Select to display featured image for a single portfolio entry.', 'avia_framework' );
+				break;
+			default:
+				$desc = apply_filters( 'avf_display_featured_image_desc', __( 'Select to display featured image for a single entry.', 'avia_framework' ) );
+				break;
+		}
+		
+		$elements[] = array(
+						'slug'		=> 'layout',
+						'name'		=> __( 'Featured Image', 'avia_framework' ),
+						'desc'		=> $desc,
+						'id'		=> '_avia_hide_featured_image',
+						'type'		=> 'select',
+						'std'		=> '',
+						'class'		=> 'avia-style',
+						'subtype'	=> array( 
+											__( 'Show on single entry', 'avia_framework' ) => '',
+											__( 'Hide on single entry', 'avia_framework' ) => '1'
+										)
+					);
 	   
 		return $elements;
 	}
+	
+	add_filter( 'avf_builder_elements', 'avia_add_hide_featured_image_select', 10, 1 );
 }
 
 if(!function_exists('avia_active_caching'))
@@ -1528,6 +1728,7 @@ if(!function_exists('avia_generate_stylesheet'))
 	function avia_generate_stylesheet($options = false)
 	{
 		global $avia;
+		
 		$safe_name = avia_backend_safe_string($avia->base_data['prefix']);
 		$safe_name = apply_filters('avf_dynamic_stylesheet_filename', $safe_name);
 
@@ -1545,7 +1746,7 @@ if(!function_exists('avia_generate_stylesheet'))
 	    $isdir = avia_backend_create_folder($stylesheet_dir);
 
 	    /*
-	    * directory could not be created (WP upload folder not write able)
+	    * directory could not be created (WP upload folder not writeable)
 	    * @todo save error in db and output error message for user.
 	    * @todo maybe add mkdirfix: http://php.net/manual/de/function.mkdir.php
 	    */

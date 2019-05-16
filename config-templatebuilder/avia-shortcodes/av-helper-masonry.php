@@ -54,37 +54,43 @@ if ( ! class_exists( 'avia_masonry' ) )
 			$this->loop = array();
 			$this->screen_options = AviaHelper::av_mobile_sizes( $atts );
 			
-			$this->atts = shortcode_atts(array(	'ids'	=> false,
-												'action'=> false,
-												'link' 	=> 'category',
-												'post_type'=> get_post_types(),
-												'items' => 24,
-												'size'	=> 'fixed',
-												'gap'	=> '1px',
-												'overlay_fx' 		=> 'active',
-                                                'animation' 		=> 'active',
-												'offset'			=> 0,
-												'container_links'	=> true,
-												'container_class'	=> "",
-												'paginate'			=> 'paginate',
-												'caption_elements' 	=> 'title excerpt',
-												'caption_display' 	=> 'always',
-												'caption_styling'	=> '',
-												'wc_prod_visible'	=> '',
-												'prod_order_by'		=> '',
-												'prod_order'		=> '',
-												'sort'				=> 'no',
-												'columns'			=> 'automatic',
-												'auto_ratio' 		=> 1.7, //equals a 16:9 ratio
-												'set_breadcrumb' 	=> true, //no shortcode option for this, modifies the breadcrumb nav, must be false on taxonomy overview
-												'custom_markup'		=> '',
-												'query_orderby' 	=> 'date',
-		                                 		'query_order' 		=> 'DESC',
-		                                 		'color'				=> '',
-		                                 		'custom_bg'			=> '',
-                                                'custom_class'	    => '',
-		                                 		'orientation'		=> '',
-		                                 		), $atts, 'av_masonry_entries');
+			$this->atts = shortcode_atts( array(	
+												'ids'					=> false,
+												'action'				=> false,
+												'link'					=> 'category',
+												'post_type'				=> get_post_types(),
+												'items'					=> 24,
+												'size'					=> 'fixed',
+												'gap'					=> '1px',
+												'overlay_fx'			=> 'active',
+												'animation'				=> 'active',
+												'offset'				=> 0,
+												'container_links'		=> true,
+												'container_class'		=> "",
+												'paginate'				=> 'none',				//	'pagination' | 'load_more' | 'none'
+												'caption_elements'		=> 'title excerpt',
+												'caption_display'		=> 'always',
+												'caption_styling'		=> '',
+												'wc_prod_visible'		=> '',
+												'prod_order_by'			=> '',
+												'prod_order'			=> '',
+												'sort'					=> 'no',
+												'columns'				=> 'automatic',
+												'auto_ratio'			=> 1.7, //equals a 16:9 ratio
+												'set_breadcrumb'		=> true, //no shortcode option for this, modifies the breadcrumb nav, must be false on taxonomy overview
+												'custom_markup'			=> '',
+												'query_orderby'			=> 'date',
+												'query_order'			=> 'DESC',
+												'color'					=> '',
+												'custom_bg'				=> '',
+												'custom_class'			=> '',
+												'orientation'			=> '',
+												'date_filter'			=> '',	
+												'date_filter_start'		=> '',
+												'date_filter_end'		=> '',
+												'date_filter_format'	=> 'yy/mm/dd',		//	'yy/mm/dd' | 'dd-mm-yy'	| yyyymmdd
+
+		                                 	), $atts, 'av_masonry_entries' );
 		 	
 		 	
 		 	if($this->atts['caption_elements'] == 'none')
@@ -107,37 +113,43 @@ if ( ! class_exists( 'avia_masonry' ) )
 			unset( $this->screen_options );
 		}
 		
-		
-		//ajax function to load additional items
-		static function load_more()
+
+		/**
+		 * Ajax callback function to load additional items
+		 * 
+		 * @since < 4.0
+		 */
+		static public function load_more()
 		{
-			if(check_ajax_referer('av-masonry-nonce', 'avno'));
+			if( check_ajax_referer( 'av-masonry-nonce', 'avno' ) );
 			
 			//increase the post items by one to fetch an additional item. this item is later removed by the javascript but it tells the script if there are more items to load or not
-			$_POST['items'] = empty($_POST['items']) ? 1 : $_POST['items'] + 1;
+			$_POST['items'] = empty( $_POST['items'] ) ? 1 : $_POST['items'] + 1;
 		
-			$masonry  	= new avia_masonry($_POST);
+			$masonry  	= new avia_masonry( $_POST );
 			$ajax 		= true;
 			
-			if(!empty($_POST['ids']))
+			if( ! empty($_POST['ids'] ) )
 			{
-				$masonry->query_entries_by_id(array(), $ajax);
+				$masonry->query_entries_by_id( array(), $ajax );
 			}
 			else
 			{
 				$masonry->extract_terms();
-				$masonry->query_entries(array(), $ajax);
+				$masonry->query_entries( array(), $ajax );
 			}
 			
-			
-			$output = $masonry->html( );
+			$output = $masonry->html();
 					
-			echo '{av-masonry-loaded}'.$output;
+			echo '{av-masonry-loaded}' . $output;
 			exit();
 		}
 		
-		
-		function extract_terms()
+		/**
+		 * 
+		 * @since < 4.0
+		 */
+		public function extract_terms()
 		{
 			if(isset($this->atts['link']))
 			{
@@ -155,7 +167,11 @@ if ( ! class_exists( 'avia_masonry' ) )
 			}
 		}
 		
-		function sort_buttons()
+		/**
+		 * @since < 4.0
+		 * @return string
+		 */
+		protected function sort_buttons()
 		{
 			
 			$term_args = array( 
@@ -185,28 +201,28 @@ if ( ! class_exists( 'avia_masonry' ) )
 			$term_count 		= array();
 			$display_terms 		= is_array($this->atts['categories']) ? $this->atts['categories'] : array_filter(explode(',',$this->atts['categories']));
 
-			foreach ($this->loop as $entry)
+			foreach( $this->loop as $entry )
 			{
-				if($current_item_terms = get_the_terms( $entry['ID'], $this->atts['taxonomy'] ))
+				$current_item_terms = get_the_terms( $entry['ID'], $this->atts['taxonomy'] );
+				
+				if( is_array( $current_item_terms ) && ! empty( $current_item_terms ) )
 				{
-					if(!empty($current_item_terms))
+					foreach( $current_item_terms as $current_item_term )
 					{
-						foreach($current_item_terms as $current_item_term)
+						if(empty($display_terms) || in_array($current_item_term->term_id, $display_terms))
 						{
-							if(empty($display_terms) || in_array($current_item_term->term_id, $display_terms))
+							$current_page_terms[$current_item_term->term_id] = $current_item_term->term_id;
+
+							if(!isset($term_count[$current_item_term->term_id] ))
 							{
-								$current_page_terms[$current_item_term->term_id] = $current_item_term->term_id;
-
-								if(!isset($term_count[$current_item_term->term_id] ))
-								{
-									$term_count[$current_item_term->term_id] = 0;
-								}
-
-								$term_count[$current_item_term->term_id] ++;
+								$term_count[$current_item_term->term_id] = 0;
 							}
+
+							$term_count[$current_item_term->term_id] ++;
 						}
 					}
 				}
+				
 			}
 			
 			
@@ -256,22 +272,26 @@ if ( ! class_exists( 'avia_masonry' ) )
 			}
 			
 			return $output;
-
-			
 		}
 		
-		//get the categories for each post and create a string that serves as classes so the javascript can sort by those classes
-		function sort_array($the_id)
+		/**
+		 * get the categories for each post and create a string that serves as classes so the javascript can sort by those classes
+		 * 
+		 * @since < 4.0
+		 * @param int|WP_Post $the_id
+		 * @return string
+		 */
+		protected function sort_array( $the_id )
 		{
-			$sort_classes 	= array("all_sort");
-			$item_terms 	= get_the_terms( $the_id, $this->atts['taxonomy']);
+			$sort_classes 	= array( 'all_sort' );
+			$item_terms 	= get_the_terms( $the_id, $this->atts['taxonomy'] );
 
-			if(is_object($item_terms) || is_array($item_terms))
+			if( is_array( $item_terms ) )
 			{
 				foreach ($item_terms as $term)
 				{
-					$term->slug = str_replace('%', '', $term->slug);
-					$sort_classes[] = $term->slug.'_sort ';
+					$term->slug = str_replace( '%', '', $term->slug );
+					$sort_classes[] = $term->slug . '_sort ';
 				}
 			}
 
@@ -279,12 +299,18 @@ if ( ! class_exists( 'avia_masonry' ) )
 		}
 
 		
-		
-		function html()
+		/**
+		 * @since < 4.0
+		 * @return string
+		 */
+		public function html()
 		{
-			if(empty($this->loop)) return;
+			if( empty( $this->loop ) ) 
+			{
+				return '';
+			}
 			
-			extract($this->screen_options); //return $av_font_classes, $av_title_font_classes, $av_display_classes and $av_column_classes
+			extract( $this->screen_options ); //return $av_font_classes, $av_title_font_classes, $av_display_classes and $av_column_classes
 			
 			$output 	= "";
 			$items		= "";
@@ -329,7 +355,7 @@ if ( ! class_exists( 'avia_masonry' ) )
 			$output .= "<div class='av-masonry-container isotope av-js-disabled ' >";
 			$all_sorts  = array();
 			$sort_array = array();
-			foreach($this->loop as $entry)
+			foreach( $this->loop as $index => $entry )
 			{
 				$title = '';
 				
@@ -418,9 +444,28 @@ if ( ! class_exists( 'avia_masonry' ) )
 				{
 					$items .=	"<figcaption class='av-inner-masonry-content site-background'><div class='av-inner-masonry-content-pos'><div class='av-inner-masonry-content-pos-content'><div class='avia-arrow'></div>".$text_before;
 					
-					if(strpos($this->atts['caption_elements'], 'title') !== false){
+					if( strpos( $this->atts['caption_elements'], 'title' ) !== false )
+					{
                         $markup = avia_markup_helper(array('context' => 'entry_title','echo'=>false, 'id'=>$entry['ID'], 'custom_markup'=>$this->atts['custom_markup']));
-						$items .=	"<h3 class='av-masonry-entry-title entry-title' {$markup}>{$the_title}</h3>";
+						
+						$default_heading = 'h3';
+						$args = array(
+									'heading'		=> $default_heading,
+									'extra_class'	=> ''
+								);
+						
+						$extra_args = array( $this, $index, $entry );
+
+						/**
+						 * @since 4.5.5
+						 * @return array
+						 */
+						$args = apply_filters( 'avf_customize_heading_settings', $args, __CLASS__, $extra_args );
+
+						$heading = ! empty( $args['heading'] ) ? $args['heading'] : $default_heading;
+						$css = ! empty( $args['extra_class'] ) ? $args['extra_class'] : '';
+						
+						$items .=	"<{$heading} class='av-masonry-entry-title entry-title {$css}' {$markup}>{$the_title}</{$heading}>";
 					}
 
 					if(strpos($this->atts['caption_elements'], 'excerpt') !== false && !empty($content)){
@@ -466,56 +511,93 @@ if ( ! class_exists( 'avia_masonry' ) )
 		}
 		
 				
-		function load_more_button()
+		/**
+		 * 
+		 * @since < 4.0
+		 * @return string
+		 */
+		protected function load_more_button()
 		{
-			$data_string  = AviaHelper::create_data_string($this->atts);
-			$data_string .= " data-avno='".wp_create_nonce( 'av-masonry-nonce' )."'";
+			$data_string  = AviaHelper::create_data_string( $this->atts );
+			$data_string .= " data-avno='" . wp_create_nonce( 'av-masonry-nonce' ) . "'";
+			
 			$output  = "";
-			$output .= 		"<a class='av-masonry-pagination av-masonry-load-more' href='#load-more' {$data_string}>".__('Load more','avia_framework')."</a>";
+			$output .= 		"<a class='av-masonry-pagination av-masonry-load-more' href='#load-more' {$data_string}>" . __( 'Load more', 'avia_framework' ) . "</a>";
 			
 			return $output;
 		}	
 		
-		function ratio_check_by_image_size($attachment)
+		/**
+		 * 
+		 * @since < 4.0
+		 * @param array $attachment
+		 * @return string
+		 */
+		protected function ratio_check_by_image_size( $attachment )
 		{
 			$img_size = ' av-grid-img';
 			
-			if(!empty($attachment[1]) && !empty($attachment[2]))
+			if( ! empty($attachment[1] ) && ! empty( $attachment[2] ) )
 			{
-				if($attachment[1] > $attachment[2]) //landscape
+				if( $attachment[1] > $attachment[2] ) //landscape
 				{
 					//only consider it landscape if its 1.7 times wider than high
-					if($attachment[1] / $attachment[2] > $this->atts['auto_ratio']) $img_size = ' av-landscape-img';
+					if( $attachment[1] / $attachment[2] > $this->atts['auto_ratio'] ) 
+					{
+						$img_size = ' av-landscape-img';
+					}
 				}
 				else //same check with portrait
 				{
-					if($attachment[2] / $attachment[1] > $this->atts['auto_ratio']) $img_size = ' av-portrait-img';
+					if( $attachment[2] / $attachment[1] > $this->atts['auto_ratio'] ) 
+					{
+						$img_size = ' av-portrait-img';
+					}
 				}
 			}
 			
 			return $img_size;
 		}
 		
-		function ratio_check_by_tag($tags)
+		/**
+		 * 
+		 * @since < 4.0
+		 * @param mixed $tags
+		 * @return string
+		 */
+		protected function ratio_check_by_tag( $tags )
 		{
 			$img_size = '';
 			
-			if(is_array($tags))
+			if( is_array( $tags ) )
 			{	
-				$tag_values = apply_filters('avf_ratio_check_by_tag_values', array('portrait' => 'portrait', 'landscape' => 'landscape'));
+				/**
+				 * Gets translated values for given tags
+				 * 
+				 * @since < 4.0
+				 * @used_by			enfold\config-wpml\config.php	avia_translate_check_by_tag_values()
+				 * @return array
+				 */
+				$tag_values = apply_filters( 'avf_ratio_check_by_tag_values', array( 'portrait' => 'portrait', 'landscape' => 'landscape' ) );
 
-				if(in_array($tag_values['portrait'], $tags)) { $img_size .= ' av-portrait-img'; }
-				if(in_array($tag_values['landscape'], $tags)){ $img_size .= ' av-landscape-img'; }
+				if( in_array( $tag_values['portrait'], $tags ) ) { $img_size .= ' av-portrait-img'; }
+				if( in_array( $tag_values['landscape'], $tags ) ){ $img_size .= ' av-landscape-img'; }
 			}
 			
-			if(empty($img_size))  $img_size = ' av-grid-img';
+			if( empty( $img_size ) )  
+			{
+				$img_size .= ' av-grid-img';
+			}
 			
 			return $img_size;
-			
 		}
 		
-		
-		function prepare_loop_from_entries( $ajax = false )
+		/**
+		 * @since < 4.0
+		 * @param boolean $ajax
+		 * @return void
+		 */
+		protected function prepare_loop_from_entries( $ajax = false )
 		{
 			$this->loop = array();
 			if(empty($this->entries) || empty($this->entries->posts)) return;
@@ -681,29 +763,40 @@ if ( ! class_exists( 'avia_masonry' ) )
 			}
 		}
 		
-		
-		//fetch new entries
-		public function query_entries($params = array(), $ajax = false)
+		/**
+		 * Fetch new entries
+		 * 
+		 * @since < 4.0
+		 * @param array $params
+		 * @param boolean $ajax
+		 * @return void
+		 */
+		public function query_entries( $params = array(), $ajax = false )
 		{
 			global $avia_config;
 
-			if(empty($params)) $params = $this->atts;
+			if( empty( $params ) ) 
+			{
+				$params = $this->atts;
+			}
 
-			if(empty($params['custom_query']))
+			if( empty( $params['custom_query'] ) )
             {
 				$query = array();
 				$terms = array();
 				$avialable_terms = array();
 				
-				if(!empty($params['categories']))
+				if( ! empty($params['categories'] ) )
 				{
 					//get the portfolio categories
 					$terms 	= explode(',', $params['categories']);
 				}
 
 				$page = get_query_var( 'paged' ) ? get_query_var( 'paged' ) : get_query_var( 'page' );
-				if(!$page || $params['paginate'] == 'no') $page = 1;
-				
+				if( ! $page || $params['paginate'] == 'none') 
+				{
+					$page = 1;
+				}
 				
 				$term_args = array( 
 								'taxonomy'		=> $params['taxonomy'],
@@ -785,7 +878,11 @@ if ( ! class_exists( 'avia_masonry' ) )
 					$params['offset'] = false;
 				}
 					 
-			
+				$date_query = array();
+				if( 'date_filter' == $params['date_filter'] )
+				{
+					$date_query = AviaHelper::add_date_query( $date_query, $params['date_filter_start'], $params['date_filter_end'], $params['date_filter_format'] );
+				}
 				
 				// Meta query - replaced by Tax query in WC 3.0.0
 				$meta_query = array();
@@ -805,6 +902,7 @@ if ( ! class_exists( 'avia_masonry' ) )
 							
 					$params['query_orderby'] = $ordering_args['orderby'];
 					$params['query_order'] = $ordering_args['order'];
+					$params['meta_key'] = $ordering_args['meta_key'];
 				}
 
 				if( ! empty( $terms ) )
@@ -825,12 +923,16 @@ if ( ! class_exists( 'avia_masonry' ) )
 								'offset'		=>	$params['offset'],
 								'posts_per_page' =>	$params['items'],
 								'meta_query'	=>	$meta_query,
-								'tax_query'		=>	$tax_query
+								'tax_query'		=>	$tax_query,
+								'date_query'	=> $date_query
 							);
 
+				if( ! empty( $params['meta_key'] ) )
+				{
+					$query['meta_key'] = $params['meta_key'];
+				}
 
-
-				if($params['query_orderby'] == 'rand' && isset($_POST['loaded']))
+				if( $params['query_orderby'] == 'rand' && isset( $_POST['loaded'] ) )
 				{
 					$query['post__not_in'] = $_POST['loaded'];
 					$query['offset'] = false;
@@ -847,8 +949,12 @@ if ( ! class_exists( 'avia_masonry' ) )
 			 * @used_by			avia_remove_bbpress_post_type_from_query		10		(bbPress)
 			 *					avia_translate_ids_from_query					10		(WPML)
 			 *					avia_events_modify_recurring_event_query		10		(Tribe Events Pro)
+			 * @since < 4.0
+			 * @param array $query
+			 * @param array $params
+			 * @return array
 			 */
-			$query = apply_filters('avia_masonry_entries_query', $query, $params);
+			$query = apply_filters( 'avia_masonry_entries_query', $query, $params );
 
 			$this->entries = new WP_Query( $query );
 			
@@ -870,17 +976,29 @@ if ( ! class_exists( 'avia_masonry' ) )
 
 		}
 		
-		
-		public function query_entries_by_id($params = array(), $ajax = false)
+		/**
+		 * 
+		 * @since < 4.0
+		 * @param array $params
+		 * @param boolean $ajax
+		 * @return void
+		 */
+		public function query_entries_by_id( $params = array(), $ajax = false )
 		{
 			global $avia_config;
 
-			if(empty($params)) $params = $this->atts;
+			if( empty( $params ) ) 
+			{
+				$params = $this->atts;
+			}
 			
-			$ids = is_array($this->atts['ids']) ? $this->atts['ids'] : array_filter(explode(',',$this->atts['ids']));
+			$ids = is_array( $this->atts['ids'] ) ? $this->atts['ids'] : array_filter( explode( ',', $this->atts['ids'] ) );
 			
 			$page = get_query_var( 'paged' ) ? get_query_var( 'paged' ) : get_query_var( 'page' );
-			if(!$page) $page = 1;
+			if( ! $page || $params['paginate'] == 'none' ) 
+			{
+				$page = 1;
+			}
 			
 			if( $params['offset'] == 0 )
 			{
@@ -888,23 +1006,27 @@ if ( ! class_exists( 'avia_masonry' ) )
 			}
 			
 			$query = array(
-				'post__in' => $ids,
-				'post_status' => 'inherit',
-				'post_type' => 'attachment',
-				'post_mime_type' => 'image',
-				'paged' 	=> $page,
-				'order' => 'ASC',
-				'offset'	=> $params['offset'],
-				'posts_per_page' => $params['items'],
-				'orderby' => 'post__in'
-			);
+							'post__in'			=> $ids,
+							'post_status'		=> 'inherit',
+							'post_type'			=> 'attachment',
+							'post_mime_type'	=> 'image',
+							'paged'				=> $page,
+							'order'				=> 'ASC',
+							'offset'			=> $params['offset'],
+							'posts_per_page'	=> $params['items'],
+							'orderby'			=> 'post__in'
+						);
 			
 			/**
 			 * @used_by			avia_remove_bbpress_post_type_from_query		10		(bbPress)
 			 *					avia_translate_ids_from_query					10		(WPML)
 			 *					avia_events_modify_recurring_event_query		10		(Tribe Events Pro)
+			 * @since < 4.0
+			 * @param array $query
+			 * @param array $params
+			 * @return array
 			 */
-			$query = apply_filters('avia_masonry_entries_query', $query, $params);
+			$query = apply_filters( 'avia_masonry_entries_query', $query, $params );
 
 			$this->entries = new WP_Query( $query );
 			
@@ -917,8 +1039,6 @@ if ( ! class_exists( 'avia_masonry' ) )
 			do_action( 'ava_after_masonry_entries_query' );
 			
 			$this->prepare_loop_from_entries( $ajax );
-			
-			
 		}
 	}
 }

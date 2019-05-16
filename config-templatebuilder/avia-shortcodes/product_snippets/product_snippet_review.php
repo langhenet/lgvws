@@ -7,16 +7,31 @@
 if ( ! defined( 'ABSPATH' ) ) {  exit;  }    // Exit if accessed directly
 
 
-if( !class_exists( 'woocommerce' ) )
+if( ! class_exists( 'woocommerce' ) )
 {
-	add_shortcode('av_product_review', 'avia_please_install_woo');
+	add_shortcode( 'av_product_review', 'avia_please_install_woo' );
 	return;
 }
 
-if ( !class_exists( 'avia_sc_product_review' ) )
+if ( ! class_exists( 'avia_sc_product_review' ) )
 {
 	class avia_sc_product_review extends aviaShortcodeTemplate
 	{
+		/**
+		 * 
+		 * @since 4.5.3
+		 * @param AviaBuilder $builder
+		 */
+		public function __construct( $builder ) 
+		{
+			parent::__construct( $builder );
+			
+			/**
+			 * @hooked      av_comments_on_builder_posts_required		10 
+			 */
+			add_filter( 'comments_open', array( $this, 'handler_wp_comments_open' ), 50, 2 );
+		}
+		
 		/**
 		 * Create the config array for the shortcode button
 		 */
@@ -71,15 +86,18 @@ if ( !class_exists( 'avia_sc_product_review' ) )
 		function shortcode_handler($atts, $content = "", $shortcodename = "", $meta = "")
 		{
 			$output = "";
-			$meta['el_class'];
-			
-			global $woocommerce, $product;
-			if(!is_object($woocommerce) || !is_object($woocommerce->query) || empty($product)) return;
-			
-			if($product->get_review_count('view') != 0) {
-				add_filter('comments_open', __return_true);
+			if( ! isset( $meta['el_class'] ) )
+			{
+				$meta['el_class'] = '';
 			}
 			
+			//	fix for seo plugins which execute the do_shortcode() function before everything is loaded
+			global $product;
+			if( ! function_exists( 'WC' ) || ! function_exists( 'WC' ) || ! WC() instanceof WooCommerce || ! is_object( WC()->query ) || ! $product instanceof WC_Product )
+			{
+				return '';
+			}
+
 			// $product = wc_get_product();
 			$output .= "<div class='av-woo-product-review ".$meta['el_class']."'>";
 			ob_start();
@@ -90,6 +108,29 @@ if ( !class_exists( 'avia_sc_product_review' ) )
 			
 			
 			return $output;
+		}
+		
+		/**
+		 * Resets to status of product
+		 * 
+		 * @since 4.5.3
+		 * @param boolean $open
+		 * @param int $post_id
+		 * @return boolean 
+		 */
+		public function handler_wp_comments_open( $open , $post_id )
+		{
+			if( is_singular() )
+			{
+				$post = get_post( $post_id );
+				
+				if( $post instanceof WP_Post )
+				{
+					$open = ( 'open' == $post->comment_status );
+				}
+			}
+			
+			return $open;
 		}
 	}
 }

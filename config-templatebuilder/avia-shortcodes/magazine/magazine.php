@@ -75,13 +75,32 @@ if ( !class_exists( 'avia_sc_magazine' ))
 						"std" 	=> "category"
 				),
 				
+				array(	
+						'type'			=> 'template',
+						'template_id' 	=> 'date_query',
+					),
+					
 				array(
-						"name" 	=> __("Number of entries", 'avia_framework' ),
-						"desc" 	=> __("How many entries should be displayed?", 'avia_framework' ),
-						"id" 	=> "items",
-						"type" 	=> "select",
-						"std" 	=> "5",
-						"subtype" => AviaHtmlHelper::number_array(1,40,1, array('All'=>'-1'))),
+						'name'		=> __( 'Number of entries per page', 'avia_framework' ),
+						'desc'		=> __( 'How many entries should be displayed?', 'avia_framework' ),
+						'id'		=> 'items',
+						'type'		=> 'select',
+						'std'		=> '5',
+						'subtype'	=> AviaHtmlHelper::number_array( 1, 100, 1, array( 'All' => '-1' ) ) ),
+				
+				array(
+						'name'		=> __( 'Pagination', 'avia_framework' ),
+						'desc'		=> __( 'Should a pagination be displayed to view additional entries? This disables &quot;Display Tabs for each category&quot;.', 'avia_framework' ),
+						'id'		=> 'paginate',
+						'type'		=> 'select',
+						'std'		=> '',
+						'required'	=> array( 'items', 'not', '-1' ),
+						'subtype'	=> array(
+											__( 'Display Pagination', 'avia_framework' )	=> 'pagination',
+											__( 'No Pagination', 'avia_framework' )			=> ''
+										)
+					),
+				
 				
 				array(
                         "name" 	=> __("Offset Number", 'avia_framework' ),
@@ -89,28 +108,29 @@ if ( !class_exists( 'avia_sc_magazine' ))
                         "id" 	=> "offset",
                         "type" 	=> "select",
                         "std" 	=> "0",
-                        "subtype" => AviaHtmlHelper::number_array(1,100,1, array(__('Deactivate offset','avia_framework')=>'0', __('Do not allow duplicate posts on the entire page (set offset automatically)', 'avia_framework' ) =>'no_duplicates'))),
+						'required'	=> array( 'paginate', 'equals', '' ),
+                        "subtype" => AviaHtmlHelper::number_array( 1, 100, 1, array( __( 'Deactivate offset','avia_framework')=>'0', __('Do not allow duplicate posts on the entire page (set offset automatically)', 'avia_framework' ) =>'no_duplicates'))),
 
 
 				
 				array(	
-						"name" 	=> __("Display Tabs for each category selected above?", 'avia_framework' ),
-						"desc" 	=> __("If checked and you have selected more than one taxonomy above, a tab will be displayed for each of them", 'avia_framework' ) ."</small>" ,
-						"id" 	=> "tabs",
-						"std" 	=> "true",
-						"type" 	=> "checkbox"),
+						'name' 	=> __( 'Display Tabs for each category selected above?', 'avia_framework' ),
+						'desc' 	=> __( 'If checked and you have selected more than one taxonomy above, a tab will be displayed for each of them. Will be ignored when using Pagination.', 'avia_framework' ),
+						'id' 	=> 'tabs',
+						'std' 	=> 'true',
+						'type' 	=> 'checkbox' ),
 				
 				
 				array(	
 						"name" 	=> __("Display Thumbnails?", 'avia_framework' ),
-						"desc" 	=> __("If checked all entries that got a feature image will show it", 'avia_framework' ) ."</small>" ,
+						"desc" 	=> __("If checked all entries that got a feature image will show it", 'avia_framework' ),
 						"id" 	=> "thumbnails",
 						"std" 	=> "true",
 						"type" 	=> "checkbox"),
 				
 				array(	
 						"name" 	=> __("Display Element Heading?", 'avia_framework' ),
-						"desc" 	=> __("If checked you can enter a title with link for this element", 'avia_framework' ) ."</small>" ,
+						"desc" 	=> __("If checked you can enter a title with link for this element", 'avia_framework' ),
 						"id" 	=> "heading_active",
 						"std" 	=> "",
 						"type" 	=> "checkbox"),
@@ -307,13 +327,13 @@ if ( !class_exists( 'avia_sc_magazine' ))
 		 * @param string $shortcodename the shortcode found, when == callback name
 		 * @return string $output returns the modified html string
 		 */
-		function shortcode_handler($atts, $content = "", $shortcodename = "", $meta = "")
+		function shortcode_handler( $atts, $content = "", $shortcodename = "", $meta = "" )
 		{
 			
 			$atts['class'] = $meta['el_class'];
 			$atts['custom_markup'] = $meta['custom_markup'];
 
-			$mag = new avia_magazine($atts);
+			$mag = new avia_magazine( $atts );
 			$mag -> query_entries();
 			return $mag->html();
 			
@@ -326,22 +346,49 @@ if ( !class_exists( 'avia_sc_magazine' ))
 
 
 
-if ( !class_exists( 'avia_magazine' ) )
+if ( ! class_exists( 'avia_magazine' ) )
 {
 	class avia_magazine
 	{
-		static  $magazine = 0;
+		/**
+		 * @since < 4.0
+		 * @var int 
+		 */
+		static protected $magazine = 0;
+		
+		/**
+		 * @since < 4.0
+		 * @var array 
+		 */
 		protected $atts;
+		
+		/**
+		 * @since < 4.0
+		 * @var WP_Query 
+		 */
 		protected $entries;
 		
-		function __construct($atts = array())
+		/**
+		 * @since < 4.5.6
+		 * @var array 
+		 */
+		protected $screen_options;
+
+
+		/**
+		 * @since < 4.0
+		 * @param array $atts
+		 */
+		public function __construct( $atts = array() )
 		{	
-			$this->screen_options = AviaHelper::av_mobile_sizes($atts);
+			$this->entries = null;
+			$this->screen_options = AviaHelper::av_mobile_sizes( $atts );
 			
 			self::$magazine += 1;
 			$this->atts = shortcode_atts(array(	'class'					=> '',
 												'custom_markup' 		=> "",
 												'items' 				=> '16',
+												'paginate'				=> '',
 												'tabs' 					=> false,
 												'thumbnails'			=> true,
 												'heading_active'		=> false,
@@ -355,11 +402,24 @@ if ( !class_exists( 'avia_magazine' ) )
 		                                 		'link'					=> '',
 		                                 		'categories'			=> array(),
 		                                 		'extra_categories'		=> array(),
-							   	'post_type'			=> array(),
+												'post_type'				=> array(),
 		                                 		'offset'				=> 0,
-		                                 		'image_size'			=> array( 'small'=> 'thumbnail', 'big' => 'magazine')
+		                                 		'image_size'			=> array( 'small'=> 'thumbnail', 'big' => 'magazine'),
+												'date_filter'			=> '',	
+												'date_filter_start'		=> '',
+												'date_filter_end'		=> '',
+												'date_filter_format'	=> 'yy/mm/dd',		//	'yy/mm/dd' | 'dd-mm-yy'	| yyyymmdd
 		                                 		
-		                                 		), $atts, 'av_magazine');
+		                                 		), $atts, 'av_magazine' );
+			
+			/**
+			 * When pagination, tabs are not possible
+			 */
+			if( ! empty( $this->atts['paginate'] ) )
+			{
+				$this->atts['tabs'] = false;
+				$this->atts['offset'] = 0;
+			}
 
 			// fetch the taxonomy and the taxonomy ids
 		    $this->extract_terms();                             		
@@ -382,7 +442,22 @@ if ( !class_exists( 'avia_magazine' ) )
 		    $this->atts['top_bar'] = !empty($this->atts['heading']) || !empty($this->atts['tabs'])  ? "av-magazine-top-bar-active" : "";
 		}
 		
-		function extract_terms()
+		/**
+		 * 
+		 * @since 4.5.6
+		 */
+		public function __destruct() 
+		{
+			unset( $this->screen_options );
+			unset( $this->atts );
+			unset( $this->entries );
+		}
+		
+		/**
+		 * 
+		 * @since < 4.0
+		 */
+		protected function extract_terms()
 		{
 			if(isset($this->atts['link']))
 			{
@@ -400,7 +475,12 @@ if ( !class_exists( 'avia_magazine' ) )
 			}
 		}
 		
-		function sort_buttons()
+		/**
+		 * 
+		 * @since < 4.0
+		 * @return string
+		 */
+		protected function sort_buttons()
 		{
 			$term_args = array( 
 								'taxonomy'		=> $this->atts['taxonomy'],
@@ -453,18 +533,26 @@ if ( !class_exists( 'avia_magazine' ) )
 			if(count($this->atts['extra_categories']) <= 1) return "";
 			
 			return $output;
-		
-		
 		}
 		
-		//fetch new entries
-		public function query_entries($params = array(), $return = false)
+		/**
+		 * Fetch new entries
+		 * 
+		 * @since < 4.0
+		 * @param array $params
+		 * @param boolean $return
+		 * @return WP_Query
+		 */
+		public function query_entries( $params = array(), $return = false )
 		{
 			global $avia_config;
 
-			if(empty($params)) $params = $this->atts;
+			if( empty( $params ) ) 
+			{
+				$params = $this->atts;
+			}
 
-			if(empty($params['custom_query']))
+			if( empty( $params['custom_query'] ) )
             {
 				$query = array();
 
@@ -475,10 +563,13 @@ if ( !class_exists( 'avia_magazine' ) )
 				}
 
 				$page = get_query_var( 'paged' ) ? get_query_var( 'paged' ) : get_query_var( 'page' );
-				if(!$page ) $page = 1;
+				if( ! $page || $params['paginate'] == '' ) 
+				{
+					$page = 1;
+				}
 
 				//if we find no terms for the taxonomy fetch all taxonomy terms
-				if(empty($terms[0]) || is_null($terms[0]) || $terms[0] === "null")
+				if( empty($terms[0] ) || is_null( $terms[0] ) || $terms[0] === "null" )
 				{
 					$term_args = array( 
 								'taxonomy'		=> $params['taxonomy'],
@@ -507,51 +598,75 @@ if ( !class_exists( 'avia_magazine' ) )
 					}
 				}
 				
-				if($params['offset'] == 'no_duplicates')
+				if( $params['offset'] == 'no_duplicates' )
                 {
                     $params['offset'] = 0;
-                    if(empty($params['ignore_dublicate_rule'])) $no_duplicates = true;
+                    if( empty($params['ignore_duplicate_rule'] ) ) 
+					{
+						$no_duplicates = true;
+					}
                 }
-				
-				
-				
-					if(empty($params['post_type'])) $params['post_type'] = get_post_types();
-					if(is_string($params['post_type'])) $params['post_type'] = explode(',', $params['post_type']);
-									
-					$query = array(	'orderby' 	=> 'date',
-									'order' 	=> 'DESC',
-									'paged' 	=> $page,
-									'post_type' => $params['post_type'],
-									'post__not_in' => (!empty($no_duplicates)) ? $avia_config['posts_on_current_page'] : array(),
-									'offset'	=> $params['offset'],
-									'posts_per_page' => $params['items'],
-									'tax_query' => array( 	array( 	'taxonomy' 	=> $params['taxonomy'],
-																	'field' 	=> 'id',
-																	'terms' 	=> $terms,
-																	'operator' 	=> 'IN')));
-				
 					
-																
-					
+				if( empty( $params['post_type'] ) ) 
+				{
+					$params['post_type'] = get_post_types();
+				}
+				
+				if( is_string( $params['post_type'] ) ) 
+				{
+					$params['post_type'] = explode( ',', $params['post_type'] );
+				}
+				
+				$date_query = array();
+				if( 'date_filter' == $params['date_filter'] )
+				{
+					$date_query = AviaHelper::add_date_query( $date_query, $params['date_filter_start'], $params['date_filter_end'], $params['date_filter_format'] );
+				}
+						
+				$query = array(	
+								'orderby'		=> 'date',
+								'order'			=> 'DESC',
+								'paged'			=> $page,
+								'post_type'		=> $params['post_type'],
+								'post__not_in'	=> ( ! empty($no_duplicates ) ) ? $avia_config['posts_on_current_page'] : array(),
+								'offset'		=> $params['offset'] != 0 ? $params['offset'] : false,
+								'posts_per_page' => $params['items'],
+								'date_query'	=> $date_query,
+								'tax_query'		=> array( array( 	
+																'taxonomy' 	=> $params['taxonomy'],
+																'field' 	=> 'id',
+																'terms' 	=> $terms,
+																'operator' 	=> 'IN'
+																)
+															)
+							);
+
 			}
 			else
 			{
 				$query = $params['custom_query'];
 			}
 
-
-			$query   = apply_filters('avf_magazine_entries_query', $query, $params);
-			$entries = get_posts( $query );
+			/**
+			 * 
+			 * @since < 4.0
+			 * @param array $query
+			 * @param array $params
+			 * @return array
+			 */
+			$query   = apply_filters( 'avf_magazine_entries_query', $query, $params );
 			
-			if(!empty($entries) && empty($params['ignore_dublicate_rule']))
+			$entries = new WP_Query( $query );
+			
+			if( ( $entries->post_count > 0 ) && empty( $params['ignore_duplicate_rule'] ) )
 			{
-				foreach($entries as $entry)
+				foreach( $entries->posts as $entry )
 	            {
 					 $avia_config['posts_on_current_page'][] = $entry->ID;
 	            }
 			}
 			
-			if($return)
+			if( $return )
 			{
 				return $entries;
 			}
@@ -561,7 +676,12 @@ if ( !class_exists( 'avia_magazine' ) )
 			}
 		}
 		
-		function html()
+		/**
+		 * 
+		 * @since < 4.0
+		 * @return string
+		 */
+		public function html()
 		{
 			$output = "";
 			$class	= !empty($this->atts['first_big_pos'])   ? " av-magazine-hero-".$this->atts['first_big_pos'] : "";
@@ -604,33 +724,42 @@ if ( !class_exists( 'avia_magazine' ) )
 			
 			
 			//magazine main loop
-			$output .= $this->magazine_loop($this->entries);
+			$output .= $this->magazine_loop( $this->entries->posts );
 			
 			
 			//magazine sub loops
 			$output .= $this->magazine_sub_loop();
 			
+			//append pagination
+			if( $this->atts['paginate'] == "pagination" && $avia_pagination = avia_pagination( $this->entries->max_num_pages, 'nav' ) )
+			{
+				$output .= "<div class='av-masonry-pagination av-masonry-pagination-{$this->atts['paginate']}'>{$avia_pagination}</div>";
+			}
 			
 			$output .="</div>";
 			return $output;
 		}
 		
-		
-		function magazine_sub_loop()
+		/**
+		 * 
+		 * @since < 4.0
+		 * @return string
+		 */
+		protected function magazine_sub_loop()
 		{
 			$output = "";
 			
-			if(!empty($this->atts['extra_categories']) && count($this->atts['extra_categories']) > 1)
+			if( ! empty($this->atts['extra_categories']) && count( $this->atts['extra_categories'] ) > 1 )
 			{
-				foreach($this->atts['extra_categories'] as $category)
+				foreach( $this->atts['extra_categories'] as $category )
 				{
 					$params = $this->atts;
-					$params['ignore_dublicate_rule'] = true;
+					$params['ignore_duplicate_rule'] = true;
 					$params['categories'] = $category;
 					$params['sort_var'] = $category;		
 					
-					$entries = $this->query_entries($params, true);
-					$output .= $this->magazine_loop($entries, $params);
+					$entries = $this->query_entries( $params, true );
+					$output .= $this->magazine_loop( $entries->posts, $params );
 					
 				}
 			}
@@ -640,8 +769,14 @@ if ( !class_exists( 'avia_magazine' ) )
 		
 		
 		
-		
-		function magazine_loop($entries, $params = array())
+		/**
+		 * 
+		 * @since < 4.0
+		 * @param array $entries		WP_Post objects
+		 * @param array $params
+		 * @return string
+		 */
+		protected function magazine_loop( array $entries, $params = array())
 		{
 			$output = "";
 			$loop 	= 0;
@@ -649,11 +784,11 @@ if ( !class_exists( 'avia_magazine' ) )
 			$html   = !empty($this->atts['first_big_pos'])   ? array("before"=>"<div class='av-magazine-hero first {$grid}'>","after"=>'</div>') : array("before"=>'',"after"=>'');
 			$css 	= empty($params['sort_var']) ? "sort_all" : "av-hidden-mag sort_".$params['sort_var'];
 			
-			if(!empty($entries))
+			if( ! empty( $entries ) )
 			{
 				$output .= "<div class='av-magazine-group {$css}'>";
 			
-				foreach($entries as $entry)
+				foreach( $entries as $entry )
 				{
 					$loop ++;
 					$entry->loop = $loop;
@@ -677,8 +812,14 @@ if ( !class_exists( 'avia_magazine' ) )
 		}
 		
 		
-		
-		function render_entry($entry, $style)
+		/**
+		 * 
+		 * @since < 4.0
+		 * @param WP_Post $entry
+		 * @param string $style
+		 * @return string
+		 */
+		protected function render_entry( WP_Post $entry, $style )
 		{
 				
 			$output			= "";
@@ -752,13 +893,4 @@ if($excerpt)$output .=		"<div class='av-magazine-content entry-content' {$markup
 		}
 	}
 }
-
-
-
-
-
-
-
-
-
 

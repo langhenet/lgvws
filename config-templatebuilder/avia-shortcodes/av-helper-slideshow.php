@@ -548,7 +548,28 @@ if ( !class_exists( 'avia_slideshow' ) )
 					//check if we got a caption
                     $markup_description = avia_markup_helper(array('context' => 'description','echo'=>false, 'id'=>$attachment_id, 'custom_markup'=>$custom_markup));
                     $markup_name = avia_markup_helper(array('context' => 'name','echo'=>false, 'id'=>$attachment_id, 'custom_markup'=>$custom_markup));
-					if(trim($title) != "")   $title 	= "<h2 {$title_styling} class='avia-caption-title {$av_title_font_classes}' $markup_name>".trim(apply_filters('avf_slideshow_title', $title))."</h2>";
+					
+					if( trim( $title ) != '' )   
+					{
+						$default_heading = 'h2';
+						$args = array(
+									'heading'		=> $default_heading,
+									'extra_class'	=> ''
+								);
+						
+						$extra_args = array( $this, $key );
+
+						/**
+						 * @since 4.5.5
+						 * @return array
+						 */
+						$args = apply_filters( 'avf_customize_heading_settings', $args, __CLASS__, $extra_args );
+
+						$heading = ! empty( $args['heading'] ) ? $args['heading'] : $default_heading;
+						$css = ! empty( $args['extra_class'] ) ? $args['extra_class'] : '';
+			
+						$title = "<{$heading} {$title_styling} class='avia-caption-title {$css} {$av_title_font_classes}' $markup_name>" . trim( apply_filters( 'avf_slideshow_title', $title ) ) . "</{$heading}>";
+					}
 					
 					if(is_array($content)) $content = implode(' ',$content); //temp fix for trim() expects string warning until I can actually reproduce the problem
 					if(trim($content) != "") $content 	= "<div class='avia-caption-content {$av_font_classes} {$content_class}' {$markup_description} {$content_styling}>".ShortcodeHelper::avia_apply_autop(ShortcodeHelper::avia_remove_autop(trim($content)))."</div>";

@@ -1,4 +1,5 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) {  exit;  }    // Exit if accessed directly
 
 /**
  *  These functions shows a number of posts related to the currently displayed post.

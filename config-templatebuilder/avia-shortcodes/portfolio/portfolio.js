@@ -19,7 +19,7 @@
 			var the_body		= $('body'),
 				container		= $(this),
 				portfolio_id	= container.data('portfolio-id'),
-				parentContainer	= container.parents('.entry-content-wrapper, .avia-fullwidth-portfolio'),
+				parentContainer	= container.closest('.av-portfolio-grid-sorting-container, .entry-content-wrapper, .avia-fullwidth-portfolio'),
 				filter			= parentContainer.find('.sort_width_container[data-portfolio-id="' + portfolio_id + '"]').find('#js_sort_items').css({visibility:"visible", opacity:0}),
 				links			= filter.find('a'),
 				imgParent		= container.find('.grid-image'),

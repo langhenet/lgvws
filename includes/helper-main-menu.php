@@ -1,4 +1,7 @@
 <?php 
+if ( ! defined( 'ABSPATH' ) ) {  exit;  }    // Exit if accessed directly
+
+
 global $avia_config;
 
 $responsive		= avia_get_option('responsive_active') != "disabled" ? "responsive" : "fixed_layout";

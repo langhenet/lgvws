@@ -1,4 +1,5 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) {  exit;  }    // Exit if accessed directly
 	
 	/**
 	* File was added with version 4.3 and holds functions that are related to compressing/merging/enqueing scripts and styles
@@ -386,26 +387,27 @@ if( ! function_exists( 'av_slideshow_required' ) )
 if( ! function_exists( 'av_comments_on_builder_posts' ) )
 {
 	/**
-	* Checks the entries for the current page for av_video, av_audio, <audio>, <video> and background video elements. 
-	*
-	* @since 4.3
-	* @added_by Kriesi
-	* @param array $assets
-	*/
+	 * Checks the entries for the current page for comment list element
+	 *
+	 * @since 4.3
+	 * @added_by Kriesi
+	 * @param boolean $open
+	 * @param int $post_id
+	 */
 	add_filter( 'comments_open', 'av_comments_on_builder_posts_required', 10, 2 );
 	
 	function av_comments_on_builder_posts_required( $open , $post_id ) 
 	{
-		if($open && is_singular())
+		if( $open && is_singular() )
 		{
 			$post = get_post( $post_id );
 			
-			if('active' === get_post_meta( $post->ID, '_aviaLayoutBuilder_active', true ))
+			if( 'active' === Avia_Builder()->get_alb_builder_status( $post_id ) )
 			{
 				$regex 	= "!\[av_comments_list!";
-				preg_match($regex, $post->post_content, $matches);
+				preg_match( $regex, $post->post_content, $matches );
 				
-				if(!isset($matches[0]))
+				if( ! isset( $matches[0] ) )
 				{
 					$open = false;
 				}

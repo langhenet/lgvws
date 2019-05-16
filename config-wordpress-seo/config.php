@@ -24,9 +24,13 @@ if(is_admin()){ add_action('init', 'avia_wpseo_register_assets'); }
  */
 if(!function_exists('avia_wpseo_deactivate_avia_set_follow'))
 {
-    function avia_wpseo_deactivate_avia_set_follow($meta)
+	/**
+	 * @param string $meta
+	 * @return string
+	 */
+    function avia_wpseo_deactivate_avia_set_follow( $meta )
     {
-        return false;
+        return '';
     }
 
     add_filter('avf_set_follow','avia_wpseo_deactivate_avia_set_follow', 10, 1);
@@ -46,6 +50,86 @@ if(!function_exists('avia_wpseo_change_title_adjustment'))
 
     add_filter('avf_title_tag', 'avia_wpseo_change_title_adjustment', 10, 2);
 }
+
+if( ! function_exists( 'avia_wpseo_pre_get_document_title' ) )
+{
+	/**
+	 * Checks, if we are on an ALB shop page
+	 * 
+	 * @since 4.5.5
+	 * @return boolean
+	 */
+	function avia_wpseo_alb_shop_page()
+	{
+		global $post;
+		
+		if( ! $post instanceof WP_Post || ! class_exists( 'WooCommerce' ) )
+		{
+			return false;
+		}
+		
+		$shop_page = wc_get_page_id( 'shop' );
+		
+		if( $post->ID != $shop_page )
+		{
+			return false;
+		}
+		
+		if( 'active' != Avia_Builder()->get_alb_builder_status( $shop_page ) )
+		{
+			return false;
+		}
+		
+		return true;
+	}
+	
+	/**
+	 * YOAST takes care of title in normal situations.
+	 * Only when WC is active and we have a ALB shop page the title is not recognised correctly (because this is no archive page)
+	 * In that case we simulate this.
+	 * 
+	 * @since 4.5.5
+	 * @param string $title
+	 * @return string
+	 */
+	function avia_wpseo_pre_get_document_title_before( $title )
+	{
+		global $wp_query, $avia_wp_query_archive_state;
+		
+		if( avia_wpseo_alb_shop_page() )
+		{
+			$avia_wp_query_archive_state = $wp_query->is_archive;
+			$wp_query->is_archive = true;
+		}
+		
+		return $title;
+	}
+	
+	/**
+	 * Reset is_archive state
+	 * 
+	 * @since 4.5.5
+	 * @param string $title
+	 * @return string
+	 */
+	function avia_wpseo_pre_get_document_title_after( $title )
+	{
+		global $wp_query, $avia_wp_query_archive_state;
+		
+		if( avia_wpseo_alb_shop_page() )
+		{
+			$wp_query->is_archive = $avia_wp_query_archive_state;
+		}
+		
+		return $title;
+	}
+
+	add_filter( 'pre_get_document_title', 'avia_wpseo_pre_get_document_title_before', 1, 1 );
+	add_filter( 'pre_get_document_title', 'avia_wpseo_pre_get_document_title_after', 99999, 1 );
+}
+
+
+
 
 /*
  * Enable Yoast SEO to index ALB elements that contains images.

@@ -31,9 +31,25 @@ if (have_posts()) :
             <header class="entry-content-header">
                 <?php
                 echo "<span class='search-result-counter {$counterclass}'>{$post_loop_count}</span>";
+				
+				$default_heading = 'h2';
+				$args = array(
+							'heading'		=> $default_heading,
+							'extra_class'	=> ''
+						);
+
+				/**
+				 * @since 4.5.5
+				 * @return array
+				 */
+				$args = apply_filters( 'avf_customize_heading_settings', $args, 'loop_search', array() );
+
+				$heading = ! empty( $args['heading'] ) ? $args['heading'] : $default_heading;
+				$css = ! empty( $args['extra_class'] ) ? $args['extra_class'] : '';
+				
                 //echo the post title
                 $markup = avia_markup_helper(array('context' => 'entry_title','echo'=>false));
-                echo "<h2 class='post-title entry-title'><a title='".the_title_attribute('echo=0')."' href='".get_permalink()."' $markup>".get_the_title()."</a></h2>";
+                echo "<{$heading} class='post-title entry-title {$css}'><a title='".the_title_attribute('echo=0')."' href='".get_permalink()."' $markup>".get_the_title()."</a></{$heading}>";
 
                 ?>
                 <span class='post-meta-infos'>

@@ -120,7 +120,7 @@ if ( !class_exists( 'avia_sc_slider' ) )
 									
 									array(	
 									"name" 	=> __("Video URL", 'avia_framework' ),
-									"desc" 	=> __('Enter the URL to the Video. Currently supported are Youtube, Vimeo and direct linking of web-video files (mp4, webm, ogv)', 'avia_framework' ) .'<br/><br/>'.
+									"desc" 	=> __('Enter the URL to the Video. Currently supported are Youtube (will display additional info like title, share link, related videos, ...), Vimeo and direct linking of web-video files (mp4, webm, ogv)', 'avia_framework' ) .'<br/><br/>'.
 									__('Working examples Youtube & Vimeo:', 'avia_framework' ).'<br/>
 								<strong>https://vimeo.com/1084537</strong><br/> 
 								<strong>https://www.youtube.com/watch?v=5guMumPFBag</strong><br/><br/>',

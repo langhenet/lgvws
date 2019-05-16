@@ -461,11 +461,28 @@ if ( !class_exists( 'avia_sc_mailchimp' ) )
 				$post_id  = function_exists('avia_get_the_id') ? avia_get_the_id() : get_the_ID();
 				$redirect = !empty($on_send) ? AviaHelper::get_url($link) : "";
 				
+				$default_heading = 'h3';
+				$args = array(
+							'heading'		=> $default_heading,
+							'extra_class'	=> ''
+						);
+
+				$extra_args = array( $this, $atts, $content );
+
+				/**
+				 * @since 4.5.5
+				 * @return array
+				 */
+				$args = apply_filters( 'avf_customize_heading_settings', $args, __CLASS__, $extra_args );
+
+				$heading = ! empty( $args['heading'] ) ? $args['heading'] : $default_heading;
+				$css = ! empty( $args['extra_class'] ) ? $args['extra_class'] : '';
+				
 				if(!empty($form_align)) $meta['el_class'] .= " av-centered-form ";
 				
 				$form_args = array(
 					"heading" 				=> "",
-					"success" 				=> "<h3 class='avia-form-success avia-mailchimp-success'>".$sent."</h3>",
+					"success" 				=> "<{$heading} class='avia-form-success avia-mailchimp-success {$css}'>{$sent}</{$heading}>",
 					"submit"  				=> $button,
 					"myemail" 				=> $email,
 					"action"  				=> get_permalink($post_id),

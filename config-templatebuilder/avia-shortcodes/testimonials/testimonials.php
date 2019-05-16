@@ -11,12 +11,100 @@ if ( !class_exists( 'avia_sc_testimonial' ) )
 {
 	class avia_sc_testimonial extends aviaShortcodeTemplate
 	{
-			static $columnClass;
-			static $rows;
-			static $counter;
-			static $columns;
-			static $style;
-			static $grid_style;
+			/**
+			 * @since < 4.0
+			 * @var string 
+			 */
+			static public $columnClass = '';
+			
+			/**
+			 * @since < 4.0
+			 * @var int 
+			 */
+			static public $rows = 0;
+			
+			/**
+			 * @since < 4.0
+			 * @var int 
+			 */
+			static public $counter = 0;
+			
+			/**
+			 * @since < 4.0
+			 * @var int 
+			 */
+			static public $columns = 0;
+			
+			/**
+			 * @since < 4.0
+			 * @var string 
+			 */
+			static public $style = '';
+			
+			/**
+			 * @since < 4.0
+			 * @var string 
+			 */
+			static public $grid_style = '';
+			
+			/**
+			 *
+			 * @since 4.5.5
+			 * @var array 
+			 */
+			protected $screen_options;
+			
+			/**
+			 * @since 4.5.6
+			 * @var string 
+			 */
+			protected $title_styling;
+			
+			/**
+			 * @since 4.5.6
+			 * @var string 
+			 */
+			protected $content_styling;
+			
+			/**
+			 * @since 4.5.6
+			 * @var string 
+			 */
+			protected $content_class;
+			
+			/**
+			 * @since 4.5.6
+			 * @var string 
+			 */
+			protected $subtitle_class;
+
+
+			/**
+			 * 
+			 * @since 4.5.5
+			 * @param AviaBuilder $builder
+			 */
+			public function __construct( $builder ) 
+			{
+				$this->screen_options = array();
+				
+				$this->title_styling 		= '';
+				$this->content_styling 		= '';
+				$this->content_class 		= '';
+				$this->subtitle_class 		= '';
+
+				parent::__construct( $builder );
+			}
+
+			/**
+			 * @since 4.5.5
+			 */
+			public function __destruct() 
+			{
+				parent::__destruct();
+
+				unset( $this->screen_options );
+			}
 
 			/**
 			 * Create the config array for the shortcode button
@@ -319,8 +407,9 @@ array(
 			 */
 			function shortcode_handler($atts, $content = "", $shortcodename = "", $meta = "")
 			{
+				$this->screen_options = AviaHelper::av_mobile_sizes( $atts );
 				
-	        	extract(AviaHelper::av_mobile_sizes($atts)); //return $av_font_classes, $av_title_font_classes and $av_display_classes 
+	        	extract( $this->screen_options ); //return $av_font_classes, $av_title_font_classes and $av_display_classes 
 				
 				$atts =  shortcode_atts(array(
 					
@@ -397,7 +486,7 @@ array(
 
 
 
-				//if we got a slider we only need a single row wrpper
+				//if we got a slider we only need a single row wrapper
 				if($style != "grid") avia_sc_testimonial::$columns = 100000;
 
 				$output .= ShortcodeHelper::avia_remove_autop($content, true);
@@ -432,6 +521,14 @@ array(
 
 			function av_testimonial_single($atts, $content = "", $shortcodename = "")
 			{
+				/**
+				 * Fixes a problem when 3-rd party plugins call nested shortcodes without executing main shortcode  (like YOAST in wpseo-filter-shortcodes)
+				 */
+				if( empty( $this->screen_options ) )
+				{
+					return '';
+				}
+				
 				extract(shortcode_atts(array('src'=> "",  'name'=> "",  'subtitle'=> "",  'link'=> "", 'linktext'=>"", 'custom_markup' =>'' ), $atts, 'av_testimonial_single'));
 
 				$output = "";

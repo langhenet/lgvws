@@ -122,7 +122,7 @@ if ( !class_exists( 'avia_sc_revolutionslider' ) && function_exists('rev_slider_
 				if($meta['index'] == 0) $params['close'] = false;
 				if(!empty($meta['siblings']['prev']['tag']) && in_array($meta['siblings']['prev']['tag'], AviaBuilder::$full_el_no_section )) $params['close'] = false;
 				
-				if($meta['index'] != 0) $params['class'] .= " slider-not-first";
+				if($meta['index'] > 0) $params['class'] .= " slider-not-first";
 				$params['id'] = "layer_slider_".( avia_sc_revolutionslider::$slide_count );
 				
 				

@@ -1,6 +1,7 @@
 <?php
 /**
- * Class that integrates ALB in WP Block editor (since version 5.0), Gutenberg plugin and Classic Editor
+ * Class that integrates ALB in WP Block editor (since version 5.0), Gutenberg plugin and Classic Editor.
+ * It also activates support for theme block editor.
  * 
  * @since 4.4.2
  * @since 4.5.1 integrate WP Block editor
@@ -21,6 +22,19 @@ if( ! $load_gutenberg )
 if ( ! $load_gutenberg ) 
 {
 	return;
+}
+
+/**
+ * @since 4.5.5
+ * @return boolean
+ */
+$block_editor_supported = empty( avia_get_option( 'block_editor_theme_support', '' ) );
+if( true === apply_filters( 'avf_block_editor_theme_support', $block_editor_supported ) )
+{
+	if( is_admin() && ( ! defined( 'DOING_AUTOSAVE' ) || true !== DOING_AUTOSAVE  ) )
+	{
+		require_once trailingslashit( get_template_directory() ) . 'config-gutenberg/class-avia-gutenberg-theme-integration.php';
+	}
 }
 
 if( ! class_exists( 'Avia_Gutenberg' ) )
@@ -136,8 +150,8 @@ if( ! class_exists( 'Avia_Gutenberg' ) )
 		 * @var boolean 
 		 */
 		protected $no_custom_filters;
-
-
+		
+		
 		/**
 		 * Return the instance of this class
 		 * 
@@ -185,7 +199,6 @@ if( ! class_exists( 'Avia_Gutenberg' ) )
 				$this->plugin_allow_switching = get_option( 'classic-editor-allow-users', 'allow' );
 			}
 			
-			
 			/**
 			 * Default link filters - we change them a little to add more information and links to classic editor pages
 			 */
@@ -206,7 +219,7 @@ if( ! class_exists( 'Avia_Gutenberg' ) )
 			add_action( 'init', array( $this, 'handler_wp_register_scripts' ), 10 );
 			add_action( 'admin_enqueue_scripts', array( $this, 'handler_wp_admin_enqueue_scripts' ), 10 );
 			
-			
+
 			/**
 			 * Add metaboxes and content and default timyMCE editor area
 			 */
@@ -223,7 +236,6 @@ if( ! class_exists( 'Avia_Gutenberg' ) )
 			 * Add logic when post are saved or layout is switched
 			 */
 			add_filter( 'avf_before_save_alb_post_data', array( $this, 'handler_before_save_alb_post_data' ), 5, 2 );	//	hook to save post title
-			add_filter( 'avf_in_shortcode_handler_prepare', array( $this, 'handler_avf_in_shortcode_handler_prepare' ), 10 );
 			
 			add_action( 'wp_ajax_avia_gutenberg_autosave_metaboxes', array( $this, 'handler_ajax_avia_gutenberg_autosave_metaboxes' ) );
 			
@@ -238,6 +250,7 @@ if( ! class_exists( 'Avia_Gutenberg' ) )
 				add_filter( 'use_block_editor_for_post', array( $this, 'handler_wp_use_block_editor_for_post'), 9999, 2 );
 				add_filter( 'use_block_editor_for_post_type', array( $this, 'handler_wp_use_block_editor_for_post_type'), 9999, 2 );
 			}
+		
 		}	
 
 		/**
@@ -265,8 +278,8 @@ if( ! class_exists( 'Avia_Gutenberg' ) )
 			
 			$template_url = get_template_directory_uri();
 			
-			wp_register_style( 'avia_gutenberg_css', $template_url.'/config-gutenberg/css/avia_gutenberg.css', array( 'avia-modal-style', 'avia-builder-style' ), $vn );
-			wp_register_script( 'avia_gutenberg_script', $template_url.'/config-gutenberg/js/avia_gutenberg.js' , array( 'avia_builder_js' ), $vn, true );
+			wp_register_style( 'avia_gutenberg_css', $template_url . '/config-gutenberg/css/avia_gutenberg.css', array( 'avia-modal-style', 'avia-builder-style' ), $vn );
+			wp_register_script( 'avia_gutenberg_script', $template_url . '/config-gutenberg/js/avia_gutenberg.js' , array( 'avia_builder_js' ), $vn, true );
 			
 			/**
 			 * Temp. fix for localhost and EDGE (might also be for other browsers) - works on live server
@@ -276,8 +289,7 @@ if( ! class_exists( 'Avia_Gutenberg' ) )
 				$this->fix_wp50_broken_url();
 			}
 		}
-		
-		
+
 		/**
 		 * URL relative path is broken for localhost on Edge browser (might also happen on other browsers) - we replace it with full path
 		 * 
@@ -807,13 +819,20 @@ if( ! class_exists( 'Avia_Gutenberg' ) )
 		 * @return WP_Admin_Bar
 		 */
 		public function handler_wp_admin_bar_menu( WP_Admin_Bar $wp_admin_bar )
-		{
-			
-			if( ! current_user_can( 'manage_options' ) ) 
+		{	
+			if( ! current_user_can( 'manage_options' ) || is_archive() ) 
 			{
 				return;
 			}
 			
+			/**
+			 * Skip info adjustment for "Edit"
+			 * 
+			 * @since 4.5.4
+			 * @return string			'show' | anything else to skip
+			 */
+			$show_info = apply_filters( 'avf_gutenberg_admin_bar_edit_page_info', 'show' );
+
 			/**
 			 * Adjust "Edit Page" link in frontend
 			 */
@@ -843,63 +862,87 @@ if( ! class_exists( 'Avia_Gutenberg' ) )
 
 					if( is_front_page() &&  ( ( $viewed_id == $set_front_id ) || ( '' == $set_front_id ) ) )
 					{
-						if( $this->need_classic_editor_links() )
+						if( 'show' == $show_info )
 						{
-							if( $is_gutenberg )
+							if( $this->need_classic_editor_links() )
 							{
-								$title = $this->has_wp_block_editor ? __( 'Edit Frontpage (Block Editor)', 'avia_framework' ) : __( 'Edit Frontpage (Gutenberg)', 'avia_framework' );
+								if( $is_gutenberg )
+								{
+									$title = $this->has_wp_block_editor ? __( 'Edit Frontpage (Block Editor)', 'avia_framework' ) : __( 'Edit Frontpage (Gutenberg)', 'avia_framework' );
+								}
+								else if( $is_alb )
+								{
+									$title = __( 'Edit Frontpage (Advanced Layout Builder)', 'avia_framework' );
+								}
+								else
+								{
+									$title = __( 'Edit Frontpage (Classic Editor)', 'avia_framework' );
+								}
 							}
-							else if( $is_alb )
+							else 
 							{
-								$title = __( 'Edit Frontpage (Advanced Layout Builder)', 'avia_framework' );
-							}
-							else
-							{
-								$title = __( 'Edit Frontpage (Classic Editor)', 'avia_framework' );
+								$title = $is_alb ? __( 'Edit Frontpage (Advanced Layout Builder)', 'avia_framework' ) : __( 'Edit Frontpage', 'avia_framework' );
 							}
 						}
-						else 
+						else
 						{
-							$title = $is_alb ? __( 'Edit Frontpage (Advanced Layout Builder)', 'avia_framework' ) : __( 'Edit Frontpage', 'avia_framework' );
+							$title = __( 'Edit Frontpage', 'avia_framework' );
 						}
 					}
 					else
 					{
 						$obj = get_post_type_object( $post->post_type );
 						
-						if( $this->need_classic_editor_links() )
+						if( 'show' == $show_info )
 						{
-							if( $is_gutenberg )
+							if( $this->need_classic_editor_links() )
 							{
-								$title = $this->has_wp_block_editor ? sprintf( __( 'Edit %s (Block Editor)', 'avia_framework' ), $obj->labels->singular_name ) : sprintf( __( 'Edit %s (Gutenberg)', 'avia_framework' ), $obj->labels->singular_name );
-							}
-							else if( $is_alb )
-							{
-								$title = sprintf( __( 'Edit %s (Advanced Layout Builder)', 'avia_framework' ), $obj->labels->singular_name );
+								if( $is_gutenberg )
+								{
+									$title = $this->has_wp_block_editor ? sprintf( __( 'Edit %s (Block Editor)', 'avia_framework' ), $obj->labels->singular_name ) : sprintf( __( 'Edit %s (Gutenberg)', 'avia_framework' ), $obj->labels->singular_name );
+								}
+								else if( $is_alb )
+								{
+									$title = sprintf( __( 'Edit %s (Advanced Layout Builder)', 'avia_framework' ), $obj->labels->singular_name );
+								}
+								else
+								{
+									$title = sprintf( __( 'Edit %s (Classic Editor)', 'avia_framework' ), $obj->labels->singular_name );
+								}
 							}
 							else
 							{
-								$title = sprintf( __( 'Edit %s (Classic Editor)', 'avia_framework' ), $obj->labels->singular_name );
+								if( $is_alb )
+								{
+									$title = sprintf( __( 'Edit %s (Advanced Layout Builder)', 'avia_framework' ), $obj->labels->singular_name );
+								}
+								else
+								{
+									$title = sprintf( __( 'Edit %s', 'avia_framework' ), $obj->labels->singular_name );
+								}
 							}
 						}
 						else
 						{
-							if( $is_alb )
-							{
-								$title = sprintf( __( 'Edit %s (Advanced Layout Builder)', 'avia_framework' ), $obj->labels->singular_name );
-							}
-							else
-							{
-								$title = sprintf( __( 'Edit %s', 'avia_framework' ), $obj->labels->singular_name );
-							}
+							$title = sprintf( __( 'Edit %s', 'avia_framework' ), $obj->labels->singular_name );
 						}
 					}
 					
+					/**
+					 * Allow to change WP default behaviour to stay on same tab (also ADA complience).
+					 * 
+					 * @used_by				currently unused
+					 * @since 4.5.4
+					 * @return string			anything different from '' sets value for target (e.g. "_blank")
+					 */
+					$target_edit = apply_filters( 'avf_admin_bar_link_target_frontend', '', 'edit_button_gutenberg' );
+					$meta_target_edit = empty( $target_edit ) ? array() : array( 'target' => $target_edit );
+			
 					$menu = array(
 									'id'	=> 'edit',
 									'title'	=> $title,
 									'href'	=> $edit_url,
-									'meta'	=> array( 'target' => 'blank' )
+									'meta'	=> $meta_target_edit
 								);
 
 					$wp_admin_bar->add_menu( $menu );
@@ -1394,34 +1437,6 @@ if( ! class_exists( 'Avia_Gutenberg' ) )
 		}
 		
 		/**
-		 * WP5.0 uses block API and REST API calls with 'the_content' filter for own post content in backend
-		 * This causes to run our shortcode handlers and produces notices (meta['index'] is undefined because $meta = array('el_class'=>'');)
-		 * 
-		 * @since 4.5.1
-		 * @param array $args
-		 * @return boolean
-		 */
-		public function handler_avf_in_shortcode_handler_prepare( array &$args )
-		{
-			if( 'classic' == $this->requested_editor() )
-			{
-				return $args[0];
-			}
-			
-			if( defined( 'REST_REQUEST' ) && REST_REQUEST )
-			{
-				return false;
-			}
-			
-			if( isset( $_REQUEST['action'] ) && ( 'edit' == $_REQUEST['action'] ) )
-			{
-				return false;
-			}
-			
-			return $args[0];
-		}
-		
-		/**
 		 * Autosave of ALB metabox content. Element manager data are updated to reflect a valid state of the post.
 		 * Postcontent is not modified to avoid a message by block editor.
 		 * 
@@ -1614,7 +1629,7 @@ if( ! class_exists( 'Avia_Gutenberg' ) )
 			 */
 			return apply_filters( 'avf_can_use_block_editor_for_post_type', $new_use_block_editor, $use_block_editor, $post_type );
 		}
-
+		
 	}
 	
 	
@@ -1630,9 +1645,13 @@ if( ! class_exists( 'Avia_Gutenberg' ) )
 	}
 	
 	/**
-	 * Activate class
+	 * Activate classes
 	 */
 	AviaGutenberg();
+	if( function_exists( 'AviaGutenbergThemeIntegration' ) )
+	{
+		AviaGutenbergThemeIntegration();
+	}
 	
 }	//	end ! class_exists( 'Avia_Gutenberg' )
 

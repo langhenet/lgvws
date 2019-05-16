@@ -71,10 +71,17 @@ if ( !class_exists( 'avia_sc_product_meta' ) )
 		function shortcode_handler($atts, $content = "", $shortcodename = "", $meta = "")
 		{
 			$output = "";
-			$meta['el_class'];
+			if( ! isset( $meta['el_class'] ) )
+			{
+				$meta['el_class'] = '';
+			}
 			
-			global $woocommerce, $product;
-			if(!is_object($woocommerce) || !is_object($woocommerce->query) || empty($product)) return;
+			//	fix for seo plugins which execute the do_shortcode() function before everything is loaded
+			global $product;
+			if( ! function_exists( 'WC' ) || ! WC() instanceof WooCommerce || ! is_object( WC()->query ) || ! $product instanceof WC_Product )
+			{
+				return '';
+			}
 			
 			$output .= "<div class='product_meta ".$meta['el_class']."'>";
 

@@ -113,7 +113,7 @@ if ( !class_exists( 'avia_sc_product_upsells' ) )
 		 */
 		function shortcode_handler($atts, $content = "", $shortcodename = "", $meta = "")
 		{
-			global $avia_config, $woocommerce, $product;
+			global $avia_config;
 			
 			extract(shortcode_atts( array(
 										'display'			=>	'upsells related', 
@@ -122,10 +122,17 @@ if ( !class_exists( 'avia_sc_product_upsells' ) )
 									), $atts));
 			
 			$output = "";
+			if( ! isset( $meta['el_class'] ) )
+			{
+				$meta['el_class'] = '';
+			}
 			
-			//	fix for seo plugins which execute the do_shortcode() function before the WooCommerce plugin is loaded
-			if(!is_object($woocommerce) || !is_object($woocommerce->query) || empty($product)) return;
-			
+			//	fix for seo plugins which execute the do_shortcode() function before everything is loaded
+			global $product;
+			if( ! function_exists( 'WC' ) || ! WC() instanceof WooCommerce || ! is_object( WC()->query ) || ! $product instanceof WC_Product )
+			{
+				return '';
+			}
 			
 			//	force to ignore WC default setting - see hooked function avia_wc_product_is_visible
 			switch( $wc_prod_visible )
@@ -142,8 +149,17 @@ if ( !class_exists( 'avia_sc_product_upsells' ) )
 			
 			// $product = wc_get_product();
 			$output .= "<div class='av-woo-product-related-upsells  ".$meta['el_class']."'>";
-			if(strpos($display, 'upsells') !== false) $output .= avia_woocommerce_output_upsells($count,$count);
-			if(strpos($display, 'related') !== false) $output .= avia_woocommerce_output_related_products($count,$count);
+			
+			if( strpos( $display, 'upsells' ) !== false ) 
+			{
+				$output .= avia_woocommerce_output_upsells($count,$count);
+			}
+			
+			if( strpos( $display, 'related' ) !== false ) 
+			{
+				$output .= avia_woocommerce_output_related_products($count,$count);
+			}
+			
 			$output .= "</div>";
 			
 				//	reset

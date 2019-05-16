@@ -351,3 +351,10 @@ clear:both;
 border:none;
 height:1px;
 }
+
+.av-buildercomment .av-buildercomment-unapproved{
+	padding: 30px 0 15px;
+	text-align: center;
+	font-size: 1.4em;
+	font-weight: 500;
+}

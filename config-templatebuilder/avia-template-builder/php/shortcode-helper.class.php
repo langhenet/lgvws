@@ -18,6 +18,16 @@ if ( !class_exists( 'ShortcodeHelper' ) ) {
         static $pattern = "";
         static $tree = array();
         static $shortcode_index = 0; //tells us which index the currently rendered shortcode has
+		
+		/**
+		 * Stores the post that had been base for the tree. In loops of posts we have to make sure we have the appropriate tree loaded for the post.
+		 * Otherwise this can result in $meta['index'] undefined
+		 *  
+		 * @since 4.5.5
+		 * @var WP_Post|null
+		 */
+		static public $current_post_in_tree = null;
+
         
 		static public $direct_calls = 0;			//	adds direct calls to theme shortcodes (e.g. from codeblocks to update $shortcode_index correctly)
         static public $is_direct_call = false;		//	set to true if shortcodes are eecuted inside elements and removed from final code to execute like in codeblocks (shortcode tree is incorrect in that case) 
@@ -437,7 +447,7 @@ if ( !class_exists( 'ShortcodeHelper' ) ) {
 			/**
 			 * On ALB page content:
 			 * 
-			 * remove all <br/> tags that are not needed. those that follow immediatly after a shortode or are located just before one
+			 * remove all <br/> tags that are not needed. those that follow immediately after a shortode or are located just before one
 			 */
 			$shortcode_tags = array_merge( ShortcodeHelper::$allowed_shortcodes, ShortcodeHelper::$nested_shortcodes );
 	    

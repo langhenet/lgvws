@@ -424,7 +424,7 @@ if ( !class_exists( 'avia_sc_tab_section' ) )
 				if(isset($meta['index']) && $meta['index'] == 0) $params['close'] = false;
 				if(!empty($meta['siblings']['prev']['tag']) && in_array($meta['siblings']['prev']['tag'], AviaBuilder::$full_el_no_section )) $params['close'] = false;
 				
-				if(isset($meta['index']) && $meta['index'] != 0) $params['class'] .= " submenu-not-first";
+				if(isset($meta['index']) && $meta['index'] > 0) $params['class'] .= " submenu-not-first";
 				
 				avia_sc_tab_sub_section::$attr = $atts;
 				$final_content =  ShortcodeHelper::avia_remove_autop($content,true) ;

@@ -1,4 +1,7 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) {  exit;  }    // Exit if accessed directly
+
+
 global $avia_config, $post_loop_count;
 
 
@@ -17,12 +20,12 @@ if($blog_disabled)
 						__('Blog Posts', 'avia_framework' )."<br><br>".
 						__('This element was disabled in your theme settings. You can activate it here:' )."<br>".
 					   '<a target="_blank" href="'.admin_url('admin.php?page=avia#goto_performance').'">'.__("Performance Settings",'avia_framework' )."</a>";
-
+		
 		$content 	= "<span class='av-shortcode-disabled-notice'>{$msg}</span>";
-
+		
 		echo $content;
 	}
-
+	
 	 return;
 }
 
@@ -36,6 +39,7 @@ if (have_posts()) :
 
 	while (have_posts()) : the_post();
 
+		
 	/*
      * get the current post id, the current post class and current post format
  	 */
@@ -50,28 +54,47 @@ if (have_posts()) :
 	$current_post['post_class']	.= ($current_post['post_type'] == "post") ? '' : ' post';
 	$current_post['post_format'] 	= get_post_format() ? get_post_format() : 'standard';
 	$current_post['post_layout']	= avia_layout_class('main', false);
-  $blog_content = !empty($avia_config['blog_content']) ? $avia_config['blog_content'] : "content";
-  if(!is_single()) $blog_content = "excerpt_read_more";
-
+	$blog_content = !empty($avia_config['blog_content']) ? $avia_config['blog_content'] : "content";
+	
 	/*If post uses builder change content to exerpt on overview pages*/
     if( Avia_Builder()->get_alb_builder_status( $current_post['the_id'] ) && !is_singular($current_post['the_id']) && $current_post['post_type'] == 'post')
     {
 	   $current_post['post_format'] = 'standard';
 	   $blog_content = "excerpt_read_more";
     }
-
+	
+	/**
+	 * Allows especially for ALB posts to change output to 'content'
+	 * Supported since 4.5.5
+	 * 
+	 * @since 4.5.5
+	 * @return string
+	 */
+	$blog_content = apply_filters( 'avf_blog_content_in_loop', $blog_content, $current_post, $blog_style, $blog_global_style );
+	
 
 	/*
      * retrieve slider, title and content for this post,...
      */
     $size = strpos($blog_style, 'big') ? (strpos($current_post['post_layout'], 'sidebar') !== false) ? 'entry_with_sidebar' : 'entry_without_sidebar' : 'square';
-
+    
     if(!empty($avia_config['preview_mode']) && !empty($avia_config['image_size']) && $avia_config['preview_mode'] == 'custom') $size = $avia_config['image_size'];
-	$current_post['slider']  	= get_the_post_thumbnail($current_post['the_id'], $size);
-
-	if(is_single($initial_id) && get_post_meta( $current_post['the_id'], '_avia_hide_featured_image', true ) ) $current_post['slider'] = "";
-
-
+	
+	/**
+	 * @since 4.5.4
+	 * @return string 
+	 */
+	$current_post['slider'] = apply_filters( 'avf_post_featured_image_link', get_the_post_thumbnail( $current_post['the_id'], $size ), $current_post, $size );
+	
+	/**
+	 * Backwards comp. to checkbox prior v4.5.3 (now selectbox with '' or '1')
+	 */
+	$hide_featured_image = empty( get_post_meta( $current_post['the_id'], '_avia_hide_featured_image', true ) ) ? false : true;
+	if( is_single( $initial_id ) && $hide_featured_image ) 
+	{
+		$current_post['slider'] = '';
+	}
+	
 	$current_post['title']   	= get_the_title();
 	$current_post['content'] 	= $blog_content == "content" ? get_the_content(__('Read more','avia_framework').'<span class="more-link-arrow"></span>') : get_the_excerpt();
 	$current_post['content'] 	= $blog_content == "excerpt_read_more" ? $current_post['content'].'<div class="read-more-link"><a href="'.get_permalink().'" class="more-link">'.__('Read more','avia_framework').'<span class="more-link-arrow"></span></a></div>' : $current_post['content'];
@@ -85,8 +108,8 @@ if (have_posts()) :
 	/*
      * ... last apply the default wordpress filters to the content
      */
-
-
+     
+    
 	$current_post['content'] = str_replace(']]>', ']]&gt;', apply_filters('the_content', $current_post['content'] ));
 
 	/*
@@ -106,12 +129,12 @@ if (have_posts()) :
 	 */
 
 	echo "<article class='".implode(" ", get_post_class('post-entry post-entry-type-'.$post_format . " " . $post_class . " ".$with_slider))."' ".avia_markup_helper(array('context' => 'entry','echo'=>false)).">";
-
-
-
+		
+		
+		
         //default link for preview images
         $link = !empty($url) ? $url : get_permalink();
-
+        
         //preview image description
         $desc = get_post( get_post_thumbnail_id() );
         if(is_object($desc))  $desc = $desc -> post_excerpt;
@@ -135,7 +158,7 @@ if (have_posts()) :
                     echo '<div class="big-preview ' . $blog_style . '">' . $before_content . '</div>';
             }
         }
-
+		
         echo "<div class='blog-meta'>";
 
         $blog_meta_output = "";
@@ -149,7 +172,7 @@ if (have_posts()) :
                 {
                 	$author_name = apply_filters('avf_author_name', get_the_author_meta('display_name', $post->post_author), $post->post_author);
 					$author_email = apply_filters('avf_author_email', get_the_author_meta('email', $post->post_author), $post->post_author);
-
+                	
 					$gravatar_alt = esc_html($author_name);
 					$gravatar = get_avatar($author_email, '81', "blank", $gravatar_alt);
 					$link = get_author_posts_url($post->post_author);
@@ -174,13 +197,13 @@ if (have_posts()) :
                     echo "<span class=' fallback-post-type-icon' ".av_icon_string($format)."></span>";
                 }
 
-            	$close_header 	= "</header>";
-
+            	$close_header 	= "</header>"; 
+            	
             	$content_output  =  '<div class="entry-content" '.avia_markup_helper(array('context' => 'entry_content','echo'=>false)).'>';
 				$content_output .=  $content;
 				$content_output .=  '</div>';
-
-
+            	
+            	
             	$taxonomies  = get_object_taxonomies(get_post_type($the_id));
                 $cats = '';
                 $excluded_taxonomies = array_merge( get_taxonomies( array( 'public' => false ) ), array('post_tag','post_format') );
@@ -196,15 +219,15 @@ if (have_posts()) :
                         }
                     }
                 }
-
-
-
+            	
+            	
+            	
             	//elegant blog
             	//prev: if( $blog_global_style == 'elegant-blog' )
             	if( strpos($blog_global_style, 'elegant-blog') !== false )
             	{
 	            	$cat_output = "";
-
+	            	
 	            	if(!empty($cats))
                     {
                         $cat_output .= '<span class="blog-categories minor-meta">';
@@ -251,19 +274,19 @@ if (have_posts()) :
 
                        echo $content_output;
                    }
-
+					
 					$cats = "";
 					$title = "";
 					$content_output = "";
 				}
-
-
-
-
+				
+				
+				
+				
 				echo $title;
 
                 if ($blog_style !== 'bloglist-compact') :
-
+				
                     echo "<span class='post-meta-infos'>";
 
                     echo "<time class='date-container minor-meta updated' >".get_the_time(get_option('date_format'))."</time>";
@@ -341,12 +364,12 @@ if (have_posts()) :
                 	the_tags('<strong>'.__('Tags:','avia_framework').'</strong><span> ');
                 	echo '</span></span>';
             	}
-
+            	
             	//share links on single post
             	avia_social_share_links();
-
+   
             }
-
+            
             do_action('ava_after_content', $the_id, 'post');
 
             echo '</footer>';
@@ -361,11 +384,25 @@ if (have_posts()) :
 	endwhile;
 	else:
 
+			$default_heading = 'h1';
+			$args = array(
+						'heading'		=> $default_heading,
+						'extra_class'	=> ''
+					);
+			
+			/**
+			 * @since 4.5.5
+			 * @return array
+			 */
+			$args = apply_filters( 'avf_customize_heading_settings', $args, 'loop_index::nothing_found', array() );
+			
+			$heading = ! empty( $args['heading'] ) ? $args['heading'] : $default_heading;
+			$css = ! empty( $args['extra_class'] ) ? $args['extra_class'] : '';
 ?>
 
     <article class="entry">
         <header class="entry-content-header">
-            <h1 class='post-title entry-title'><?php _e('Nothing Found', 'avia_framework'); ?></h1>
+            <?php echo "<{$heading} class='post-title entry-title {$css}'>" . __( 'Nothing Found', 'avia_framework' ) . "</{$heading}>"; ?>
         </header>
 
         <p class="entry-content" <?php avia_markup_helper(array('context' => 'entry_content')); ?>><?php _e('Sorry, no posts matched your criteria', 'avia_framework'); ?></p>
@@ -381,4 +418,3 @@ if (have_posts()) :
 	{
 		echo "<div class='{$blog_style}'>".avia_pagination('', 'nav')."</div>";
 	}
-?>

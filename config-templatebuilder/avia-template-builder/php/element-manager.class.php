@@ -78,6 +78,19 @@ if( ! class_exists( 'aviaElementManager' ) )
 		 */
 		protected $blog_elements_state;
 
+		/**
+		 * 
+		 * @since 4.5.5
+		 * @var null|false|string
+		 */
+		protected $widget_hash;
+		
+		/**
+		 *
+		 * @since 4.5.5
+		 * @var array|false					$shortcode => array ( widget_id => count_usage )
+		 */
+		protected $widget_elements_state;
 		
 		/**
 		 *
@@ -86,6 +99,19 @@ if( ! class_exists( 'aviaElementManager' ) )
 		 */
 		protected $checked_elements;
 
+		/**
+		 * @since 4.5.5
+		 * @var array 
+		 */
+		private $temp_widgets_shortcodes;
+		
+		/**
+		 * Flag when true does not merge widgets elements to content
+		 * 
+		 * @since 4.5.5
+		 * @var boolean 
+		 */
+		private $debug_output;
 		
 		/**
 		 * 
@@ -98,13 +124,20 @@ if( ! class_exists( 'aviaElementManager' ) )
 			$this->current_post_elements = null;
 			$this->blog_elements_state = array();
 			$this->post_elements_state = array();
+			$this->widget_hash = null;
+			$this->widget_elements_state = $this->get_widgets_element_state();
 			$this->checked_elements = null;
+			$this->temp_widgets_shortcodes = array();
+			$this->debug_output = false;
 			
 			add_action( 'get_header', array( $this, 'handler_wp_get_header' ), 10, 1 );
 			
 			if( is_admin() )
 			{
 				add_action( 'admin_init', array( $this, 'handler_check_for_version_updates' ), 10 );
+				add_action( 'admin_init', array( $this, 'handler_check_for_widget_updates' ), 999 );
+				add_action( 'avia_ajax_after_save_options_page', array( $this, 'handler_avia_after_save_options_page' ), 999, 1 );
+				
 				add_action( 'trashed_post', array( $this, 'handler_wp_trashed_post' ), 10, 1 );
 				add_action( 'untrash_post', array( $this, 'handler_wp_untrash_post' ), 10, 1 );
 				
@@ -125,7 +158,9 @@ if( ! class_exists( 'aviaElementManager' ) )
 			unset( $this->current_post_elements );
 			unset( $this->blog_elements_state );
 			unset( $this->post_elements_state );
+			unset( $this->widget_elements_state );
 			unset( $this->checked_elements );
+			unset( $this->temp_widgets_shortcodes );
 		}
 		
 		
@@ -180,6 +215,95 @@ if( ! class_exists( 'aviaElementManager' ) )
 			$this->checked_elements = $elements;
 			
 			return update_option( 'av_alb_element_check_stat', $elements );
+		}
+
+		/**
+		 * Returns if we need to scan widgets depending on option settings
+		 * 
+		 * @since 4.5.5
+		 * @return boolean
+		 */
+		protected function needs_widget_scan()
+		{
+			return ( 'auto' == avia_get_option( 'disable_alb_elements', 'auto' ) ) && ( 'scan_widgets' == avia_get_option( 'scan_widgets_for_alb_elements', '' ) );
+		}
+
+		/**
+		 * Returns the saved widget hash
+		 * 
+		 * @since 4.5.5
+		 * @return false|string
+		 */
+		protected function get_widget_hash()
+		{
+			if( is_null( $this->widget_hash ) )
+			{
+				$this->widget_hash = get_option( 'av_alb_widget_hash', false );
+			}
+			
+			return $this->widget_hash;
+		}
+		
+		/**
+		 * Set internal member and save in options
+		 * 
+		 * @since 4.5.5
+		 * @param string $value
+		 */
+		protected function save_widget_hash( $value )
+		{
+			$this->widget_hash = $value;
+			update_option( 'av_alb_widget_hash', $value, true );
+		}
+		
+		/**
+		 * 
+		 * @since 4.5.5
+		 * @return array
+		 */
+		protected function get_widgets_element_state()
+		{
+			if( ! is_array( $this->widget_elements_state ) )
+			{
+				$this->widget_elements_state = $this->needs_widget_scan() ? get_option( 'av_alb_widget_element_state', array() ) : array();
+			}
+			
+			return $this->widget_elements_state;
+		}
+		
+		/**
+		 * Save the widget state to option
+		 * 
+		 * @since 4.5.5
+		 */
+		protected function save_widget_element_state()
+		{
+			update_option( 'av_alb_widget_element_state', $this->widget_elements_state );
+		}
+
+		/**
+		 * Adds a shortcode for a sidebar to the cache array
+		 * 
+		 * @param string $sidebar_id
+		 * @param array $shortcodes
+		 */
+		protected function add_widget_element_state( $sidebar_id, array $shortcodes )
+		{
+			foreach( $shortcodes as $shortcode => $count ) 
+			{
+				if( ! isset( $this->widget_elements_state[ $shortcode ] ) )
+				{
+					$this->widget_elements_state[ $shortcode ] = array( $sidebar_id => $count  );
+				}
+				else if( ! isset( $this->widget_elements_state[ $shortcode ][ $sidebar_id ]) )
+				{
+					$this->widget_elements_state[ $shortcode ][ $sidebar_id ] = $count;
+				}
+				else
+				{
+					$this->widget_elements_state[ $shortcode ][ $sidebar_id ] += $count;
+				}
+			}
 		}
 
 		/**
@@ -324,7 +448,7 @@ if( ! class_exists( 'aviaElementManager' ) )
 				{
 					if( isset( $this->post_elements_state[ $post_id ] ) )
 					{
-						return $this->post_elements_state[ $post_id ];
+						return $this->merge_widget_elements_state( $this->post_elements_state[ $post_id ] );
 					}
 				
 					/**
@@ -341,7 +465,7 @@ if( ! class_exists( 'aviaElementManager' ) )
 						}
 					
 						$this->post_elements_state[ $post_id ] = $all_elements;
-						return $all_elements;
+						return $this->merge_widget_elements_state( $all_elements );
 					}
 				}
 			
@@ -349,14 +473,14 @@ if( ! class_exists( 'aviaElementManager' ) )
 				{
 					if( ! empty( $this->blog_elements_state ) )
 					{
-						return $this->blog_elements_state;
+						return $this->merge_widget_elements_state( $this->blog_elements_state );
 					}
 
 					$stored = get_option( 'av_alb_blog_elements_state', array() );
 					if( ! empty( $stored ) )
 					{
 						$this->blog_elements_state = $stored;
-						return $this->blog_elements_state;
+						return $this->merge_widget_elements_state( $this->blog_elements_state );
 					}
 				}
 			}
@@ -419,7 +543,7 @@ if( ! class_exists( 'aviaElementManager' ) )
 				$this->blog_elements_state = $states;
 			}
 			
-			return $states;
+			return $this->merge_widget_elements_state( $states );
 		}
 
 		/**
@@ -437,7 +561,201 @@ if( ! class_exists( 'aviaElementManager' ) )
 			do_action( 'ava_current_post_element_info_available', $this );
 		}
 		
+		/**
+		 * Updates the widget element state in backend if necessary
+		 * 
+		 * @since 4.5.5
+		 */
+		public function handler_check_for_widget_updates()
+		{	
+			if( $this->skip_update_check() )
+			{
+				return;
+			}
+			
+			if( ! $this->needs_widget_scan() )
+			{
+				return;
+			}
+			
+			$this->check_for_widget_updates();
+		}
 		
+		/**
+		 * Checks if we need to check for widget updates when theme options changed
+		 * 
+		 * @param array $options
+		 * @since 4.5.5
+		 */
+		public function handler_avia_after_save_options_page( array $new_options )
+		{
+			$disable_alb_elements = isset( $new_options['avia']['disable_alb_elements'] ) ? $new_options['avia']['disable_alb_elements'] : 'auto';
+			$scan_widgets_for_alb_elements = isset( $new_options['avia']['scan_widgets_for_alb_elements'] ) ? $new_options['avia']['scan_widgets_for_alb_elements'] : '';
+			
+			if( ( 'auto' == $disable_alb_elements ) && ( 'scan_widgets' == $scan_widgets_for_alb_elements ) )
+			{
+				$this->check_for_widget_updates();
+			}
+		}
+				
+		/**
+		 * Perform the actual update
+		 * 
+		 * @since 4.5.5
+		 */
+		protected function check_for_widget_updates()
+		{
+			$hash = $this->get_widget_hash();
+			$new_hash = $this->calculate_widget_hash();
+			
+			if( false === $hash || $hash != $new_hash )
+			{
+				$this->update_widget_element_states();
+				$this->save_widget_element_state();
+				$this->save_widget_hash( $new_hash );
+			}			
+		}
+
+		/**
+		 * Combines options for widgets into the sidebar definitions and returns a hash value
+		 * 
+		 * @since 4.5.5
+		 * @return string
+		 */
+		protected function calculate_widget_hash()
+		{
+			global $wp_registered_widgets;
+			
+			$sidebar_widgets = wp_get_sidebars_widgets();
+			
+			foreach( $sidebar_widgets as $sidebar_key => $sidebar ) 
+			{
+				if( 'wp_inactive_widgets' == $sidebar_key )
+				{
+					continue;
+				}
+				
+				foreach( $sidebar as $key => $widget_id ) 
+				{
+					if( isset( $wp_registered_widgets[ $widget_id ] ) )
+					{
+						/**
+						 * Get settings of instance to check for changes
+						 */
+						$widget_obj = $wp_registered_widgets[ $widget_id ]['callback'][0];
+						$settings = $widget_obj->get_settings();
+						$index = str_replace( $widget_obj->id_base . '-', '', $widget_id );
+						
+						$sidebar_widgets[ $sidebar_key ][ $key ] = isset( $settings[ $index ] ) ? $settings[ $index ] : '';
+					}
+				}
+			}
+			
+			return hash( 'md5', json_encode( $sidebar_widgets ) );
+		}
+		
+		/**
+		 * Scans all sidebars for shortcodes
+		 * 
+		 * @since 4.5.5
+		 */
+		protected function update_widget_element_states()
+		{
+			$this->widget_elements_state = array();
+			
+			$sidebar_widgets = wp_get_sidebars_widgets();
+			
+			add_action( 'avf_in_shortcode_handler_prepare_start', array( $this, 'handler_catch_widgets_shortcode_execution' ), 10 );
+			
+			foreach( $sidebar_widgets as $sidebar_key => $sidebar ) 
+			{
+				$this->temp_widgets_shortcodes = array();
+				if( 'wp_inactive_widgets' == $sidebar_key )
+				{
+					continue;
+				}
+				
+				if( function_exists( 'dynamic_sidebar' ) )
+				{
+					/**
+					 * Triggers handler handler_catch_widgets_shortcode_execution
+					 */
+					ob_start();
+					dynamic_sidebar( $sidebar_key );
+					ob_end_clean();
+				}
+				
+				$this->add_widget_element_state( $sidebar_key, $this->temp_widgets_shortcodes );
+			}
+			
+			remove_action( 'avf_in_shortcode_handler_prepare_start', array( $this, 'handler_catch_widgets_shortcode_execution' ), 10 );
+			
+		}
+		
+		/**
+		 * Merges the given states array (e.g. post or blog) with $this->widget_elements_state - sets true if used and in given array
+		 * 
+		 * @since 4.5.5
+		 * @param array $boolean_states
+		 * @return array
+		 */
+		protected function merge_widget_elements_state( array $boolean_states )
+		{
+			if( $this->debug_output )
+			{
+				return $boolean_states;
+			}
+			
+			$states = $this->get_widgets_element_state();
+			if( ! is_array( $states ) || empty( $states ) )
+			{
+				return $boolean_states;
+			}
+			
+			foreach( $states as $shortcode => $value ) 
+			{
+				if( ! is_array( $value ) || ( 0 == array_sum( $value ) ) )
+				{
+					continue;
+				}
+				
+				if( isset( $boolean_states[ $shortcode ] ) )
+				{
+					$boolean_states[ $shortcode ] = true;
+				}
+			}
+			
+			return $boolean_states;
+		}
+
+		/**
+		 * Adds a called shortcode to temp array to merge into cache array later
+		 * 
+		 * @since 4.5.5
+		 * @param array $args			[0] boolean
+		 *								[1] aviaShortcodeTemplate $this
+		 *								[2] array $atts
+		 *								[3]	string $content
+		 *								[4]	string $shortcodename
+		 *								[5] boolean $fake
+		 */
+		public function handler_catch_widgets_shortcode_execution( &$args )
+		{
+			if( ! in_array( $args[4], $this->registered_elements() ) )
+			{
+				return;
+			}
+			
+			if( ! isset( $this->temp_widgets_shortcodes[ $args[4] ] ) )
+			{
+				$this->temp_widgets_shortcodes[ $args[4] ] = 1;
+			}
+			else
+			{
+				$this->temp_widgets_shortcodes[ $args[4] ] ++;
+			}
+		}
+
 		/**
 		 * After import of demos we need to force an update of elements settings
 		 * 
@@ -449,6 +767,53 @@ if( ! class_exists( 'aviaElementManager' ) )
 			update_option( 'av_alb_element_mgr_update', '' );
 			
 			$this->exec_version_update();
+			
+			if( $this->needs_widget_scan() )
+			{
+				$this->check_for_widget_updates();
+			}
+		}
+		
+		/**
+		 * Basic check if we shall check for updates
+		 * 
+		 * @since 4.5.5
+		 * @return boolean
+		 */
+		protected function skip_update_check()
+		{
+			if ( defined( 'DOING_AJAX' ) && DOING_AJAX )
+			{
+				return true;
+			}
+
+				//	allow user to login/logout
+			if( is_admin() && ( ! is_user_logged_in() ) )
+			{
+				return true;
+			}
+
+			/**
+			 * Allow to filter function for a custom login page.
+			 * Return true or false (boolean value) if you used a custom page, else any numeric value for standard WP login page.
+			 * 
+			 * @used_by:		currently unused
+			 * 
+			 * @since 4.3
+			 */
+			$result = apply_filters( 'avf_is_custom_admin_login_page', -1 );
+
+			if( is_bool( $result ) )
+			{
+				return true;
+			}
+
+			if( false !== stripos( $_SERVER["SCRIPT_NAME"], strrchr( wp_login_url(), '/') ) )
+			{
+				return true;
+			}
+			
+			return false;
 		}
 
 		/**
@@ -466,33 +831,7 @@ if( ! class_exists( 'aviaElementManager' ) )
 				return;
 			}
 			
-			if ( defined( 'DOING_AJAX' ) && DOING_AJAX )
-			{
-				return;
-			}
-
-				//	allow user to login/logout
-			if( is_admin() && ( ! is_user_logged_in() ) )
-			{
-				return;
-			}
-
-			/**
-			 * Allow to filter function for a custom login page.
-			 * Return true or false (boolean value) if you used a custom page, else any numeric value for standard WP login page.
-			 * 
-			 * @used_by:		currently unused
-			 * 
-			 * @since 4.3
-			 */
-			$result = apply_filters( 'avf_is_custom_admin_login_page', -1 );
-
-			if( is_bool( $result ) )
-			{
-				return;
-			}
-
-			if( false !== stripos( $_SERVER["SCRIPT_NAME"], strrchr( wp_login_url(), '/') ) )
+			if( $this->skip_update_check() )
 			{
 				return;
 			}
@@ -1055,6 +1394,7 @@ if( ! class_exists( 'aviaElementManager' ) )
 		 */
 		public function debug_element_usage_info()
 		{
+			$this->debug_output = true;
 			
 			$blog = $this->get_elements_state( 'blog' );
 			if( ! is_array( $blog )  )
@@ -1086,6 +1426,15 @@ if( ! class_exists( 'aviaElementManager' ) )
 				
 				$post = $this->esc_boolean( $post );
 			}
+			
+			$widgets = $this->get_widgets_element_state();
+			if( empty( $widgets ) )
+			{
+				$widgets = __( 'No theme shortcodes used in widgets', 'avia_framework' );
+			}
+			
+			$this->debug_output = false;
+			
 			
 			$chk = $this->get_checked_elements();
 			
@@ -1131,6 +1480,14 @@ if( ! class_exists( 'aviaElementManager' ) )
 			
 			$out .=					'<pre><code>';
 			$out .=						$this->esc_shortcode( print_r( $post, true ) );
+			$out .=					'</code></pre>';
+			
+			$out .=				"[/av_toggle]";
+			
+			$out .=				"[av_toggle title='" . __( 'Widget Usage - which elements are used in the sidebar widgets', 'avia_framework' ) . "' tags='post']";
+			
+			$out .=					'<pre><code>';
+			$out .=						$this->esc_shortcode( print_r( $widgets, true ) );
 			$out .=					'</code></pre>';
 			
 			$out .=				"[/av_toggle]";

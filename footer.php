@@ -17,12 +17,8 @@
 		$footer 				= get_post_meta( $the_id, 'footer', true );
 		$footer_options			= avia_get_option( 'display_widgets_socket', 'all' );
 		
-		$avia_post_nav = '';
-		if( avia_get_option('disable_post_nav') != "disable_post_nav" )
-		{
-			//get link to previous and next portfolio entry
-			$avia_post_nav = avia_post_nav();
-		}
+		//get link to previous and next post/portfolio entry
+		$avia_post_nav = avia_post_nav();
 
 		/**
 		 * Reset individual page override to defaults if widget or page settings are different (user might have changed theme options)
@@ -57,12 +53,9 @@
 		if( ! $blank && in_array( $footer_widget_setting, array( 'page_in_footer_socket', 'page_in_footer' ) ) )
 		{
 			/**
-			 * Allow e.g. translation plugins to hook and change the id to translated post
-			 * 
-			 * @since 4.4.2
-			 * @param int
+			 * Allows 3rd parties to change page id's, e.g. translation plugins
 			 */
-			$post = get_post( apply_filters( 'avf_footer_page_id', avia_get_option( 'footer_page', 0 ), $the_id ) );
+			$post = AviaCustomPages()->get_custom_page_object( 'footer_page', '' );
 			
 			if( ( $post instanceof WP_Post ) && ( $post->ID != $the_id ) )
 			{
@@ -82,6 +75,14 @@
 				$builder_stat = ( 'active' == Avia_Builder()->get_alb_builder_status( $post->ID ) );
 				$avia_config['conditionals']['is_builder'] = $builder_stat;
 				$avia_config['conditionals']['is_builder_template'] = $builder_stat;
+				
+				/**
+				 * @used_by			config-bbpress\config.php
+				 * @since 4.5.6.1
+				 * @param WP_Post $post
+				 * @param int $the_id
+				 */
+				do_action( 'ava_before_page_in_footer_compile', $post, $the_id );
 				
 				$content = Avia_Builder()->compile_post_content( $post );
 				

@@ -120,12 +120,14 @@ if ( !class_exists( 'avia_sc_masonry_gallery' ) )
 					"desc" 	=> __("Should a pagination or load more option be displayed to view additional images?", 'avia_framework' ),
 					"id" 	=> "paginate",
 					"type" 	=> "select",
-					"std" 	=> "yes",
-					"required" => array('items','not','-1'),
+					"std" 	=> "none",
+					"required" => array( 'items', 'not', '-1' ),
 					"subtype" => array(
-						__('Display Pagination',  'avia_framework' ) =>'pagination',
-						__('Display "Load More" Button',  'avia_framework' ) =>'load_more',
-						__('No option to view additional images',  'avia_framework' ) =>'none')),
+										__( 'Display Pagination',  'avia_framework' )					=> 'pagination',
+										__( 'Display "Load More" Button',  'avia_framework' )			=> 'load_more',
+										__( 'No option to view additional images',  'avia_framework' )	=> 'none'
+									)
+						),
 				
 					
 				array(
@@ -481,7 +483,7 @@ if ( !class_exists( 'avia_sc_masonry_gallery' ) )
 				if($meta['index'] == 0) $params['close'] = false;
 				if(!empty($meta['siblings']['prev']['tag']) && in_array($meta['siblings']['prev']['tag'], AviaBuilder::$full_el_no_section )) $params['close'] = false;
 				
-				if($meta['index'] != 0) $params['class'] .= " masonry-not-first";
+				if($meta['index'] > 0) $params['class'] .= " masonry-not-first";
 				if($meta['index'] == 0 && get_post_meta(get_the_ID(), 'header', true) != "no") $params['class'] .= " masonry-not-first";
 				
 				if($atts['gap'] == 'no') $params['class'] .= " avia-no-border-styling";

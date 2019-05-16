@@ -640,19 +640,25 @@ if( ! class_exists( 'Avia_Config_LayerSlider' ) )
 		{
 			global $post;
 			
+			$maintenance_page = AviaCustomPages()->get_custom_page_object( 'maintenance' );
+			if( $maintenance_page instanceof WP_Post )
+			{
+				if( $this->post_needs_layerslider( $maintenance_page ) )
+				{
+					return true;
+				}
+			}
+			
 			if( ! $post instanceof WP_Post )
 			{
-				if( ! is_404() || ( avia_get_option( 'error404_custom' ) != 'error404_custom' ) )
+				$page_404 = AviaCustomPages()->get_custom_page_object( '404' );
+				
+				if( ! is_404() || ( ! $page_404 instanceof WP_Post ) )
 				{
 					return false;
 				}
 				
-				$post_obj = get_post( avia_get_option( 'error404_page', 0 ) );
-				
-				if( ! $post_obj instanceof WP_Post )
-				{
-					return false;
-				}
+				$post_obj = $page_404;
 			}
 			else
 			{
@@ -667,7 +673,7 @@ if( ! class_exists( 'Avia_Config_LayerSlider' ) )
 				return true;
 			}
 			
-			$footer_page = get_post( avia_get_option( 'footer_page', 0 ) );
+			$footer_page = AviaCustomPages()->get_custom_page_object( 'footer_page' );
 			
 			if( $footer_page instanceof WP_Post )
 			{

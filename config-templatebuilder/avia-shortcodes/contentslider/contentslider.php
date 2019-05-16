@@ -428,13 +428,30 @@ if ( !class_exists( 'avia_content_slider' ) )
 			
 			extract(AviaHelper::av_mobile_sizes($this->config)); //return $av_font_classes, $av_title_font_classes and $av_display_classes 
             extract($this->config);
+			
+			$default_heading = 'h3';
+			$args = array(
+						'heading'		=> $default_heading,
+						'extra_class'	=> ''
+					);
+
+			$extra_args = array( $this, 'slider_title' );
+
+			/**
+			 * @since 4.5.5
+			 * @return array
+			 */
+			$args = apply_filters( 'avf_customize_heading_settings', $args, __CLASS__, $extra_args );
+
+			$heading1 = ! empty( $args['heading'] ) ? $args['heading'] : $default_heading;
+			$css = ! empty( $args['extra_class'] ) ? $args['extra_class'] : '';
 
             $extraClass 		= 'first';
             $grid 				= 'one_third';
             $slide_loop_count 	= 1;
             $loop_counter		= 1;
             $total				= $columns % 2 ? "odd" : "even";
-			$heading 			= !empty($this->config['heading']) ? '<h3>'.$this->config['heading'].'</h3>' : "&nbsp;";
+			$heading 			= !empty($this->config['heading']) ? "<{$heading1} class='{$css}'>{$this->config['heading']}</{$heading1}>" : "&nbsp;";
             $slide_count = count($content);
 
             switch($columns)
@@ -491,9 +508,27 @@ if ( !class_exists( 'avia_content_slider' ) )
                     $output .= "<section class='slide-entry flex_column {$post_class} {$grid} {$extraClass}' $markup>";
 
                     $markup = avia_markup_helper(array('context' => 'entry_title','echo'=>false, 'custom_markup'=>$custom_markup));
-                    $output .= !empty($title) ? "<h3 class='slide-entry-title entry-title' $markup>" : '';
+					
+					$default_heading = 'h3';
+					$args = array(
+								'heading'		=> $default_heading,
+								'extra_class'	=> ''
+							);
+
+					$extra_args = array( $this, 'slider_entry' );
+
+					/**
+					 * @since 4.5.5
+					 * @return array
+					 */
+					$args = apply_filters( 'avf_customize_heading_settings', $args, __CLASS__, $extra_args );
+
+					$heading1 = ! empty( $args['heading'] ) ? $args['heading'] : $default_heading;
+					$css = ! empty( $args['extra_class'] ) ? $args['extra_class'] : '';
+					
+                    $output .= !empty($title) ? "<{$heading1} class='slide-entry-title entry-title {$css}' $markup>" : '';
                     $output .= (!empty($link) && !empty($title)) ? "<a href='{$link}' $blank title='".esc_attr($title)."'>".$title."</a>" : $title;
-                    $output .= !empty($title) ? '</h3>' : '';
+                    $output .= !empty($title) ? "</{$heading1}>" : '';
 
                     $markup = avia_markup_helper(array('context' => 'entry_content','echo'=>false, 'custom_markup'=>$custom_markup));
                     $output .= !empty($value['content']) ? "<div class='slide-entry-excerpt entry-content' $markup>".ShortcodeHelper::avia_apply_autop(ShortcodeHelper::avia_remove_autop($value['content']))."</div>" : "";

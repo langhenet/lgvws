@@ -456,7 +456,24 @@ if ( !class_exists( 'avia_sc_team' ) )
 				if($name)
 				{
                     $markup = avia_markup_helper(array('context' => 'name','echo'=>false, 'custom_markup'=>$custom_markup));
-					$output.= "<h3 class='team-member-name' {$title_styling} {$markup}>{$name}</h3>";
+					$default_heading = 'h3';
+					$args = array(
+								'heading'		=> $default_heading,
+								'extra_class'	=> ''
+							);
+
+					$extra_args = array( $this, $atts, $content );
+
+					/**
+					 * @since 4.5.5
+					 * @return array
+					 */
+					$args = apply_filters( 'avf_customize_heading_settings', $args, __CLASS__, $extra_args );
+
+					$heading = ! empty( $args['heading'] ) ? $args['heading'] : $default_heading;
+					$css = ! empty( $args['extra_class'] ) ? $args['extra_class'] : '';
+				
+					$output.= "<{$heading} class='team-member-name' {$css} {$title_styling} {$markup}>{$name}</{$heading}>";
 				}
 
 				if($job)

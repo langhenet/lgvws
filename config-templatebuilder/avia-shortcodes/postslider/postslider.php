@@ -89,34 +89,43 @@ if ( !class_exists( 'avia_sc_postslider' ))
 					),
 				
 				array(
-						"name" 	=> __( "Sorting Options", 'avia_framework' ),
-						"desc" 	=> __( "Here you can choose how to sort the products. Default setting can be set at Woocommerce -&gt Settings -&gt Products -&gt Display -&gt Default product sorting", 'avia_framework' ),
+						"name" 	=> __( "WooCommerce Sorting Options", 'avia_framework' ),
+						"desc" 	=> __( "Here you can choose how to sort the products. Default setting can be set at Dashboard -&gt; Appearance -&gt; Customize -&gt; WooCommerce -&gt; Product Catalog -&gt; Default Product Sorting", 'avia_framework' ),
 						"id" 	=> "prod_order_by",
 						"type" 	=> "select",
 						"std" 	=> "",
 						"required" => array( 'link', 'parent_in_array', implode( ' ', get_object_taxonomies( 'product', 'names' ) ) ),
 						"subtype" => array( 
-								__('Use defaut (defined at Woocommerce -&gt; Settings -&gt Default product sorting) ', 'avia_framework' ) =>	'',
-								__('Sort alphabetically', 'avia_framework' )			=>	'title',
-								__('Sort by most recent', 'avia_framework' )			=>	'date',
-								__('Sort by price', 'avia_framework' )					=>	'price',
-								__('Sort by popularity', 'avia_framework' )				=>	'popularity',
-								__('Sort randomly', 'avia_framework' )					=>	'rand'
+								__( 'Use default (defined at Dashboard -&gt; Customize -&gt; WooCommerce) ', 'avia_framework' )	=> '',
+								__( 'Sort alphabetically', 'avia_framework' )			=> 'title',
+								__( 'Sort by most recent', 'avia_framework' )			=> 'date',
+								__( 'Sort by price', 'avia_framework' )					=> 'price',
+								__( 'Sort by popularity', 'avia_framework' )			=> 'popularity',
+								__( 'Sort randomly', 'avia_framework' )					=> 'rand',
+								__( 'Sort by menu order and name', 'avia_framework' )	=> 'menu_order',
+								__( 'Sort by average rating', 'avia_framework' )		=> 'rating',
+								__( 'Sort by relevance', 'avia_framework' )				=> 'relevance',
+								__( 'Sort by Product ID', 'avia_framework' )			=> 'id'
 							)
 					),
 				
 				array(
-						"name" 	=> __( "Sorting Order", 'avia_framework' ),
-						"desc" 	=> __( "Here you can choose the order of the result products. Default setting can be set at Woocommerce -&gt Settings -&gt Products -&gt Display -&gt Default product sorting", 'avia_framework' ),
+						"name" 	=> __( "WooCommerce Sorting Order", 'avia_framework' ),
+						"desc" 	=> __( "Here you can choose the order of the result products. Default setting can be set at Dashboard -&gt; Appearance -&gt; Customize -&gt; WooCommerce -&gt; Product Catalog -&gt; Default Product Sorting", 'avia_framework' ),
 						"id" 	=> "prod_order",
 						"type" 	=> "select",
 						"std" 	=> "",
 						"required" => array( 'link', 'parent_in_array', implode( ' ', get_object_taxonomies( 'product', 'names' ) ) ),
 						"subtype" => array( 
-								__('Use defaut (defined at Woocommerce -&gt Settings -&gt Default product sorting)', 'avia_framework' ) =>	'',
+								__('Use default (defined at Dashboard -&gt; Customize -&gt; WooCommerce)', 'avia_framework' ) =>	'',
 								__('Ascending', 'avia_framework' )			=>	'ASC',
 								__('Descending', 'avia_framework' )			=>	'DESC'
 							)
+					),
+				
+				array(	
+						'type'			=> 'template',
+						'template_id' 	=> 'date_query',
 					),
 
 				array(
@@ -342,6 +351,12 @@ array(
 			$atts['class'] = $meta['el_class'];
 			$atts = array_merge($atts, $screen_sizes);
 			
+			/**
+			 * @since 4.5.5
+			 * @return array
+			 */
+			$atts = apply_filters( 'avf_post_slider_args', $atts, $this->config['shortcode'], $this );
+				   
 			$slider = new avia_post_slider($atts);
 			$slider->query_entries();
 			return $slider->html();
@@ -353,52 +368,96 @@ array(
 
 
 
-if ( !class_exists( 'avia_post_slider' ) )
+if ( ! class_exists( 'avia_post_slider' ) )
 {
 	class avia_post_slider
 	{	
-		static  $slide = 0;
+		/**
+		 * @since < 4.0
+		 * @var int 
+		 */
+		static public $slide = 0;
+		
+		/**
+		 *
+		 * @since < 4.0
+		 * @var array 
+		 */
 		protected $atts;
+		
+		/**
+		 *
+		 * @since < 4.0
+		 * @var array 
+		 */
 		protected $entries;
 
-		function __construct($atts = array())
+		/**
+		 * @since < 4.0
+		 * @param array $atts
+		 */
+		public function __construct( $atts = array() )
 		{
-			$this->atts = shortcode_atts(array(	'type'		=> 'slider', // can also be used as grid
-												'style'		=> '', //no_margin
-										 		'columns' 	=> '4',
-		                                 		'items' 	=> '16',
-		                                 		'taxonomy'  => 'category',
-												'wc_prod_visible'	=>	'',
-												'prod_order_by'		=>	'',
-												'prod_order'		=>	'',
-		                                 		'post_type'=> get_post_types(),
-		                                 		'contents' 	=> 'excerpt',
-		                                 		'preview_mode' => 'auto',
-												'image_size' => 'portfolio',
-		                                 		'autoplay'  => 'no',
-												'animation' => 'fade',
-												'paginate'	=> 'no',
-                                                'use_main_query_pagination' => 'no',
-												'interval'  => 5,
-												'class'		=> '',
-		                                 		'categories'=> array(),
-		                                 		'custom_query'=> array(),
-                                                'offset' => 0,
-                                                'custom_markup' => '',
-                                                'av_display_classes' => ''
-		                                 		), $atts, 'av_postslider');
-		                                 		
-		                    
+			$this->atts = shortcode_atts( array(	
+												'type'				=> 'slider', // can also be used as grid
+												'style'				=> '', //no_margin
+												'columns'			=> '4',
+												'items'				=> '16',
+												'taxonomy'			=> 'category',
+												'wc_prod_visible'	=> '',
+												'prod_order_by'		=> '',
+												'prod_order'		=> '',
+												'show_meta_data'	=> '',		//	'' | 'always' | 'on_empty_title' | 'on_empty_content' (use filter to change)
+												'post_type'			=> get_post_types(),
+												'contents'			=> 'excerpt',
+												'preview_mode'		=> 'auto',
+												'image_size'		=> 'portfolio',
+												'autoplay'			=> 'no',
+												'animation'			=> 'fade',
+												'paginate'			=> 'no',
+												'use_main_query_pagination' => 'no',
+												'interval'			=> 5,
+												'class'				=> '',
+												'categories'		=> array(),
+												'custom_query'		=> array(),
+												'offset'			=> 0,
+												'custom_markup'		=> '',
+												'av_display_classes'	=> '',
+												'date_filter'		=> '',	
+												'date_filter_start'	=> '',
+												'date_filter_end'	=> '',
+												'date_filter_format'	=> 'yy/mm/dd',		//	'yy/mm/dd' | 'dd-mm-yy'	| yyyymmdd
+		                                 	), $atts, 'av_postslider' );
+		    
+			$this->entries = array();
+		}
+		
+		
+		/**
+		 * @since 4.5.5
+		 */
+		public function __destruct() 
+		{
+			unset( $this->atts );
+			unset( $this->entries );
 		}
 
+		/**
+		 * 
+		 * @since < 4.0
+		 * @return string
+		 */
 		public function html()
 		{
 			global $avia_config;
 
-			$output = "";
+			$output = '';
 
-			if(empty($this->entries) || empty($this->entries->posts)) return $output;
-
+			if( empty( $this->entries ) || empty( $this->entries->posts ) ) 
+			{
+				return $output;
+			}
+			
 			avia_post_slider::$slide ++;
 			extract($this->atts);
 
@@ -435,7 +494,7 @@ if ( !class_exists( 'avia_post_slider' ) )
 			$output .= "<div {$data} class='avia-content-slider avia-content-{$type}-active avia-content-slider".avia_post_slider::$slide." avia-content-slider-{$total} {$class} {$av_display_classes}' $markup>";
 			$output .= 		"<div class='avia-content-slider-inner'>";
 
-				foreach ($this->entries->posts as $entry)
+				foreach ($this->entries->posts as $index => $entry)
 				{
 					$the_id 	= $entry->ID;
 					$parity		= $loop_counter % 2 ? 'odd' : 'even';
@@ -529,8 +588,9 @@ if ( !class_exists( 'avia_post_slider' ) )
 						$current_post = array();
 			            $current_post['content'] = $entry->post_content;
 			            $current_post['title'] =  $entry->post_title;
+				    $current_post['id'] = $entry->ID;
 						
-						$current_post = apply_filters( 'post-format-'.$post_format, $current_post );
+						$current_post = apply_filters( 'post-format-'.$post_format, $current_post, $entry );
 						
 						if(!empty( $current_post['before_content'] )) $output .= '<div class="big-preview single-big audio-preview">'.$current_post['before_content'].'</div>';
 					}
@@ -541,7 +601,7 @@ if ( !class_exists( 'avia_post_slider' ) )
                     $output .= '<header class="entry-content-header">';
                     $meta_out = "";
                     
-                    if (!empty($title))
+                    if( ! empty( $title ) || in_array( $show_meta_data, array( 'always', 'on_empty_title' ) ) )
                     {
 	                    if($show_meta)
 	                    {
@@ -602,7 +662,25 @@ if ( !class_exists( 'avia_post_slider' ) )
 							$output .= $meta_out;
 						}
 						
-                    	$output .=  "<h3 class='slide-entry-title entry-title' $markup><a href='{$link}' title='".esc_attr(strip_tags($title))."'>".$title."</a></h3>";
+						$default_heading = 'h3';
+						$args = array(
+									'heading'		=> $default_heading,
+									'extra_class'	=> ''
+								);
+						
+						$extra_args = array( $this, $index, $entry );
+
+						/**
+						 * @since 4.5.5
+						 * @return array
+						 */
+						$args = apply_filters( 'avf_customize_heading_settings', $args, __CLASS__, $extra_args );
+
+						$heading = ! empty( $args['heading'] ) ? $args['heading'] : $default_heading;
+						$css = ! empty( $args['extra_class'] ) ? $args['extra_class'] : '';
+						
+						
+                    	$output .=  "<{$heading} class='slide-entry-title entry-title {$css}' $markup><a href='{$link}' title='".esc_attr(strip_tags($title))."'>".$title."</a></{$heading}>";
                     	
 							//	modern business style
                     	if( ( strpos( $new_blogstyle, 'modern-blog' ) !== false ) && ( $new_blogstyle != "" ) ) 
@@ -615,7 +693,7 @@ if ( !class_exists( 'avia_post_slider' ) )
                     
                     $output .= '</header>';
 
-                    if($show_meta && !empty($excerpt))
+                    if( ( $show_meta && ! empty( $excerpt ) ) || in_array( $show_meta_data, array( 'always', 'on_empty_content' ) ) )
 					{
 						$meta  = "<div class='slide-meta'>";
 						if ( $commentCount != "0" || comments_open($the_id) && $entry->post_type != 'portfolio')
@@ -674,24 +752,31 @@ if ( !class_exists( 'avia_post_slider' ) )
 			global $wp_query;
             if($use_main_query_pagination == 'yes' && $paginate == "yes")
             {
-                $avia_pagination = avia_pagination($wp_query->max_num_pages, 'nav');
+                $avia_pagination = avia_pagination( $wp_query->max_num_pages, 'nav' );
             }
             else if($paginate == "yes")
             {
-                $avia_pagination = avia_pagination($this->entries, 'nav');
+                $avia_pagination = avia_pagination( $this->entries, 'nav' );
             }
 
-            if(!empty($avia_pagination)) $output .= "<div class='pagination-wrap pagination-slider'>{$avia_pagination}</div>";
+            if( ! empty( $avia_pagination ) ) 
+			{
+				$output .= "<div class='pagination-wrap pagination-slider'>{$avia_pagination}</div>";
+			}
 
 
             $output .= "</div>";
 
-			$output = str_replace('{{thumbnail}}', $thumb_fallback, $output);
+			$output = str_replace( '{{thumbnail}}', $thumb_fallback, $output );
 
 			wp_reset_query();
 			return $output;
 		}
 
+		/**
+		 * @since < 4.0
+		 * @return string
+		 */
 		protected function slide_navigation_arrows()
 		{
 			$html  = "";
@@ -703,8 +788,13 @@ if ( !class_exists( 'avia_post_slider' ) )
 			return $html;
 		}
 
-		//fetch new entries
-		public function query_entries($params = array())
+		/**
+		 * Fetch new entries
+		 * 
+		 * @since < 4.0
+		 * @param array $params
+		 */
+		public function query_entries( $params = array() )
 		{	
 			global $avia_config;
 
@@ -721,7 +811,10 @@ if ( !class_exists( 'avia_post_slider' ) )
 				}
 
 				$page = get_query_var( 'paged' ) ? get_query_var( 'paged' ) : get_query_var( 'page' );
-				if(!$page || $params['paginate'] == 'no') $page = 1;
+				if( ! $page || $params['paginate'] == 'no') 
+				{
+					$page = 1;
+				}
 
 				//if we find no terms for the taxonomy fetch all taxonomy terms
 				if(empty($terms[0]) || is_null($terms[0]) || $terms[0] === "null")
@@ -780,9 +873,16 @@ if ( !class_exists( 'avia_post_slider' ) )
 				$orderby = 'date';
 				$order = 'DESC';
 				
+				$date_query = array();
+				if( 'date_filter' == $params['date_filter'] )
+				{
+					$date_query = AviaHelper::add_date_query( $date_query, $params['date_filter_start'], $params['date_filter_end'], $params['date_filter_format'] );
+				}
+				
 				// Meta query - replaced by Tax query in WC 3.0.0
 				$meta_query = array();
 				$tax_query = array();
+				
 
 				// check if taxonomy are set to product or product attributes
 				$tax = get_taxonomy( $params['taxonomy'] );
@@ -798,6 +898,7 @@ if ( !class_exists( 'avia_post_slider' ) )
 							
 					$orderby = $ordering_args['orderby'];
 					$order = $ordering_args['order'];
+					$params['meta_key'] = $ordering_args['meta_key'];
 				}
 
 				if( ! empty( $terms ) )
@@ -810,16 +911,18 @@ if ( !class_exists( 'avia_post_slider' ) )
 								);
 				}				
 				
-				$query = array(	'orderby'		=>	$orderby,
-								'order'			=>	$order,
-								'paged'			=>	$page,
-								'post_type'		=>	$params['post_type'],
-//								'post_status'	=>	'publish',
-								'offset'		=>	$params['offset'],
-								'posts_per_page' =>	$params['items'],
-								'post__not_in'	=>	( ! empty( $no_duplicates ) ) ? $avia_config['posts_on_current_page'] : array(),
-								'meta_query'	=>	$meta_query,
-								'tax_query'		=>	$tax_query
+				$query = array(	
+								'orderby'		=> $orderby,
+								'order'			=> $order,
+								'paged'			=> $page,
+								'post_type'		=> $params['post_type'],
+//								'post_status'	=> 'publish',
+								'offset'		=> $params['offset'],
+								'posts_per_page' => $params['items'],
+								'post__not_in'	=> ( ! empty( $no_duplicates ) ) ? $avia_config['posts_on_current_page'] : array(),
+								'meta_query'	=> $meta_query,
+								'tax_query'		=> $tax_query,
+								'date_query'	=> $date_query
 							);
 																
 			}
@@ -827,9 +930,22 @@ if ( !class_exists( 'avia_post_slider' ) )
 			{
 				$query = $params['custom_query'];
 			}
+			
+			if( ! empty( $params['meta_key'] ) )
+			{
+				$query['meta_key'] = $params['meta_key'];
+			}
 
-
-			$query = apply_filters('avia_post_slide_query', $query, $params);
+			/**
+			 * @used_by				config-bbpress\config.php	avia_remove_bbpress_post_type_from_query()			10
+			 * @used_by				config-wpml\config.php		avia_translate_ids_from_query						10
+			 * 
+			 * @since < 4.0
+			 * @param array $query
+			 * @param array $params
+			 * @return array 
+			 */
+			$query = apply_filters( 'avia_post_slide_query', $query, $params );
 
 			@$this->entries = new WP_Query( $query ); //@ is used to prevent errors caused by wpml
 

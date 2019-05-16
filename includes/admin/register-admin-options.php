@@ -33,10 +33,17 @@ if(!current_theme_supports('avia_disable_import_export')){
 }
 
 
+//required for the general styling color schemes
+include('register-backend-styles.php');
+
+//required for the advanced styling wizard
+include('register-backend-advanced-styles.php');
+
+
 /**
  * Allow to include a user defined file to add or alter backend styles
  * 
- * @since 4.2.1
+ * @since 4.5.5
  * @return string		full path to the include file ( not a relative path !!! )
  */
 $custom_path = apply_filters( 'avf_register_custom_backend_styles', '' );
@@ -44,15 +51,6 @@ if( ! empty( $custom_path ) && file_exists( $custom_path ) )
 {
 	include_once $custom_path;
 }
-
-
-
-
-//required for the general styling color schemes
-include('register-backend-styles.php');
-
-//required for the advanced styling wizard
-include('register-backend-advanced-styles.php');
 
 
 
@@ -155,6 +153,20 @@ $avia_elements[] = array(
 		"nodescription"=>true,
 		"slug"	=> "performance");
 		
+$avia_elements[] = array(
+					'slug'		=> 'performance',
+					'name'		=> __( 'Scan Widgets for Theme Shortcodes', 'avia_framework'),
+					'desc'		=> __( 'Enable scan only when you use Theme Shortcodes in widgets and do not use these in pages/posts. If you run into troubles please use one of the other options. Please reload the widget page when finished editing to force a scan of the widgets.', 'avia_framework'),
+					'id'		=> 'scan_widgets_for_alb_elements',
+					'required'	=> array( 'disable_alb_elements', 'auto' ),
+					'type'		=> 'select',
+					'std'		=> '',
+					'no_first'	=> true,
+					'subtype'	=> array(	
+											__( 'Do not scan widgets', 'avia_framework' )	=> '',
+											__( 'Scan widgets', 'avia_framework' )			=> 'scan_widgets'
+										)
+					);
 
 		
 
@@ -1951,7 +1963,7 @@ $avia_elements[] = array(
 $avia_elements[] = array(	"slug"	=> "avia", "type" => "visual_group_end", "id" => "avia_lightbox_end", "nodescription" => true);
 
 
-$avia_elements[] = array(	"slug"	=> "avia", "type" => "visual_group_start", "id" => "avia_404_start", "nodescription" => true);
+
 
 /**
  * Error 404 page section
@@ -1959,27 +1971,34 @@ $avia_elements[] = array(	"slug"	=> "avia", "type" => "visual_group_start", "id"
  * @author tinabillinger
  * @since 4.3
  */
+$avia_elements[] = array(	'slug'	=> 'avia', 'type' => 'visual_group_start', 'id' => 'avia_404_start', 'nodescription' => true );
     
-$avia_elements[] =	array(
-    "slug"	=> "avia",
-    "name" => __("Error 404 Page",'avia_framework'),
-    "desc" 	=> __("Click to use any page as your custom Error 404 Page", 'avia_framework'),
-    "id" 	=> "error404_custom",
-    "type" 	=> "checkbox",
-    "std"	=> false,
-);
+$avia_elements[] = array(
+						'slug'		=> 'avia',
+						'name'		=> __( 'Custom Error 404 Page', 'avia_framework' ),
+						'desc'		=> __( 'Select if you want to use any of your pages as your custom Error 404 Page. This page will be excluded from page lists and search results. You must deselect the page to make it accessible for public again.', 'avia_framework' ),
+						'id'		=> 'error404_custom',
+						'type'		=> 'select',
+						'no_first'	=> true,
+						'std'		=> '',
+						'subtype'	=> array(
+									__( 'No custom 404 page selected', 'avia_framework' )				=> '',
+									__( 'Display selected page without redirect', 'avia_framework' )	=> 'error404_custom',
+									__( 'Redirect to selected page', 'avia_framework' )					=> 'error404_redirect'
+							)
+					);
 
-$avia_elements[] =	array(
-    "slug"	=> "avia",
-    "name" 	=> __("Custom Error 404 Page", 'avia_framework'),
-    "desc" 	=> __("If you are using a caching plugin, make sure to exclude this page from caching.", 'avia_framework'),
-    "required" => array("error404_custom",'error404_custom'),
-    "id" 	=> "error404_page",
-    "type" 	=> "select",
-    "subtype" => 'page'
-);
+$avia_elements[] = array(
+						'slug'		=> 'avia',
+						'name'		=> __( 'Select Your Custom Error 404 Page', 'avia_framework' ),
+						'desc'		=> __( 'If you are using a caching plugin, make sure to exclude this page from caching.', 'avia_framework' ),
+						'required'	=> array( 'error404_custom', '{contains_array}error404_custom;error404_redirect' ),
+						'id'		=> 'error404_page',
+						'type'		=> 'select',
+						'subtype'	=> 'page'
+					);
 
-$avia_elements[] = array(	"slug"	=> "avia", "type" => "visual_group_end", "id" => "avia_404_end", "nodescription" => true);
+$avia_elements[] = array(	'slug'	=> 'avia', 'type' => 'visual_group_end', 'id' => 'avia_404_end', 'nodescription' => true );
 
 
 /**
@@ -1988,28 +2007,35 @@ $avia_elements[] = array(	"slug"	=> "avia", "type" => "visual_group_end", "id" =
  * @author tinabillinger
  * @since 4.3
  */
- 
-$avia_elements[] = array(	"slug"	=> "avia", "type" => "visual_group_start", "id" => "avia_maintain_start", "nodescription" => true);
+
+$avia_elements[] = array(	'slug'	=> 'avia', 'type' => 'visual_group_start', 'id' => 'avia_maintain_start', 'nodescription' => true );
 
 $avia_elements[] =	array(
-    "name" => __("Maintenance Mode",'avia_framework'),
-    "slug"	=> "avia",
-    "desc" 	=> __("Check to enable maintenance mode and redirect all page requests to a maintenance page of your choice", 'avia_framework'),
-    "id" 	=> "maintenance_mode",
-    "type" 	=> "checkbox",
-    "std"	=> false,
-);
-$avia_elements[] =	array(
-    "slug"	=> "avia",
-    "name" 	=> __("Redirect all users to this page", 'avia_framework'),
-    "desc" 	=> __("Please note that logged in Administrators, Editors and Authors will still be able to access the site", 'avia_framework'),
-    "required" => array("maintenance_mode",'maintenance_mode'),
-    "id" 	=> "maintenance_page",
-    "type" 	=> "select",
-    "subtype" => 'page'
-);
+						'name'		=> __( 'Maintenance Mode', 'avia_framework' ),
+						'slug'		=> 'avia',
+						'desc'		=> __( 'Check to enable maintenance mode and show or redirect all page requests to a maintenance page of your choice. This page will not be accessable and will be excluded from page lists and search results. You must deselect the page to make it accessible for public again.', 'avia_framework' ),
+						'id'		=> 'maintenance_mode',
+						'type'		=> 'select',
+						'no_first'	=> true,
+						'std'		=> '',
+						'subtype'	=> array(
+									__( 'Disabled', 'avia_framework' )												=> '',
+									__( 'Enabled - Use selected page content without redirect', 'avia_framework' )	=> 'maintenance_mode',
+									__( 'Enabled - Redirect to selected page', 'avia_framework' )					=> 'maintenance_mode_redirect'
+							)
+					);
 
-$avia_elements[] = array(	"slug"	=> "avia", "type" => "visual_group_end", "id" => "avia_maintain_end", "nodescription" => true);
+$avia_elements[] =	array(
+						'slug'		=> 'avia',
+						'name'		=> __( 'Select Your Maintenance Mode Page', 'avia_framework' ),
+						'desc'		=> __( 'Please note that logged in Administrators, Editors and Authors will still be able to access the site', 'avia_framework' ),
+						'required'	=> array( 'maintenance_mode', '{contains_array}maintenance_mode;maintenance_mode_redirect' ),
+						'id'		=> 'maintenance_page',
+						'type'		=> 'select',
+						'subtype'	=> 'page'
+					);
+
+$avia_elements[] = array(	'slug'	=> 'avia', 'type' => 'visual_group_end', 'id' => 'avia_maintain_end', 'nodescription' => true );
 
 
 /**
@@ -2072,7 +2098,33 @@ if( version_compare( $wp_version, '5.0', '>=' ) )
 					);
 }
 
+$avia_elements[] = array(	
+						'slug'			=> 'avia', 
+						'type'			=> 'visual_group_start', 
+						'id'			=> 'avia_preprocess_start', 
+						'nodescription'	=> true
+					);
 
+$avia_elements[] = array(
+						'name'		=> __( 'Preprocessing Shortcodes In Header', 'avia_framework' ),
+						'slug'		=> 'avia',
+						'desc'		=> __( 'Some SEO plugins need to process shortcodes when bulding the header. As this is time consuming it is disabled by default. Also if you experience problems you can leave it disabled until you find a solution to fix it.', 'avia_framework' ),
+						'id'		=> 'preprocess_shortcodes_in_header',
+						'type'		=> 'select',
+						'std'		=> '',
+						'no_first'	=> true,
+						'subtype'	=> array(
+										__( 'Do not allow to preprocess shortcodes', 'avia_framework' )		=> '',
+										__( 'allow to preprocess shortcodes', 'avia_framework' )			=> 'preprocess_shortcodes_in_header'
+									)
+					);
+
+$avia_elements[] = array(	
+						'slug'			=> 'avia', 
+						'type'			=> 'visual_group_end', 
+						'id'			=> 'avia_preprocess_end', 
+						'nodescription'	=> true
+					);
 
 
 $avia_elements[] =	array(
@@ -2647,7 +2699,20 @@ $avia_elements[] =	array(
 					);
 
 
-
+$avia_elements[] = array(
+						'slug'		=> 'styling',
+						'name'		=> __( 'Show Custom Styles In Backend Block Editor', 'avia_framework'),
+						'desc'		=> __( 'Select if you want to see theme custom styles when editing a page/post with the block editor.', 'avia_framework' ),
+						'id'		=> 'block_editor_theme_support',
+						'type'		=> 'select',
+						'required'	=> array( 'enable_wp_classic_editor', '' ),
+						'std'		=> '',
+						'no_first'	=> true,
+						'subtype'	=> array(
+											__( 'Show Theme Custom Styles', 'avia_framework' )			=> '',
+											__( 'Use Block Editor Default Styles', 'avia_framework' )	=> 'no_theme_support',
+										)
+					);
 
 /*Sidebar*/
 
@@ -3437,13 +3502,20 @@ $avia_elements[] =	array(	"name" => __("Single Post Options", 'avia_framework'),
 							"nodescription"=>true);
   
 $avia_elements[] = array(
-		"name" 	=> __("Disable the post navigation", 'avia_framework'),
-		"desc" 	=> __("Check to disable the post navigation that links to the next/previous post on single entries ", 'avia_framework'),
-		"id" 	=> "disable_post_nav",
-		"type" 	=> "checkbox",
-		"std"	=> "",
-		"slug"	=> "blog");  
-  
+						'slug'		=> 'blog',
+						'name'		=> __( 'Single Post Navigation', 'avia_framework' ),
+						'desc'		=> __( 'Select to disable or enable the post navigation that links to the next/previous post on single entries. Setting is also used for portfolio. Use filter avf_post_nav_settings to customize.', 'avia_framework' ),
+						'id'		=> 'disable_post_nav',
+						'type'		=> 'select',
+						'no_first'	=> true,
+						'std'		=> '',
+						'subtype'	=> array(
+											__( 'Enable post navigation', 'avia_framework' )	=> '',
+											__( 'Disable post navigation', 'avia_framework' )	=> 'disable_post_nav',
+											__( 'Loop post navigation', 'avia_framework' )		=> 'loop_post_nav'
+										)
+		);  
+
 $avia_elements[] =	array(
     "slug"	=> "blog",
     "name" 	=> __("Single Post Style", 'avia_framework'),

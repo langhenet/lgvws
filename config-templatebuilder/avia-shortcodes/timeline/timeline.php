@@ -13,9 +13,39 @@ if (!defined('ABSPATH')) {
     die('-1');
 }
 
-if (!class_exists('avia_sc_timeline')) {
+if ( ! class_exists( 'avia_sc_timeline' ) ) 
+{
     class avia_sc_timeline extends aviaShortcodeTemplate
     {
+		/**
+		 *
+		 * @since 4.5.5
+		 * @var array 
+		 */
+		protected $screen_options;
+		
+		/**
+		 * 
+		 * @since 4.5.5
+		 * @param AviaBuilder $builder
+		 */
+		public function __construct( $builder ) 
+		{
+			$this->screen_options = array();
+				
+			parent::__construct( $builder );
+		}
+		
+		/**
+		 * @since 4.5.5
+		 */
+		public function __destruct() 
+		{
+			parent::__destruct();
+			
+			unset( $this->screen_options );
+		}
+		
         /**
          * Create the config array for the shortcode button
          */
@@ -813,6 +843,13 @@ if (!class_exists('avia_sc_timeline')) {
 
         function av_timeline_item($atts, $content = "", $shortcodename = "")
         {
+			/**
+			 * Fixes a problem when 3-rd party plugins call nested shortcodes without executing main shortcode  (like YOAST in wpseo-filter-shortcodes)
+			 */
+		   if( empty( $this->screen_options ) )
+		   {
+			   return '';
+		   }
 
             extract($this->screen_options); //return $av_font_classes, $av_title_font_classes and $av_display_classes
 
@@ -998,18 +1035,37 @@ if (!class_exists('avia_sc_timeline')) {
                 $icon .= "</span>";
             }
             $icon .= $icon_wrapper['end'];
+			
+			
+			$default_heading = 'h2';
+			$args = array(
+						'heading'		=> $default_heading,
+						'extra_class'	=> ''
+					);
 
+			$extra_args = array( $this, $atts, $content, 'date' );
 
+			/**
+			 * @since 4.5.5
+			 * @return array
+			 */
+			$args = apply_filters( 'avf_customize_heading_settings', $args, __CLASS__, $extra_args );
+
+			$heading = ! empty( $args['heading'] ) ? $args['heading'] : $default_heading;
+			$css = ! empty( $args['extra_class'] ) ? $args['extra_class'] : '';
+
+			
             /* date */
             $title_sanitized = sanitize_title($atts['date']);
             $date_wrapper = array(
-                'start' => "<h2 class='av-milestone-date{$av_title_font_classes}' {$date_styling} id='milestone-{$title_sanitized}'><strong>",
-                'end' => "</strong></h2>",
+                'start' => "<{$heading} class='av-milestone-date {$css} {$av_title_font_classes}' {$date_styling} id='milestone-{$title_sanitized}'><strong>",
+                'end' => "</strong></{$heading}>",
             );
 
-            if (in_array($atts['linkelement'], array('all', 'both', 'date_head')) &&  !empty($atts['link']) ) {
-                $date_wrapper['start'] = "<h2 class='av-milestone-date{$av_title_font_classes}' {$date_styling} id='milestone-{$title_sanitized}'><a title='" . esc_attr($linktitle) . "' href='{$atts['link']}' {$linktarget}>";
-                $date_wrapper['end'] = "</a></h2>";
+            if (in_array($atts['linkelement'], array('all', 'both', 'date_head')) &&  !empty($atts['link']) ) 
+			{
+                $date_wrapper['start'] = "<{$heading} class='av-milestone-date {$css} {$av_title_font_classes}' {$date_styling} id='milestone-{$title_sanitized}'><a title='" . esc_attr($linktitle) . "' href='{$atts['link']}' {$linktarget}>";
+                $date_wrapper['end'] = "</a></{$heading}>";
             }
 
             $date = "";
@@ -1022,17 +1078,35 @@ if (!class_exists('avia_sc_timeline')) {
             $article = "";
             $article .= "<article class='av-milestone-content-wrap'>";
             $article .= "<div class='av-milestone-contentbox' {$contentbox_styling}>";
-            if (!empty($atts['title'])) {
-                $title_class = $av_font_classes ? " class='{$av_font_classes}'" : "";
+            if( ! empty( $atts['title'] ) ) 
+			{
+				$default_heading = 'h4';
+				$args = array(
+							'heading'		=> $default_heading,
+							'extra_class'	=> ''
+						);
+
+				$extra_args = array( $this, $atts, $content, 'title' );
+
+				/**
+				 * @since 4.5.5
+				 * @return array
+				 */
+				$args = apply_filters( 'avf_customize_heading_settings', $args, __CLASS__, $extra_args );
+
+				$heading = ! empty( $args['heading'] ) ? $args['heading'] : $default_heading;
+				$css = ! empty( $args['extra_class'] ) ? $args['extra_class'] : '';
+				
+				$title_class = "class='{$av_font_classes} {$css}'";
 
                 $headline_wrap = array(
-                    'start' => "<h4 {$title_styling}{$title_class}>",
-                    'end' => "</h4>"
+                    'start' => "<{$heading} {$title_styling} {$title_class}>",
+                    'end' => "</{$heading}>"
                 );
 
                 if (in_array($atts['linkelement'], array('all', 'icon_head', 'date_head')) &&  !empty($atts['link']) ) {
-                    $headline_wrap['start'] = "<h4 {$title_styling}{$title_class}><a title='" . esc_attr($linktitle) . "' href='{$atts['link']}' {$linktarget}>";
-                    $headline_wrap['end'] = "</a></h4>";
+                    $headline_wrap['start'] = "<{$heading} {$title_styling} {$title_class}><a title='" . esc_attr($linktitle) . "' href='{$atts['link']}' {$linktarget}>";
+                    $headline_wrap['end'] = "</a></{$heading}>";
                 }
 
                 $article .= '<header class="entry-content-header">';

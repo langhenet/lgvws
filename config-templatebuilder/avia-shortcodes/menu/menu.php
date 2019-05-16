@@ -7,12 +7,21 @@
 if ( ! defined( 'ABSPATH' ) ) {  exit;  }    // Exit if accessed directly
 
 
-if ( !class_exists( 'avia_sc_submenu' ) ) 
+if ( ! class_exists( 'avia_sc_submenu' ) ) 
 {
 	class avia_sc_submenu extends aviaShortcodeTemplate
 	{
-			static $count = 0;
-			static $custom_items = 0;
+			/**
+			 *
+			 * @var int 
+			 */
+			static protected $count = 0;
+			
+			/**
+			 *
+			 * @var int 
+			 */
+			static protected $custom_items = 0;
 	
 			/**
 			 * Create the config array for the shortcode button
@@ -181,7 +190,7 @@ if ( !class_exists( 'avia_sc_submenu' ) )
 						"std" 	=> "true",
 						"type" 	=> "checkbox"),
 						
-	              	 array(	
+					array(	
 						"name" 	=> __("Mobile Menu Display",'avia_framework' ),
 						"desc" 	=> __("How do you want to display the menu on mobile devices",'avia_framework' ),
 						"id" 	=> "mobile",
@@ -190,7 +199,21 @@ if ( !class_exists( 'avia_sc_submenu' ) )
 						"subtype" => array(   __('Display full menu (works best if you only got a few menu items)','avia_framework' )       			=>'disabled',
 						                      __('Display a button to open menu (works best for menus with a lot of menu items)','avia_framework' )     =>'active',
 						                      )
-				    ),
+						),
+					
+					array(
+							'name'		=> __( 'Screenwidth for burger menu button', 'avia_framework' ),
+							'desc'		=> __( 'Select the maximum screenwidth to use a burger menu button instead of full menu. Above that the full menu is displayed', 'avia_framework' ),
+							'id'		=> 'mobile_switch',
+							'type'		=> 'select',
+							'std'		=> 'av-switch-768',
+							'required' 	=> array( 'mobile', 'equals', 'active' ),
+							'subtype'	=> array(
+													__( 'Switch at 990px (tablet landscape)','avia_framework' ) => 'av-switch-990',
+													__( 'Switch at 768px (tablet portrait)','avia_framework' ) => 'av-switch-768',
+													__( 'Switch at 480px (smartphone portrait)','avia_framework' ) => 'av-switch-480',
+											)
+						),
 				    
 				    array(	
 						"name" 	=> __("Hide Mobile Menu Submenu Items", 'avia_framework'),
@@ -278,19 +301,32 @@ if ( !class_exists( 'avia_sc_submenu' ) )
 			 */
 			function shortcode_handler($atts, $content = "", $shortcodename = "", $meta = "")
 			{
-				$atts = shortcode_atts(array(
-				'style'			=> '',
-				'menu'			=> '',
-				'position'	 	=> 'center',
-				'sticky'		=> '',
-				'color'			=> 'main_color',
-				'mobile'		=> 'disabled',
-				'mobile_submenu'=> '',
-				'which_menu'	=> ''
+				$atts = shortcode_atts( array(
+										'style'			=> '',
+										'menu'			=> '',
+										'position'	 	=> 'center',
+										'sticky'		=> '',
+										'color'			=> 'main_color',
+										'mobile'		=> 'disabled',
+										'mobile_switch'	=> 'av-switch-768',
+										'mobile_submenu'=> '',
+										'which_menu'	=> ''
 				
-				), $atts, $this->config['shortcode']);
+				), $atts, $this->config['shortcode'] );
 				
-				extract($atts);
+				if( 'disabled' == $atts['mobile'] )
+				{
+					$atts['mobile_switch'] = '';
+				}
+				else if( empty( $atts['mobile_switch'] ) )
+				{
+					$atts['mobile_switch'] = 'av-switch-768';
+				}
+				
+				
+				
+				extract( $atts );
+				
 				$output  	= "";
 				$sticky_div = "";
 				avia_sc_submenu::$count++;
@@ -310,11 +346,13 @@ if ( !class_exists( 'avia_sc_submenu' ) )
 					$sticky_div = "<div class='sticky_placeholder'></div>";
 				}
 				
+				$params['class'] .= ' ' . $mobile_switch;
+				
 				//we dont need a closing structure if the element is the first one or if a previous fullwidth element was displayed before
 				if(isset($meta['index']) && $meta['index'] == 0) $params['close'] = false;
 				if(!empty($meta['siblings']['prev']['tag']) && in_array($meta['siblings']['prev']['tag'], AviaBuilder::$full_el_no_section )) $params['close'] = false;
 				
-				if(isset($meta['index']) && $meta['index'] != 0) $params['class'] .= " submenu-not-first";
+				if(isset($meta['index']) && $meta['index'] > 0) $params['class'] .= " submenu-not-first";
 				
 				
 				if($which_menu == "custom")
@@ -360,6 +398,14 @@ if ( !class_exists( 'avia_sc_submenu' ) )
 			
 			function av_submenu_item($atts, $content = "", $shortcodename = "", $meta = "")
 			{
+				/**
+				 * Fixes a problem when 3-rd party plugins call nested shortcodes without executing main shortcode  (like YOAST in wpseo-filter-shortcodes)
+				 */
+				if( avia_sc_submenu::$count == 0 )
+				{
+					return '';
+				}
+				
 				$output = "";
 				$atts = shortcode_atts(
                 array(	
@@ -368,7 +414,7 @@ if ( !class_exists( 'avia_sc_submenu' ) )
                 	'linktarget' 	=> '',
                 	'button_style' 	=> '',
                 ), 
-                $atts, 'av_rotator_item');
+                $atts, 'av_submenu_item');
                 
                 extract($atts);
                 

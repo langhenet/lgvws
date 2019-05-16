@@ -6,13 +6,14 @@
  */
 
  // Don't load directly
-if ( !defined('ABSPATH') ) { die('-1'); }
+if ( ! defined('ABSPATH') ) { die('-1'); }
 
 
 
-if ( !class_exists( 'avia_sc_section' ) )
+if ( ! class_exists( 'avia_sc_section' ) )
 {
-	class avia_sc_section extends aviaShortcodeTemplate{
+	class avia_sc_section extends aviaShortcodeTemplate
+	{
 
 			static $section_count = 0;
 			static $add_to_closing = "";
@@ -193,19 +194,31 @@ if ( !class_exists( 'avia_sc_section' ) )
 					
 					
 					array(
-						"name" 	=> __("Section Minimum Height",'avia_framework' ),
-						"id" 	=> "min_height",
-						"desc"  => __("Define a minimum height for the section. Content within the section will be centered vertically within the section",'avia_framework' ),
-						"type" 	=> "select",
-						"std" 	=> "",
-						"subtype" => array(   __('No minimum height, use content within section to define Section height','avia_framework' )	=>'',
-						                      __('At least 100&percnt; of Browser Window height','avia_framework' )=>'100',
-						                      __('At least 75&percnt; of Browser Window height','avia_framework' )	=>'75',
-											  __('At least 50&percnt; of Browser Window height','avia_framework' )	=>'50',
-											  __('At least 25&percnt; of Browser Window height','avia_framework' )	=>'25',
-											  __('Custom height in pixel','avia_framework' )	=>'custom',
+							'name' 	=> __( 'Section Minimum Height','avia_framework' ),
+							'id' 	=> 'min_height',
+							'desc'  => __( 'Define a minimum height for the section. Content within the section will be centered vertically within the section', 'avia_framework' ),
+							'type' 	=> 'select',
+							'std' 	=> '',
+							'subtype' => array(   
+											__( 'No minimum height, use content within section to define Section height', 'avia_framework' )	=> '',
+											__( 'At least 100&percnt; of Browser Window height', 'avia_framework' )					=> '100',
+											__( 'At least 75&percnt; of Browser Window height', 'avia_framework' )					=> '75',
+											__( 'At least 50&percnt; of Browser Window height', 'avia_framework' )					=> '50',
+											__( 'At least 25&percnt; of Browser Window height', 'avia_framework' )					=> '25',
+											__( 'Custom height in &percnt; based on browser windows height', 'avia_framework' )	=> 'percent',
+											__( 'Custom height in pixel', 'avia_framework' )										=> 'custom',
 						                  )
-				    ),
+						),
+					
+					array(	
+							'name' 	=> __( 'Section minimum custom height in &percnt;', 'avia_framework' ),
+							'desc' 	=> __( 'Define a minimum height for the section in &percnt; based on the browser windows height', 'avia_framework' ),
+							'id' 	=> 'min_height_pc',
+							'required'	=> array( 'min_height', 'equals', 'percent' ),
+							'std' 	=> '25',
+							'type' 	=> 'select',
+							'subtype' => AviaHtmlHelper::number_array( 1, 99, 1 )
+						),
 				    
 				    array(	
 							"name" 	=> __("Section custom height", 'avia_framework' ),
@@ -677,53 +690,60 @@ array(
 				extract(AviaHelper::av_mobile_sizes($atts)); //return $av_font_classes, $av_title_font_classes and $av_display_classes 
 
 				avia_sc_section::$section_count ++;
-			    $atts = shortcode_atts(array(	'src' => '', 
-			    								'position' => 'top left', 
-			    								'repeat' => 'no-repeat', 
-			    								'attach' => 'scroll', 
-			    								'color' => 'main_color',
-                                                'background'		                => '',
-                                                'custom_bg' => '',
+			    $atts = shortcode_atts( array(	'src'				=> '', 
+			    								'position'			=> 'top left', 
+			    								'repeat'			=> 'no-repeat', 
+			    								'attach'			=> 'scroll', 
+			    								'color'				=> 'main_color',
+                                                'background'		=> '',
+                                                'custom_bg'			=> '',
                                                 'background_gradient_color1'		=> '',
-                                                'background_gradient_color2'	   	=> '',
-                                                'background_gradient_direction'	   	=> '',
-			    								'padding'=>'default' ,
-			    								'margin' => '',
-			    								'custom_margin' => '',
-			    								'shadow'=>'shadow', 
-			    								'id'=>'', 
-			    								'min_height' => '', 
-			    								'min_height_px' => '', 
-			    								'video' => '', 
-			    								'video_ratio'=>'16:9', 
-			    								'video_mobile_disabled'=>'',
-			    								'custom_markup' => '',
-			    								'attachment' => '',
-			    								'attachment_size' => '',
-			    								'bottom_border' => '',
-			    								'overlay_enable' => '',
-			    								'overlay_opacity' => '',
-			    								'overlay_color' => '',
-			    								'overlay_pattern' => '',
-			    								'overlay_custom_pattern' => '',
-			    								'scroll_down' => '',
-			    								'bottom_border_diagonal_color' => '',
-			    								'bottom_border_diagonal_direction' => '',
-			    								'bottom_border_style'=>'',
-			    								'custom_arrow_bg' => ''
+                                                'background_gradient_color2'		=> '',
+                                                'background_gradient_direction'		=> '',
+			    								'padding'			=> 'default' ,
+			    								'margin'			=> '',
+			    								'custom_margin'		=> '',
+			    								'shadow'			=> 'shadow', 
+			    								'id'				=> '', 
+			    								'min_height'		=> '', 
+												'min_height_pc'		=> 25,
+			    								'min_height_px'		=> '', 
+			    								'video'				=> '', 
+			    								'video_ratio'		=>' 16:9', 
+			    								'video_mobile_disabled'			=>'',
+			    								'custom_markup'		=> '',
+			    								'attachment'		=> '',
+			    								'attachment_size'	=> '',
+			    								'bottom_border'		=> '',
+			    								'overlay_enable'	=> '',
+			    								'overlay_opacity'	=> '',
+			    								'overlay_color'		=> '',
+			    								'overlay_pattern'	=> '',
+			    								'overlay_custom_pattern'	=> '',
+			    								'scroll_down'		=> '',
+			    								'bottom_border_diagonal_color'		=> '',
+			    								'bottom_border_diagonal_direction'	=> '',
+			    								'bottom_border_style'				=> '',
+			    								'custom_arrow_bg'					=> ''
 			    								
 			    								), 
-			    							$atts, $this->config['shortcode']);
+			    							$atts, $this->config['shortcode'] );
 							    							
 			    							
+				if( 'percent' == $atts['min_height'] )
+				{
+					$atts['min_height'] = $atts['min_height_pc'];
+				}
+				
 				extract($atts);
+				
 			    $output      = "";
 			    $class       = "avia-section ".$color." avia-section-".$padding." avia-".$shadow;
 			    $background  = "";
 				$src		 = '';
+				$params	= array();
 				
-				
-				$params['id'] = !empty($id) ? AviaHelper::save_string($id,'-') :"av_section_".avia_sc_section::$section_count;
+				$params['id'] = ! empty( $id ) ? AviaHelper::save_string($id,'-') : "av_section_".avia_sc_section::$section_count;
 				$params['custom_markup'] = $meta['custom_markup'];
 				$params['attach'] = "";
 				
@@ -936,7 +956,7 @@ array(
 				$params['video_ratio'] = $video_ratio;
 				$params['video_mobile_disabled'] = $video_mobile_disabled;
 				
-			    if(isset($meta['index']))
+			    if(isset($meta['index']) && $meta['index'] >= 0 )
 			    {
 			    	if($meta['index'] == 0) 
 			    	{
@@ -954,8 +974,6 @@ array(
 				    $params['class'] .= " av-arrow-down-section";
 			    }
 			    
-		
-				
 				$avia_config['layout_container'] = "section";
 				
 				$output .= avia_new_section($params);
@@ -1053,6 +1071,7 @@ if(!function_exists('avia_new_section'))
 	    
 	    
 	    $defaults = array_merge($defaults, $params);
+		
 	    extract($defaults);
 
 	    $post_class = "";
@@ -1065,8 +1084,8 @@ if(!function_exists('avia_new_section'))
 	    if($close) 
 	    {
 	    	$cm		 = avia_section_close_markup();
-	    	$output .= "</div></div>{$cm}</div>".avia_sc_section::$add_to_closing.avia_sc_section::$close_overlay."</div>";
-		avia_sc_section::$add_to_closing = '';
+			$output .= "</div></div>{$cm}</div>".avia_sc_section::$add_to_closing.avia_sc_section::$close_overlay."</div>";
+			avia_sc_section::$add_to_closing = '';
 	    	avia_sc_section::$close_overlay = "";
 		}
 	    //start new
@@ -1076,10 +1095,16 @@ if(!function_exists('avia_new_section'))
 	
 	        if($open_color_wrap)
 	        {
-	        	if(!empty($min_height)) 
+	        	if( ! empty( $min_height ) ) 
 	        	{
-	        		$class .= " av-minimum-height av-minimum-height-".$min_height;
-	        		if($min_height == 'custom' && $min_height_px != "")
+					$class .= " av-minimum-height av-minimum-height-{$min_height} ";
+					
+					if( is_numeric( $min_height ) )
+					{
+						$data .= " data-av_minimum_height_pc='{$min_height}'";
+					}
+					
+	        		if( $min_height == 'custom' && $min_height_px != '' )
 	        		{
 	        			$min_height_px 		= (int)$min_height_px;
 	        			$container_style 	= "style='height:{$min_height_px}px'";
@@ -1110,7 +1135,7 @@ if(!function_exists('avia_new_section'))
 	        		$bg_slider->set_extra_class('av-section-video-bg');
 	        		$class .= " av-section-with-video-bg";
 	        		$class .= !empty($video_mobile_disabled) ? " av-section-mobile-video-disabled" : "";
-	        		$data .= "  data-section-video-ratio='{$video_ratio}'";
+	        		$data .= " data-section-video-ratio='{$video_ratio}'";
 	        		
 	        	}
 	        	$output .= $before_new;

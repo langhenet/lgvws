@@ -872,7 +872,8 @@ class AviaTypeFonts extends aviaFontManagementBase
 			$weight = array_unique( $weight );
 			sort( $weight );
 			
-			$name = $uploaded[ $font_key ]['config'][0]['name'] . ' (' . implode( ', ', $weight ) . ')';
+			$name = isset( $uploaded[ $font_key ]['config'][0]['name'] ) ? $uploaded[ $font_key ]['config'][0]['name'] : $font_key;
+			$name .= ' (' . implode( ', ', $weight ) . ')';
 			$fonts[  $name ] = $font_key;
 		}
 		
@@ -1013,6 +1014,15 @@ class AviaTypeFonts extends aviaFontManagementBase
 				continue;
 			}
 			
+			/**
+			 * Allow to change default behaviour of browsers when loading external fonts
+			 * https://developers.google.com/web/updates/2016/02/font-display
+			 * 
+			 * @since 4.5.6
+			 * @return string			auto | block | swap | fallback | optional
+			 */
+			$font_display = apply_filters( 'avf_font_display', 'auto', $font['key'] );
+			
 			$css .= "@font-face { \r\n";
 			
 			$css .= "     font-family: '{$font['key']}';\r\n";
@@ -1023,6 +1033,7 @@ class AviaTypeFonts extends aviaFontManagementBase
 			
 			$css .= "     font-style:  {$info['style']};\r\n";
 			$css .= "     font-weight: {$info['weight']};\r\n";
+			$css .= "     font-display: {$font_display};\r\n";
 			
 			$css .= "}\r\n";
 		}
@@ -1057,11 +1068,11 @@ class AviaTypeFonts extends aviaFontManagementBase
 	 * Output styles for custom uploaded fonts to dynamic stylesheet
 	 * 
 	 * @param string $output
-	 * @param avia_style_generator $avia_style_generator
+	 * @param avia_style_generator $style_generator
 	 * @param string $context					'before' | 'after'
 	 * @return string
 	 */
-	public function handler_create_dynamic_stylesheet( $output, avia_style_generator $avia_style_generator, $context = '' )
+	public function handler_create_dynamic_stylesheet( $output, avia_style_generator $style_generator, $context = '' )
 	{
 		if( ! in_array( $context, array( 'before' ) ) )
 		{

@@ -211,7 +211,7 @@
     	}
     	
     	
-    }
+    };
 
 
 	function activate_waypoints(container)
@@ -251,7 +251,7 @@
 		}
 	    
 	    this._init( options );
-	}
+	};
 	
 	$.AviaParallaxElement.prototype = {
 	
@@ -350,7 +350,7 @@ $.fn.avia_parallax = function(options)
     			self = $.data( this, 'aviaParallax', new $.AviaParallaxElement( options, this ) );
     		}
     	});
-}
+};
 
 
 // -------------------------------------------------------------------------------------------
@@ -383,7 +383,7 @@ $.fn.avia_mobile_fixed = function(options)
 			current.prepend(template);
 			current.attr('style','');
 	});
-}
+};
 
 
 
@@ -418,7 +418,7 @@ $.fn.avia_sc_animation_delayed = function(options)
 			
 		});
 	});
-}
+};
 
 /*delayd animations when used within tab sections or similar elements. this way they get animated each new time a tab is shown*/
 $.fn.avia_delayed_animation_in_container = function(options)
@@ -442,7 +442,7 @@ $.fn.avia_delayed_animation_in_container = function(options)
 				animate.removeClass('avia_start_animation avia_start_delayed_animation');
 		});
 	});
-}
+};
 
 
 
@@ -462,6 +462,7 @@ $.fn.avia_browser_height = function()
 		css_block	= $("<style type='text/css' id='av-browser-height'></style>").appendTo('head:first'), 
 		sidebar_menu= $('.html_header_sidebar #top #header_main'),
 		full_slider	= $('.html_header_sidebar .avia-fullscreen-slider.avia-builder-el-0.avia-builder-el-no-sibling').addClass('av-solo-full'),
+		pc_heights	= [ 25, 50, 75 ],
 		calc_height = function()
 		{
 			var css			= "",
@@ -470,10 +471,8 @@ $.fn.avia_browser_height = function()
 				wh100_mod 	= wh100,
 				whCover		= (wh100 / 9) * 16,
 				wwCover		= (ww100 / 16) * 9,
-				wh75		= Math.round( wh100 * 0.75 ),
-				wh50		= Math.round( wh100 * 0.5  ),
-				wh25		= Math.round( wh100 * 0.25 ),
-				solo		= 0;
+				solo		= 0,
+				whCustom	= [];
 			
 			if(sidebar_menu.length) solo = sidebar_menu.height();
 			
@@ -486,9 +485,12 @@ $.fn.avia_browser_height = function()
 			
 			//various section heights (100-25% as well as 100% - header/adminbar in case its the first builder element)
 			css += ".av-minimum-height-100 .container, .avia-fullscreen-slider .avia-slideshow, #top.avia-blank .av-minimum-height-100 .container, .av-cell-min-height-100 > .flex_cell{height:"+wh100+"px;}\n";
-			css += ".av-minimum-height-75 .container, .av-cell-min-height-75 > .flex_cell	{height:"+wh75+"px;}\n";
-			css += ".av-minimum-height-50 .container, .av-cell-min-height-50 > .flex_cell	{height:"+wh50+"px;}\n";
-			css += ".av-minimum-height-25 .container, .av-cell-min-height-25 > .flex_cell	{height:"+wh25+"px;}\n";
+			
+			$.each( pc_heights, function( index, value ) {
+						var wh = Math.round( wh100 * ( value / 100.0 ) );
+						css += ".av-minimum-height-" + value + " .container, .av-cell-min-height-" + value + " > .flex_cell	{height:" + wh + "px;}\n";
+					});
+			
 			css += ".avia-builder-el-0.av-minimum-height-100 .container, .avia-builder-el-0.avia-fullscreen-slider .avia-slideshow, .avia-builder-el-0.av-cell-min-height-100 > .flex_cell{height:"+wh100_mod+"px;}\n";
 			
 			css += "#top .av-solo-full .avia-slideshow {min-height:"+solo+"px;}\n";
@@ -524,10 +526,27 @@ $.fn.avia_browser_height = function()
 			
 			setTimeout(function(){ win.trigger('av-height-change'); /*broadcast the height change*/ },100);
 		};
+		
+	this.each( function( index ) {
+					var height = $(this).data('av_minimum_height_pc');
+					if( 'number' != typeof height )
+					{
+						return this;
+					}
+
+					height = parseInt( height );
+
+					if( ! pc_heights.includes( height ) && ( height != 100 ) )
+					{
+						pc_heights.push( height );
+					}
+					
+					return this;
+		});
 	
-	win.on( 'debouncedresize', calc_height);
+	win.on( 'debouncedresize', calc_height );
 	calc_height();
-}
+};
 
 // -------------------------------------------------------------------------------------------
 // Video Section helper
@@ -588,7 +607,7 @@ $.fn.avia_video_section = function()
 		calc_height(self, i);
 	});
 	
-}
+};
 
 
 /**
@@ -692,7 +711,7 @@ $.fn.avia_link_column = function()
 					 	
 					}, options );
 				}
-			},100)
+			},100);
 			
 		});
 	};
@@ -875,7 +894,7 @@ $.extend( $.easing,
 
 				loader.loading_item = $('<div class="avia_loading_icon"><div class="av-siteloader"></div></div>').css({display:"none"}).appendTo(attach_to);
 			}
-		}
+		};
 
 		loader.attach();
 		return loader;
@@ -904,7 +923,7 @@ $.extend( $.easing,
 
 				pp.loading_item = $('<div class="avia_playpause_icon"></div>').css({display:"none"}).appendTo(attach_to);
 			}
-		}
+		};
 
 		pp.attach();
 		return pp;
@@ -918,7 +937,7 @@ $.extend( $.easing,
 	$.avia_utilities.preload = function(options_passed)
 	{
 		new $.AviaPreloader(options_passed);
-	}
+	};
 	
 	$.AviaPreloader  =  function(options)
 	{
@@ -936,7 +955,7 @@ $.extend( $.easing,
 		this.preload_images = 0;
 		
 		this.load_images();
-	}
+	};
 	
 	$.AviaPreloader.prototype  = 
 	{
@@ -1000,7 +1019,7 @@ $.extend( $.easing,
 			}
 
 		}
-	}
+	};
 
 	/************************************************************************
 	CSS Easing transformation table

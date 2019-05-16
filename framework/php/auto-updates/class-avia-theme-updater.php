@@ -102,6 +102,8 @@ if( ! class_exists( 'Avia_Theme_Updater' ) )
 			$this->init( $args );
 			
 			add_filter( 'pre_set_site_transient_update_themes', array( $this, 'handler_pre_set_site_transient_update_themes' ), 10, 1 );
+			add_filter( 'upgrader_package_options', array( $this, 'handler_upgrader_package_options' ), 1000, 1 );
+//			add_filter( 'upgrader_post_install', array( $this, 'handler_upgrader_post_install' ), 1000, 3 );
 		}
 		
 		/**
@@ -169,12 +171,12 @@ if( ! class_exists( 'Avia_Theme_Updater' ) )
 			
 			if( ! empty( $new_token ) )
 			{
-				return new Avia_Envato_Base_API( $new_token );
+				return new Avia_Envato_Base_API( $new_token, avia_auto_updates::get_theme_name(), avia_auto_updates::get_version() );
 			}
 			
 			if( empty( $this->envato_api ) )
 			{
-				$this->envato_api = new Avia_Envato_Base_API( $this->personal_token );
+				$this->envato_api = new Avia_Envato_Base_API( $this->personal_token, avia_auto_updates::get_theme_name(), avia_auto_updates::get_version() );
 			}
 			
 			return $this->envato_api;
@@ -223,9 +225,50 @@ if( ! class_exists( 'Avia_Theme_Updater' ) )
 			 */
 			if( $this->get_cache() )
 			{
-				foreach( $this->envato_results_cache as $theme => $update ) 
+				if( ! empty( $this->envato_results_cache ) )
 				{
-					$updates->response[ $theme ] = $update;
+					$purchases = avia_auto_updates::get_theme_keys();
+				
+					/**
+					 * Check if theme has updated already and remove from cache
+					 */
+					foreach( $this->envato_results_cache as $theme => $update ) 
+					{
+						$theme_key = '';
+						$stylesheet = '';
+						foreach( $purchases as $name => $purchase ) 
+						{
+							if( $purchase['item']['wordpress_theme_metadata']['stylesheet'] == $theme )
+							{
+								$theme_key = $name;
+								$stylesheet = $purchases[ $name ]['item']['wordpress_theme_metadata']['stylesheet'];
+								break;
+							}
+						}
+
+						$do_update = false;
+						if( ! empty( $theme_key ) && isset( $purchases[ $theme_key ]['item']['wordpress_theme_metadata']['version'] ) )
+						{
+							if( version_compare( $purchases[ $theme_key ]['item']['wordpress_theme_metadata']['version'], $update['new_version'], '<' ) )
+							{
+								$do_update = true;
+							}
+							else if( version_compare( $purchases[ $theme_key ]['item']['wordpress_theme_metadata']['version'], $update['new_version'], '=' ) )
+							{
+								unset( $this->envato_results_cache[ $theme ] );
+								$this->update_cache();
+							}
+						}
+
+						if( $do_update )
+						{
+							$updates->response[ $theme ] = $update;
+						}
+						else if( array_key_exists( $theme, $updates->response ) )
+						{
+							unset( $updates->response[ $theme ] );
+						}
+					}
 				}
 				
 				if( current_theme_supports( 'avia_envato_extended_log' ) )
@@ -240,10 +283,23 @@ if( ! class_exists( 'Avia_Theme_Updater' ) )
 			{
 				$this->add_to_updater_log( new Avia_Envato_Exception( __( 'No cache, Envato API request started', 'avia_framework' ) ) );
 			}
-			 
+
 			try
 			{
-				$purchases = $api->get_purchases();
+				$purchases = avia_auto_updates::get_theme_keys();
+				
+				/**
+				 * Backwards comp. for WP - keep existing code in case we need a fallback
+				 * @since 4.5.3
+				 */
+				if( current_theme_supports( 'avia_envato_purchase_query' ) || ! function_exists( 'wp_get_themes' ) )
+				{
+					$purchases = $api->get_purchases();
+				}
+				else
+				{	
+					$purchases = $api->get_product_infos( $purchases );
+				}
 			
 				$installed = function_exists( 'wp_get_themes' ) ? wp_get_themes() : get_themes();
 				$filtered = array();
@@ -285,11 +341,11 @@ if( ! class_exists( 'Avia_Theme_Updater' ) )
 					{
 						try
 						{
-							$url = $api->get_wp_download_url( $purchase['item']['id'] );
 							$update = array(
-											'url'			=> $purchase['item']['url'],
-											'new_version'	=> $purchase['item']['wordpress_theme_metadata']['version'],
-											'package'		=> $url
+											'url'				=> $purchase['item']['url'],
+											'new_version'		=> $purchase['item']['wordpress_theme_metadata']['version'],
+											'envato_item_id'	=> $purchase['item']['id'],
+											'package'			=> ''
 										);
 											
 							$updates->response[ $current->Stylesheet ] = $update;
@@ -297,7 +353,7 @@ if( ! class_exists( 'Avia_Theme_Updater' ) )
 							
 							if( current_theme_supports( 'avia_envato_extended_log' ) )
 							{
-								$this->add_to_updater_log( new Avia_Envato_Exception( sprintf( __( 'Successfull download package for %s - %s', 'avia_framework' ), $current->Stylesheet, $update['new_version'] ) ) );
+								$this->add_to_updater_log( new Avia_Envato_Exception( sprintf( __( 'Existing download package found for %s - %s', 'avia_framework' ), $current->Name, $update['new_version'] ) ) );
 							}
 						} 
 						catch( Avia_Envato_Exception $ex ) 
@@ -326,6 +382,127 @@ if( ! class_exists( 'Avia_Theme_Updater' ) )
 			return $updates;
 		}
 		
+		
+		/**
+		 * Get download URL for our products from Envato
+		 * 
+		 * @since 4.5.3
+		 * @param array $options
+		 * @return array
+		 */
+		public function handler_upgrader_package_options( array $options )
+		{
+			/**
+			 * Ignore, if a package URL is already set - not our product
+			 */
+			if( ! empty( $options['package'] ) )
+			{
+				return $options;
+			}
+			
+	
+			$api = $this->get_envato_api();
+			if( ! $api instanceof Avia_Envato_Base_API )
+			{
+				return $options;
+			}
+			
+			/**
+			 * At the moment we only have theme(s) to update
+			 */
+			if( empty( $options['hook_extra']['theme'] ) )
+			{
+				return $options;
+			}
+			
+			$stylesheet = $options['hook_extra']['theme'];
+			
+			$purchases = avia_auto_updates::get_theme_keys();
+			
+			$product = null;
+			foreach( $purchases as $theme => $purchase ) 
+			{
+				if( $purchase['item']['wordpress_theme_metadata']['stylesheet'] == $stylesheet )
+				{
+					$product = $purchase;
+					break;
+				}
+			}
+			
+			if( is_null( $product ) )
+			{
+				return $options;
+			}
+			
+			if( current_theme_supports( 'avia_envato_extended_log' ) )
+			{
+				$this->add_to_updater_log( new Avia_Envato_Exception( $purchase['item']['wordpress_theme_metadata']['theme_name'] . ': ' . __( 'Envato API request for download URL started', 'avia_framework' ) ) );
+			}
+			
+			$errors_occured = false;
+			$package_errors = array();
+			
+			try
+			{
+				$options['package'] = $api->get_wp_download_url( $product['item']['id'] );
+			} 
+			catch( Avia_Envato_Exception $ex ) 
+			{
+				$options['package'] = '';
+				$errors_occured = true;
+				$package_errors[] = $purchase['item']['wordpress_theme_metadata']['theme_name'] . ' - ' . __( 'Request for Download URL failed.', 'avia_framework' );
+			}
+			
+			if( $errors_occured )
+			{
+				$this->add_to_updater_log( $api, $package_errors );
+			}
+			
+			if( current_theme_supports( 'avia_envato_extended_log' ) )
+			{
+				$this->add_to_updater_log( new Avia_Envato_Exception( $purchase['item']['wordpress_theme_metadata']['theme_name'] . ': ' . __( 'Envato API request for download URL finished', 'avia_framework' ) ) );
+			}
+			
+			return $options;
+		}
+		
+		
+		/**
+		 * Not needed - only kept for reference in case we might need it
+		 * 
+		 * @since 4.5.4
+		 * @param bool  $response   Installation response.
+		 * @param array $hook_extra Extra arguments passed to hooked filters.
+		 * @param array $result     Installation result data.
+		 * @return boolean 
+		 */
+		public function handler_upgrader_post_install( $response, array $hook_extra, array $result )
+		{
+//			if( true !== $response )
+//			{
+//				return $response;
+//			}
+			
+//			$cache = $this->get_cache();
+//			if( false === $cache )
+//			{
+//				return $response;
+//			}
+//			
+//			if( empty( $hook_extra['theme'] ) )
+//			{
+//				return $response;
+//			}
+//			
+//			if( isset( $this->envato_results_cache[ $hook_extra['theme'] ] ) )
+//			{
+//				unset( $this->envato_results_cache[ $hook_extra['theme'] ] );
+//				$this->update_cache();
+//			}
+			
+			return $response;
+		}
+
 		/**
 		 * Output the HTML below the verify input field
 		 * Keep backwards comp with old API - but do not allow to enter new values
@@ -608,7 +785,7 @@ if( ! class_exists( 'Avia_Theme_Updater' ) )
 		protected function get_cache()
 		{
 			static $force_check_executed = false;
-			
+
 			if( is_array( $this->envato_results_cache ) )
 			{
 				return true;
@@ -688,14 +865,16 @@ if( ! class_exists( 'Avia_Theme_Updater' ) )
 		}
 		
 		/**
-		 * Clears local and saved cache
+		 * Clears local and saved cache and removes the transient
 		 * 
 		 * @since 4.5.2
 		 */
 		protected function clear_cache()
 		{
 			$this->clear_local_cache();
-			$this->update_cache();
+			
+			$transient = $this->get_cache_name();
+			delete_transient( $transient );
 		}
 
 		/**
@@ -774,7 +953,7 @@ if( ! class_exists( 'Avia_Theme_Updater' ) )
 				
 				if( is_array( $package_errors ) )
 				{
-					$entry['package_errors'] = trim( implode( ', ', $package_errors ) );
+					$entry['package_errors'] = $package_errors;
 				}
 				
 				$log[] = $entry;
