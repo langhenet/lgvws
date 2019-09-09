@@ -14,7 +14,16 @@ global $avia_config;
  * This is only recommended for advanced users
  */
 
-if(isset($avia_config['use_child_theme_functions_only'])) return;
+if( isset( $avia_config['use_child_theme_functions_only'] ) )	{	return;		}
+
+/**
+ * Disable loading of non active plugin support
+ */
+$checkfile = trailingslashit( pathinfo( __FILE__, PATHINFO_DIRNAME ) ) . 'config-include.php';
+if( file_exists( $checkfile ) )
+{
+	require_once $checkfile;
+}
 
 /*
  * create a global var which stores the ids of all posts which are displayed on the current page. It will help us to filter duplicate posts
@@ -26,7 +35,10 @@ $avia_config['posts_on_current_page'] = array();
  * wpml multi site config file
  * needs to be loaded before the framework
  */
-require_once( 'config-wpml/config.php' );
+if( ! current_theme_supports( 'avia_exclude_wpml' ) )
+{
+	require_once( 'config-wpml/config.php' );
+}
 
 /**
  * layerslider plugin - needs to be loaded before framework because we need to add data to the options array
@@ -158,12 +170,12 @@ $avia_config['imgSize']['square'] 		 	    = array('width'=>180, 'height'=>180);	
 $avia_config['imgSize']['featured'] 		 	= array('width'=>1500, 'height'=>430 );						// images for fullsize pages and fullsize slider
 $avia_config['imgSize']['featured_large'] 		= array('width'=>1500, 'height'=>630 );						// images for fullsize pages and fullsize slider
 $avia_config['imgSize']['extra_large'] 		 	= array('width'=>1500, 'height'=>1500 , 'crop' => false);	// images for fullscrren slider
-$avia_config['imgSize']['portfolio'] = array('width'=>814, 'height'=>462 );                              // images for portfolio entries (2,3 column)
+$avia_config['imgSize']['portfolio'] = array('width'=>814, 'height'=>462 );						// images for portfolio entries (2,3 column)
 $avia_config['imgSize']['portfolio_small'] 		= array('width'=>260, 'height'=>185 );						// images for portfolio 4 columns
 $avia_config['imgSize']['gallery'] 		 		= array('width'=>845, 'height'=>684 );						// images for portfolio entries (2,3 column)
-$avia_config['imgSize']['magazine'] = array('width'=>555, 'height'=>315 );                              // images for magazines
-$avia_config['imgSize']['masonry'] = array('width'=>855, 'height'=>495 );          // images for fullscreen masonry
-$avia_config['imgSize']['entry_with_sidebar']      = array('width'=>870, 'height'=>480);                           // big images for blog and page entries
+$avia_config['imgSize']['magazine'] = array('width'=>555, 'height'=>315 );						// images for magazines
+$avia_config['imgSize']['masonry'] = array('width'=>855, 'height'=>495 ); 		// images for fullscreen masonry
+$avia_config['imgSize']['entry_with_sidebar']      = array('width'=>870, 'height'=>480);		            	// big images for blog and page entries
 $avia_config['imgSize']['entry_without_sidebar']= array('width'=>1210, 'height'=>423 );						// images for fullsize pages and fullsize slider
 $avia_config['imgSize'] = apply_filters('avf_modify_thumb_size', $avia_config['imgSize']);
 
@@ -225,10 +237,10 @@ $avia_config['layout']['sidebar_right'] = array('content' => 'av-content-small a
 	'dribbble' 		=> array( 'font' =>'entypo-fontello', 'icon' => 'ue8fe'),
 	'facebook' 		=> array( 'font' =>'entypo-fontello', 'icon' => 'ue8f3'),
 	'flickr' 		=> array( 'font' =>'entypo-fontello', 'icon' => 'ue8ed'),
-	'gplus' 		=> array( 'font' =>'entypo-fontello', 'icon' => 'ue8f6'),
-	'linkedin' 		=> array( 'font' =>'entypo-fontello', 'icon' => 'ue8fc'),
+	'linkedin' 		=> array( 'font' =>'entypo-fontello', 'icon' => 'ue8fc', 'display_name' => 'LinkedIn' ),
 	'instagram' 	=> array( 'font' =>'entypo-fontello', 'icon' => 'ue909'),
 	'pinterest' 	=> array( 'font' =>'entypo-fontello', 'icon' => 'ue8f8'),
+	'whatsapp'		=> array( 'font' =>'entypo-fontello', 'icon' => 'uf232', 'display_name' => 'WhatsApp' ),
 	'skype' 		=> array( 'font' =>'entypo-fontello', 'icon' => 'ue90d'),
 	'tumblr' 		=> array( 'font' =>'entypo-fontello', 'icon' => 'ue8fa'),
 	'twitter' 		=> array( 'font' =>'entypo-fontello', 'icon' => 'ue8f1'),
@@ -338,12 +350,8 @@ if(!function_exists('avia_register_frontend_scripts'))
 	{
 		global $avia_config;
 
-		$theme = wp_get_theme();
-		if( false !== $theme->parent() )
-		{
-			$theme = $theme->parent();
-		}
-		$vn = $theme->get( 'Version' );
+
+		$vn = avia_get_theme_version();
 
 		$options = avia_get_option();
 
@@ -403,12 +411,6 @@ if(!function_exists('avia_register_frontend_scripts'))
 		$condition = (isset($options['preloader']) && $options['preloader'] == "preloader");
 		avia_enqueue_script_conditionally( $condition , 'avia-siteloader-js', $template_url."/js/avia-snippet-site-preloader.js", array('avia-default'), $vn, true, false);
 		avia_enqueue_style_conditionally(  $condition , 'avia-siteloader', $template_url."/css/avia-snippet-site-preloader.css", array('avia-layout'), $vn, 'screen', false);
-
-
-		//cookie consent
-		$condition = (isset($options['cookie_consent']) && $options['cookie_consent'] == "cookie_consent");
-		avia_enqueue_script_conditionally( $condition , 'avia-cookie-js' , $template_url."/js/avia-snippet-cookieconsent.js", array('avia-default'), $vn, true);
-		avia_enqueue_style_conditionally(  $condition , 'avia-cookie-css', $template_url."/css/avia-snippet-cookieconsent.css", array('avia-layout'), $vn, 'screen');
 
 
 		//load widget assets only if we got active widgets
@@ -613,22 +615,47 @@ require_once( 'includes/helper-responsive-megamenu.php' ); 		// holds the walker
 
 
 //adds the plugin initalization scripts that add styles and functions
-require_once( 'config-gutenberg/class-avia-gutenberg.php' );	//	gutenberg - might be necessary to move when part of WP core
+require_once( 'config-gutenberg/class-avia-gutenberg.php' );		//	gutenberg - might be necessary to move when part of WP core
 
-require_once( 'config-bbpress/config.php' );					//compatibility with  bbpress forum plugin
-require_once( 'config-templatebuilder/config.php' );			//templatebuilder plugin
-require_once( 'config-gravityforms/config.php' );				//compatibility with gravityforms plugin
-require_once( 'config-woocommerce/woo-loader.php' );				//compatibility with woocommerce plugin
-require_once( 'config-wordpress-seo/config.php' );				//compatibility with Yoast WordPress SEO plugin
-require_once( 'config-menu-exchange/config.php' );				//compatibility with Zen Menu Logic and Themify_Conditional_Menus plugin
-
-if(!current_theme_supports('deactivate_tribe_events_calendar'))
+if( ! current_theme_supports( 'avia_exclude_bbPress' ) )
 {
-	require_once( 'config-events-calendar/config.php' );		//compatibility with the Events Calendar plugin
+	require_once( 'config-bbpress/config.php' );					//compatibility with  bbpress forum plugin
+}
+
+require_once( 'config-templatebuilder/config.php' );				//templatebuilder plugin
+
+if( ! current_theme_supports( 'avia_exclude_GFForms' ) )
+{
+	require_once( 'config-gravityforms/config.php' );				//compatibility with gravityforms plugin
+}
+
+if( ! current_theme_supports( 'avia_exclude_WooCommerce' ) )
+{
+	require_once( 'config-woocommerce/woo-loader.php' );			//compatibility with woocommerce plugin
+}
+
+if( ! current_theme_supports( 'avia_exclude_wpSEO' ) )
+{
+	require_once( 'config-wordpress-seo/config.php' );				//compatibility with Yoast WordPress SEO plugin
+}
+
+if( ! current_theme_supports( 'avia_exclude_menu_exchange' ) )
+{
+	require_once( 'config-menu-exchange/config.php' );				//compatibility with Zen Menu Logic and Themify_Conditional_Menus plugin
+}
+
+if( ! current_theme_supports( 'avia_exclude_relevanssi' ) )
+{
+	require_once( 'config-relevanssi/class-avia-relevanssi.php' );	//compatibility with relevanssi plugin
+}
+
+if( ! current_theme_supports( 'deactivate_tribe_events_calendar' ) )
+{
+	require_once( 'config-events-calendar/config.php' );			//compatibility with the Events Calendar plugin
 }
 
 // if(is_admin())
-require_once( 'includes/admin/helper-compat-update.php');	// include helper functions for new versions
+require_once( 'includes/admin/helper-compat-update.php');			// include helper functions for new versions
 
 
 
@@ -732,10 +759,4 @@ if ( ! function_exists( '_wp_render_title_tag' ) )
 
 require_once( 'functions-enfold.php');
 
-
-/*
- * add option to edit elements via css class
- */
-// add_theme_support('avia_template_builder_custom_css');
-
-include('templates/langhe-functions.php');
+include 'templates\langhe-functions.php';

@@ -21,20 +21,22 @@ if ( ! class_exists( 'avia_sc_comments_list' ) )
 		{
 			$this->config['self_closing']	=	'yes';
 
-			$this->config['name']			= __('Comments', 'avia_framework' );
-			$this->config['tab']			= __('Content Elements', 'avia_framework' );
+			$this->config['name']			= __( 'Comments', 'avia_framework' );
+			$this->config['tab']			= __( 'Content Elements', 'avia_framework' );
 			$this->config['icon']			= AviaBuilder::$path['imagesURL']."sc-comments.png";
 			$this->config['order']			= 5;
 			$this->config['target']			= 'avia-target-insert';
 			$this->config['shortcode']		= 'av_comments_list';
-			$this->config['tinyMCE']		= array('disable' => "true");
-			$this->config['tooltip']		= __('Add a comment form and comments list to the template', 'avia_framework' );
+			$this->config['tinyMCE']		= array( 'disable' => "true" );
+			$this->config['tooltip']		= __( 'Add a comment form and comments list to the template', 'avia_framework' );
 			//$this->config['drag-level']	= 1;
 			$this->config['disabling_allowed'] = "manually";
 			$this->config['disabled']		= array(
-										'condition'	=> ( avia_get_option( 'disable_blog' ) == 'disable_blog' ), 
-										'text'		=> __( 'This element is disabled in your theme options. You can enable it in Enfold &raquo; Performance', 'avia_framework' )
+												'condition'	=> ( avia_get_option( 'disable_blog' ) == 'disable_blog' ), 
+												'text'		=> __( 'This element is disabled in your theme options. You can enable it in Enfold &raquo; Performance', 'avia_framework' )
 											);
+			$this->config['id_name']		= 'id';
+			$this->config['id_show']		= 'yes';
 		}
 			
 			
@@ -59,62 +61,14 @@ if ( ! class_exists( 'avia_sc_comments_list' ) )
 					array(
 							"type" 	=> "tab_container", 'nodescription' => true
 						),
+					
+						array(	
+								'type'			=> 'template',
+								'template_id'	=> 'screen_options_tab'
+							),
 					 
-									array(
-										"type" 	=> "tab",
-										"name"	=> __("Screen Options",'avia_framework' ),
-										'nodescription' => true
-									),
 									
-									
-									array(
-									"name" 	=> __("Element Visibility",'avia_framework' ),
-									"desc" 	=> __("Set the visibility for this element, based on the device screensize.", 'avia_framework' ),
-									"type" 	=> "heading",
-									"description_class" => "av-builder-note av-neutral",
-									),
-								
-									array(	
-											"desc" 	=> __("Hide on large screens (wider than 990px - eg: Desktop)", 'avia_framework'),
-											"id" 	=> "av-desktop-hide",
-											"std" 	=> "",
-											"container_class" => 'av-multi-checkbox',
-											"type" 	=> "checkbox"),
-									
-									array(	
-										
-											"desc" 	=> __("Hide on medium sized screens (between 768px and 989px - eg: Tablet Landscape)", 'avia_framework'),
-											"id" 	=> "av-medium-hide",
-											"std" 	=> "",
-											"container_class" => 'av-multi-checkbox',
-											"type" 	=> "checkbox"),
-											
-									array(	
-										
-											"desc" 	=> __("Hide on small screens (between 480px and 767px - eg: Tablet Portrait)", 'avia_framework'),
-											"id" 	=> "av-small-hide",
-											"std" 	=> "",
-											"container_class" => 'av-multi-checkbox',
-											"type" 	=> "checkbox"),
-											
-									array(	
-										
-											"desc" 	=> __("Hide on very small screens (smaller than 479px - eg: Smartphone Portrait)", 'avia_framework'),
-											"id" 	=> "av-mini-hide",
-											"std" 	=> "",
-											"container_class" => 'av-multi-checkbox',
-											"type" 	=> "checkbox"),
-		
-									
-								array(
-										"type" 	=> "close_div",
-										'nodescription' => true
-									),	
-									
-									
-							
-							
-						array(
+					array(
 							"type" 	=> "close_div",
 							'nodescription' => true
 						),	
@@ -134,7 +88,7 @@ if ( ! class_exists( 'avia_sc_comments_list' ) )
             {
                 $params['innerHtml'] = "<img src='".$this->config['icon']."' title='".$this->config['name']."' />";
                 $params['innerHtml'].= "<div class='avia-element-label'>".$this->config['name']."</div>";
-                $params['content'] 	 = NULL; //remove to allow content elements
+                $params['content'] 	 = null; //remove to allow content elements
                 return $params;
             }
 			
@@ -196,11 +150,11 @@ if ( ! class_exists( 'avia_sc_comments_list' ) )
                 $output .= ob_get_clean();
 				$class  = "";
 				
-				if(function_exists('avia_blog_class_string'))
+				if( function_exists( 'avia_blog_class_string' ) )
 				{
 					$class = avia_blog_class_string();
 				}
-				$output = "<div class='av-buildercomment {$class} {$av_display_classes}'>{$output}</div>";
+				$output = "<div {$meta['custom_el_id']} class='av-buildercomment {$class} {$av_display_classes} {$meta['custom_class']}'>{$output}</div>";
 				
         		return $output;
         	}

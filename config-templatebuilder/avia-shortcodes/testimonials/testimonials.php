@@ -7,7 +7,7 @@
 if ( ! defined( 'ABSPATH' ) ) {  exit;  }    // Exit if accessed directly
 
 
-if ( !class_exists( 'avia_sc_testimonial' ) )
+if ( ! class_exists( 'avia_sc_testimonial' ) )
 {
 	class avia_sc_testimonial extends aviaShortcodeTemplate
 	{
@@ -113,16 +113,18 @@ if ( !class_exists( 'avia_sc_testimonial' ) )
 			{
 				$this->config['self_closing']	=	'no';
 				
-				$this->config['name']		= __('Testimonials', 'avia_framework' );
-				$this->config['tab']		= __('Content Elements', 'avia_framework' );
+				$this->config['name']		= __( 'Testimonials', 'avia_framework' );
+				$this->config['tab']		= __( 'Content Elements', 'avia_framework' );
 				$this->config['icon']		= AviaBuilder::$path['imagesURL']."sc-testimonials.png";
 				$this->config['order']		= 20;
 				$this->config['target']		= 'avia-target-insert';
 				$this->config['shortcode'] 	= 'av_testimonials';
-				$this->config['shortcode_nested'] = array('av_testimonial_single');
-				$this->config['tooltip'] 	= __('Creates a Testimonial Grid', 'avia_framework' );
+				$this->config['shortcode_nested'] = array( 'av_testimonial_single' );
+				$this->config['tooltip'] 	= __( 'Creates a Testimonial Grid', 'avia_framework' );
 				$this->config['preview'] 	= "xlarge";
 				$this->config['disabling_allowed'] = true;
+				$this->config['id_name']	= 'id';
+				$this->config['id_show']	= 'yes';
 			}
 			
 			function extra_assets()
@@ -133,8 +135,8 @@ if ( !class_exists( 'avia_sc_testimonial' ) )
 				wp_enqueue_style( 'avia-module-testimonials' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/testimonials/testimonials.css' , array('avia-layout'), false );
 				
 				
-				wp_enqueue_script( 'avia-module-slideshow' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/slideshow/slideshow.js' , array('avia-shortcodes'), false, TRUE );
-				wp_enqueue_script( 'avia-module-testimonials' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/testimonials/testimonials.js' , array('avia-shortcodes'), false, TRUE );
+				wp_enqueue_script( 'avia-module-slideshow' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/slideshow/slideshow.js' , array('avia-shortcodes'), false, true );
+				wp_enqueue_script( 'avia-module-testimonials' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/testimonials/testimonials.js' , array('avia-shortcodes'), false, true );
 			}
 				
 			/**
@@ -224,7 +226,7 @@ if ( !class_exists( 'avia_sc_testimonial' ) )
 					),
 
 
-array(
+					array(
 							"name" 	=> __("Testimonial Style", 'avia_framework' ),
 							"desc" 	=> __("Here you can select how to display the testimonials. You can either create a testimonial slider or a testimonial grid with multiple columns", 'avia_framework' ) ,
 							"id" 	=> "style",
@@ -316,57 +318,13 @@ array(
 										"type" 	=> "close_div",
 										'nodescription' => true
 									),
-									
-								array(
-									"type" 	=> "tab",
-									"name"	=> __("Screen Options",'avia_framework' ),
-									'nodescription' => true
-								),
-								
-								
-								array(
-								"name" 	=> __("Element Visibility",'avia_framework' ),
-								"desc" 	=> __("Set the visibility for this element, based on the device screensize.", 'avia_framework' ),
-								"type" 	=> "heading",
-								"description_class" => "av-builder-note av-neutral",
-								),
-							
+					
+					
 								array(	
-										"desc" 	=> __("Hide on large screens (wider than 990px - eg: Desktop)", 'avia_framework'),
-										"id" 	=> "av-desktop-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-								
-								array(	
-									
-										"desc" 	=> __("Hide on medium sized screens (between 768px and 989px - eg: Tablet Landscape)", 'avia_framework'),
-										"id" 	=> "av-medium-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-										
-								array(	
-									
-										"desc" 	=> __("Hide on small screens (between 480px and 767px - eg: Tablet Portrait)", 'avia_framework'),
-										"id" 	=> "av-small-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-										
-								array(	
-									
-										"desc" 	=> __("Hide on very small screens (smaller than 479px - eg: Smartphone Portrait)", 'avia_framework'),
-										"id" 	=> "av-mini-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-	
-								
-							array(
-									"type" 	=> "close_div",
-									'nodescription' => true
-								),	
+										'type'			=> 'template',
+										'template_id'	=> 'screen_options_tab'
+									),
+					
 									
 								array(
 										"type" 	=> "close_div",
@@ -405,31 +363,34 @@ array(
 			 * @param string $shortcodename the shortcode found, when == callback name
 			 * @return string $output returns the modified html string
 			 */
-			function shortcode_handler($atts, $content = "", $shortcodename = "", $meta = "")
+			function shortcode_handler( $atts, $content = '', $shortcodename = '', $meta = '' )
 			{
 				$this->screen_options = AviaHelper::av_mobile_sizes( $atts );
 				
 	        	extract( $this->screen_options ); //return $av_font_classes, $av_title_font_classes and $av_display_classes 
 				
-				$atts =  shortcode_atts(array(
-					
-					'style'=> "grid",  
-					'columns'=> "2", 
-					"autoplay"=>true, 
-					"interval"=>5,
-					'font_color'=>'', 
-					'custom_title'=>'', 
-					'custom_content'=>'',
-					'grid_style'	=> ''
-				
-				), $atts, $this->config['shortcode']);
-				
-				
-				$custom_class = !empty($meta['custom_class']) ? $meta['custom_class'] : "";
-				extract($atts);
+				$atts =  shortcode_atts( array(
+							'style'			=> 'grid',  
+							'columns'		=> '2', 
+							'autoplay'		=> true, 
+							'interval'		=> 5,
+							'font_color'	=> '', 
+							'custom_title'	=> '', 
+							'custom_content' => '',
+							'grid_style'	=> ''
+
+						), $atts, $this->config['shortcode'] );
 				
 				
-				if($style != "grid") $grid_style = "";
+				$custom_class = ! empty( $meta['custom_class'] ) ? $meta['custom_class'] : '';
+				
+				extract( $atts );
+				
+				
+				if( $style != 'grid' ) 
+				{
+					$grid_style = '';
+				}
 				
 				$this->title_styling 		= "";
 				$this->content_styling 		= "";
@@ -475,7 +436,7 @@ array(
 				}
 				
 				
-				$output .= "<div {$data} class='avia-testimonial-wrapper avia-{$style}-testimonials avia-{$style}-{$columns}-testimonials avia_animate_when_almost_visible {$custom_class} {$grid_style} {$av_display_classes}'>";
+				$output .= "<div {$meta['custom_el_id']} {$data} class='avia-testimonial-wrapper avia-{$style}-testimonials avia-{$style}-{$columns}-testimonials avia_animate_when_almost_visible {$custom_class} {$grid_style} {$av_display_classes}'>";
 
 				avia_sc_testimonial::$counter = 1;
 				avia_sc_testimonial::$rows = 1;
@@ -489,7 +450,7 @@ array(
 				//if we got a slider we only need a single row wrapper
 				if($style != "grid") avia_sc_testimonial::$columns = 100000;
 
-				$output .= ShortcodeHelper::avia_remove_autop($content, true);
+				$output .= ShortcodeHelper::avia_remove_autop( $content, true );
 
 				//close unclosed wrapper containers
 				if(avia_sc_testimonial::$counter != 1){
@@ -519,7 +480,7 @@ array(
 	        }
 			
 
-			function av_testimonial_single($atts, $content = "", $shortcodename = "")
+			function av_testimonial_single( $atts, $content = '', $shortcodename = '' )
 			{
 				/**
 				 * Fixes a problem when 3-rd party plugins call nested shortcodes without executing main shortcode  (like YOAST in wpseo-filter-shortcodes)

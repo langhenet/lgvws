@@ -269,12 +269,8 @@ if( ! class_exists( 'Avia_Gutenberg' ) )
 		 */
 		public function handler_wp_register_scripts()
 		{	
-			$theme = wp_get_theme();
-			if( false !== $theme->parent() )
-			{
-				$theme = $theme->parent();
-			}
-			$vn = $theme->get( 'Version' );
+			
+			$vn = avia_get_theme_version();
 			
 			$template_url = get_template_directory_uri();
 			

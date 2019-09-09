@@ -6,16 +6,17 @@
  */
 
  // Don't load directly
-if ( !defined('ABSPATH') ) { die('-1'); }
+if ( ! defined('ABSPATH') ) { die('-1'); }
 
 
 
-if ( !class_exists( 'avia_sc_tab_section' ) )
+if ( ! class_exists( 'avia_sc_tab_section' ) )
 {
 	//load the subsection shhortcode
 	include_once( 'tab_sub_section.php' );
 	
-	class avia_sc_tab_section extends aviaShortcodeTemplate{
+	class avia_sc_tab_section extends aviaShortcodeTemplate
+	{
 
 			static $count = 0;
 			static $tab = 0;
@@ -36,24 +37,27 @@ if ( !class_exists( 'avia_sc_tab_section' ) )
 				$this->config['contains_text']		=	'no';
 				$this->config['layout_children']	=	array( 'av_tab_sub_section' );
 				
-				$this->config['name']		= __('Tab Section', 'avia_framework' );
+				$this->config['name']		= __( 'Tab Section', 'avia_framework' );
 				$this->config['icon']		= AviaBuilder::$path['imagesURL']."sc-tabsection.png";
-				$this->config['tab']		= __('Layout Elements', 'avia_framework' );
+				$this->config['tab']		= __( 'Layout Elements', 'avia_framework' );
 				$this->config['order']		= 13;
 				$this->config['shortcode'] 	= 'av_tab_section';
 				$this->config['html_renderer'] 	= false;
-				$this->config['tinyMCE'] 	= array('disable' => "true");
-				$this->config['tooltip'] 	= __('Add a fullwidth section with tabs that can contain columns and other elements', 'avia_framework' );
+				$this->config['tinyMCE'] 	= array( 'disable' => 'true' );
+				$this->config['tooltip'] 	= __( 'Add a fullwidth section with tabs that can contain columns and other elements', 'avia_framework' );
 				$this->config['drag-level'] = 1;
 				$this->config['drop-level'] = 100;
 				$this->config['disabling_allowed'] = true;
 
+				$this->config['id_name']		= 'id';
+				$this->config['id_show']		= 'always';				//	we use original code - not $meta
+				$this->config['aria_label']		= 'yes';
 			}
 			
 			function admin_assets()
 		    {
 			    $ver = AviaBuilder::VERSION;
-		        wp_enqueue_script('avia_tab_section_js' , AviaBuilder::$path['assetsURL'].'js/avia-tab-section.js' , array('avia_builder_js','avia_modal_js'), $ver, TRUE );
+		        wp_enqueue_script('avia_tab_section_js' , AviaBuilder::$path['assetsURL'].'js/avia-tab-section.js' , array('avia_builder_js','avia_modal_js'), $ver, true );
 			}
 			
 			
@@ -62,7 +66,7 @@ if ( !class_exists( 'avia_sc_tab_section' ) )
 		        //load css
 				wp_enqueue_style( 'avia-module-tabsection' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/tab_section/tab_section.css' , array('avia-layout'), false );
 				//load js
-				wp_enqueue_script( 'avia-module-tabsection' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/tab_section/tab_section.js' , array('avia-shortcodes'), false, TRUE );
+				wp_enqueue_script( 'avia-module-tabsection' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/tab_section/tab_section.js' , array('avia-shortcodes'), false, true );
 		    }
 
 
@@ -261,14 +265,7 @@ if ( !class_exists( 'avia_sc_tab_section' ) )
                     "std" 	=> "1",
                     "type" 	=> "input"),
 					
-				    
-				    array(	"name" 	=> __("For Developers: Section ID", 'avia_framework' ),
-							"desc" 	=> __("Apply a custom ID Attribute to the section, so you can apply a unique style via CSS. This option is also helpful if you want to use anchor links to scroll to a sections when a link is clicked", 'avia_framework' )."<br/><br/>".
-									   __("Use with caution and make sure to only use allowed characters. No special characters can be used.", 'avia_framework' ),
-				            "id" 	=> "id",
-				            "type" 	=> "input",
-				            "std" => ""),
-				            
+
 				    array(	"id" 	=> "av_element_hidden_in_editor",
 				            "type" 	=> "hidden",
 				            "std" => "0"),
@@ -307,66 +304,10 @@ if ( !class_exists( 'avia_sc_tab_section' ) )
 						'nodescription' => true
 					),
 					
-				array(
-									"type" 	=> "tab",
-									"name"	=> __("Screen Options",'avia_framework' ),
-									'nodescription' => true
-								),
-								
-								
-								array(
-								"name" 	=> __("Element Visibility",'avia_framework' ),
-								"desc" 	=> __("Set the visibility for this element, based on the device screensize.", 'avia_framework' ),
-								"type" 	=> "heading",
-								"description_class" => "av-builder-note av-neutral",
-								),
-							
-								array(	
-										"desc" 	=> __("Hide on large screens (wider than 990px - eg: Desktop)", 'avia_framework'),
-										"id" 	=> "av-desktop-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-								
-								array(	
-									
-										"desc" 	=> __("Hide on medium sized screens (between 768px and 989px - eg: Tablet Landscape)", 'avia_framework'),
-										"id" 	=> "av-medium-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-										
-								array(	
-									
-										"desc" 	=> __("Hide on small screens (between 480px and 767px - eg: Tablet Portrait)", 'avia_framework'),
-										"id" 	=> "av-small-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-										
-								array(	
-									
-										"desc" 	=> __("Hide on very small screens (smaller than 479px - eg: Smartphone Portrait)", 'avia_framework'),
-										"id" 	=> "av-mini-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-	
-								
-							array(
-									"type" 	=> "close_div",
-									'nodescription' => true
-								),	
-								
-								
-						
-						
-					array(
-						"type" 	=> "close_div",
-						'nodescription' => true
-					),		
-					
-					
+				array(	
+						'type'			=> 'template',
+						'template_id'	=> 'screen_options_tab'
+					),
 					
 				array(
 						"type" 	=> "close_div",
@@ -384,9 +325,9 @@ if ( !class_exists( 'avia_sc_tab_section' ) )
 			 * @param string $shortcodename the shortcode found, when == callback name
 			 * @return string $output returns the modified html string
 			 */
-			function shortcode_handler($atts, $content = "", $shortcodename = "", $meta = "")
+			function shortcode_handler( $atts, $content = "", $shortcodename = "", $meta = "" )
 			{
-				extract(AviaHelper::av_mobile_sizes($atts)); //return $av_font_classes, $av_title_font_classes and $av_display_classes 
+				extract( AviaHelper::av_mobile_sizes( $atts ) ); //return $av_font_classes, $av_title_font_classes and $av_display_classes 
 				
 				avia_sc_tab_section::$tab = 0;
 				avia_sc_tab_section::$tab_titles = array();
@@ -395,29 +336,28 @@ if ( !class_exists( 'avia_sc_tab_section' ) )
 				avia_sc_tab_section::$tab_atts = array();
 				avia_sc_tab_section::$count++;
 				
-			    $atts = shortcode_atts(array(
-				'initial'			=>	1,
-				'id'				=>	'',
-				'padding'			=>	'default',
-				'tab_padding'		=>	'default', 
-				'transition'		=>	'av-tab-no-transition' , 
-				'bg_color'			=>	'' , 
-				'color'				=>	'' , 
-				'tab_pos'			=>	'av-tab-above-content',
-				'content_height'	=>  ''
+			    $atts = shortcode_atts( array(
+							'initial'			=>	1,
+							'id'				=>	'',
+							'padding'			=>	'default',
+							'tab_padding'		=>	'default', 
+							'transition'		=>	'av-tab-no-transition' , 
+							'bg_color'			=>	'' , 
+							'color'				=>	'' , 
+							'tab_pos'			=>	'av-tab-above-content',
+							'content_height'	=>  ''
+
+						), $atts, $this->config['shortcode'] );
 				
-				
-				
-				), $atts, $this->config['shortcode']);
-				
-				extract($atts);
-				$output  	= "";
+				extract( $atts );
+				$output = '';
 				
 				
 				$params['class'] = "av-tab-section-container entry-content-wrapper main_color {$transition} {$content_height} {$av_display_classes} {$tab_pos} ".$meta['el_class'];
 				$params['open_structure'] = false; 
-				$params['id'] = !empty($id) ? AviaHelper::save_string($id,'-') : "av-tab-section-".avia_sc_tab_section::$count;
+				$params['id'] = AviaHelper::save_string( $id, '-', "av-tab-section-".avia_sc_tab_section::$count );
 				$params['custom_markup'] = $meta['custom_markup'];
+				$params['aria_label'] = $meta['aria_label'];
 				
 				
 				//we dont need a closing structure if the element is the first one or if a previous fullwidth element was displayed before

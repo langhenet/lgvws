@@ -1923,11 +1923,11 @@ if( ! class_exists('avia_google_maps') )
 		 */
 		public function widget( $args, $instance ) 
 		{
-			if( true === apply_filters( 'avf_load_google_map_api_prohibited', false ) )
+			if( true === Av_Google_Maps()->is_loading_prohibited() )
 			{
 				if( current_user_can( 'edit_posts' ) )
 				{
-					echo '<p style="font-weight: 700;color: red;">' . __( 'Widget Google Maps is disabled with filter &quot;avf_load_google_map_api_prohibited&quot;.', 'avia_framework' ) . '</p>';
+					echo '<p style="font-weight: 700;color: red;">' . __( 'Widget Google Maps is disabled with theme option.', 'avia_framework' ) . '</p>';
 					echo '<p style="font-weight: 400;color: red;">' . __( '(Visible to admins only.)', 'avia_framework' ) . '</p>';
 				}
 				
@@ -2341,9 +2341,9 @@ if( ! class_exists('avia_google_maps') )
 					<?php echo $html->render_single_element( $fallback_element );?>
 				</div>
 <?php 
-				if( true === apply_filters( 'avf_load_google_map_api_prohibited', false ) )
+				if( true === Av_Google_Maps()->is_loading_prohibited() )
 				{
-					echo '<p style="font-weight: 700;color: red;">' . __( 'This element is disabled in frontend with filter &quot;avf_load_google_map_api_prohibited&quot;', 'avia_framework' ) . '</p>';
+					echo '<p style="font-weight: 700;color: red;">' . __( 'This element is disabled in frontend with theme option', 'avia_framework' ) . '</p>';
 				}
 ?>
 			</div>
@@ -2360,7 +2360,7 @@ if( ! class_exists('avia_google_maps') )
 			$api_key = avia_get_option( 'gmap_api' );
 			$api_url = av_google_maps::api_url( $api_key );
             
-            wp_register_script( 'avia-google-maps-api', $api_url, array('jquery'), NULL, true );
+            wp_register_script( 'avia-google-maps-api', $api_url, array('jquery'), null, true );
             
             $load_google_map_api = apply_filters( 'avf_load_google_map_api', true, 'avia_google_map_widget' );
             
@@ -2437,7 +2437,7 @@ if( ! class_exists('avia_google_maps') )
 				$api_key = avia_get_option('gmap_api');
 				$api_url = av_google_maps::api_url( $api_key );
 
-				wp_register_script( 'avia-google-maps-api', $api_url, array( 'jquery' ), NULL, true );
+				wp_register_script( 'avia-google-maps-api', $api_url, array( 'jquery' ), null, true );
 				wp_enqueue_script( 'avia-google-maps-api' );
 			}
 
@@ -2944,7 +2944,7 @@ if( ! class_exists('avia_instagram_widget') )
 						}
 
 						echo '<div class="' . $liclass . '">';
-						echo '<a href="' . esc_url( $item['link'] ) . '" target="' . esc_attr( $targeting ) . '"  class="' . $aclass . ' ' . $imgclass . '" title="' . esc_attr( $item['description'] ) . '" style="background-image:url(' . esc_url( $item[ $size ] ) . ');">';
+						echo '<a href="https:' . esc_url( $item['link'] ) . '" target="' . esc_attr( $targeting ) . '"  class="' . $aclass . ' ' . $imgclass . '" title="' . esc_attr( $item['description'] ) . '" style="background-image:url(' . esc_url( $item[ $size ] ) . ');">';
 						echo '</a></div>';
 
 						if( $rowcount % $columns == 0 || $last_id == $item['id'] || ( $itemcount >= $number ) )
@@ -2973,7 +2973,7 @@ if( ! class_exists('avia_instagram_widget') )
 			if ( $link != '' ) 
 			{
 				?>
-				<a class="av-instagram-follow avia-button" href="//instagram.com/<?php echo esc_attr( trim( $username ) ); ?>" rel="me" target="<?php echo esc_attr( $target ); ?>"><?php echo $link; ?></a><?php
+				<a class="av-instagram-follow avia-button" href="https://instagram.com/<?php echo esc_attr( trim( $username ) ); ?>" rel="me" target="<?php echo esc_attr( $target ); ?>"><?php echo $link; ?></a><?php
 			}
 
 			do_action( 'aviw_after_widget', $instance );

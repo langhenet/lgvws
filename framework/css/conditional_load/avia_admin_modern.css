@@ -518,12 +518,17 @@ right:28px;
 .av-verification-response-wrapper .av-text-notice{
 	border:none;
 	padding: 20px;
-	    background: #0085ba;
+	background: #0085ba;
+}
+
+.av-verification-result{
+	float: left;
+	width: 100%;
 }
 
 .av-verification-result .av-text-notice.av-notice-error{
-	    background: #23282d;
-	    border:none;
+	background: #23282d;
+	border:none;
 }
 
 .av-prev-el-notice{

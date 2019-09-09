@@ -7,11 +7,15 @@
 if ( ! defined( 'ABSPATH' ) ) {  exit;  }    // Exit if accessed directly
 
 
-if ( !class_exists( 'avia_sc_gallery_horizontal' ) )
+if ( ! class_exists( 'avia_sc_gallery_horizontal' ) )
 {
 	class avia_sc_gallery_horizontal extends aviaShortcodeTemplate
 	{
-			static $hor_gallery = 0;
+			/**
+			 *
+			 * @var int 
+			 */
+			static protected $hor_gallery = 0;
 
 			/**
 			 * Create the config array for the shortcode button
@@ -20,16 +24,18 @@ if ( !class_exists( 'avia_sc_gallery_horizontal' ) )
 			{
 				$this->config['self_closing']	=	'no';
 				
-				$this->config['name']			= __('Horizontal Gallery', 'avia_framework' );
-				$this->config['tab']			= __('Media Elements', 'avia_framework' );
+				$this->config['name']			= __( 'Horizontal Gallery', 'avia_framework' );
+				$this->config['tab']			= __( 'Media Elements', 'avia_framework' );
 				$this->config['icon']			= AviaBuilder::$path['imagesURL']."sc-accordion-slider.png";
 				$this->config['order']			= 6;
 				$this->config['target']			= 'avia-target-insert';
 				$this->config['shortcode'] 		= 'av_horizontal_gallery';
-				$this->config['tooltip']        = __('Creates a horizontal scrollable gallery ', 'avia_framework' );
+				$this->config['tooltip']        = __( 'Creates a horizontal scrollable gallery', 'avia_framework' );
 				$this->config['preview'] 		= false;
 				$this->config['drag-level'] 	= 3;
 				$this->config['disabling_allowed'] = true;
+				$this->config['id_name']		= 'id';
+				$this->config['id_show']		= 'always';				//	we use original code - not $meta
 			}
 			
 			
@@ -42,7 +48,7 @@ if ( !class_exists( 'avia_sc_gallery_horizontal' ) )
 				wp_enqueue_style( 'avia-module-gallery-hor' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/gallery_horizontal/gallery_horizontal.css' , array('avia-module-slideshow'), false );
 				
 					//load js
-				wp_enqueue_script( 'avia-module-gallery-hor' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/gallery_horizontal/gallery_horizontal.js' , array('avia-shortcodes'), false, TRUE );
+				wp_enqueue_script( 'avia-module-gallery-hor' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/gallery_horizontal/gallery_horizontal.js' , array('avia-shortcodes'), false, true );
 
 			
 			}
@@ -176,77 +182,25 @@ if ( !class_exists( 'avia_sc_gallery_horizontal' ) )
 						"id" 	=> "control_layout",
 						"type" 	=> "select",
 						"std" 	=> "",
-						"subtype" => array(__('Default','avia_framework' ) =>'av-control-default',__('Minimal White','avia_framework' ) =>'av-control-minimal', __('Minimal Black','avia_framework' ) =>'av-control-minimal av-control-minimal-dark',__('Hidden','avia_framework' ) =>'av-control-hidden')),
-	                
-					
-					array(	
-						"name" 	=> __("For Developers: Section ID", 'avia_framework' ),
-						"desc" 	=> __("Apply a custom ID Attribute to the section, so you can apply a unique style via CSS. This option is also helpful if you want to use anchor links to scroll to a sections when a link is clicked", 'avia_framework' )."<br/><br/>".
-								   __("Use with caution and make sure to only use allowed characters. No special characters can be used.", 'avia_framework' ),
-			            "id" 	=> "id",
-			            "type" 	=> "input",
-			            "std"	=> "" ),
+						"subtype" => array(
+										__( 'Default', 'avia_framework' )		=> 'av-control-default',
+										__( 'Minimal White', 'avia_framework' )	=> 'av-control-minimal', 
+										__( 'Minimal Black', 'avia_framework' )	=> 'av-control-minimal av-control-minimal-dark',
+										__( 'Hidden', 'avia_framework' )		=> 'av-control-hidden'
+									)
+						),
 					
 	                array(
 							"type" 	=> "close_div",
 							'nodescription' => true
 						),
+					
+					array(	
+							'type'			=> 'template',
+							'template_id'	=> 'screen_options_tab'
+						),
 						
-						
-								array(
-									"type" 	=> "tab",
-									"name"	=> __("Screen Options",'avia_framework' ),
-									'nodescription' => true
-								),
-								
-								
-								array(
-								"name" 	=> __("Element Visibility",'avia_framework' ),
-								"desc" 	=> __("Set the visibility for this element, based on the device screensize.", 'avia_framework' ),
-								"type" 	=> "heading",
-								"description_class" => "av-builder-note av-neutral",
-								),
-							
-								array(	
-										"desc" 	=> __("Hide on large screens (wider than 990px - eg: Desktop)", 'avia_framework'),
-										"id" 	=> "av-desktop-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-								
-								array(	
-									
-										"desc" 	=> __("Hide on medium sized screens (between 768px and 989px - eg: Tablet Landscape)", 'avia_framework'),
-										"id" 	=> "av-medium-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-										
-								array(	
-									
-										"desc" 	=> __("Hide on small screens (between 480px and 767px - eg: Tablet Portrait)", 'avia_framework'),
-										"id" 	=> "av-small-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-										
-								array(	
-									
-										"desc" 	=> __("Hide on very small screens (smaller than 479px - eg: Smartphone Portrait)", 'avia_framework'),
-										"id" 	=> "av-mini-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-	
-								
-							array(
-									"type" 	=> "close_div",
-									'nodescription' => true
-								),	
-								
-								
-						
-						
+				
 					array(
 						"type" 	=> "close_div",
 						'nodescription' => true
@@ -309,36 +263,37 @@ if ( !class_exists( 'avia_sc_gallery_horizontal' ) )
 			 * @param string $shortcodename the shortcode found, when == callback name
 			 * @return string $output returns the modified html string
 			 */
-			function shortcode_handler($atts, $content = "", $shortcodename = "", $meta = "")
+			function shortcode_handler( $atts, $content = "", $shortcodename = "", $meta = "" )
 			{
 				$output = "";
 				
 				extract(AviaHelper::av_mobile_sizes($atts)); //return $av_font_classes, $av_title_font_classes and $av_display_classes 
 				
-				extract(shortcode_atts(array(
-						'height'      		=> '400',
-						'size' 				=> 'large',
-						'links' 			=> 'active',
-						'lightbox_text'		=> '',				//	default to title
-						'link_dest'			=> '',
-						'gap'				=> 'large',
-						'ids'    	 		=> '',
-						'active'    		=> 'enlarge',
-						'control_layout'	=> 'av-control-default',
-						'initial'			=> '',
-						'id'				=> ''
-				
-				), $atts, $this->config['shortcode']));
+				extract( shortcode_atts( array(
+								'height'      		=> '400',
+								'size' 				=> 'large',
+								'links' 			=> 'active',
+								'lightbox_text'		=> '',				//	default to title
+								'link_dest'			=> '',
+								'gap'				=> 'large',
+								'ids'    	 		=> '',
+								'active'    		=> 'enlarge',
+								'control_layout'	=> 'av-control-default',
+								'initial'			=> '',
+								'id'				=> ''
+
+							), $atts, $this->config['shortcode'] ) );
 					
 
-				$attachments = get_posts(array(
-				'include' => $ids,
-				'post_status' => 'inherit',
-				'post_type' => 'attachment',
-				'post_mime_type' => 'image',
-				'order' => 'DESC',
-				'orderby' => 'post__in')
-				);
+				$attachments = get_posts( array(
+									'include'		=> $ids,
+									'post_status'	=> 'inherit',
+									'post_type'		=> 'attachment',
+									'post_mime_type' => 'image',
+									'order'			=> 'DESC',
+									'orderby'		=> 'post__in'
+								)
+							);
 				
 				$display_char = av_icon('ue869', 'entypo-fontello');
 				$padding = "";
@@ -350,9 +305,9 @@ if ( !class_exists( 'avia_sc_gallery_horizontal' ) )
 					$padding 	= "style='padding: {$padding}% 0px;' data-av-enlarge='{$enlarge_by}' ";
 				}
 				
-				if(!empty($attachments) && is_array($attachments))
+				if( ! empty( $attachments ) && is_array( $attachments ) )
 				{
-					self::$hor_gallery++;
+					avia_sc_gallery_horizontal::$hor_gallery++;
 					
 					if( ! is_numeric( $initial ) || ( (int) $initial <= 0 ) )
 					{
@@ -369,8 +324,10 @@ if ( !class_exists( 'avia_sc_gallery_horizontal' ) )
                     $markup 	= avia_markup_helper(
                     	array('context' => 'image','echo'=>false, 'custom_markup'=>$meta['custom_markup'])
                     );
+					
+					$add_id = ShortcodeHelper::is_top_level() ? '' : $meta['custom_el_id'];
                     
-					$output .= "<div class='av-horizontal-gallery av-horizontal-gallery-{$gap}-gap av-horizontal-gallery-{$active}-effect av-horizontal-gallery-".self::$hor_gallery." ".$meta['el_class']." {$control_layout} {$av_display_classes}' {$markup} {$padding} {$initial}>";
+					$output .= "<div {$add_id} class='av-horizontal-gallery av-horizontal-gallery-{$gap}-gap av-horizontal-gallery-{$active}-effect av-horizontal-gallery-".self::$hor_gallery." ".$meta['el_class']." {$control_layout} {$av_display_classes}' {$markup} {$padding} {$initial}>";
 					
 					$output .= $this->slide_navigation_arrows();
 
@@ -452,11 +409,16 @@ if ( !class_exists( 'avia_sc_gallery_horizontal' ) )
 
 				}
 
-				if(!ShortcodeHelper::is_top_level()) return $output;
+				if( ! ShortcodeHelper::is_top_level() ) 
+				{
+					return $output;
+				}
+				
+				
 				$params = array();
 				$params['class'] = "main_color av-horizontal-gallery-fullwidth avia-no-border-styling {$av_display_classes} ".$meta['el_class'];
 				$params['open_structure'] = false;
-				$params['id'] = !empty($atts['id']) ? AviaHelper::save_string($atts['id'],'-') : "";
+				$params['id'] = AviaHelper::save_string( $meta['custom_id_val'] ,'-', 'av-horizontal-gallery-' . avia_sc_gallery_horizontal::$hor_gallery );
 				$params['custom_markup'] = $meta['custom_markup'];
 				if($meta['index'] == 0) $params['class'] .= " avia-no-border-styling";
 				

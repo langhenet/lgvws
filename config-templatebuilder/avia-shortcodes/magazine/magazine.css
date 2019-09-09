@@ -18,8 +18,19 @@ Magazine
 .av-magazine header{position: relative;}
 .av-magazine-time, .av-magazine-author, .av-magazine-text-sep{font-size: 12px; text-transform: uppercase;}
 .av-magazine-text-sep{padding: 0 5px;}
-.av-magazine-text-sep, .av-magazine-author{ display: none; }
+/*.av-magazine-text-sep, .av-magazine-author{ display: none; }*/
 .av-magazine .av-magazine-content-wrap .av-magazine-title{font-size: 14px; line-height: 1.3em; text-transform: none; letter-spacing:normal; padding:0; margin:0;}
+
+.av-magazine .minor-meta {font-size: 12px;}
+.av-magazine .av-magazine-text-sep.text-sep-cats,
+.av-magazine .av-magazine-text-sep.text-sep-tags{padding: 0 5px 0 0; text-transform: uppercase;}
+.av-magazine .av-magazine-cats-wrap,
+.av-magazine .av-magazine-tags-wrap{
+	width: 100%;
+	float: left;
+	margin-top: -10px;
+}
+
 
 .av-magazine-hero .av-magazine-thumbnail{margin:0 0 8px 0; float:none; width:100%; border-radius: 2px; padding:7px;}
 .av-magazine-hero .av-magazine-content-wrap{ padding-bottom: 10px;}

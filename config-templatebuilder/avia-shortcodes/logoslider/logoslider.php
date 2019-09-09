@@ -7,9 +7,9 @@
 if ( ! defined( 'ABSPATH' ) ) {  exit;  }    // Exit if accessed directly
 
 
-if ( !class_exists( 'avia_sc_partner_logo' ) )
+if ( ! class_exists( 'avia_sc_partner_logo' ) )
 {
-  class avia_sc_partner_logo extends aviaShortcodeTemplate
+	class avia_sc_partner_logo extends aviaShortcodeTemplate
 	{
 			/**
 			 * Create the config array for the shortcode button
@@ -18,16 +18,18 @@ if ( !class_exists( 'avia_sc_partner_logo' ) )
 			{
 				$this->config['self_closing']	=	'no';
 				
-				$this->config['name']			= __('Partner/Logo Element', 'avia_framework' );
-				$this->config['tab']			= __('Media Elements', 'avia_framework' );
+				$this->config['name']			= __( 'Partner/Logo Element', 'avia_framework' );
+				$this->config['tab']			= __( 'Media Elements', 'avia_framework' );
 				$this->config['icon']			= AviaBuilder::$path['imagesURL']."sc-partner.png";
 				$this->config['order']			= 7;
 				$this->config['target']			= 'avia-target-insert';
 				$this->config['shortcode'] 		= 'av_partner';
 				$this->config['shortcode_nested'] = array('av_partner_logo');
-				$this->config['tooltip'] 	    = __('Display a partner/logo Grid or Slider', 'avia_framework' );
+				$this->config['tooltip'] 	    = __( 'Display a partner/logo Grid or Slider', 'avia_framework' );
 				$this->config['preview'] 		= false;
 				$this->config['disabling_allowed'] = true;
+				$this->config['id_name']	= 'el_id';
+				$this->config['id_show']	= 'yes';
 			}
 			
 			function extra_assets()
@@ -38,7 +40,7 @@ if ( !class_exists( 'avia_sc_partner_logo' ) )
 				wp_enqueue_style( 'avia-module-postslider' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/postslider/postslider.css' , array('avia-layout'), false );
 				
 					//load js
-				wp_enqueue_script( 'avia-module-slideshow' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/slideshow/slideshow.js' , array('avia-shortcodes'), false, TRUE );
+				wp_enqueue_script( 'avia-module-slideshow' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/slideshow/slideshow.js' , array('avia-shortcodes'), false, true );
 
 			
 			}
@@ -163,6 +165,13 @@ if ( !class_exists( 'avia_sc_partner_logo' ) )
 							"type" 	=> "input",
 							"std" 	=> "",
 							),
+					
+					array(	
+							'type'				=> 'template',
+							'template_id'		=> 'heading_tag',
+							'theme_default'		=> 'h3',
+							'context'			=> __CLASS__
+						),
 
 					array(
 							"name" 	=> __("Logo Image Size", 'avia_framework' ),
@@ -252,60 +261,11 @@ if ( !class_exists( 'avia_sc_partner_logo' ) )
 							"type" 	=> "close_div",
 							'nodescription' => true
 						),
-						
-						
-								array(
-									"type" 	=> "tab",
-									"name"	=> __("Screen Options",'avia_framework' ),
-									'nodescription' => true
-								),
-								
-								
-								array(
-								"name" 	=> __("Element Visibility",'avia_framework' ),
-								"desc" 	=> __("Set the visibility for this element, based on the device screensize.", 'avia_framework' ),
-								"type" 	=> "heading",
-								"description_class" => "av-builder-note av-neutral",
-								),
-							
-								array(	
-										"desc" 	=> __("Hide on large screens (wider than 990px - eg: Desktop)", 'avia_framework'),
-										"id" 	=> "av-desktop-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-								
-								array(	
-									
-										"desc" 	=> __("Hide on medium sized screens (between 768px and 989px - eg: Tablet Landscape)", 'avia_framework'),
-										"id" 	=> "av-medium-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-										
-								array(	
-									
-										"desc" 	=> __("Hide on small screens (between 480px and 767px - eg: Tablet Portrait)", 'avia_framework'),
-										"id" 	=> "av-small-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-										
-								array(	
-									
-										"desc" 	=> __("Hide on very small screens (smaller than 479px - eg: Smartphone Portrait)", 'avia_framework'),
-										"id" 	=> "av-mini-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-	
-								
-							array(
-									"type" 	=> "close_div",
-									'nodescription' => true
-								),	
-								
-								
+					
+						array(	
+								'type'			=> 'template',
+								'template_id'	=> 'screen_options_tab'
+							),
 						
 						
 					array(
@@ -391,30 +351,35 @@ if ( !class_exists( 'avia_sc_partner_logo' ) )
 			 * @param string $shortcodename the shortcode found, when == callback name
 			 * @return string $output returns the modified html string
 			 */
-			function shortcode_handler($atts, $content = "", $shortcodename = "", $meta = "")
+			function shortcode_handler( $atts, $content = "", $shortcodename = "", $meta = "" )
 			{
-				extract(AviaHelper::av_mobile_sizes($atts)); //return $av_font_classes, $av_title_font_classes and $av_display_classes 
+				extract( AviaHelper::av_mobile_sizes( $atts ) ); //return $av_font_classes, $av_title_font_classes and $av_display_classes 
 				
-				$atts = shortcode_atts(array(
-                'type'          => 'grid',
-				'size'			=> 'featured',
-				'ids'    	 	=> '',
-				'autoplay'		=> 'false',
-				'navigation'    => 'arrows',
-                'animation'     => 'slide',
-				'interval'		=> 5,
-				'heading'		=> '',
-				'hover'			=> '',
-                'columns'       => 3,
-                'border'		=> '',
-				'handle'		=> $shortcodename,
-				'content'		=> ShortcodeHelper::shortcode2array($content),
-				'class'			=> $meta['el_class']." ".$av_display_classes,
-				'custom_markup' => $meta['custom_markup'],
-				'img_size_behave'=> '',
-				), $atts, $this->config['shortcode']);
-
-				$logo = new avia_partner_logo($atts);
+				$meta = aviaShortcodeTemplate::set_frontend_developer_heading_tag( $atts, $meta );
+				
+				$atts = shortcode_atts( array(
+								'type'          => 'grid',
+								'size'			=> 'featured',
+								'ids'    	 	=> '',
+								'autoplay'		=> 'false',
+								'navigation'    => 'arrows',
+								'animation'     => 'slide',
+								'interval'		=> 5,
+								'heading'		=> '',
+								'hover'			=> '',
+								'columns'       => 3,
+								'border'		=> '',
+								'handle'		=> $shortcodename,
+								'content'		=> ShortcodeHelper::shortcode2array($content),
+								'class'			=> $meta['el_class'] . ' ' . $av_display_classes,
+								'custom_markup' => $meta['custom_markup'],
+								'custom_el_id'	=> ! empty( $meta['custom_el_id'] ) ? $meta['custom_el_id'] : '',
+								'heading_tag'	=> ! empty( $meta['heading_tag'] ) ? $meta['heading_tag'] : '',
+								'heading_class'	=> ! empty( $meta['heading_class'] ) ? $meta['heading_class'] : '',
+								'img_size_behave' => '',
+							), $atts, $this->config['shortcode']);
+				
+				$logo = new avia_partner_logo( $atts );
 				return $logo->html();
 			}
 
@@ -422,23 +387,44 @@ if ( !class_exists( 'avia_sc_partner_logo' ) )
 }
 
 
-
-
-
-
-
-
-
-if ( !class_exists( 'avia_partner_logo' ) )
+if ( ! class_exists( 'avia_partner_logo' ) )
 {
 	class avia_partner_logo
 	{
-		static  $slider = 0; 				//slider count for the current page
+		/**
+		 * slider count for the current page
+		 * 
+		 * @var int 
+		 */
+		static  $slider = 0;
 		
-		protected $config;	 				//base config set on initialization
-		protected $slides;	 				//attachment posts for the current slider
-		protected $slide_count;				//number of slides
-		protected $id_array;				//unique array of slide id's
+		/**
+		 * base config set on initialization
+		 * 
+		 * @var array 
+		 */
+		protected $config;
+		
+		/**
+		 * attachment posts for the current slider
+		 * 
+		 * @var array 
+		 */
+		protected $slides;
+		
+		/**
+		 * number of slides
+		 * 
+		 * @var int 
+		 */
+		protected $slide_count;
+		
+		/**
+		 * unique array of slide id's
+		 * 
+		 * @var array 
+		 */
+		protected $id_array;
 
 		
 		/**
@@ -451,34 +437,37 @@ if ( !class_exists( 'avia_partner_logo' ) )
 			$this->slide_count = 0;
 			$this->id_array = array();
 
-			$this->config = array_merge(array(
-                'type'          => 'grid',
-				'size'			=> 'featured',
-				'ids'    	 	=> '',
-				'autoplay'		=> 'false',
-				'navigation'    => 'arrows',
-                'animation'     => 'slide',
-				'handle'		=> '',
-				'heading'		=> '',
-				'border'		=> '',
-                'columns'       => 3,
-				'interval'		=> 5,
-				'class'			=> "",
-				'custom_markup' => "",
-				'hover'			=> '',
-				'css_id'		=> "",
-				'img_size_behave'=>'',
-				'content'		=> array()
-				), $config);
+			$this->config = array_merge( array(
+								'type'          => 'grid',
+								'size'			=> 'featured',
+								'ids'    	 	=> '',
+								'autoplay'		=> 'false',
+								'navigation'    => 'arrows',
+								'animation'     => 'slide',
+								'handle'		=> '',
+								'heading'		=> '',
+								'border'		=> '',
+								'columns'       => 3,
+								'interval'		=> 5,
+								'class'			=> '',
+								'custom_markup' => '',
+								'custom_el_id'	=> '',
+								'heading_tag'	=> '',
+								'heading_class'	=> '',
+								'hover'			=> '',
+								'css_id'		=> '',
+								'img_size_behave'=>'',
+								'content'		=> array()
+						), $config);
 
 
 			//if we got subslides overwrite the id array
-			if(!empty($config['content']))
+			if( ! empty( $config['content'] ) )
 			{
-				$this->extract_subslides($config['content']);
+				$this->extract_subslides( $config['content'] );
 			}
 
-			$this->set_slides($this->config['ids']);
+			$this->set_slides( $this->config['ids'] );
 		}
 		
 		/**
@@ -500,16 +489,19 @@ if ( !class_exists( 'avia_partner_logo' ) )
 		 */
 		public function set_slides($ids)
 		{
-			if(empty($ids)) return;
+			if( empty( $ids ) ) 
+			{
+				return;
+			}
 
-			$this->slides = get_posts(array(
-				'include' => $ids,
-				'post_status' => 'inherit',
-				'post_type' => 'attachment',
-				'post_mime_type' => 'image',
-				'order' => 'ASC',
-				'orderby' => 'post__in')
-				);
+			$this->slides = get_posts( array(
+										'include'		=> $ids,
+										'post_status'	=> 'inherit',
+										'post_type'		=> 'attachment',
+										'post_mime_type' => 'image',
+										'order'			=> 'ASC',
+										'orderby'		=> 'post__in'
+									) );
 
 
 			//resort slides so the id of each slide matches the post id
@@ -551,18 +543,21 @@ if ( !class_exists( 'avia_partner_logo' ) )
 
 		public function html()
 		{
-			$output = "";
+			$output = '';
 			$counter = 0;
 			avia_partner_logo::$slider++;
-			if($this->slide_count == 0) return $output;
-
-
-            extract($this->config);
 			
-			$default_heading = 'h3';
+			if( $this->slide_count == 0 ) 
+			{
+				return $output;
+			}
+
+            extract( $this->config );
+			
+			$default_heading = ! empty( $heading_tag ) ? $heading_tag : 'h3';
 			$args = array(
 						'heading'		=> $default_heading,
-						'extra_class'	=> ''
+						'extra_class'	=> $heading_class
 					);
 
 			$extra_args = array( $this );
@@ -573,8 +568,8 @@ if ( !class_exists( 'avia_partner_logo' ) )
 			 */
 			$args = apply_filters( 'avf_customize_heading_settings', $args, __CLASS__, $extra_args );
 
-			$heading = ! empty( $args['heading'] ) ? $args['heading'] : $default_heading;
-			$css = ! empty( $args['extra_class'] ) ? $args['extra_class'] : '';
+			$heading_tag = ! empty( $args['heading'] ) ? $args['heading'] : $default_heading;
+			$css = ! empty( $args['extra_class'] ) ? $args['extra_class'] : $heading_class;
 
 				
             $extraClass 		= 'first';
@@ -582,9 +577,9 @@ if ( !class_exists( 'avia_partner_logo' ) )
             $slide_loop_count 	= 1;
             $loop_counter		= 1;
             $total				= $columns % 2 ? "odd" : "even";
-			$heading 			= !empty($this->config['heading']) ? "<{$heading} class='{$css}'>{$this->config['heading']}</{$heading}>" : "&nbsp;";
+			$heading 			= ! empty( $heading ) ? "<{$heading_tag} class='{$css}'>{$heading}</{$heading_tag}>" : "&nbsp;";
 
-            switch($columns)
+            switch( $columns )
             {
                 case "1": $grid = 'av_fullwidth'; break;
                 case "2": $grid = 'av_one_half'; break;
@@ -599,7 +594,7 @@ if ( !class_exists( 'avia_partner_logo' ) )
             $data = AviaHelper::create_data_string(array('autoplay'=>$autoplay, 'interval'=>$interval, 'animation' => $animation));
 
             $thumb_fallback = "";
-            $output .= "<div {$data} class='avia-logo-element-container {$border} avia-logo-{$type} avia-content-slider avia-smallarrow-slider avia-content-{$type}-active noHover avia-content-slider".avia_partner_logo::$slider." avia-content-slider-{$total} {$class}' >";
+            $output .= "<div {$custom_el_id} {$data} class='avia-logo-element-container {$border} avia-logo-{$type} avia-content-slider avia-smallarrow-slider avia-content-{$type}-active noHover avia-content-slider".avia_partner_logo::$slider." avia-content-slider-{$total} {$class}' >";
 
 				$heading_class = '';
                 if($navigation == 'no') $heading_class .= ' no-logo-slider-navigation ';

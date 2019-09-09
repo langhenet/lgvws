@@ -7,7 +7,7 @@
 if ( ! defined( 'ABSPATH' ) ) {  exit;  }    // Exit if accessed directly
 
 
-if ( !class_exists( 'avia_sc_tab' ) )
+if ( ! class_exists( 'avia_sc_tab' ) )
 {
     class avia_sc_tab extends aviaShortcodeTemplate
     {
@@ -51,22 +51,24 @@ if ( !class_exists( 'avia_sc_tab' ) )
         {
 			$this->config['self_closing']	=	'no';
 			
-            $this->config['name']		= __('Tabs', 'avia_framework' );
-            $this->config['tab']		= __('Content Elements', 'avia_framework' );
+            $this->config['name']		= __( 'Tabs', 'avia_framework' );
+            $this->config['tab']		= __( 'Content Elements', 'avia_framework' );
             $this->config['icon']		= AviaBuilder::$path['imagesURL']."sc-tabs.png";
             $this->config['order']		= 75;
             $this->config['target']		= 'avia-target-insert';
             $this->config['shortcode'] 	= 'av_tab_container';
             $this->config['shortcode_nested'] = array('av_tab');
-            $this->config['tooltip'] 	= __('Creates a tabbed content area', 'avia_framework' );
+            $this->config['tooltip'] 	= __( 'Creates a tabbed content area', 'avia_framework' );
             $this->config['disabling_allowed'] = true; 
+			$this->config['id_name']	= 'id';
+			$this->config['id_show']	= 'yes';
         }
 		
 		
 		function admin_assets()
 		{
 			$ver = AviaBuilder::VERSION;
-            wp_enqueue_script('avia_tab_toggle_js' , AviaBuilder::$path['assetsURL'].'js/avia-tab-toggle.js' , array('avia_modal_js'), $ver, TRUE );
+            wp_enqueue_script('avia_tab_toggle_js' , AviaBuilder::$path['assetsURL'].'js/avia-tab-toggle.js' , array('avia_modal_js'), $ver, true );
 		}
 
         function extra_assets()
@@ -75,7 +77,7 @@ if ( !class_exists( 'avia_sc_tab' ) )
 			wp_enqueue_style( 'avia-module-tabs' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/tabs/tabs.css' , array('avia-layout'), false );
 				
 			//load js
-			wp_enqueue_script( 'avia-module-tabs' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/tabs/tabs.js' , array('avia-shortcodes'), false, TRUE );
+			wp_enqueue_script( 'avia-module-tabs' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/tabs/tabs.js' , array('avia-shortcodes'), false, true );
         }
 
 
@@ -192,84 +194,35 @@ if ( !class_exists( 'avia_sc_tab' ) )
                     "type" 	=> "input"),
 
             
-
-
-           
-			array(
+					array(
 							"type" 	=> "close_div",
 							'nodescription' => true
 						),
+
+					array(	
+							'type'			=> 'template',
+							'template_id'	=> 'screen_options_tab'
+						),
 						
 						
-								array(
-									"type" 	=> "tab",
-									"name"	=> __("Screen Options",'avia_framework' ),
-									'nodescription' => true
-								),
 								
-								
-								array(
-								"name" 	=> __("Element Visibility",'avia_framework' ),
-								"desc" 	=> __("Set the visibility for this element, based on the device screensize.", 'avia_framework' ),
-								"type" 	=> "heading",
-								"description_class" => "av-builder-note av-neutral",
-								),
-							
-								array(	
-										"desc" 	=> __("Hide on large screens (wider than 990px - eg: Desktop)", 'avia_framework'),
-										"id" 	=> "av-desktop-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-								
-								array(	
-									
-										"desc" 	=> __("Hide on medium sized screens (between 768px and 989px - eg: Tablet Landscape)", 'avia_framework'),
-										"id" 	=> "av-medium-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-										
-								array(	
-									
-										"desc" 	=> __("Hide on small screens (between 480px and 767px - eg: Tablet Portrait)", 'avia_framework'),
-										"id" 	=> "av-small-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-										
-								array(	
-									
-										"desc" 	=> __("Hide on very small screens (smaller than 479px - eg: Smartphone Portrait)", 'avia_framework'),
-										"id" 	=> "av-mini-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-	
-								
-							array(
-									"type" 	=> "close_div",
-									'nodescription' => true
-								),	
-								
-								
-						
-						
 					array(
 						"type" 	=> "close_div",
 						'nodescription' => true
 					),	
 			);
 			
-			if(current_theme_supports('avia_template_builder_custom_tab_toogle_id'))
-            {
-                $this->elements[4]['subelements'][] = array(
-                    "name" 	=> __("For Developers: Custom Tab ID",'avia_framework' ),
-                    "desc" 	=> __("Insert a custom ID for the element here. Make sure to only use allowed characters.",'avia_framework' ),
-                    "id" 	=> "custom_id",
-                    "type" 	=> "input",
-                    "std" 	=> "");
-            }
+			$setting_id = Avia_Builder()->get_developer_settings( 'custom_id' );
+			$class = in_array( $setting_id, array( 'deactivate', 'hide' ) ) ? 'avia-hidden' : '';
+			
+			$this->elements[4]['subelements'][] = array(
+					'name' 	=> __( 'For Developers: Custom Tab ID','avia_framework' ),
+					'desc' 	=> __( 'Insert a custom ID for the element here. Make sure to only use allowed characters (latin characters, underscores, dashes and numbers, no special characters can be used)','avia_framework' ),
+					'id' 	=> 'custom_id',
+					'type' 	=> 'input',
+					'std' 	=> '',
+					'container_class'	=> $class,
+				);
 
         }
 
@@ -313,17 +266,23 @@ if ( !class_exists( 'avia_sc_tab' ) )
          * @param string $shortcodename the shortcode found, when == callback name
          * @return string $output returns the modified html string
          */
-        function shortcode_handler($atts, $content = "", $shortcodename = "", $meta = "")
+        function shortcode_handler( $atts, $content = "", $shortcodename = "", $meta = "" )
         {
 			$this->screen_options = AviaHelper::av_mobile_sizes( $atts );
 			
 	        extract( $this->screen_options ); //return $av_font_classes, $av_title_font_classes and $av_display_classes 
 	        
-            $atts =  shortcode_atts(array('initial' => '1', 'position' => 'top_tab', 'boxed'=>'border_tabs'), $atts, $this->config['shortcode']);
-            extract($atts);
+            $atts = shortcode_atts( array(
+							'initial'	=> '1', 
+							'position'	=> 'top_tab', 
+							'boxed'		=> 'border_tabs'
+						), $atts, $this->config['shortcode'] );
+			
+			
+            extract( $atts );
 
             $boxed   = $position != "top_tab" ? $boxed : "";
-            $output  = '<div class="tabcontainer  '.$av_display_classes.' '.$position.' '.$boxed.' '.$meta['el_class'].'">'."\n";
+            $output  = '<div ' . $meta['custom_el_id'] . ' class="tabcontainer  '.$av_display_classes.' '.$position.' '.$boxed.' '.$meta['el_class'].'">'."\n";
             $counter = 1;
 		
 			$tab_sc = ShortcodeHelper::shortcode2array( $content, 1 );
@@ -346,7 +305,7 @@ if ( !class_exists( 'avia_sc_tab' ) )
             return $output;
         }
 
-        function av_tab($atts, $content = "", $shortcodename = "")
+        function av_tab( $atts, $content = "", $shortcodename = "" )
         {
             /**
 			 * Fixes a problem when 3-rd party plugins call nested shortcodes without executing main shortcode  (like YOAST in wpseo-filter-shortcodes)
@@ -357,7 +316,15 @@ if ( !class_exists( 'avia_sc_tab' ) )
 			}
 				
             $output = $titleClass  = $contentClass = $icon = "";
-            $tab_atts = shortcode_atts(array('title' => '', 'icon_select'=>'no', 'icon' =>"", 'custom_id' =>'', 'font' =>'', 'custom_markup' => ''), $atts, 'av_tab');
+			
+            $tab_atts = shortcode_atts( array(
+							'title'			=> '', 
+							'icon_select'	=> 'no', 
+							'icon'			=> '', 
+							'custom_id'		=> '', 
+							'font'			=> '', 
+							'custom_markup'	=> ''
+					), $atts, 'av_tab' );
             
             $display_char = av_icon($tab_atts['icon'], $tab_atts['font']);
 			
@@ -380,10 +347,15 @@ if ( !class_exists( 'avia_sc_tab' ) )
                 $icon = "<span class='tab_icon' {$display_char}></span>";
             }
 
-            if(empty($tab_atts['custom_id']))
+			$setting_id = Avia_Builder()->get_developer_settings( 'custom_id' );
+            if( empty( $tab_atts['custom_id'] ) || in_array( $setting_id, array( 'deactivate' ) ) )
             {
                 $tab_atts['custom_id'] = 'tab-id-'.avia_sc_tab::$tab_id++;
             }
+			else
+			{
+				$tab_atts['custom_id'] = AviaHelper::save_string( $tab_atts['custom_id'], '-' );
+			}
 
 
             $markup_tab = avia_markup_helper(array('context' => 'entry','echo'=>false, 'custom_markup'=>$tab_atts['custom_markup']));

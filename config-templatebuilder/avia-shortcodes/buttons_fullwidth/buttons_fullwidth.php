@@ -11,7 +11,7 @@ if ( !class_exists( 'avia_sc_button_full' ) )
 {
 	class avia_sc_button_full extends aviaShortcodeTemplate
 	{
-			static $count = 0;
+			static $button_count = 0;
 			
 			/**
 			 * Create the config array for the shortcode button
@@ -20,17 +20,18 @@ if ( !class_exists( 'avia_sc_button_full' ) )
 			{
 				$this->config['self_closing']	=	'no';
 				
-				$this->config['name']		= __('Fullwidth Button', 'avia_framework' );
-				$this->config['tab']		= __('Content Elements', 'avia_framework' );
+				$this->config['name']		= __( 'Fullwidth Button', 'avia_framework' );
+				$this->config['tab']		= __( 'Content Elements', 'avia_framework' );
 				$this->config['icon']		= AviaBuilder::$path['imagesURL']."sc-button.png";
 				$this->config['order']		= 84;
 				$this->config['target']		= 'avia-target-insert';
 				$this->config['shortcode'] 	= 'av_button_big';
-				$this->config['tooltip'] 	= __('Creates a colored button that stretches across the full width', 'avia_framework' );
-				$this->config['tinyMCE']    = array('tiny_always'=>true);
+				$this->config['tooltip'] 	= __( 'Creates a colored button that stretches across the full width', 'avia_framework' );
+				$this->config['tinyMCE']    = array( 'tiny_always' => true );
 				$this->config['preview'] 	= true;
 				$this->config['disabling_allowed'] = true;
-
+				$this->config['id_name']	= 'id';
+				$this->config['id_show']	= 'yes';
 			}
 			
 			
@@ -109,7 +110,16 @@ if ( !class_exists( 'avia_sc_button_full' ) )
 							"id" 	=> "link_target",
 							"type" 	=> "select",
 							"std" 	=> "",
-							"subtype" => AviaHtmlHelper::linking_options()),	
+							"subtype" => AviaHtmlHelper::linking_options()
+						),	
+					
+					array(	
+							'name'		=> __( 'Button Title Attribute', 'avia_framework' ),
+							'desc'		=> __( 'Add a title attribute for this button.', 'avia_framework' ),
+							'id'		=> 'title_attr',
+							'type'		=> 'input',
+							'std'		=> ''
+						),
 							
 					array(	
 							"name" 	=> __("Button Icon", 'avia_framework' ),
@@ -233,61 +243,14 @@ if ( !class_exists( 'avia_sc_button_full' ) )
 							"type" 	=> "close_div",
 							'nodescription' => true
 						),
-						
-					
-					array(
-									"type" 	=> "tab",
-									"name"	=> __("Screen Options",'avia_framework' ),
-									'nodescription' => true
-								),
-								
-								
-								array(
-								"name" 	=> __("Element Visibility",'avia_framework' ),
-								"desc" 	=> __("Set the visibility for this element, based on the device screensize.", 'avia_framework' ),
-								"type" 	=> "heading",
-								"description_class" => "av-builder-note av-neutral",
-								),
-							
-								array(	
-										"desc" 	=> __("Hide on large screens (wider than 990px - eg: Desktop)", 'avia_framework'),
-										"id" 	=> "av-desktop-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-								
-								array(	
-									
-										"desc" 	=> __("Hide on medium sized screens (between 768px and 989px - eg: Tablet Landscape)", 'avia_framework'),
-										"id" 	=> "av-medium-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-										
-								array(	
-									
-										"desc" 	=> __("Hide on small screens (between 480px and 767px - eg: Tablet Portrait)", 'avia_framework'),
-										"id" 	=> "av-small-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-										
-								array(	
-									
-										"desc" 	=> __("Hide on very small screens (smaller than 479px - eg: Smartphone Portrait)", 'avia_framework'),
-										"id" 	=> "av-mini-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-									
-							
-							array(
-									"type" 	=> "close_div",
-									'nodescription' => true
-								),	
 					
 					
-						
+					array(	
+							'type'			=> 'template',
+							'template_id'	=> 'screen_options_tab'
+						),
+
+					
 					array(
 							"type" 	=> "close_div",
 							'nodescription' => true
@@ -340,27 +303,29 @@ if ( !class_exists( 'avia_sc_button_full' ) )
 			 * @param string $shortcodename the shortcode found, when == callback name
 			 * @return string $output returns the modified html string 
 			 */
-			function shortcode_handler($atts, $content = "", $shortcodename = "", $meta = "")
+			function shortcode_handler( $atts, $content = "", $shortcodename = "", $meta = "" )
 			{
-			   avia_sc_button_full::$count++;
+			   avia_sc_button_full::$button_count++;
 			   
 			   extract(AviaHelper::av_mobile_sizes($atts)); //return $av_font_classes, $av_title_font_classes and $av_display_classes 
 			   
-			   $atts =  shortcode_atts(array('label' => 'Click me', 
-			                                 'link' => '', 
-			                                 'link_target' => '',
-			                                 'color' => 'theme-color',
-			                                 'color_hover' => 'theme-color-highlight',
-			                                 'custom_bg' => '#444444',
-			                                 'custom_bg_hover' => '#444444',
-			                                 'custom_font' => '#ffffff',
-			                                 'position' => 'center',
-			                                 'icon_select' => 'no',
-			                                 'icon' => '', 
-			                                 'font' =>'',
-			                                 'icon_hover' => '',
-			                                 'description_pos' => ''
-			                                 ), $atts, $this->config['shortcode']);
+			   $atts = shortcode_atts( array(
+								'label'			=> 'Click me', 
+								'link'			=> '', 
+								'link_target'	=> '',
+								'title_attr'	=> '',
+								'color'			=> 'theme-color',
+								'color_hover'	=> 'theme-color-highlight',
+								'custom_bg'		=> '#444444',
+								'custom_bg_hover'	=> '#444444',
+								'custom_font'	=> '#ffffff',
+								'position'		=> 'center',
+								'icon_select'	=> 'no',
+								'icon'			=> '', 
+								'font'			=>'',
+								'icon_hover'	=> '',
+								'description_pos'	=> ''
+							), $atts, $this->config['shortcode'] );
 			
 				$display_char = av_icon($atts['icon'], $atts['font']);
 			
@@ -385,6 +350,7 @@ if ( !class_exists( 'avia_sc_button_full' ) )
 			    $link  = AviaHelper::get_url($atts['link']);
 			    $link  = $link == "http://" ? "" : $link;
 			    
+				$title_attr = ! empty( $atts['title_attr'] ) ? 'title="' . $atts['title_attr'] . '"' : '';
 			    
 			    if($style) $style = "style='{$style}'";
 			    
@@ -402,19 +368,20 @@ if ( !class_exists( 'avia_sc_button_full' ) )
 					$content_html .= "<div class='av-button-description av-button-description-below'>".ShortcodeHelper::avia_apply_autop(ShortcodeHelper::avia_remove_autop($content) )."</div>";
 			    }
 			    
-			    $output  = "";
-				$output .= "<a href='{$link}' class='avia-button avia-button-fullwidth {$av_display_classes} {$extraClass} ".$this->class_by_arguments('icon_select, color' , $atts, true)."' {$blank} {$style} >";
-				$output .= $content_html;
-				$output .= "<span class='avia_button_background avia-button avia-button-fullwidth avia-color-".$atts['color_hover']."' {$style_hover}></span>";
-				$output .= "</a>";
+			    $output  = '';
+				$output .=	"<a href='{$link}' class='avia-button avia-button-fullwidth {$av_display_classes} {$extraClass} ".$this->class_by_arguments('icon_select, color' , $atts, true)."' {$blank} {$style} >";
+				$output .=		$content_html;
+				$output .=		"<span class='avia_button_background avia-button avia-button-fullwidth avia-color-".$atts['color_hover']."' {$style_hover}></span>";
+				$output .=	"</a>";
 				
-				$output =  "<div class='avia-button-wrap avia-button-".$atts['position']." ".$meta['el_class']."'>".$output."</div>";
+				$output =  "<div {$meta['custom_el_id']} class='avia-button-wrap avia-button-{$atts['position']} {$meta['el_class']}' {$title_attr}>{$output}</div>";
 			
 				
 				$params['class'] = "main_color av-fullscreen-button avia-no-border-styling ".$meta['el_class'];
 				$params['open_structure'] = false;
-				$id = AviaHelper::save_string($atts['label'],'-');
-				$params['id'] = !empty($id) ? $id : "av-fullwidth-button-".avia_sc_button_full::$count;
+				
+				$id = AviaHelper::save_string( $atts['label'], '-' );
+				$params['id'] = AviaHelper::save_string( $id, '-', 'av-fullwidth-button-' . avia_sc_button_full::$button_count );
 				$params['custom_markup'] = $meta['custom_markup'];
 				
 				//we dont need a closing structure if the element is the first one or if a previous fullwidth element was displayed before
@@ -422,11 +389,14 @@ if ( !class_exists( 'avia_sc_button_full' ) )
 				if(!empty($meta['siblings']['prev']['tag']) && in_array($meta['siblings']['prev']['tag'], AviaBuilder::$full_el_no_section )) $params['close'] = false;
 				
 				
-				if(!ShortcodeHelper::is_top_level()) return $output;
+				if( ! ShortcodeHelper::is_top_level() ) 
+				{
+					return $output;
+				}
 				
 				$button_html = $output;
 				
-				$output  =  avia_new_section($params);
+				$output  = avia_new_section( $params );
 				$output .= $button_html;
 				$output .= avia_section_after_element_content( $meta , 'after_fullwidth_button' );
 				

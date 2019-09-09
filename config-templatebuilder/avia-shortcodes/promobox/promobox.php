@@ -7,7 +7,7 @@
 if ( ! defined( 'ABSPATH' ) ) {  exit;  }    // Exit if accessed directly
 
 
-if ( !class_exists( 'avia_sc_promobox' ) )
+if ( ! class_exists( 'avia_sc_promobox' ) )
 {
 	class avia_sc_promobox extends aviaShortcodeTemplate
 	{
@@ -18,15 +18,17 @@ if ( !class_exists( 'avia_sc_promobox' ) )
 			{
 				$this->config['self_closing']	=	'no';
 				
-				$this->config['name']			= __('Promo Box', 'avia_framework' );
-				$this->config['tab']			= __('Content Elements', 'avia_framework' );
+				$this->config['name']			= __( 'Promo Box', 'avia_framework' );
+				$this->config['tab']			= __( 'Content Elements', 'avia_framework' );
 				$this->config['icon']			= AviaBuilder::$path['imagesURL']."sc-promobox.png";
 				$this->config['order']			= 50;
 				$this->config['target']			= 'avia-target-insert';
 				$this->config['shortcode'] 		= 'av_promobox';
-				$this->config['tooltip'] 	    = __('Creates a notification box with call to action button', 'avia_framework' );
+				$this->config['tooltip'] 	    = __( 'Creates a notification box with call to action button', 'avia_framework' );
 				$this->config['preview'] 		= "xlarge";
 				$this->config['disabling_allowed'] = true;
+				$this->config['id_name']		= 'id';
+				$this->config['id_show']		= 'yes';
 			}
 			
 			function extra_assets()
@@ -247,62 +249,13 @@ if ( !class_exists( 'avia_sc_promobox' ) )
 							"type" 	=> "close_div",
 							'nodescription' => true
 						),
+					
+					array(	
+							'type'			=> 'template',
+							'template_id'	=> 'screen_options_tab'
+						),
 						
-					array(
-									"type" 	=> "tab",
-									"name"	=> __("Screen Options",'avia_framework' ),
-									'nodescription' => true
-								),
-								
-								
-								array(
-								"name" 	=> __("Element Visibility",'avia_framework' ),
-								"desc" 	=> __("Set the visibility for this element, based on the device screensize.", 'avia_framework' ),
-								"type" 	=> "heading",
-								"description_class" => "av-builder-note av-neutral",
-								),
-							
-								array(	
-										"desc" 	=> __("Hide on large screens (wider than 990px - eg: Desktop)", 'avia_framework'),
-										"id" 	=> "av-desktop-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-								
-								array(	
-									
-										"desc" 	=> __("Hide on medium sized screens (between 768px and 989px - eg: Tablet Landscape)", 'avia_framework'),
-										"id" 	=> "av-medium-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-										
-								array(	
-									
-										"desc" 	=> __("Hide on small screens (between 480px and 767px - eg: Tablet Portrait)", 'avia_framework'),
-										"id" 	=> "av-small-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-										
-								array(	
-									
-										"desc" 	=> __("Hide on very small screens (smaller than 479px - eg: Smartphone Portrait)", 'avia_framework'),
-										"id" 	=> "av-mini-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-									
-								
-							  
-				
-							
-								
-							array(
-									"type" 	=> "close_div",
-									'nodescription' => true
-								),
-						
+					
 					array(
 							"type" 	=> "close_div",
 							'nodescription' => true
@@ -356,32 +309,33 @@ if ( !class_exists( 'avia_sc_promobox' ) )
 			function shortcode_handler($atts, $content = "", $shortcodename = "", $meta = "")
 			{
 				
-				extract(AviaHelper::av_mobile_sizes($atts)); //return $av_font_classes, $av_title_font_classes and $av_display_classes 
+				extract( AviaHelper::av_mobile_sizes( $atts ) ); //return $av_font_classes, $av_title_font_classes and $av_display_classes 
 				
-				$atts =  shortcode_atts(array(
-											 'button' => 'yes',
-											 'label' => 'Click me',
-			                                 'link' => '',
-			                                 'link_target' => '',
-			                                 'color' => 'theme-color',
-			                                 'custom_bg' => '#444444',
-			                                 'custom_font' => '#ffffff',
-			                                 'size' => 'small',
-			                                 'position' => 'center',
-			                                 'icon_select' => 'yes',
-			                                 'icon' => '',
-			                                 'font' => '',
-			                                 'box_color' => '',
-			                                 'box_custom_bg' => '',
-			                                 'box_custom_font'=>'',
-			                                 'box_custom_border'=>'',
-			                                 'label_display'=>'',
-			                                 
-			                                 ), $atts, $this->config['shortcode']);
-				extract($atts);
+				$atts = shortcode_atts( array(
+								'button'		=> 'yes',
+								'label'			=> 'Click me',
+								'link'			=> '',
+								'link_target'	=> '',
+								'color'			=> 'theme-color',
+								'custom_bg'		=> '#444444',
+								'custom_font'	=> '#ffffff',
+								'size'			=> 'small',
+								'position'		=> 'center',
+								'icon_select'	=> 'yes',
+								'icon'			=> '',
+								'font'			=> '',
+								'box_color'		=> '',
+								'box_custom_bg'	=> '',
+								'box_custom_font'	=>'',
+								'box_custom_border'	=>'',
+								'label_display'	=>''
+
+							), $atts, $this->config['shortcode'] );
+				
+				extract( $atts );
 			
 				$style = "";
-				if($box_color == "custom")
+				if( $box_color == "custom" )
 				{
 					if( $box_custom_bg )   $style .= "background:$box_custom_bg;";
 					if( $box_custom_font ) $style .= "color:$box_custom_font;";
@@ -395,21 +349,22 @@ if ( !class_exists( 'avia_sc_promobox' ) )
 				$output = "";
 
 				$output = "";
-				$output.= "	<div {$style} class='av_promobox {$av_display_classes} ".$this->class_by_arguments('button' , $atts, true).$meta['el_class']."'>";
+				$output.= "	<div {$meta['custom_el_id']} {$style} class='av_promobox {$av_display_classes} " . $this->class_by_arguments( 'button', $atts, true ) . " {$meta['el_class']}'>";
 				$output.= "		<div class='avia-promocontent'>".stripslashes(wpautop(trim($content)))."</div>";
 				
 				
 				
-				if($atts['button'] == "yes")
+				if( $atts['button'] == "yes" )
 				{
 					global $shortcode_tags;
+					
 					$fake   = true;
-					$output.= call_user_func( $shortcode_tags['av_button'], $atts, null, 'av_button', $fake);
+					$output.= call_user_func( $shortcode_tags['av_button'], $atts, null, 'av_button', $fake );
 				}
 
 				$output.= "	</div>";
 
-				return do_shortcode($output);
+				return do_shortcode( $output );
 
 			}
 

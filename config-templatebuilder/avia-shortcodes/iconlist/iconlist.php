@@ -89,17 +89,19 @@ if ( ! class_exists( 'avia_sc_iconlist' ) )
 			{
 				$this->config['self_closing']	=	'no';
 				
-				$this->config['name']		= __('Icon List', 'avia_framework' );
-				$this->config['tab']		= __('Content Elements', 'avia_framework' );
+				$this->config['name']		= __( 'Icon List', 'avia_framework' );
+				$this->config['tab']		= __( 'Content Elements', 'avia_framework' );
 				$this->config['icon']		= AviaBuilder::$path['imagesURL']."sc-iconlist.png";
 				$this->config['order']		= 90;
 				$this->config['target']		= 'avia-target-insert';
 				$this->config['shortcode'] 	= 'av_iconlist';
 				$this->config['shortcode_nested'] = array('av_iconlist_item');
-				$this->config['tooltip'] 	= __('Creates a list with nice icons beside', 'avia_framework' );
+				$this->config['tooltip'] 	= __( 'Creates a list with nice icons beside', 'avia_framework' );
 				$this->config['preview'] 	= true;
 				$this->config['disabling_allowed'] = true;
-
+				$this->config['id_name'] = 'id';
+				$this->config['id_show'] = 'yes';
+				
 			}
 			
 			function extra_assets()
@@ -107,7 +109,7 @@ if ( ! class_exists( 'avia_sc_iconlist' ) )
 				wp_enqueue_style( 'avia-module-icon' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/icon/icon.css' , array('avia-layout'), false );
 				wp_enqueue_style( 'avia-module-iconlist' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/iconlist/iconlist.css' , array('avia-layout'), false );
 				
-				wp_enqueue_script( 'avia-module-iconlist' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/iconlist/iconlist.js' , array('avia-shortcodes'), false, TRUE );
+				wp_enqueue_script( 'avia-module-iconlist' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/iconlist/iconlist.js' , array('avia-shortcodes'), false, true );
 
 			}
 
@@ -149,12 +151,19 @@ if ( ! class_exists( 'avia_sc_iconlist' ) )
 
 							'subelements' 	=> array(
 
-									array(
+								array(
 									"name" 	=> __("List Item Title", 'avia_framework' ),
 									"desc" 	=> __("Enter the list item title here (Better keep it short)", 'avia_framework' ) ,
 									"id" 	=> "title",
 									"std" 	=> "List Title",
 									"type" 	=> "input"),
+								
+								array(	
+										'type'				=> 'template',
+										'template_id'		=> 'heading_tag',
+										'theme_default'		=> 'h4',
+										'context'			=> __CLASS__
+									),
 
 
                                 array(
@@ -364,113 +373,14 @@ if ( ! class_exists( 'avia_sc_iconlist' ) )
 							"type" 	=> "close_div",
 							'nodescription' => true
 						),
-						
-						
-					array(
-									"type" 	=> "tab",
-									"name"	=> __("Screen Options",'avia_framework' ),
-									'nodescription' => true
-								),
-								
-								
-								array(
-								"name" 	=> __("Element Visibility",'avia_framework' ),
-								"desc" 	=> __("Set the visibility for this element, based on the device screensize.", 'avia_framework' ),
-								"type" 	=> "heading",
-								"description_class" => "av-builder-note av-neutral",
-								),
-							
-								array(	
-										"desc" 	=> __("Hide on large screens (wider than 990px - eg: Desktop)", 'avia_framework'),
-										"id" 	=> "av-desktop-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-								
-								array(	
-									
-										"desc" 	=> __("Hide on medium sized screens (between 768px and 989px - eg: Tablet Landscape)", 'avia_framework'),
-										"id" 	=> "av-medium-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-										
-								array(	
-									
-										"desc" 	=> __("Hide on small screens (between 480px and 767px - eg: Tablet Portrait)", 'avia_framework'),
-										"id" 	=> "av-small-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-										
-								array(	
-									
-										"desc" 	=> __("Hide on very small screens (smaller than 479px - eg: Smartphone Portrait)", 'avia_framework'),
-										"id" 	=> "av-mini-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-									
-								
-									
-								array(
-									"name" 	=> __("Heading Font Size",'avia_framework' ),
-									"desc" 	=> __("Set the font size for the heading, based on the device screensize.", 'avia_framework' ),
-									"type" 	=> "heading",
-									"description_class" => "av-builder-note av-neutral",
-									),
-										
-									array(	"name" 	=> __("Font Size for medium sized screens (between 768px and 989px - eg: Tablet Landscape)", 'avia_framework' ),
-						            "id" 	=> "av-medium-font-size-title",
-						            "type" 	=> "select",
-						            "subtype" => AviaHtmlHelper::number_array(10,120,1, array( __("Default", 'avia_framework' )=>'' , __("Hidden", 'avia_framework' )=>'hidden' ), "px"),
-						            "std" => ""),
-						            
-						            array(	"name" 	=> __("Font Size for small screens (between 480px and 767px - eg: Tablet Portrait)", 'avia_framework' ),
-						            "id" 	=> "av-small-font-size-title",
-						            "type" 	=> "select",
-						            "subtype" => AviaHtmlHelper::number_array(10,120,1, array( __("Default", 'avia_framework' )=>'', __("Hidden", 'avia_framework' )=>'hidden'), "px"),
-						            "std" => ""),
-						            
-									array(	"name" 	=> __("Font Size for very small screens (smaller than 479px - eg: Smartphone Portrait)", 'avia_framework' ),
-						            "id" 	=> "av-mini-font-size-title",
-						            "type" 	=> "select",
-						            "subtype" => AviaHtmlHelper::number_array(10,120,1, array( __("Default", 'avia_framework' )=>'', __("Hidden", 'avia_framework' )=>'hidden'), "px"),
-						            "std" => ""),
-						            
-						            
-						        array(
-									"name" 	=> __("Content Font Size",'avia_framework' ),
-									"desc" 	=> __("Set the font size for the content, based on the device screensize.", 'avia_framework' ),
-									"type" 	=> "heading",
-									"description_class" => "av-builder-note av-neutral",
-									),
-										
-									array(	"name" 	=> __("Font Size for medium sized screens (between 768px and 989px - eg: Tablet Landscape)", 'avia_framework' ),
-						            "id" 	=> "av-medium-font-size",
-						            "type" 	=> "select",
-						            "subtype" => AviaHtmlHelper::number_array(10,120,1, array( __("Default", 'avia_framework' )=>'', __("Hidden", 'avia_framework' )=>'hidden'), "px"),
-						            "std" => ""),
-						            
-						            array(	"name" 	=> __("Font Size for small screens (between 480px and 767px - eg: Tablet Portrait)", 'avia_framework' ),
-						            "id" 	=> "av-small-font-size",
-						            "type" 	=> "select",
-						            "subtype" => AviaHtmlHelper::number_array(10,120,1, array( __("Default", 'avia_framework' )=>'', __("Hidden", 'avia_framework' )=>'hidden'), "px"),
-						            "std" => ""),
-						            
-									array(	"name" 	=> __("Font Size for very small screens (smaller than 479px - eg: Smartphone Portrait)", 'avia_framework' ),
-						            "id" 	=> "av-mini-font-size",
-						            "type" 	=> "select",
-						            "subtype" => AviaHtmlHelper::number_array(10,120,1, array( __("Default", 'avia_framework' )=>'', __("Hidden", 'avia_framework' )=>'hidden'), "px"),
-						            "std" => ""),    
-				
-							
-								
-							array(
-									"type" 	=> "close_div",
-									'nodescription' => true
-								),
 					
+					
+					array(	
+							'type'				=> 'template',
+							'template_id'		=> 'screen_options_tab',
+							'templates_include'	=> array( 'screen_options_visibility', 'heading_font_size', 'content_font_size' )
+						),
+								
 						
 					array(
 							"type" 	=> "close_div",
@@ -514,7 +424,7 @@ if ( ! class_exists( 'avia_sc_iconlist' ) )
 			 * @param string $shortcodename the shortcode found, when == callback name
 			 * @return string $output returns the modified html string
 			 */
-			function shortcode_handler($atts, $content = "", $shortcodename = "", $meta = "")
+			function shortcode_handler( $atts, $content = '', $shortcodename = '', $meta = '' )
 			{
 				$this->screen_options = AviaHelper::av_mobile_sizes( $atts );
 				
@@ -528,36 +438,36 @@ if ( ! class_exists( 'avia_sc_iconlist' ) )
 				extract( $this->screen_options ); //return $av_font_classes, $av_title_font_classes and $av_display_classes
 				
 				extract( shortcode_atts( array(
-											'position'				=> 'left',
-											'color'					=> '', 
-											'custom_bg'				=> '', 
-											'custom_border'			=> '', 
-											'custom_font'			=> '',
-											'font_color'			=> "",
-											'custom_title'			=> '',
-											'custom_content'		=> '',
-											'custom_title_size'		=> '',
-											'custom_content_size'	=> '',
-											'iconlist_styling'		=> '',
-											'animation'				=> ''
-				
-									), $atts, $this->config['shortcode'] ) );
+							'position'				=> 'left',
+							'color'					=> '', 
+							'custom_bg'				=> '', 
+							'custom_border'			=> '', 
+							'custom_font'			=> '',
+							'font_color'			=> '',
+							'custom_title'			=> '',
+							'custom_content'		=> '',
+							'custom_title_size'		=> '',
+							'custom_content_size'	=> '',
+							'iconlist_styling'		=> '',
+							'animation'				=> ''
+
+					), $atts, $this->config['shortcode'] ) );
 				
 				
 				$this->iconlist_styling 	= $iconlist_styling == 'av-iconlist-small' ? "av-iconlist-small" : "av-iconlist-big";
 				
 				if($color == "custom")
 				{
-					$this->icon_html_styling .= !empty($custom_bg) ? "background-color:{$custom_bg}; " : "";
-					$this->icon_html_styling .= !empty($custom_border) ? "border:1px solid {$custom_border}; " : "";
-					$this->icon_html_styling .= !empty($custom_font) ? "color:{$custom_font}; " : "";
+					$this->icon_html_styling .= !empty($custom_bg) ? "background-color:{$custom_bg}; " : '';
+					$this->icon_html_styling .= !empty($custom_border) ? "border:1px solid {$custom_border}; " : '';
+					$this->icon_html_styling .= !empty($custom_font) ? "color:{$custom_font}; " : '';
 					
 				}
 				
 				if($font_color == "custom")
 				{
-					$this->title_styling 		.= !empty($custom_title) ? "color:{$custom_title}; " : "";
-					$this->content_styling 		.= !empty($custom_content) ? "color:{$custom_content}; " : "";
+					$this->title_styling 		.= !empty($custom_title) ? "color:{$custom_title}; " : '';
+					$this->content_styling 		.= !empty($custom_content) ? "color:{$custom_content}; " : '';
 					
 					if($this->content_styling) 	
 					{
@@ -591,24 +501,24 @@ if ( ! class_exists( 'avia_sc_iconlist' ) )
 
 
 				// animation
-                $animation_class = "";
+                $animation_class = '';
                 if ($animation == ''){
                     $animation_class = "avia-iconlist-animate";
                 }
 					
 					
-				$output	 = "";
-				$output .= "<div class='avia-icon-list-container {$av_display_classes} ".$meta['el_class']."'>";
-				$output .= "<ul class='avia-icon-list avia-icon-list-{$position} {$this->iconlist_styling} avia_animate_when_almost_visible {$animation_class}'>";
-				$output .= ShortcodeHelper::avia_remove_autop( $content, true );
-				$output .= "</ul>";
-				$output .= "</div>";
+				$output	 =	'';
+				$output .=	"<div {$meta['custom_el_id']} class='avia-icon-list-container {$av_display_classes} {$meta['el_class']}'>";
+				$output .=		"<ul class='avia-icon-list avia-icon-list-{$position} {$this->iconlist_styling} avia_animate_when_almost_visible {$animation_class}'>";
+				$output .=			ShortcodeHelper::avia_remove_autop( $content, true );
+				$output .=		"</ul>";
+				$output .=	"</div>";
 
 
 				return $output;
 			}
 
-			function av_iconlist_item($atts, $content = "", $shortcodename = "")
+			function av_iconlist_item( $atts, $content = '', $shortcodename = '' )
 			{
 				/**
 				 * Fixes a problem when 3-rd party plugins call nested shortcodes without executing main shortcode  (like YOAST in wpseo-filter-shortcodes)
@@ -617,10 +527,12 @@ if ( ! class_exists( 'avia_sc_iconlist' ) )
 				{
 					return '';
 				}
-				
+
 				extract( $this->screen_options ); //return $av_font_classes, $av_title_font_classes and $av_display_classes
 				
-                $atts =  shortcode_atts( array(
+				$meta = aviaShortcodeTemplate::set_frontend_developer_heading_tag( $atts );
+				
+				$atts =  shortcode_atts( array(
 								'title'			=> '', 
 								'link'			=> '', 
 								'icon'			=> '', 
@@ -634,8 +546,8 @@ if ( ! class_exists( 'avia_sc_iconlist' ) )
 				$display_char = av_icon($atts['icon'], $atts['font']);
 				$display_char_wrapper = array();
 
-				$blank = (strpos($atts['linktarget'], '_blank') !== false || $atts['linktarget'] == 'yes') ? ' target="_blank" ' : "";
-				$blank .= strpos($atts['linktarget'], 'nofollow') !== false ? ' rel="nofollow" ' : "";
+				$blank = (strpos($atts['linktarget'], '_blank') !== false || $atts['linktarget'] == 'yes') ? ' target="_blank" ' : '';
+				$blank .= strpos($atts['linktarget'], 'nofollow') !== false ? ' rel="nofollow" ' : '';
                 if(!empty($atts['link']))
                 {
 					$atts['link'] = aviaHelper::get_url($atts['link']);
@@ -670,38 +582,58 @@ if ( ! class_exists( 'avia_sc_iconlist' ) )
                     $display_char_wrapper['end'] = 'div';
                 }
                 
-                $contentClass = "";
-                if(trim($content) == "")
+                $contentClass = '';
+                if(trim($content) == '')
                 {
                 	$contentClass = "av-iconlist-empty";
                 }
-                
-                $title_el = "h4";
-                $iconlist_title = "";
-                if($this->iconlist_styling == "av-iconlist-small")
-                {
-	                $title_el = "div";
-	                $iconlist_title = "_" . "small";
-	            }
-                
-                
+              	
+				$default_heading = ! empty( $meta['heading_tag'] ) ? $meta['heading_tag'] : 'h4';
+				$args = array(
+							'heading'		=> $default_heading,
+							'extra_class'	=> $meta['heading_class']
+						);
 
-				$output  = "";
-				$output .= "<li>";
+				$extra_args = array( $this, $atts, $content, $shortcodename );
+
+				/**
+				 * @since 4.5.7.2
+				 * @return array
+				 */
+				$args = apply_filters( 'avf_customize_heading_settings', $args, __CLASS__, $extra_args );
+
+				$heading = ! empty( $args['heading'] ) ? $args['heading'] : $default_heading;
+				$css = ! empty( $args['extra_class'] ) ? $args['extra_class'] : $meta['heading_class'];
+				
+				$title_el = $heading;
+				$iconlist_title = '';
+				if( $this->iconlist_styling == 'av-iconlist-small' )
+				{
+					$title_el = 'div';
+					$iconlist_title = '_small';
+				}
+
+				$output  = '';
+				$output .= '<li>';
 				$output .= 		"<{$display_char_wrapper['start']} {$this->icon_html_styling} class='iconlist_icon  avia-font-".$atts['font']."'><span class='iconlist-char ' {$display_char}></span></{$display_char_wrapper['end']}>";
-                $output .=          '<article class="article-icon-entry '.$contentClass.'" '.avia_markup_helper(array('context' => 'entry','echo'=>false, 'custom_markup'=>$atts['custom_markup'])).'>';
+				$output .=          '<article class="article-icon-entry '.$contentClass.'" '.avia_markup_helper(array('context' => 'entry','echo'=>false, 'custom_markup'=>$atts['custom_markup'])).'>';
 				$output .=              "<div class='iconlist_content_wrap'>";
-                $output .=                  '<header class="entry-content-header">';
-                $markup = avia_markup_helper(array('context' => 'entry_title','echo'=>false, 'custom_markup'=>$atts['custom_markup']));
-				if(!empty($atts['title'])) $output .="<{$title_el} class='av_iconlist_title iconlist_title{$iconlist_title} {$this->title_class} {$av_title_font_classes}' {$markup} {$this->title_styling}>".$atts['title']."</{$title_el}>";
-                $output .=                  '</header>';
-                $markup = avia_markup_helper(array('context' => 'entry_content','echo'=>false, 'custom_markup'=>$atts['custom_markup']));
-				$output .=                  "<div class='iconlist_content {$this->content_class} {$av_font_classes}' {$markup} {$this->content_styling}>".ShortcodeHelper::avia_apply_autop(ShortcodeHelper::avia_remove_autop( $content ) )."</div>";
-                $output .=              "</div>";
-                $output .=              '<footer class="entry-footer"></footer>';
-                $output .=          '</article>';
+				$output .=                  '<header class="entry-content-header">';
+				
+				$markup = avia_markup_helper( array( 'context' => 'entry_title', 'echo' => false, 'custom_markup' => $atts['custom_markup'] ) );
+				if( ! empty( $atts['title'] ) ) 
+				{
+					$output .=					"<{$title_el} class='av_iconlist_title iconlist_title{$iconlist_title} {$css} {$this->title_class} {$av_title_font_classes}' {$markup} {$this->title_styling}>".$atts['title']."</{$title_el}>";
+				}
+				$output .=                  '</header>';
+				
+				$markup = avia_markup_helper( array( 'context' => 'entry_content', 'echo' => false, 'custom_markup' => $atts['custom_markup'] ) );
+				$output .=                  "<div class='iconlist_content {$this->content_class} {$av_font_classes}' {$markup} {$this->content_styling}>" . ShortcodeHelper::avia_apply_autop( ShortcodeHelper::avia_remove_autop( $content ) ) . '</div>';
+				$output .=              '</div>';
+				$output .=              '<footer class="entry-footer"></footer>';
+				$output .=          '</article>';
 				$output .=      "<div class='iconlist-timeline'></div>";
-				$output .= "</li>";
+				$output .= '</li>';
 
 				return $output;
 			}

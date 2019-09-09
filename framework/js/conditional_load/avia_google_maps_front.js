@@ -70,8 +70,34 @@
 				return;
 			}
 			
-			//check if maps are disabled by user setting via cookie. 
-			if(document.cookie.match(/aviaPrivacyGoogleMapsDisabled/))
+			/*	check if maps are disabled by user setting via cookie - or user must opt in.	*/
+			var cookie_check = $('html').hasClass('av-cookies-needs-opt-in') || $('html').hasClass('av-cookies-can-opt-out');
+			var allow_continue = true;
+
+			if( cookie_check )
+			{
+				if( ! document.cookie.match(/aviaCookieConsent/) || sessionStorage.getItem( 'aviaCookieRefused' ) )
+				{
+					allow_continue = false;
+				}
+				else
+				{
+					if( ! document.cookie.match(/aviaPrivacyRefuseCookiesHideBar/) )
+					{
+						allow_continue = false;
+					}
+					else if( ! document.cookie.match(/aviaPrivacyEssentialCookiesEnabled/) )
+					{
+						allow_continue = false;
+					}
+					else if( document.cookie.match(/aviaPrivacyGoogleMapsDisabled/) )
+					{
+						allow_continue = false;
+					}
+				}
+			}
+			
+			if( ! allow_continue )
 			{
 				$('.av_gmaps_main_wrap').addClass('av-maps-user-disabled');
 				return;

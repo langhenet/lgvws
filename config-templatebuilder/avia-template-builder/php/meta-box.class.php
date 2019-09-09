@@ -4,9 +4,10 @@
 */
 
 // Don't load directly
-if ( !defined('ABSPATH') ) { die('-1'); }
+if ( ! defined( 'ABSPATH' ) ) { die('-1'); }
 
-if ( !class_exists( 'MetaBoxBuilder' ) ) {
+if ( ! class_exists( 'MetaBoxBuilder' ) ) 
+{
 
 	class MetaBoxBuilder 
 	{
@@ -28,6 +29,13 @@ if ( !class_exists( 'MetaBoxBuilder' ) ) {
 		 */
 		protected $box_elements;
 		
+		/**
+		 * Allows to customize colorpicker default color boxes
+		 * 
+		 * @since 4.5.7.2
+		 * @var array 
+		 */
+		protected $colorpicker_palettes;
 		
 		/**
 		 * 
@@ -38,9 +46,10 @@ if ( !class_exists( 'MetaBoxBuilder' ) ) {
 			$this->configPath = $configPath;
 			$this->default_boxes = array();
 			$this->box_elements = array();
+			$this->colorpicker_palettes = null;
 			
-			add_action('load-post.php', array(&$this, 'setUp'));
-			add_action('load-post-new.php', array(&$this, 'setUp'));
+			add_action( 'load-post.php', array( $this, 'setUp' ) );
+			add_action( 'load-post-new.php', array( $this, 'setUp' ) );
 			
 		}
 		
@@ -52,6 +61,7 @@ if ( !class_exists( 'MetaBoxBuilder' ) ) {
 		{
 			unset( $this->default_boxes );
 			unset( $this->box_elements );
+			unset( $this->colorpicker_palettes );
 		}
 	 
 	 	public function setUp()
@@ -88,9 +98,22 @@ if ( !class_exists( 'MetaBoxBuilder' ) ) {
 	 	
 	 	function add_js_info()
 	 	{
+			global $post_ID;
+			
 	 		$theme = wp_get_theme();
+			
+			if( is_null( $this->colorpicker_palettes ) )
+			{
+				$this->colorpicker_palettes = apply_filters( 'avf_colorpicker_colors', array( '#000000', '#ffffff', '#B02B2C', '#edae44', '#eeee22', '#83a846', '#7bb0e7', '#745f7e', '#5f8789', '#d65799', '#4ecac2' ) );
+			}
+			
+			$palettes = '';
+			if( ! empty( $this->colorpicker_palettes ) )
+			{
+				$palettes = array_map( function ( $value ) { return "'$value'"; }, $this->colorpicker_palettes );
+				$palettes = '    avia_globals.color_palettes = [' . implode( ', ', $palettes ) . "];\n";
+			}
 	 		
-	 		global $post_ID;
 			echo "\n <script type='text/javascript'>\n /* <![CDATA[ */  \n";
 			echo "var avia_globals = avia_globals || {};\n";
 			echo "    avia_globals.post_id = '".$post_ID."';\n";
@@ -98,6 +121,7 @@ if ( !class_exists( 'MetaBoxBuilder' ) ) {
 			echo "    avia_globals.themeversion = '".$theme->get('Version')."';\n";
 			echo "    avia_globals.builderversion = '".AviaBuilder::VERSION."';\n";
 			echo "    avia_globals.builderMode = '".AviaBuilder::$mode."';\n";
+			echo	  $palettes;
 			echo "/* ]]> */ \n";
 			echo "</script>\n \n ";
 	 	}
@@ -352,9 +376,13 @@ if ( !class_exists( 'MetaBoxBuilder' ) ) {
 			return $class;
 		}
 		
-		function add_expanded_param($location, $id)
+		function add_expanded_param( $location, $id )
 		{
-			$location .= "&avia-expanded=".$_POST['avia-expanded-hidden'];
+			if( isset( $_POST['avia-expanded-hidden'] ) )
+			{
+				$location .= '&avia-expanded=' . $_POST['avia-expanded-hidden'];
+			}
+			
 			return $location;
 		}
 	
@@ -362,16 +390,4 @@ if ( !class_exists( 'MetaBoxBuilder' ) ) {
 	
 
 } // end if !class_exists
-
-
-
-
-
-
-
-
-
-
-
-
 

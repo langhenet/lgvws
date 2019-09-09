@@ -124,9 +124,9 @@ if($headerS['header_topbar'] == true)
 						*   the function is located at framework/php/function-set-avia-frontend-functions.php in case you need to edit the output
 						*/
 						$addition = false;
-						if( !empty($headerS['header_transparency']) && !empty($headerS['header_replacement_logo']) )
+						if( ! empty( $headerS['header_transparency'] ) && ! empty( $headerS['header_replacement_logo'] ) )
 						{
-							$addition = "<img src='".$headerS['header_replacement_logo']."' class='alternate' alt='' title='' />";
+							$addition = "<img src='{$headerS['header_replacement_logo']}' class='alternate' alt='{$headerS['header_replacement_logo_alt']}' title='{$headerS['header_replacement_logo_title']}' />";
 						}
 						
 						$output .= avia_logo(AVIA_BASE_URL.'images/layout/logo.png', $addition, 'span', true);

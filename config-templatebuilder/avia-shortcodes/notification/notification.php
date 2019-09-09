@@ -37,7 +37,7 @@ if ( !class_exists( 'avia_sc_notification' ) )
 				wp_enqueue_style( 'avia-modfule-notification' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/notification/notification.css' , array('avia-layout'), false );
 
                 //load js
-                wp_enqueue_script( 'avia-mofdule-notification' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/notification/notification.js' , array('avia-shortcodes'), false, TRUE );
+                wp_enqueue_script( 'avia-mofdule-notification' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/notification/notification.js' , array('avia-shortcodes'), false, true );
 
             }
 			
@@ -191,58 +191,12 @@ if ( !class_exists( 'avia_sc_notification' ) )
                     "type" 	=> "close_div",
                     'nodescription' => true
                 ),
+				
+				array(	
+						'type'			=> 'template',
+						'template_id'	=> 'screen_options_tab'
+					),
 
-                array(
-                    "type" 	=> "tab",
-                    "name"	=> __("Screen Options",'avia_framework' ),
-                    'nodescription' => true
-                ),
-
-
-                array(
-                    "name" 	=> __("Element Visibility",'avia_framework' ),
-                    "desc" 	=> __("Set the visibility for this element, based on the device screensize.", 'avia_framework' ),
-                    "type" 	=> "heading",
-                    "description_class" => "av-builder-note av-neutral",
-                ),
-
-                array(
-                    "desc" 	=> __("Hide on large screens (wider than 990px - eg: Desktop)", 'avia_framework'),
-                    "id" 	=> "av-desktop-hide",
-                    "std" 	=> "",
-                    "container_class" => 'av-multi-checkbox',
-                    "type" 	=> "checkbox"),
-
-                array(
-
-                    "desc" 	=> __("Hide on medium sized screens (between 768px and 989px - eg: Tablet Landscape)", 'avia_framework'),
-                    "id" 	=> "av-medium-hide",
-                    "std" 	=> "",
-                    "container_class" => 'av-multi-checkbox',
-                    "type" 	=> "checkbox"),
-
-                array(
-
-                    "desc" 	=> __("Hide on small screens (between 480px and 767px - eg: Tablet Portrait)", 'avia_framework'),
-                    "id" 	=> "av-small-hide",
-                    "std" 	=> "",
-                    "container_class" => 'av-multi-checkbox',
-                    "type" 	=> "checkbox"),
-
-                array(
-
-                    "desc" 	=> __("Hide on very small screens (smaller than 479px - eg: Smartphone Portrait)", 'avia_framework'),
-                    "id" 	=> "av-mini-hide",
-                    "std" 	=> "",
-                    "container_class" => 'av-multi-checkbox',
-                    "type" 	=> "checkbox"),
-
-
-
-                array(
-                    "type" 	=> "close_div",
-                    'nodescription' => true
-                ),
 
                 array(
                     "type" 	=> "close_div",
@@ -296,22 +250,23 @@ if ( !class_exists( 'avia_sc_notification' ) )
 			 * @param string $shortcodename the shortcode found, when == callback name
 			 * @return string $output returns the modified html string 
 			 */
-            function shortcode_handler($atts, $content = "", $shortcodename = "", $meta = "")
+            function shortcode_handler( $atts, $content = "", $shortcodename = "", $meta = "" )
             {
-                extract(AviaHelper::av_mobile_sizes($atts)); //return $av_font_classes, $av_title_font_classes and $av_display_classes
+                extract( AviaHelper::av_mobile_sizes( $atts ) ); //return $av_font_classes, $av_title_font_classes and $av_display_classes
 
-                $atts =  shortcode_atts(array(	 'title' => '',
-                    'color' => 'green',
-                    'border' => '',
-                    'custom_bg' => '#444444',
-                    'custom_font' => '#ffffff',
-                    'size' => 'large',
-                    'icon_select' => 'yes',
-                    'icon' => '',
-                    'font' => '',
-                    'close_btn' => '',
-                    'cookie_lifetime' => ''
-                ), $atts, $this->config['shortcode']);
+                $atts =  shortcode_atts( array(	 
+								'title'			=> '',
+								'color'			=> 'green',
+								'border'		=> '',
+								'custom_bg'		=> '#444444',
+								'custom_font'	=> '#ffffff',
+								'size'			=> 'large',
+								'icon_select'	=> 'yes',
+								'icon'			=> '',
+								'font'			=> '',
+								'close_btn'		=> '',
+								'cookie_lifetime' => ''
+							), $atts, $this->config['shortcode'] );
 
                 $display_char = av_icon($atts['icon'], $atts['font']);
 

@@ -9,7 +9,7 @@
 if ( ! defined( 'ABSPATH' ) ) {  exit;  }    // Exit if accessed directly
 
 
-if ( !class_exists( 'avia_sc_table' ) ) 
+if ( ! class_exists( 'avia_sc_table' ) ) 
 {
 	class avia_sc_table extends aviaShortcodeTemplate
 	{
@@ -54,24 +54,26 @@ if ( !class_exists( 'avia_sc_table' ) )
 				$this->config['self_closing']	=	'no';
 				$this->config['auto_repair']	=	'no';
 				
-				$this->config['name']		= __('Table', 'avia_framework' );
-				$this->config['tab']		= __('Content Elements', 'avia_framework' );
+				$this->config['name']		= __( 'Table', 'avia_framework' );
+				$this->config['tab']		= __( 'Content Elements', 'avia_framework' );
 				$this->config['icon']		= AviaBuilder::$path['imagesURL']."sc-table.png";
 				$this->config['order']		= 35;
 				$this->config['target']		= 'avia-target-insert';
 				$this->config['shortcode'] 	= 'av_table';
-				$this->config['modal_data'] = array('modal_class' => 'bigscreen', 'before_save' => 'before_table_save');
-				$this->config['shortcode_nested'] = array('av_row', 'av_cell','av_button');
-				$this->config['tooltip'] 	= __('Creates a data or pricing table', 'avia_framework' );
+				$this->config['modal_data'] = array( 'modal_class' => 'bigscreen', 'before_save' => 'before_table_save' );
+				$this->config['shortcode_nested'] = array( 'av_row', 'av_cell','av_button' );
+				$this->config['tooltip'] 	= __( 'Creates a data or pricing table', 'avia_framework' );
 				$this->config['preview'] 	= false;
 				$this->config['disabling_allowed'] = true;
+				$this->config['id_name']	= 'id';
+				$this->config['id_show']	= 'yes';
 			}
 			
 			
 			function admin_assets()
 			{
 				$ver = AviaBuilder::VERSION;
-				wp_enqueue_script('avia_table_js' , AviaBuilder::$path['assetsURL'].'js/avia-table.js' , array('avia_modal_js'), $ver, TRUE );
+				wp_enqueue_script('avia_table_js' , AviaBuilder::$path['assetsURL'].'js/avia-table.js' , array('avia_modal_js'), $ver, true );
 			}
 			
 			
@@ -193,61 +195,21 @@ if ( !class_exists( 'avia_sc_table' ) )
 								
 					
 						array(
-							"type" 	=> "close_div", 'nodescription' => true
+							"type" 	=> "close_div", 
+							'nodescription' => true
 						),
+					
+					
+						array(	
+								'type'			=> 'template',
+								'template_id'	=> 'screen_options_tab'
+							),
+				
+						
 						array(
-									"type" 	=> "tab",
-									"name"	=> __("Screen Options",'avia_framework' ),
-									'nodescription' => true
-								),
-								
-								
-								array(
-								"name" 	=> __("Element Visibility",'avia_framework' ),
-								"desc" 	=> __("Set the visibility for this element, based on the device screensize.", 'avia_framework' ),
-								"type" 	=> "heading",
-								"description_class" => "av-builder-note av-neutral",
-								),
-							
-								array(	
-										"desc" 	=> __("Hide on large screens (wider than 990px - eg: Desktop)", 'avia_framework'),
-										"id" 	=> "av-desktop-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-								
-								array(	
-									
-										"desc" 	=> __("Hide on medium sized screens (between 768px and 989px - eg: Tablet Landscape)", 'avia_framework'),
-										"id" 	=> "av-medium-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-										
-								array(	
-									
-										"desc" 	=> __("Hide on small screens (between 480px and 767px - eg: Tablet Portrait)", 'avia_framework'),
-										"id" 	=> "av-small-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-										
-								array(	
-									
-										"desc" 	=> __("Hide on very small screens (smaller than 479px - eg: Smartphone Portrait)", 'avia_framework'),
-										"id" 	=> "av-mini-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-	
-								
-							array(
-									"type" 	=> "close_div",
-									'nodescription' => true
-								),
-						array(
-							"type" 	=> "close_div", 'nodescription' => true
-						),
+								"type" 	=> "close_div", 
+								'nodescription' => true
+							),
 								
 					);
 			}
@@ -280,7 +242,7 @@ if ( !class_exists( 'avia_sc_table' ) )
 			{	
 				$template = $this->update_template("label", __("Element", 'avia_framework' ). ": {{label}}");
 				
-				$params['content'] = NULL;
+				$params['content'] = null;
 				$params['innerHtml']  = "";
 				$params['innerHtml'] .= "<div class='avia_image_container' {$template}>".__("Element", 'avia_framework' ).": ".$params['args']['label']."</div>";
 				$params['data'] = array('modal_class'=>'mediumscreen');
@@ -298,24 +260,27 @@ if ( !class_exists( 'avia_sc_table' ) )
 			 * @param string $shortcodename the shortcode found, when == callback name
 			 * @return string $output returns the modified html string 
 			 */
-			function shortcode_handler($atts, $content = "", $shortcodename = "", $meta = "")
+			function shortcode_handler( $atts, $content = "", $shortcodename = "", $meta = "" )
 			{	
-				$this->screen_options = AviaHelper::av_mobile_sizes($atts);
+				$this->screen_options = AviaHelper::av_mobile_sizes( $atts );
 				
 				$atts 		= shortcode_atts(array('purpose' => 'pricing', 'caption' => '', 'responsive_styling' => 'avia_responsive_table', 'pricing_hidden_cells' => '', 'pricing_table_design' => 'avia_pricing_default'), $atts, $this->config['shortcode']);
 				$depth		= 2;
-				$table_rows = ShortcodeHelper::shortcode2array($content, $depth);
+				$table_rows = ShortcodeHelper::shortcode2array( $content, $depth );
 				
 				$output 	= "";
 				
-				if(empty($table_rows)) return;
+				if( empty( $table_rows ) ) 
+				{
+					return $output;
+				}
 				
 				self::$table_count ++;
 				
-				switch($atts['purpose'])
+				switch( $atts['purpose'] )
 				{
-					case "pricing":  $output .= $this->pricing_table($table_rows, $atts, $meta); break;
-					default: 		 $output .= $this->data_table($table_rows, $atts, $meta); break;
+					case "pricing":  $output .= $this->pricing_table( $table_rows, $atts, $meta ); break;
+					default: 		 $output .= $this->data_table( $table_rows, $atts, $meta ); break;
 				}
 
 				return $output;
@@ -343,16 +308,17 @@ if ( !class_exists( 'avia_sc_table' ) )
 			/*
 			pricing table uses unordered lists to display the table structure
 			*/
-			function pricing_table($table_rows, $atts, $meta)
+			function pricing_table( $table_rows, $atts, $meta )
 			{	
-				extract($this->screen_options);
+				extract( $this->screen_options );
 				
 				
-				$class = $atts['pricing_hidden_cells']." ".$atts['pricing_table_design']." ".$av_display_classes;
+				$class = "{$atts['pricing_hidden_cells']} {$atts['pricing_table_design']} {$av_display_classes} {$meta['el_class']}";
 				$sorted_rows = $this->list_sort_array($table_rows);
                 $markup = avia_markup_helper(array('context' => 'table','echo'=>false, 'custom_markup'=>$meta['custom_markup']));
+				
 				$output  =	"";		
-				$output .= "<div class='avia-table main_color avia-pricing-table-container {$class} avia-table-".self::$table_count." ".$meta['el_class']."' $markup>";
+				$output .= "<div {$meta['custom_el_id']} class='avia-table main_color avia-pricing-table-container {$class} avia-table-".self::$table_count."' $markup>";
 
 				$fallback_values = array();
 				$empty_cells = false;

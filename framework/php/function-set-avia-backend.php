@@ -433,10 +433,10 @@ if( ! function_exists( 'avia_backend_get_hex_from_rgb' ) )
 	 * 
 	 *  @param int $r red
 	 *  @param int $g green
-	 *  @param int $B blue
+	 *  @param int $b blue
 	 *  @return string returns the converted string
 	 */
- 	function avia_backend_get_hex_from_rgb( $r = FALSE, $g = FALSE, $b = FALSE ) 
+ 	function avia_backend_get_hex_from_rgb( $r = false, $g = false, $b = false ) 
 	{
 		$x = 255;
 		$y = 0;
@@ -772,6 +772,14 @@ if(!function_exists('avia_backend_truncate'))
 	 */
 	function avia_backend_truncate($string, $limit, $break=".", $pad="...", $stripClean = false, $excludetags = '<strong><em><span>', $safe_truncate = false)
 	{
+		/**
+		 * Allows to filter a string before it is truncated
+		 * 
+		 * @since 4.6
+		 * @return string
+		 */
+		$string = apply_filters( 'avf_avia_backend_truncate_string', $string, $limit, $break, $pad, $stripClean, $excludetags, $safe_truncate );
+		
 		if($stripClean)
 		{
 			$string = strip_shortcodes(strip_tags($string, $excludetags));

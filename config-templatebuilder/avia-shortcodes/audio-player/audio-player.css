@@ -39,3 +39,7 @@ margin:0;
 #top .avia-playerstyle-minimal.avia-playlist-custom-background-color .wp-playlist{
 	padding:10px;
 }
+
+#top .av-player-container.av-player-hide-playlist .wp-playlist-tracks{
+	display: none;
+}

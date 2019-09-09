@@ -7,13 +7,13 @@
 if ( ! defined( 'ABSPATH' ) ) {  exit;  }    // Exit if accessed directly
 
 
-if( !class_exists( 'woocommerce' ) )
+if( ! class_exists( 'woocommerce' ) )
 {
 	add_shortcode('av_product_upsells', 'avia_please_install_woo');
 	return;
 }
 
-if ( !class_exists( 'avia_sc_product_upsells' ) )
+if ( ! class_exists( 'avia_sc_product_upsells' ) )
 {
 	class avia_sc_product_upsells extends aviaShortcodeTemplate
 	{
@@ -24,16 +24,18 @@ if ( !class_exists( 'avia_sc_product_upsells' ) )
 		{
 			$this->config['self_closing']	=	'yes';
 			
-			$this->config['name']		= __('Related Products', 'avia_framework' );
-			$this->config['tab']		= __('Plugin Additions', 'avia_framework' );
+			$this->config['name']		= __( 'Related Products', 'avia_framework' );
+			$this->config['tab']		= __( 'Plugin Additions', 'avia_framework' );
 			$this->config['icon']		= AviaBuilder::$path['imagesURL']."sc-tabs.png";
 			$this->config['order']		= 15;
 			$this->config['target']		= 'avia-target-insert';
 			$this->config['shortcode'] 	= 'av_product_upsells';
-			$this->config['tooltip'] 	= __('Display a list of related products and/or up-sells', 'avia_framework' );
+			$this->config['tooltip'] 	= __( 'Display a list of related products and/or up-sells', 'avia_framework' );
 			$this->config['drag-level'] = 3;
-			$this->config['tinyMCE'] 	= array('disable' => "true");
-			$this->config['posttype'] 	= array('product',__('This element can only be used on single product pages','avia_framework'));
+			$this->config['tinyMCE'] 	= array( 'disable' => 'true' );
+			$this->config['posttype'] 	= array( 'product', __( 'This element can only be used on single product pages', 'avia_framework' ) );
+			$this->config['id_name']	= 'id';
+			$this->config['id_show']	= 'yes';
 		}
 			/**
 			 * Popup Elements
@@ -47,6 +49,17 @@ if ( !class_exists( 'avia_sc_product_upsells' ) )
 			{
 				$this->elements = array(
 				
+					array(
+							'type'			=> 'tab_container', 
+							'nodescription' => true
+						),
+					
+					array(
+							'type'			=> 'tab',
+							'name'			=> __( 'Content' , 'avia_framework' ),
+							'nodescription' => true
+						),
+					
 					array(	
 							"name" 	=> __("Display options", 'avia_framework' ),
 							"desc" 	=> __("Choose which products you want to display", 'avia_framework' ),
@@ -78,7 +91,17 @@ if ( !class_exists( 'avia_sc_product_upsells' ) )
 							__('Hide products out of stock',  'avia_framework' ) => 'hide',
 //							__('Show products out of stock',  'avia_framework' )  => 'show'
 								)
-					)
+					),
+					
+					array(
+							'type'			=> 'close_div',
+							'nodescription' => true
+						),
+					
+					array(
+							'type'			=> 'close_div',
+							'nodescription' => true
+						)
 					
 				);
 			}
@@ -111,7 +134,7 @@ if ( !class_exists( 'avia_sc_product_upsells' ) )
 		 * @param string $shortcodename the shortcode found, when == callback name
 		 * @return string $output returns the modified html string
 		 */
-		function shortcode_handler($atts, $content = "", $shortcodename = "", $meta = "")
+		function shortcode_handler( $atts, $content = '', $shortcodename = '', $meta = '' )
 		{
 			global $avia_config;
 			
@@ -121,7 +144,7 @@ if ( !class_exists( 'avia_sc_product_upsells' ) )
 										'wc_prod_visible'	=>	''	
 									), $atts));
 			
-			$output = "";
+			$output = '';
 			if( ! isset( $meta['el_class'] ) )
 			{
 				$meta['el_class'] = '';
@@ -148,16 +171,16 @@ if ( !class_exists( 'avia_sc_product_upsells' ) )
 			}
 			
 			// $product = wc_get_product();
-			$output .= "<div class='av-woo-product-related-upsells  ".$meta['el_class']."'>";
+			$output .= "<div {$meta['custom_el_id']} class='av-woo-product-related-upsells {$meta['el_class']}'>";
 			
 			if( strpos( $display, 'upsells' ) !== false ) 
 			{
-				$output .= avia_woocommerce_output_upsells($count,$count);
+				$output .= avia_woocommerce_output_upsells( $count, $count );
 			}
 			
 			if( strpos( $display, 'related' ) !== false ) 
 			{
-				$output .= avia_woocommerce_output_related_products($count,$count);
+				$output .= avia_woocommerce_output_related_products( $count, $count );
 			}
 			
 			$output .= "</div>";

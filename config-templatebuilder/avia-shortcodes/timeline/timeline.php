@@ -9,14 +9,18 @@
  */
 
 // Don't load directly
-if (!defined('ABSPATH')) {
-    die('-1');
-}
+if ( ! defined( 'ABSPATH' ) ) {   die('-1');   }
 
 if ( ! class_exists( 'avia_sc_timeline' ) ) 
 {
     class avia_sc_timeline extends aviaShortcodeTemplate
     {
+		/**
+		 * @since 4.5.7.2
+		 * @var int 
+		 */
+		static protected $timeline_count = 0;
+		
 		/**
 		 *
 		 * @since 4.5.5
@@ -53,17 +57,18 @@ if ( ! class_exists( 'avia_sc_timeline' ) )
         {
             $this->config['self_closing']	=	'no';
 
-            $this->config['name'] = __('Timeline', 'avia_framework');
-            $this->config['tab'] = __('Content Elements', 'avia_framework');
-            $this->config['icon'] = AviaBuilder::$path['imagesURL'] . "sc-timeline.png";
-            $this->config['order'] = 70;
-            $this->config['target'] = 'avia-target-insert';
-            $this->config['shortcode'] = 'av_timeline';
-            $this->config['shortcode_nested'] = array('av_timeline_item');
-            $this->config['tooltip'] = __('Creates a timeline', 'avia_framework');
-            $this->config['preview'] = "large";
+            $this->config['name']		= __( 'Timeline', 'avia_framework');
+            $this->config['tab']		= __( 'Content Elements', 'avia_framework');
+            $this->config['icon']		= AviaBuilder::$path['imagesURL'] . "sc-timeline.png";
+            $this->config['order']		= 70;
+            $this->config['target']		= 'avia-target-insert';
+            $this->config['shortcode']	= 'av_timeline';
+            $this->config['shortcode_nested'] = array( 'av_timeline_item' );
+            $this->config['tooltip']	= __( 'Creates a timeline', 'avia_framework' );
+            $this->config['preview']	= "large";
             $this->config['disabling_allowed'] = true;
-
+			$this->config['id_name']	= 'id';
+			$this->config['id_show']	= 'yes';
         }
 
         function extra_assets()
@@ -71,8 +76,8 @@ if ( ! class_exists( 'avia_sc_timeline' ) )
             wp_enqueue_style( 'avia-module-slideshow' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/slideshow/slideshow.css' , array('avia-layout'), false );
             wp_enqueue_style( 'avia-module-timeline' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/timeline/timeline.css' , array('avia-layout'), false );
 
-            wp_enqueue_script( 'avia-module-slideshow' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/slideshow/slideshow.js' , array('avia-shortcodes'), false, TRUE );
-            wp_enqueue_script( 'avia-module-timeline' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/timeline/timeline.js' , array('avia-shortcodes','avia-module-slideshow'), false , TRUE);
+            wp_enqueue_script( 'avia-module-slideshow' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/slideshow/slideshow.js' , array('avia-shortcodes'), false, true );
+            wp_enqueue_script( 'avia-module-timeline' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/timeline/timeline.js' , array('avia-shortcodes','avia-module-slideshow'), false , true );
 
         }
 
@@ -123,15 +128,15 @@ if ( ! class_exists( 'avia_sc_timeline' ) )
                         ),
 
                         array(
-                            "name" => __("Milestone Date", 'avia_framework'),
-                            "desc" => __("Enter the milestone date here (This can be any format)", 'avia_framework'),
+                            "name" => __( "Milestone Date", 'avia_framework' ),
+                            "desc" => __( "Enter the milestone date here. This can be any format. Use filter avf_customize_heading_settings to change the html tag.", 'avia_framework' ),
                             "id" => "date",
                             "std" => '2018',
                             "type" => "input"
                         ),
                         array(
-                            "name" => __("Milestone Title", 'avia_framework'),
-                            "desc" => __("Enter the Milestone Title here", 'avia_framework'),
+                            "name" => __( "Milestone Title", 'avia_framework' ),
+                            "desc" => __( "Enter the Milestone Title here. Use filter avf_customize_heading_settings to change the html tag.", 'avia_framework' ),
                             "id" => "title",
                             "std" => "Milestone Title",
                             "type" => "input"
@@ -522,115 +527,46 @@ if ( ! class_exists( 'avia_sc_timeline' ) )
 
 
                 array(
-                    "type" => "tab",
-                    "name" => __("Screen Options", 'avia_framework'),
-                    'nodescription' => true
-                ),
+						"type"			=> "tab",
+						"name"			=> __( "Screen Options", 'avia_framework' ),
+						'nodescription' => true
+					),
+				
+				array(	
+						'type'			=> 'template',
+						'template_id'	=> 'screen_options_visibility'
+					),
 
                 array(
-                    "name" => __("Element Visibility", 'avia_framework'),
-                    "desc" => __("Set the visibility for this element, based on the device screensize.", 'avia_framework'),
+                    "name" => __( "Date Font Size", 'avia_framework' ),
+                    "desc" => __( "Set the font size for the date, based on the device screensize.", 'avia_framework' ),
                     "type" => "heading",
                     "description_class" => "av-builder-note av-neutral",
                 ),
+				
+				array(	
+						'type'			=> 'template',
+						'template_id'	=> 'font_sizes_title'
+					),
+
 
                 array(
-                    "desc" => __("Hide on large screens (wider than 990px - eg: Desktop)", 'avia_framework'),
-                    "id" => "av-desktop-hide",
-                    "std" => "",
-                    "container_class" => 'av-multi-checkbox',
-                    "type" => "checkbox"),
+						"name" => __( "Title Font Size", 'avia_framework' ),
+						"desc" => __( "Set the font size for the title, based on the device screensize.", 'avia_framework' ),
+						"type" => "heading",
+						"description_class" => "av-builder-note av-neutral",
+					),
+				
+				array(	
+						'type'			=> 'template',
+						'template_id'	=> 'font_sizes_content'
+					),
 
                 array(
-
-                    "desc" => __("Hide on medium sized screens (between 768px and 989px - eg: Tablet Landscape)", 'avia_framework'),
-                    "id" => "av-medium-hide",
-                    "std" => "",
-                    "container_class" => 'av-multi-checkbox',
-                    "type" => "checkbox"),
-
-                array(
-
-                    "desc" => __("Hide on small screens (between 480px and 767px - eg: Tablet Portrait)", 'avia_framework'),
-                    "id" => "av-small-hide",
-                    "std" => "",
-                    "container_class" => 'av-multi-checkbox',
-                    "type" => "checkbox"),
-
-                array(
-
-                    "desc" => __("Hide on very small screens (smaller than 479px - eg: Smartphone Portrait)", 'avia_framework'),
-                    "id" => "av-mini-hide",
-                    "std" => "",
-                    "container_class" => 'av-multi-checkbox',
-                    "type" => "checkbox"
-                ),
-
-                array(
-                    "name" => __("Date Font Size", 'avia_framework'),
-                    "desc" => __("Set the font size for the date, based on the device screensize.", 'avia_framework'),
-                    "type" => "heading",
-                    "description_class" => "av-builder-note av-neutral",
-                ),
-
-                array(
-                    "name" => __("Font Size for medium sized screens", 'avia_framework'),
-                    "id" => "av-medium-font-size-title",
-                    "type" => "select",
-                    "subtype" => AviaHtmlHelper::number_array(10, 120, 1, array(__("Default", 'avia_framework') => '', __("Hidden", 'avia_framework') => 'hidden'), "px"),
-                    "std" => ""
-                ),
-
-                array(
-                    "name" => __("Font Size for small screens", 'avia_framework'),
-                    "id" => "av-small-font-size-title",
-                    "type" => "select",
-                    "subtype" => AviaHtmlHelper::number_array(10, 120, 1, array(__("Default", 'avia_framework') => '', __("Hidden", 'avia_framework') => 'hidden'), "px"),
-                    "std" => ""
-                ),
-
-                array(
-                    "name" => __("Font Size for very small screens", 'avia_framework'),
-                    "id" => "av-mini-font-size-title",
-                    "type" => "select",
-                    "subtype" => AviaHtmlHelper::number_array(10, 120, 1, array(__("Default", 'avia_framework') => '', __("Hidden", 'avia_framework') => 'hidden'), "px"),
-                    "std" => ""
-                ),
-
-                array(
-                    "name" => __("Title Font Size", 'avia_framework'),
-                    "desc" => __("Set the font size for the title, based on the device screensize.", 'avia_framework'),
-                    "type" => "heading",
-                    "description_class" => "av-builder-note av-neutral",
-                ),
-
-                array(
-                    "name" => __("Font Size for medium sized screens", 'avia_framework'),
-                    "id" => "av-medium-font-size",
-                    "type" => "select",
-                    "subtype" => AviaHtmlHelper::number_array(10, 120, 1, array(__("Default", 'avia_framework') => '', __("Hidden", 'avia_framework') => 'hidden'), "px"),
-                    "std" => ""
-                ),
-
-                array(
-                    "name" => __("Font Size for small screens", 'avia_framework'),
-                    "id" => "av-small-font-size",
-                    "type" => "select",
-                    "subtype" => AviaHtmlHelper::number_array(10, 120, 1, array(__("Default", 'avia_framework') => '', __("Hidden", 'avia_framework') => 'hidden'), "px"),
-                    "std" => ""
-                ),
-
-                array(
-                    "name" => __("Font Size for very small screens", 'avia_framework'),
-                    "id" => "av-mini-font-size",
-                    "type" => "select",
-                    "subtype" => AviaHtmlHelper::number_array(10, 120, 1, array(__("Default", 'avia_framework') => '', __("Hidden", 'avia_framework') => 'hidden'), "px"),
-                    "std" => ""
-                ),
-                array(
-                    "type" => "close_div",
-                    'nodescription' => true
-                ),
+						"type" => "close_div",
+						'nodescription' => true
+					),
+				
                 array(
                     "type" => "close_div",
                     'nodescription' => true
@@ -673,41 +609,42 @@ if ( ! class_exists( 'avia_sc_timeline' ) )
          * @param string $shortcodename the shortcode found, when == callback name
          * @return string $output returns the modified html string
          */
-        function shortcode_handler($atts, $content = "", $shortcodename = "", $meta = "")
+        function shortcode_handler( $atts, $content = "", $shortcodename = "", $meta = "" )
         {
 
-            $this->screen_options = AviaHelper::av_mobile_sizes($atts);
-            extract($this->screen_options); //return $av_font_classes, $av_title_font_classes and $av_display_classes
+            $this->screen_options = AviaHelper::av_mobile_sizes( $atts );
+            extract( $this->screen_options ); //return $av_font_classes, $av_title_font_classes and $av_display_classes
 
-            extract(shortcode_atts(
-                array(
-                    'orientation' => 'vertical',
-                    'placement_v' => '',
-                    'placement_h' => '',
-                    'slides_num' => '',
-                    'content_appearence' => '',
-                    'animation' => '',
+            extract( shortcode_atts( array(
+							'orientation' => 'vertical',
+							'placement_v' => '',
+							'placement_h' => '',
+							'slides_num' => '',
+							'content_appearence' => '',
+							'animation' => '',
 
-                    'custom_date_size' => '',
-                    'custom_title_size' => '',
-                    'custom_content_size' => '',
+							'custom_date_size' => '',
+							'custom_title_size' => '',
+							'custom_content_size' => '',
 
-                    'font_color' => "",
-                    'icon_color' => "",
+							'font_color' => "",
+							'icon_color' => "",
 
-                    'custom_date' => '',
-                    'custom_title' => '',
-                    'custom_content' => '',
+							'custom_date' => '',
+							'custom_title' => '',
+							'custom_content' => '',
 
-                    'icon_custom_bg' => '',
-                    'icon_custom_font' => '',
-                    'icon_custom_border' => '',
+							'icon_custom_bg' => '',
+							'icon_custom_font' => '',
+							'icon_custom_border' => '',
 
-                    'contentbox_bg_color' => '',
-                    'custom_contentbox_bg_color' => ''
+							'contentbox_bg_color' => '',
+							'custom_contentbox_bg_color' => ''
 
-                ), $atts, $this->config['shortcode']));
+						), $atts, $this->config['shortcode']));
 
+			avia_sc_timeline::$timeline_count ++;
+			
             $this->orientation = $orientation;
             $this->placement_v = $placement_v;
             $this->placement_h = $placement_h;
@@ -819,12 +756,13 @@ if ( ! class_exists( 'avia_sc_timeline' ) )
                 $animation_class = "avia-timeline-animate";
             }
 
+			$id = ! empty( $meta['custom_el_id'] ) ? $meta['custom_el_id'] : ' id="avia-timeline-' . avia_sc_timeline::$timeline_count . '" ';
 
             $output = "";
-            $output .= "<div id='avia-timeline-" . uniqid() . "' class='avia-timeline-container {$slider_container_class} {$av_display_classes} ".$meta['el_class']."' {$slider_attribute}>";
-            $output .= "<ul class='avia-timeline avia-timeline-{$orientation} {$this->placement} avia-timeline-{$this->appearence} avia_animate_when_almost_visible {$animation_class}'>";
-            $output .= ShortcodeHelper::avia_remove_autop($content, true);
-            $output .= "</ul>";
+            $output .=	"<div {$id} class='avia-timeline-container {$slider_container_class} {$av_display_classes} {$meta['el_class']}' {$slider_attribute}>";
+            $output .=		"<ul class='avia-timeline avia-timeline-{$orientation} {$this->placement} avia-timeline-{$this->appearence} avia_animate_when_almost_visible {$animation_class}'>";
+            $output .=			ShortcodeHelper::avia_remove_autop( $content, true );
+            $output .=		"</ul>";
 
 
             if ($this->orientation == 'horizontal') {

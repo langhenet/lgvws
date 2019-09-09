@@ -2,10 +2,10 @@
 
 if ( ! defined( 'ABSPATH' ) ) {  exit;  }    // Exit if accessed directly
 
-//update_option("Enfold_version", "4.3.9"); // for testing
+//update_option( "Enfold_version", "4.5.7" ); // for testing
 
 //activate the update script. temp: let it always run, also in frontend. change hook to admin_init after a few versions 
-add_action('wp_loaded', array(new avia_update_helper(), 'update_version'));
+add_action( 'wp_loaded', array( new avia_update_helper(), 'update_version' ) );
 
 /*all the functions that keep compatibility between theme versions: */
 
@@ -417,7 +417,7 @@ function avia_update_layerslider_data_structure($prev_version, $new_version)
 							{
 								$full_url 	= "http://www.kriesi.at/themes/wp-content/uploads/avia-sample-layerslides/" . $image_name;
 								
-								$new_url = media_sideload_image( $full_url , false, NULL, 'src');
+								$new_url = media_sideload_image( $full_url , false, null, 'src');
 								
 								if(!is_object($new_url) && !empty($new_url))
 								{
@@ -453,7 +453,7 @@ function avia_update_layerslider_data_structure($prev_version, $new_version)
 						else
 						{
 							$full_url 	= "http://www.kriesi.at/themes/wp-content/uploads/avia-sample-layerslides/" . $image_name;
-							$new_url = media_sideload_image( $full_url , false, NULL, 'src');
+							$new_url = media_sideload_image( $full_url , false, null, 'src');
 							
 							if(!is_object($new_url) && !empty($new_url))
 							{
@@ -643,7 +643,7 @@ add_action('ava_trigger_updates', 'avia_remove_wrong_update_credentials',18,2);
 
 function avia_remove_wrong_update_credentials($prev_version, $new_version)
 {	
-	//if the previous theme version is equal or bigger to 4.4 we don't need to update
+	//if the previous theme version is equal or bigger to 4.4.1 we don't need to update
 	if(version_compare($prev_version, '4.4.1', ">=")) return; 
 	
 	if(avia_get_option('updates_username') == "mirzepapa")
@@ -654,8 +654,45 @@ function avia_remove_wrong_update_credentials($prev_version, $new_version)
 }
 
 
+add_action( 'ava_trigger_updates', 'avia_remove_google_plus', 19, 2 );
 
-
+function avia_remove_google_plus( $prev_version, $new_version )
+{	
+	//if the previous theme version is equal or bigger to 4.5.7.2 we don't need to update
+	if( version_compare( $prev_version, '4.5.7.2', ">=") ) 
+	{
+		return; 
+	}
+	
+	//set global options
+	global $avia;
+	$theme_options = $avia->options['avia'];
+	
+	$social_icons = isset( $theme_options['social_icons'] ) ? $theme_options['social_icons'] : array();
+	$new_icons = array();
+	
+	foreach( $social_icons as $key => $icon ) 
+	{
+		if( isset( $icon['social_icon'] ) && ( 'gplus' == $icon['social_icon'] ) )
+		{
+			continue;
+		}
+		
+		$new_icons[] = $icon;
+	}
+	
+	$theme_options['social_icons'] = $new_icons;
+	
+	if( '' == $theme_options['developer_options'] )
+	{
+		$theme_options['developer_options'] = 'hide';
+	}
+	
+	//replace existing options with the new options
+	$avia->options['avia'] = $theme_options;
+	update_option( $avia->option_prefix, $avia->options );
+	
+}
 
 
 

@@ -68,7 +68,7 @@ if ( !class_exists( 'avia_sc_produc_price' ) )
          * @param string $shortcodename the shortcode found, when == callback name
          * @return string $output returns the modified html string
          */
-        function shortcode_handler($atts, $content = "", $shortcodename = "", $meta = "")
+        function shortcode_handler( $atts, $content = "", $shortcodename = "", $meta = "" )
         {
             $output = "";
             if( ! isset( $meta['el_class'] ) )

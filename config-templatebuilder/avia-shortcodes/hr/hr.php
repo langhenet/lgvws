@@ -6,13 +6,14 @@
  */
  
 // Don't load directly
-if ( !defined('ABSPATH') ) { die('-1'); }
+if ( ! defined('ABSPATH') ) { die('-1'); }
 
 
 
-if ( !class_exists( 'avia_sc_hr' ) ) 
+if ( ! class_exists( 'avia_sc_hr' ) ) 
 {
-	class avia_sc_hr extends aviaShortcodeTemplate{
+	class avia_sc_hr extends aviaShortcodeTemplate
+	{
 			
 			/**
 			 * Create the config array for the shortcode button
@@ -21,17 +22,19 @@ if ( !class_exists( 'avia_sc_hr' ) )
 			{
 				$this->config['self_closing']	=	'yes';
 				
-				$this->config['name']		= __('Separator / Whitespace', 'avia_framework' );
-				$this->config['tab']		= __('Content Elements', 'avia_framework' );
+				$this->config['name']		= __( 'Separator / Whitespace', 'avia_framework' );
+				$this->config['tab']		= __( 'Content Elements', 'avia_framework' );
 				$this->config['icon']		= AviaBuilder::$path['imagesURL']."sc-hr.png";
 				$this->config['order']		= 94;
 				$this->config['target']		= 'avia-target-insert';
 				$this->config['shortcode'] 	= 'av_hr';
-				$this->config['modal_data'] = array('modal_class' => 'highscreen');
-				$this->config['tooltip'] 	= __('Creates a delimiter/whitespace to separate elements', 'avia_framework' );
-				$this->config['tinyMCE']    = array('tiny_always'=>true);
+				$this->config['modal_data'] = array( 'modal_class' => 'highscreen' );
+				$this->config['tooltip'] 	= __( 'Creates a delimiter/whitespace to separate elements', 'avia_framework' );
+				$this->config['tinyMCE']    = array( 'tiny_always' => true );
 				$this->config['preview'] 	= 1;
 				$this->config['disabling_allowed'] = true;
+				$this->config['id_name']	= 'id';
+				$this->config['id_show']	= 'yes';
 			}
 			
 			function extra_assets()
@@ -197,69 +200,15 @@ if ( !class_exists( 'avia_sc_hr' ) )
 							"std" 	=> "ue808",
 							"required" => array('icon_select','not_empty_and','no')
 							),
-				array(
+					array(
 							"type" 	=> "close_div",
 							'nodescription' => true
 						),
-						
-						
-								array(
-									"type" 	=> "tab",
-									"name"	=> __("Screen Options",'avia_framework' ),
-									'nodescription' => true
-								),
-								
-								
-								array(
-								"name" 	=> __("Element Visibility",'avia_framework' ),
-								"desc" 	=> __("Set the visibility for this element, based on the device screensize.", 'avia_framework' ),
-								"type" 	=> "heading",
-								"description_class" => "av-builder-note av-neutral",
-								),
-							
-								array(	
-										"desc" 	=> __("Hide on large screens (wider than 990px - eg: Desktop)", 'avia_framework'),
-										"id" 	=> "av-desktop-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-								
-								array(	
-									
-										"desc" 	=> __("Hide on medium sized screens (between 768px and 989px - eg: Tablet Landscape)", 'avia_framework'),
-										"id" 	=> "av-medium-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-										
-								array(	
-									
-										"desc" 	=> __("Hide on small screens (between 480px and 767px - eg: Tablet Portrait)", 'avia_framework'),
-										"id" 	=> "av-small-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-										
-								array(	
-									
-										"desc" 	=> __("Hide on very small screens (smaller than 479px - eg: Smartphone Portrait)", 'avia_framework'),
-										"id" 	=> "av-mini-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-									
-								
-							  
-				
-							
-								
-							array(
-									"type" 	=> "close_div",
-									'nodescription' => true
-								),	
-								
-								
-						
+					
+					array(	
+							'type'			=> 'template',
+							'template_id'	=> 'screen_options_tab'
+						),
 						
 					array(
 						"type" 	=> "close_div",
@@ -282,7 +231,7 @@ if ( !class_exists( 'avia_sc_hr' ) )
 			 */
 			function editor_element($params)
 			{
-				$params['content'] 		= NULL;
+				$params['content'] 		= null;
 				$params['innerHtml']  	= "<span class='avia-divider'></span>";
 				$params['class'] = "";
 
@@ -297,27 +246,25 @@ if ( !class_exists( 'avia_sc_hr' ) )
 			 * @param string $shortcodename the shortcode found, when == callback name
 			 * @return string $output returns the modified html string 
 			 */
-			function shortcode_handler($atts, $content = "", $shortcodename = "", $meta = "")
+			function shortcode_handler( $atts, $content = "", $shortcodename = "", $meta = "" )
 			{	
-				extract(AviaHelper::av_mobile_sizes($atts)); //return $av_font_classes, $av_title_font_classes and $av_display_classes 
+				extract( AviaHelper::av_mobile_sizes( $atts ) ); //return $av_font_classes, $av_title_font_classes and $av_display_classes 
 				
-			    extract(shortcode_atts(array(
-			    
-			    'class' 	=> 'default', 
-			    'height' 	=> '50', 
-			    'shadow'	=>'no-shadow',
-			    'position'	=>'center', 
-			    'custom_border'	=>'thin', 
-			    'custom_width'	=>'30%', 
-			    'custom_margin_top'		=>'30px', 
-			    'custom_margin_bottom'	=>'30px', 
-			    'icon_select'	=>'no', 
-			    'custom_border_color'	=>'', 
-			    'custom_icon_color'	=>'', 
-			    'icon'	=>'', 
-			    'font'	=>'', 
-			    
-			    ), $atts, $this->config['shortcode']));
+			    extract( shortcode_atts( array(
+							'class'					=> 'default', 
+							'height'				=> '50', 
+							'shadow'				=> 'no-shadow',
+							'position'				=> 'center', 
+							'custom_border'			=> 'thin', 
+							'custom_width'			=> '30%', 
+							'custom_margin_top'		=> '30px', 
+							'custom_margin_bottom'	=> '30px', 
+							'icon_select'			=> 'no', 
+							'custom_border_color'	=> '', 
+							'custom_icon_color'		=> '', 
+							'icon'					=> '', 
+							'font'					=> '', 
+						), $atts, $this->config['shortcode'] ) );
 			
         		$output  = "";
         		$style	 = "";
@@ -363,15 +310,17 @@ if ( !class_exists( 'avia_sc_hr' ) )
         		}
 				
 				
-        		$output 		.= "<div {$style} class='hr hr-{$class} {$av_display_classes} ".$meta['el_class']."'>";
-        		$outputInner  	.= "<span class='hr-inner {$inner_class}' {$inner_style}><span class='hr-inner-style'></span></span>";
-        		$output 		.= $outputInner;
-        		if($display_char)
+        		$output .=	"<div {$meta['custom_el_id']} {$style} class='hr hr-{$class} {$av_display_classes} ".$meta['el_class']."'>";
+				
+        		$outputInner .=	"<span class='hr-inner {$inner_class}' {$inner_style}><span class='hr-inner-style'></span></span>";
+        		$output .=		$outputInner;
+				
+        		if( $display_char )
         		{
-	        		$output .= $display_char . $outputInner;
+	        		$output .=		$display_char . $outputInner;
         		}
         		
-        		$output .= "</div>";
+        		$output .=	"</div>";
         		
         		
         		return $output;

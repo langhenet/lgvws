@@ -117,9 +117,12 @@ if(!function_exists('avia_append_search_nav'))
 	    if ((is_object($args) && $args->theme_location == 'avia') || (is_string($args) && $args = "fallback_menu"))
 	    {
 	        global $avia_config;
+			
 	        ob_start();
 	        get_search_form();
-	        $form =  htmlspecialchars(ob_get_clean()) ;
+	        $form = ob_get_clean();
+			$form = str_replace( '<form ', '<form role="search" ', $form );
+			$form = htmlspecialchars( $form );
 			
 			/**
 			 * Avoid duplicate indexing or empty search page
@@ -130,10 +133,15 @@ if(!function_exists('avia_append_search_nav'))
 			 * @return string
 			 */
 			$nofollow = apply_filters( 'avf_nav_search_icon_nofollow', 'rel="nofollow"', $items, $args );
+			
+			$aria_label = __( 'Search', 'avia_framework' );
+			$aria_label = apply_filters( 'avf_nav_search_aria_label', $aria_label, $items, $args );
 
-	        $items .= '<li id="menu-item-search" class="noMobile menu-item menu-item-search-dropdown menu-item-avia-special">
-							<a href="?s=" '. $nofollow . ' data-avia-search-tooltip="'.$form.'" '.av_icon_string('search').'><span class="avia_hidden_link_text">'.__('Search','avia_framework').'</span></a>
-	        		   </li>';
+	        $items .=	'<li id="menu-item-search" class="noMobile menu-item menu-item-search-dropdown menu-item-avia-special">';
+			$items .=		'<a aria-label="' . $aria_label . '" href="?s=" '. $nofollow . ' data-avia-search-tooltip="' . $form . '" ' . av_icon_string('search') . '>';
+			$items .=			'<span class="avia_hidden_link_text">' . __( 'Search', 'avia_framework' ) . '</span>';
+			$items .=		'</a>';
+	        $items .=	'</li>';
 	    }
 	    return $items;
 	}
@@ -848,56 +856,99 @@ if(!function_exists('avia_show_menu_description'))
 * make google analytics code work, even if the user only enters the UA id. if the new async tracking code is entered add it to the header, else to the footer
 */
 
-if(!function_exists('avia_get_tracking_code'))
+if( ! function_exists( 'avia_get_tracking_code' ) )
 {
-	add_action('init', 'avia_get_tracking_code');
+	add_action( 'init', 'avia_get_tracking_code' );
 
 	function avia_get_tracking_code()
 	{
 		global $avia_config;
-
-		$avia_config['analytics_code'] = avia_option('analytics', false, false, true);
 		
+		$avia_config['analytics_code'] = '';
 		
-		if(empty($avia_config['analytics_code'])) return;
-
-		if(strpos($avia_config['analytics_code'],'UA-') === 0) // if we only get passed the UA-id create the script for the user (universal tracking code)
+		$analytics = avia_get_option( 'analytics', '' );
+		$avia_config['analytics_code'] = trim( $analytics );
+		
+		if( empty( $avia_config['analytics_code'] ) ) 
 		{
-			$temp = trim($avia_config['analytics_code']);
+			return;
+		}
+
+		if( strpos( $avia_config['analytics_code'],'UA-' ) === 0 ) // if we only get passed the UA-id create the script for the user (universal tracking code)
+		{
 			$avia_config['analytics_code'] = "
 <!-- Global site tag (gtag.js) - Google Analytics -->
-<script async src='https://www.googletagmanager.com/gtag/js?id=".$temp."'></script>
-<script>
+<script async src='https://www.googletagmanager.com/gtag/js?id=" . $avia_config['analytics_code'] . "'></script>
+<script type='text/javascript'>
 window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
-gtag('config', '".$temp."', { 'anonymize_ip': true });
+gtag('config', '" . $avia_config['analytics_code'] . "', { 'anonymize_ip': true });
 </script>
 ";
 		}
 		
-		
-		add_action('wp_footer', 'avia_print_tracking_code', 100);
+		add_action( 'wp_footer', 'avia_print_tracking_code', 100 );
 	}
 
 	function avia_print_tracking_code()
 	{
 		global $avia_config;
 
-		if(!empty($avia_config['analytics_code']))
+		if( ! empty( $avia_config['analytics_code'] ) )
 		{
 			//extract UA ID from code
 			$UAID = false;
-			$extra_code = "";
-			preg_match("!UA-[0-9]+-[0-9]+!", $avia_config['analytics_code'], $match);
+			$extra_code = '';
+			$match = array();
+			preg_match( "!UA-[0-9]+-[0-9]+!", $avia_config['analytics_code'], $match );
 			
-			if(!empty($match) && isset($match[0])) $UAID = $match[0];
+			if( ! empty( $match ) && isset( $match[0] ) ) 
+			{
+				$UAID = $match[0];
+			}
 			
 			//if we got a valid uaid, add the js cookie check 
-			if($UAID){
-			$extra_code = "
-			<script>
-			if(document.cookie.match(/aviaPrivacyGoogleTrackingDisabled/)){ window['ga-disable-{$UAID}'] = true; }
+			if( $UAID )
+			{
+				$extra_code = "
+				<script type='text/javascript'>
+			
+				(function() {
+					
+					/*	check if google analytics tracking is disabled by user setting via cookie - or user must opt in.	*/
+					var html = document.getElementsByTagName('html')[0];
+					var cookie_check = html.className.indexOf('av-cookies-needs-opt-in') >= 0 || html.className.indexOf('av-cookies-can-opt-out') >= 0;
+					var allow_continue = true;
+
+					if( cookie_check )
+					{
+						if( ! document.cookie.match(/aviaCookieConsent/) || sessionStorage.getItem( 'aviaCookieRefused' ) )
+						{
+							allow_continue = false;
+						}
+						else
+						{
+							if( ! document.cookie.match(/aviaPrivacyRefuseCookiesHideBar/) )
+							{
+								allow_continue = false;
+							}
+							else if( ! document.cookie.match(/aviaPrivacyEssentialCookiesEnabled/) )
+							{
+								allow_continue = false;
+							}
+							else if( document.cookie.match(/aviaPrivacyGoogleTrackingDisabled/) )
+							{
+								allow_continue = false;
+							}
+						}
+					}
+
+					if( ! allow_continue )
+					{ 
+						window['ga-disable-{$UAID}'] = true;
+					}
+				})();
 			</script>";
 			}
 			
@@ -921,20 +972,22 @@ if(!function_exists('avia_header_setting'))
 		if(isset($avia_config['header_settings']) && !$single_val) return $avia_config['header_settings']; //return cached header setting if available
 		
 		$defaults = array(  'header_position' 			=> 'header_top',
-							'header_layout'				=>'logo_left menu_right', 
-							'header_size'				=>'slim', 
-							'header_custom_size'		=>'', 
-							'header_sticky'				=>'header_sticky', 
+							'header_layout'				=> 'logo_left menu_right', 
+							'header_size'				=> 'slim', 
+							'header_custom_size'		=> '', 
+							'header_sticky'				=> 'header_sticky', 
 							'header_shrinking'			=>'header_shrinking', 
-							'header_title_bar'			=>'',
-							'header_social'				=>'',
-							'header_unstick_top'		=>'',
-							'header_secondary_menu'		=>'', 
-							'header_stretch'			=>'',
-							'header_custom_size'		=>'',
-							'header_phone_active'		=>'',
-							'header_replacement_logo'	=>'',
-							'header_replacement_menu'	=>'',
+							'header_title_bar'			=> '',
+							'header_social'				=> '',
+							'header_unstick_top'		=> '',
+							'header_secondary_menu'		=> '', 
+							'header_stretch'			=> '',
+							'header_custom_size'		=> '',
+							'header_phone_active'		=> '',
+							'header_replacement_logo'	=> '',
+							'header_replacement_logo_title'	=> '',
+							'header_replacement_logo_alt'	=> '',
+							'header_replacement_menu'	=> '',
 							'submenu_visibility' 		=> '',
 							'overlay_style'				=> 'av-overlay-side',
 							'header_searchicon' 		=> true,
@@ -960,7 +1013,7 @@ if(!function_exists('avia_header_setting'))
 		{	
 			$custom_fields = get_post_custom($post_id);
 			
-			foreach($defaults as $key =>$default)
+			foreach( $defaults as $key => $default )
 			{
 				if(!empty($custom_fields[$key]) && !empty($custom_fields[$key][0]) ) 
 				{
@@ -1068,12 +1121,29 @@ if(!function_exists('avia_header_setting'))
 		if(!empty($header['header_replacement_logo']))
 		{
 			$header['header_class'] .= " av_alternate_logo_active"; 
-			if(is_numeric($header['header_replacement_logo']))
-			{ 
-				$header['header_replacement_logo'] = wp_get_attachment_image_src($header['header_replacement_logo'], 'full'); 
-				$header['header_replacement_logo'] = $header['header_replacement_logo'][0]; 
+			if( is_numeric( $header['header_replacement_logo'] ) )
+			{
+				$header_replacement_logo_id = $header['header_replacement_logo'];
+				$header_replacement_logo_src = wp_get_attachment_image_src( $header_replacement_logo_id, 'full' );
+				if( is_array( $header_replacement_logo_src ) )
+				{
+					$header['header_replacement_logo'] = $header_replacement_logo_src[0];
+					
+					/**
+					 * We added title and alt attribute - this allows to ignore it
+					 * 
+					 * @since 4.5.7.2
+					 * @param boolean
+					 * @param int
+					 * @rturn boolean
+					 */
+					if( false === apply_filters( 'avf_hide_transparency_logo_meta', false, $header_replacement_logo_id ) )
+					{
+						$header['header_replacement_logo_title'] = get_the_title( $header_replacement_logo_id );
+						$header['header_replacement_logo_alt'] = get_post_meta( $header_replacement_logo_id, '_wp_attachment_image_alt', true );
+					}
+				}
 			}
-		
 		}
 		
 		//header class that tells us to use the alternate logo
@@ -1096,32 +1166,35 @@ if(!function_exists('avia_header_setting'))
 
 if(!function_exists('avia_header_setting_sidebar'))
 {
-	function avia_header_setting_sidebar($header, $single_val = false)
+	function avia_header_setting_sidebar( $header, $single_val = false )
 	{
-		$overwrite = array(  	'header_layout'=>'logo_left menu_right', 
-								'header_size'=>'slim', 
-								'header_custom_size'=>'', 
-								'header_sticky'=>'disabled', 
-								'header_shrinking'=>'disabled', 
-								'header_title_bar'=>'hidden_title_bar',
-								'header_social'=>'', 
-								'header_secondary_menu'=>'', 
-								'header_stretch'=>'',
-								'header_custom_size'=>'',
-								'header_phone_active'=>'disabled',
-								'header_replacement_logo'=>'',
-								'header_replacement_menu'=>'',
-								'header_mobile_activation' => 'mobile_menu_phone',
-								'phone'=>'',
-								'header_menu_border' => '',
-								'header_topbar'	=> false,
-								'bottom_menu'	=> false,
-								'header_style' 	=> '',
-								'menu_display' 	=> '',
-								'submenu_clone'		=> 'av-submenu-noclone',
-							  );
+		$overwrite = array(  	
+							'header_layout'				=> 'logo_left menu_right', 
+							'header_size'				=> 'slim', 
+							'header_custom_size'		=> '', 
+							'header_sticky'				=> 'disabled', 
+							'header_shrinking'			=> 'disabled', 
+							'header_title_bar'			=> 'hidden_title_bar',
+							'header_social'				=> '', 
+							'header_secondary_menu'		=> '', 
+							'header_stretch'			=> '',
+							'header_custom_size'		=> '',
+							'header_phone_active'		=> 'disabled',
+							'header_replacement_logo'	=> '',
+							'header_replacement_logo_title'	=> '',
+							'header_replacement_logo_alt'	=> '',
+							'header_replacement_menu'	=> '',
+							'header_mobile_activation'	=> 'mobile_menu_phone',
+							'phone'						=>'',
+							'header_menu_border'		=> '',
+							'header_topbar'				=> false,
+							'bottom_menu'				=> false,
+							'header_style'				=> '',
+							'menu_display'				=> '',
+							'submenu_clone'				=> 'av-submenu-noclone',
+						);
 		
-		$header = array_merge($header, $overwrite);
+		$header = array_merge( $header, $overwrite );
 		
 		//	Reset to actual user setting - otherwise burger menu will result in wrong behaviour
 		$settings = avia_get_option();
@@ -1732,7 +1805,7 @@ if(!function_exists('avia_generate_stylesheet'))
 		$safe_name = avia_backend_safe_string($avia->base_data['prefix']);
 		$safe_name = apply_filters('avf_dynamic_stylesheet_filename', $safe_name);
 
-	    if( defined('AVIA_CSSFILE') && AVIA_CSSFILE === FALSE )
+	    if( defined('AVIA_CSSFILE') && AVIA_CSSFILE === false )
 	    {
 	        $dir_flag           = update_option( 'avia_stylesheet_dir_writable'.$safe_name, 'false' );
 	        $stylesheet_flag    = update_option( 'avia_stylesheet_exists'.$safe_name, 'false' );
@@ -2064,21 +2137,6 @@ if( ! function_exists( 'av_disable_live_preview' ) )
 	add_filter( 'avb_backend_editor_element_data_filter', 'av_disable_live_preview' );
 }
 
-/**
- * enable developer options
- */
-if( ! function_exists( 'av_enable_dev_options' ) )
-{
-	function av_enable_dev_options() 
-	{
-		if(avia_get_option('developer_options') == "developer_options")
-		{
-			add_theme_support('avia_template_builder_custom_css');
-		}
-	}
-
-	add_action( 'init', 'av_enable_dev_options' );
-}
 
 /**
  * Adds a copyright field to the upload and edit dialogue of the media manager
@@ -2095,7 +2153,7 @@ if( ! function_exists( 'av_attachment_copyright_field_edit' ) )
 
         $form_fields['av_copyright_field'] = array(
             'label' => __('Copyright'),
-            'input' => "text",
+            'input' => 'text',
             'value' => get_post_meta( $post->ID, '_avia_attachment_copyright', true ),
         );
 
@@ -2158,217 +2216,6 @@ if( ! function_exists( 'avia_post_thumbnail_html' ) )
         add_filter('post_thumbnail_html', 'avia_post_thumbnail_html', 99, 5);
     }
 }
-
-
-/**
- * Creates a modal window informing the user about the use of cookies on the site
- * Sets a cookie when the confirm button is clicked, and hides the box.
- * Resets the cookie once either of the text in the box is changed in theme options
- *
- * @author tinabillinger
- * @since 4.3
- */
-
-if( ! function_exists( 'av_cookie_consent' ) )
-{
-    function av_cookie_consent(){
-        if(avia_get_option('cookie_consent') == "cookie_consent")
-        {
-        $message = do_shortcode(avia_option('cookie_content', false, false, true));
-        $position = avia_get_option('cookie_position');
-        $buttontext = avia_option('cookie_buttontext', false, false, true);
-
-        $body_layout = avia_option('color-body_style', false, false, true);
-
-        $style = "";
-
-        if ($body_layout == 'av-framed-box') {
-            $frame_width = avia_option('color-frame_width', false, false, true);
-
-            $atts = array(
-                'width' => 'calc(100% - '.($frame_width*2).'px)',
-                'left' => $frame_width,
-                'bottom' => $frame_width,
-                'top' => $frame_width,
-                'left' => $frame_width,
-                'right' => $frame_width,
-            );
-
-            if ($position == 'top' || $position == 'bottom') {
-                $style .= AviaHelper::style_string($atts, 'width', 'width', "");
-                $style .= AviaHelper::style_string($atts, 'left', 'left', "px");
-            }
-
-            if ($position == 'top-left') {
-                $style .= AviaHelper::style_string($atts, 'left', 'left', "px");
-                $style .= AviaHelper::style_string($atts, 'top', 'top', "px");
-            }
-
-            if ($position == 'top-right') {
-                $style .= AviaHelper::style_string($atts, 'right', 'right', "px");
-                $style .= AviaHelper::style_string($atts, 'top', 'top', "px");
-            }
-
-            if ($position == 'bottom-right') {
-                $style .= AviaHelper::style_string($atts, 'right', 'right', "px");
-                $style .= AviaHelper::style_string($atts, 'bottom', 'bottom', "px");
-            }
-
-            if ($position == 'bottom-left') {
-                $style .= AviaHelper::style_string($atts, 'left', 'left', "px");
-                $style .= AviaHelper::style_string($atts, 'bottom', 'bottom', "px");
-            }
-
-            if ($position == 'top') {
-                $style .= AviaHelper::style_string($atts, 'top', 'top', "px");
-            }
-
-            else if ($position == 'bottom') {
-                $style .= AviaHelper::style_string($atts, 'bottom', 'bottom', "px");
-            }
-
-            $style  = AviaHelper::style_string($style);
-        }
-
-        ?>
-
-        <div class='avia-cookie-consent cookiebar-hidden avia-cookiemessage-<?php echo $position; ?>'<?php echo $style; ?>>
-        <div class='container'>
-        <p class="avia_cookie_text"><?php echo $message; ?></p>
-
-        <?php
-        $cookie_contents = $message;
-        if (avia_get_option('cookie_infolink') == "cookie_infolink") :
-
-            $linktext = avia_option('cookie_linktext', false, false, true);
-            $linksource = avia_option('cookie_linksource', false, false, true);
-            $cookie_contents .= $linktext;
-
-            ?>
-            <a class="avia_cookie_infolink" href='<?php echo $linksource; ?>' target='_blank'><?php echo $linktext; ?></a>
-        <?php
-        endif;
-
-        $cookie_contents .= $buttontext;
-        $cookie_contents = md5($cookie_contents);
-		
-		$buttons = avia_get_option('msg_bar_buttons', array());
-		$i = 0;
-		$extra_info = "";
-		foreach($buttons as $button)
-		{
-			$i++;
-			$data  = "";
-			$btn_class = "av-extra-cookie-btn";
-			$label = !empty($button['msg_bar_button_label']) ? $button['msg_bar_button_label'] : "×";
-			$link  = !empty($button['msg_bar_button_link']) && $button['msg_bar_button_action'] == 'link' ? $button['msg_bar_button_link'] : "#";
-			
-			if(empty($button['msg_bar_button_action']))
-			{
-				$btn_class = " avia-cookie-close-bar ";
-				$data = "data-contents='{$cookie_contents}'";
-			}
-			
-			
-			
-			if(!empty($button['msg_bar_button_action']) && $button['msg_bar_button_action'] == 'info_modal')
-			{
-				//$post = get_post( 4214);
-				//$content = Avia_Builder()->compile_post_content( $post );
-				$heading = __( "Cookie and Privacy Settings", 'avia_framework' );
-				$contents = array(
-							
-							array(	'label'		=> __( 'How we use cookies', 'avia_framework' ) , 
-									'content'	=> __( 'We may request cookies to be set on your device. We use cookies to let us know when you visit our websites, how you interact with us, to enrich your user experience, and to customize your relationship with our website. <br><br>Click on the different category headings to find out more. You can also change some of your preferences. Note that blocking some types of cookies may impact your experience on our websites and the services we are able to offer.', 'avia_framework' )),
-
-							array(	'label'		=> __( 'Essential Website Cookies', 'avia_framework' ), 
-									'content'	=> __( 'These cookies are strictly necessary to provide you with services available through our website and to use some of its features. <br><br>Because these cookies are strictly necessary to deliver the website, you cannot refuse them without impacting how our site functions. You can block or delete them by changing your browser settings and force blocking all cookies on this website.', 'avia_framework' )),
-							
-							);
-							
-				$analtics_check = avia_get_option('analytics');			
-				if(!empty( $analtics_check ) )
-				{
-					$contents[] = array(	'label'		=> __( 'Google Analytics Cookies', 'avia_framework' ), 
-											'content'	=> __( 'These cookies collect information that is used either in aggregate form to help us understand how our website is being used or how effective our marketing campaigns are, or to help us customize our website and application for you in order to enhance your experience. <br><br>If you do not want that we track your visist to our site you can disable tracking in your browser here: [av_privacy_google_tracking]', 'avia_framework' ));
-				}
-				
-				$contents[] = array(	'label'		=> __( 'Other external services', 'avia_framework' ), 
-										'content'	=> __( 'We also use different external services like Google Webfonts, Google Maps and external Video providers. Since these providers may collect personal data like your IP address we allow you to block them here. Please be aware that this might heavily reduce the functionality and appearance of our site. Changes will take effect once you reload the page.<br><br>
-
-Google Webfont Settings:					
-[av_privacy_google_webfonts]
-
-Google Map Settings:
-[av_privacy_google_maps]
-
-Vimeo and Youtube video embeds:
-[av_privacy_video_embeds]', 'avia_framework' )
-										);
-				
-				
-				$wp_privacy_page = get_option('wp_page_for_privacy_policy');
-				if(!empty( $wp_privacy_page ))
-				{
-					$contents[] = array(	'label'		=> __( 'Privacy Policy', 'avia_framework' ), 
-											'content'	=> __( 'You can read about our cookies and privacy settings in detail on our Privacy Policy Page. <br><br> [av_privacy_link]', 'avia_framework' ));
-											
-				}
-
-				
-				if(avia_get_option('cookie_info_custom_content') == "cookie_info_custom_content" )
-				{
-					$contents = avia_get_option('cookie_info_content', array());
-					$heading  = str_replace("'", "&apos;", avia_get_option('cookie_info_content_heading', $heading));
-				}
-				
-				$content  = "";
-				foreach($contents as $content_block )
-				{
-					$tablabel    = str_replace("'", "&apos;", $content_block['label']);
-					$content .= "[av_tab title='{$tablabel}' icon_select='no' icon='ue81f' font='entypo-fontello']";
-					$content .= $content_block['content'];
-					$content .= "[/av_tab]";
-				}
-				
-				$btn_class .= " avia-cookie-info-btn ";
-				$extra_info = "<div id='av-consent-extra-info' class='av-inline-modal main_color'>".do_shortcode("
-				
-				[av_heading tag='h3' padding='10' heading='{$heading}' color='' style='blockquote modern-quote' custom_font='' size='' subheading_active='' subheading_size='15' custom_class='' admin_preview_bg='' av-desktop-hide='' av-medium-hide='' av-small-hide='' av-mini-hide='' av-medium-font-size-title='' av-small-font-size-title='' av-mini-font-size-title='' av-medium-font-size='' av-small-font-size='' av-mini-font-size='' margin='10px,0,0,0'][/av_heading]
-
-[av_hr class='custom' height='50' shadow='no-shadow' position='left' custom_border='av-border-thin' custom_width='100%' custom_border_color='' custom_margin_top='0px' custom_margin_bottom='0px' icon_select='no' custom_icon_color='' icon='ue808' font='entypo-fontello' av_uid='av-jhe1dyat' admin_preview_bg='rgb(255, 255, 255)']
-
-[av_tab_container position='sidebar_tab sidebar_tab_left' boxed='noborder_tabs' initial='1' av_uid='av-jhds1skt']
-{$content}
-[/av_tab_container]
-					
-				")."</div>";
-			}
-			
-			echo "<a href='{$link}' class='avia-button avia-cookie-consent-button avia-cookie-consent-button-{$i} {$btn_class}' {$data}>{$label}</a>";
-		}
-		
-		
-		
-        ?>
-        
-        
-        
-
-        </div>
-        </div>
-        
-        <?php
-	    echo $extra_info;
-        }
-    }
-    add_action('wp_footer', 'av_cookie_consent', 3);
-}
-
-
-
-
-
 
 
 if( ! function_exists( 'av_builder_meta_box_elements_content' ) )

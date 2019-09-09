@@ -536,7 +536,7 @@ $.fn.avia_browser_height = function()
 
 					height = parseInt( height );
 
-					if( ! pc_heights.includes( height ) && ( height != 100 ) )
+					if( ( -1 == $.inArray( height, pc_heights ) ) && ( height != 100 ) )
 					{
 						pc_heights.push( height );
 					}

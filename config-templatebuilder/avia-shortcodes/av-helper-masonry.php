@@ -44,9 +44,9 @@ if ( ! class_exists( 'avia_masonry' ) )
 
 		
 		/**
-		 * 
+		 * @param array $atts
 		 */
-		public function __construct($atts = array())
+		public function __construct( $atts = array() )
 		{
 			self::$element += 1;
 			
@@ -55,50 +55,50 @@ if ( ! class_exists( 'avia_masonry' ) )
 			$this->screen_options = AviaHelper::av_mobile_sizes( $atts );
 			
 			$this->atts = shortcode_atts( array(	
-												'ids'					=> false,
-												'action'				=> false,
-												'link'					=> 'category',
-												'post_type'				=> get_post_types(),
-												'items'					=> 24,
-												'size'					=> 'fixed',
-												'gap'					=> '1px',
-												'overlay_fx'			=> 'active',
-												'animation'				=> 'active',
-												'offset'				=> 0,
-												'container_links'		=> true,
-												'container_class'		=> "",
-												'paginate'				=> 'none',				//	'pagination' | 'load_more' | 'none'
-												'caption_elements'		=> 'title excerpt',
-												'caption_display'		=> 'always',
-												'caption_styling'		=> '',
-												'wc_prod_visible'		=> '',
-												'prod_order_by'			=> '',
-												'prod_order'			=> '',
-												'sort'					=> 'no',
-												'columns'				=> 'automatic',
-												'auto_ratio'			=> 1.7, //equals a 16:9 ratio
-												'set_breadcrumb'		=> true, //no shortcode option for this, modifies the breadcrumb nav, must be false on taxonomy overview
-												'custom_markup'			=> '',
-												'query_orderby'			=> 'date',
-												'query_order'			=> 'DESC',
-												'color'					=> '',
-												'custom_bg'				=> '',
-												'custom_class'			=> '',
-												'orientation'			=> '',
-												'date_filter'			=> '',	
-												'date_filter_start'		=> '',
-												'date_filter_end'		=> '',
-												'date_filter_format'	=> 'yy/mm/dd',		//	'yy/mm/dd' | 'dd-mm-yy'	| yyyymmdd
+								'ids'					=> false,
+								'action'				=> false,
+								'link'					=> 'category',
+								'post_type'				=> get_post_types(),
+								'items'					=> 24,
+								'size'					=> 'fixed',
+								'gap'					=> '1px',
+								'overlay_fx'			=> 'active',
+								'animation'				=> 'active',
+								'offset'				=> 0,
+								'container_links'		=> true,
+								'container_class'		=> "",
+								'paginate'				=> 'none',				//	'pagination' | 'load_more' | 'none'
+								'caption_elements'		=> 'title excerpt',
+								'caption_display'		=> 'always',
+								'caption_styling'		=> '',
+								'wc_prod_visible'		=> '',
+								'prod_order_by'			=> '',
+								'prod_order'			=> '',
+								'sort'					=> 'no',
+								'columns'				=> 'automatic',
+								'auto_ratio'			=> 1.7, //equals a 16:9 ratio
+								'set_breadcrumb'		=> true, //no shortcode option for this, modifies the breadcrumb nav, must be false on taxonomy overview
+								'custom_markup'			=> '',
+								'query_orderby'			=> 'date',
+								'query_order'			=> 'DESC',
+								'color'					=> '',
+								'custom_bg'				=> '',
+								'custom_class'			=> '',
+								'orientation'			=> '',
+								'date_filter'			=> '',	
+								'date_filter_start'		=> '',
+								'date_filter_end'		=> '',
+								'date_filter_format'	=> 'yy/mm/dd',		//	'yy/mm/dd' | 'dd-mm-yy'	| yyyymmdd
+								'id'					=> ''
+							), $atts, 'av_masonry_entries' );
 
-		                                 	), $atts, 'av_masonry_entries' );
-		 	
 		 	
 		 	if($this->atts['caption_elements'] == 'none')
 		 	{
 			 	$this->atts['caption_styling'] = "";
 		 	}
 		 	                                		
-		  	$this->atts = apply_filters('avf_masonry_settings', $this->atts, self::$element);
+		  	$this->atts = apply_filters( 'avf_masonry_settings', $this->atts, self::$element );
 		}
 		
 		/**
@@ -317,21 +317,23 @@ if ( ! class_exists( 'avia_masonry' ) )
 			$size 		= strpos($this->atts['size'], 'fixed') !== false ? 'fixed' : "flex";
 			$auto 		= strpos($this->atts['size'], 'masonry') !== false ? true : false;
 			$manually	= strpos($this->atts['size'], 'manually') !== false ? true : false;
-			$defaults 	= array('ID'=>'', 
-								'thumb_ID'=>'', 
-								'title' =>'', 
-								'url' => '',  
-								'class' => array(),  
-								'date' => '', 
-								'excerpt' => '', 
-								'data' => '', 
-								'attachment'=> array(), 
+			$defaults 	= array(
+								'ID'			=>'', 
+								'thumb_ID'		=>'', 
+								'title'			=>'', 
+								'url'			=> '',  
+								'class'			=> array(),  
+								'date'			=> '', 
+								'excerpt'		=> '', 
+								'data'			=> '', 
+								'attachment'	=> array(), 
 								'attachment_overlay' => array(),
-								'bg' => "", 
-								'before_content'=>'', // if set replaces the whole bg part 
-								'text_before'=>'', 
-								'text_after'=>'', 
-								'img_before'=>'');
+								'bg'			=> "", 
+								'before_content' =>'', // if set replaces the whole bg part 
+								'text_before'	=>'', 
+								'text_after'	=>'', 
+								'img_before'	=>''
+							);
 			
 			
 			$style = "";
@@ -343,12 +345,11 @@ if ( ! class_exists( 'avia_masonry' ) )
 			}
 			
 			$orientation = $this->atts['size'] == "fixed" ? $this->atts['orientation'] : ""; 
-            $custom_class = "";
-            if(isset($this->atts['custom_class'])) {
-                $custom_class = $this->atts['custom_class'];
-            }
 			
-			$output .= "<div id='av-masonry-".self::$element."' class='av-masonry {$custom_class} noHover av-{$size}-size av-{$this->atts['gap']}-gap av-hover-overlay-{$this->atts['overlay_fx']} av-masonry-animation-{$this->atts['animation']} av-masonry-col-{$this->atts['columns']} av-caption-{$this->atts['caption_display']} av-caption-style-{$this->atts['caption_styling']} {$this->atts['container_class']} {$orientation} {$av_display_classes} {$av_column_classes}' {$style} >";
+            $custom_class = isset( $this->atts['custom_class'] ) ? $this->atts['custom_class'] : '';
+			$id_el = ! empty( $this->atts['id'] ) ? $this->atts['id'] : 'av-masonry-' . self::$element;
+			
+			$output .= "<div id='{$id_el}' class='av-masonry {$custom_class} noHover av-{$size}-size av-{$this->atts['gap']}-gap av-hover-overlay-{$this->atts['overlay_fx']} av-masonry-animation-{$this->atts['animation']} av-masonry-col-{$this->atts['columns']} av-caption-{$this->atts['caption_display']} av-caption-style-{$this->atts['caption_styling']} {$this->atts['container_class']} {$orientation} {$av_display_classes} {$av_column_classes}' {$style} >";
 			
 			$output .= $this->atts['sort'] != "no" ? $this->sort_buttons() : "";
 			
@@ -359,7 +360,7 @@ if ( ! class_exists( 'avia_masonry' ) )
 			{
 				$title = '';
 				
-				extract(array_merge($defaults, $entry));
+				extract( array_merge( $defaults, $entry ) );
 				
 				$img_html		= "";
 				$img_style		= "";

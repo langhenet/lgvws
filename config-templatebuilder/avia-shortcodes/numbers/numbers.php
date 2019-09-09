@@ -7,7 +7,7 @@
 if ( ! defined( 'ABSPATH' ) ) {  exit;  }    // Exit if accessed directly
 
 
-if ( !class_exists( 'avia_sc_animated_numbers' ) ) 
+if ( ! class_exists( 'avia_sc_animated_numbers' ) ) 
 {
 	
 	class avia_sc_animated_numbers extends aviaShortcodeTemplate
@@ -19,15 +19,17 @@ if ( !class_exists( 'avia_sc_animated_numbers' ) )
 			{
 				$this->config['self_closing']	=	'no';
 				
-				$this->config['name']		= __('Animated Numbers', 'avia_framework' );
-				$this->config['tab']		= __('Content Elements', 'avia_framework' );
+				$this->config['name']		= __( 'Animated Numbers', 'avia_framework' );
+				$this->config['tab']		= __( 'Content Elements', 'avia_framework' );
 				$this->config['icon']		= AviaBuilder::$path['imagesURL']."sc-numbers.png";
 				$this->config['order']		= 15;
 				$this->config['target']		= 'avia-target-insert';
 				$this->config['shortcode'] 	= 'av_animated_numbers';
-				$this->config['tooltip'] 	= __('Display an animated Number with subtitle', 'avia_framework' );
+				$this->config['tooltip'] 	= __( 'Display an animated Number with subtitle', 'avia_framework' );
 				$this->config['preview'] 	= true;
 				$this->config['disabling_allowed'] = true;
+				$this->config['id_name']	= 'id';
+				$this->config['id_show']	= 'yes';
 			}
 		
 		
@@ -37,7 +39,7 @@ if ( !class_exists( 'avia_sc_animated_numbers' ) )
 				wp_enqueue_style( 'avia-module-numbers' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/numbers/numbers.css' , array('avia-layout'), false );
 				
 				//load js
-				wp_enqueue_script( 'avia-module-numbers' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/numbers/numbers.js' , array('avia-shortcodes'), false, TRUE );
+				wp_enqueue_script( 'avia-module-numbers' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/numbers/numbers.js' , array('avia-shortcodes'), false, true );
 			}
 		
 		
@@ -288,58 +290,12 @@ if ( !class_exists( 'avia_sc_animated_numbers' ) )
 							"type" 	=> "close_div",
 							'nodescription' => true
 						),
-						
-					array(
-									"type" 	=> "tab",
-									"name"	=> __("Screen Options",'avia_framework' ),
-									'nodescription' => true
-								),
-								
-								
-								array(
-								"name" 	=> __("Element Visibility",'avia_framework' ),
-								"desc" 	=> __("Set the visibility for this element, based on the device screensize.", 'avia_framework' ),
-								"type" 	=> "heading",
-								"description_class" => "av-builder-note av-neutral",
-								),
-							
-								array(	
-										"desc" 	=> __("Hide on large screens (wider than 990px - eg: Desktop)", 'avia_framework'),
-										"id" 	=> "av-desktop-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-								
-								array(	
-									
-										"desc" 	=> __("Hide on medium sized screens (between 768px and 989px - eg: Tablet Landscape)", 'avia_framework'),
-										"id" 	=> "av-medium-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-										
-								array(	
-									
-										"desc" 	=> __("Hide on small screens (between 480px and 767px - eg: Tablet Portrait)", 'avia_framework'),
-										"id" 	=> "av-small-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-										
-								array(	
-									
-										"desc" 	=> __("Hide on very small screens (smaller than 479px - eg: Smartphone Portrait)", 'avia_framework'),
-										"id" 	=> "av-mini-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-	
-								
-							array(
-									"type" 	=> "close_div",
-									'nodescription' => true
-								),	
-						
+					
+					array(	
+							'type'			=> 'template',
+							'template_id'	=> 'screen_options_tab'
+						),
+				
 					array(
 							"type" 	=> "close_div",
 							'nodescription' => true
@@ -388,34 +344,34 @@ if ( !class_exists( 'avia_sc_animated_numbers' ) )
 			 * @param string $shortcodename the shortcode found, when == callback name
 			 * @return string $output returns the modified html string 
 			 */
-			function shortcode_handler($atts, $content = "", $shortcodename = "", $meta = "")
+			function shortcode_handler( $atts, $content = "", $shortcodename = "", $meta = "" )
 			{
 				
 	        	extract( AviaHelper::av_mobile_sizes( $atts ) ); //return $av_font_classes, $av_title_font_classes and $av_display_classes 
 				
 				$atts = shortcode_atts( array(	
-											'number' 		=> '100', 
-											'number_format'	=> '',
-											'timer'			=> '',			//	defaults to 3 - set in numbers.js
-											'icon' 			=> '1', 
-											'position' 		=> 'left', 
-											'link' 			=> '', 
-											'linktarget'	=> 'no', 
-											'color' 		=> '', 
-											'custom_color'	=> '', 
-											'icon_select'	=> '', 
-											'icon' 			=> 'no',
-											'font'			=> '',
-											'font_size'		=> '',
-											'font_size_description'	=>'',
-											'circle'		=> '',
-											'circle_custom'	=> '',
-											'circle_border_color'	=> '',
-											'circle_bg_color'		=> '',
-											'circle_border_width'	=> '',
-											'circle_size'	=> ''
-					
-										), $atts, $this->config['shortcode'] );
+							'number' 		=> '100', 
+							'number_format'	=> '',
+							'timer'			=> '',			//	defaults to 3 - set in numbers.js
+							'icon' 			=> '1', 
+							'position' 		=> 'left', 
+							'link' 			=> '', 
+							'linktarget'	=> 'no', 
+							'color' 		=> '', 
+							'custom_color'	=> '', 
+							'icon_select'	=> '', 
+							'icon' 			=> 'no',
+							'font'			=> '',
+							'font_size'		=> '',
+							'font_size_description'	=>'',
+							'circle'		=> '',
+							'circle_custom'	=> '',
+							'circle_border_color'	=> '',
+							'circle_bg_color'		=> '',
+							'circle_border_width'	=> '',
+							'circle_size'	=> ''
+
+						), $atts, $this->config['shortcode'] );
 				
 				extract( $atts );
 				
@@ -491,7 +447,7 @@ if ( !class_exists( 'avia_sc_animated_numbers' ) )
 
 
         		// add blockquotes to the content
-        		$output  = '<' . $tags[0] . ' class="avia-animated-number av-force-default-color ' . $av_display_classes . ' avia-color-' . $color . ' ' . $meta['el_class'] . ' avia_animate_when_visible" ' . $style . ' data-timer="' . $timer . '">';
+        		$output  = '<' . $tags[0] . ' ' . $meta['custom_el_id'] . ' class="avia-animated-number av-force-default-color ' . $av_display_classes . ' avia-color-' . $color . ' ' . $meta['el_class'] . ' avia_animate_when_visible" ' . $style . ' data-timer="' . $timer . '">';
                 $output .= $circle_markup;
 
 
@@ -528,7 +484,38 @@ if ( !class_exists( 'avia_sc_animated_numbers' ) )
 				$replace = '<span class="avia-single-number __av-single-number" data-number_format="' . $number_format . '" data-number="$1">$1</span>';
 				
 				$number = preg_replace( '!(\D+)!', '<span class="avia-no-number">$1</span>', $number );
-				$number = preg_replace( '!(\d+)!', $replace, $number );
+				
+				/**
+				 * In frontend we have to render unformatted to allow js work properly
+				 */
+				if( version_compare( phpversion(), '7.0', '<' ) || ! is_admin() )
+				{
+					$number = preg_replace( '!(\d+)!', $replace, $number );
+				}
+				else
+				{
+					$number = preg_replace_callback( 
+										'!(\d+)!', 
+										function ( $match ) use ( $number_format )
+										{
+											switch( $number_format )
+											{
+												case '.':
+													$number = number_format( $match[0], 0, ',', $number_format );
+													break;
+												case ',':
+													$number = number_format( $match[0], 0, '.', $number_format );
+													break;
+												case ' ':
+													$number = number_format( $match[0], 0, ',', $number_format );
+													break;
+												default:
+													$number = $match[0];
+											}
+											return $number;
+										}, 
+										$number );
+				}
 				
 				return $number;
 			}

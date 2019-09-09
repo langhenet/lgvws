@@ -43,7 +43,7 @@
 				setTimeout(function(){ parentContainer.addClass('avia_sortable_active'); }, 0);
 			};
 
-			links.bind('click',function()
+			links.on('click',function()
 			{
 				var current		= $(this),
 			  		selector	= current.data('filter'),
@@ -303,7 +303,7 @@
 					
 						var current = $(this), overlay;
 						
-						current.addClass('no_combo').bind('click', function(event)
+						current.addClass('no_combo').on('click', function(event)
 						{
 							overlay = current.find('.slideshow_overlay');
 							
@@ -375,7 +375,7 @@
 			
 			container.on("click", "a", methods.load_item);
 			controls.on("click", "a", methods.control_click);
-			if(jQuery.support.leadingWhitespace) { win.bind('debouncedresize', methods.resize_reset); }
+			if(jQuery.support.leadingWhitespace) { win.on('debouncedresize', methods.resize_reset); }
 			
 		});
 	};

@@ -721,18 +721,50 @@ if( ! class_exists( 'avia_style_generator' ) )
 			$output .= "\n<!-- google webfont font replacement -->\n";
 			$output .= "
 			<script type='text/javascript'>
-			if(!document.cookie.match(/aviaPrivacyGoogleWebfontsDisabled/)){
+
 				(function() {
-					var f = document.createElement('link');
 					
-					f.type 	= 'text/css';
-					f.rel 	= 'stylesheet';
-					f.href 	= '//fonts.googleapis.com/css?family=" . apply_filters( 'avf_google_fontlist', $this->google_fontlist ) . "';
-					f.id 	= 'avia-google-webfont';
+					/*	check if webfonts are disabled by user setting via cookie - or user must opt in.	*/
+					var html = document.getElementsByTagName('html')[0];
+					var cookie_check = html.className.indexOf('av-cookies-needs-opt-in') >= 0 || html.className.indexOf('av-cookies-can-opt-out') >= 0;
+					var allow_continue = true;
+
+					if( cookie_check )
+					{
+						if( ! document.cookie.match(/aviaCookieConsent/) || sessionStorage.getItem( 'aviaCookieRefused' ) )
+						{
+							allow_continue = false;
+						}
+						else
+						{
+							if( ! document.cookie.match(/aviaPrivacyRefuseCookiesHideBar/) )
+							{
+								allow_continue = false;
+							}
+							else if( ! document.cookie.match(/aviaPrivacyEssentialCookiesEnabled/) )
+							{
+								allow_continue = false;
+							}
+							else if( document.cookie.match(/aviaPrivacyGoogleWebfontsDisabled/) )
+							{
+								allow_continue = false;
+							}
+						}
+					}
 					
-					document.getElementsByTagName('head')[0].appendChild(f);
+					if( allow_continue )
+					{
+						var f = document.createElement('link');
+					
+						f.type 	= 'text/css';
+						f.rel 	= 'stylesheet';
+						f.href 	= '//fonts.googleapis.com/css?family=" . apply_filters( 'avf_google_fontlist', $this->google_fontlist ) . "';
+						f.id 	= 'avia-google-webfont';
+
+						document.getElementsByTagName('head')[0].appendChild(f);
+					}
 				})();
-			}
+			
 			</script>
 			";
 			

@@ -7,13 +7,13 @@
 if ( ! defined( 'ABSPATH' ) ) {  exit;  }    // Exit if accessed directly
 
 
-if( !class_exists( 'woocommerce' ) )
+if( ! class_exists( 'woocommerce' ) )
 {
-	add_shortcode('av_product_button', 'avia_please_install_woo');
+	add_shortcode( 'av_product_button', 'avia_please_install_woo' );
 	return;
 }
 
-if ( !class_exists( 'avia_sc_produc_button' ) )
+if ( ! class_exists( 'avia_sc_produc_button' ) )
 {
 	class avia_sc_produc_button extends aviaShortcodeTemplate
 	{
@@ -24,16 +24,16 @@ if ( !class_exists( 'avia_sc_produc_button' ) )
 		{
 			$this->config['self_closing']	=	'yes';
 			
-			$this->config['name']		= __('Product Purchase Button', 'avia_framework' );
-			$this->config['tab']		= __('Plugin Additions', 'avia_framework' );
+			$this->config['name']		= __( 'Product Purchase Button', 'avia_framework' );
+			$this->config['tab']		= __( 'Plugin Additions', 'avia_framework' );
 			$this->config['icon']		= AviaBuilder::$path['imagesURL']."sc-button.png";
 			$this->config['order']		= 20;
 			$this->config['target']		= 'avia-target-insert';
 			$this->config['shortcode'] 	= 'av_product_button';
-			$this->config['tooltip'] 	= __('Display the "Add to cart" button for the current product', 'avia_framework' );
+			$this->config['tooltip'] 	= __( 'Display the "Add to cart" button for the current product', 'avia_framework' );
 			$this->config['drag-level'] = 3;
 			$this->config['tinyMCE'] 	= array('disable' => "true");
-			$this->config['posttype'] 	= array('product',__('This element can only be used on single product pages','avia_framework'));
+			$this->config['posttype'] 	= array( 'product', __( 'This element can only be used on single product pages', 'avia_framework' ) );
 		}
 
 
@@ -68,7 +68,7 @@ if ( !class_exists( 'avia_sc_produc_button' ) )
 		 * @param string $shortcodename the shortcode found, when == callback name
 		 * @return string $output returns the modified html string
 		 */
-		function shortcode_handler($atts, $content = "", $shortcodename = "", $meta = "")
+		function shortcode_handler( $atts, $content = "", $shortcodename = "", $meta = "" )
 		{
 			$output = "";
 			if( ! isset( $meta['el_class'] ) )

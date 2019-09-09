@@ -22,6 +22,10 @@ Tab SECTION
 	display: table;
 	position: relative;
 	left:0%;
+
+	/* Safari pixel gap fix */
+	margin-left: -1px;
+	margin-right: -1px;
 }
 
 .av-tab-slide-transition .av-tab-section-inner-container{

@@ -18,13 +18,13 @@ if ( ! class_exists( 'avia_sc_blog' ) )
 			{
 				$this->config['self_closing']	=	'yes';
 				
-				$this->config['name']		= __('Blog Posts', 'avia_framework' );
-				$this->config['tab']		= __('Content Elements', 'avia_framework' );
+				$this->config['name']		= __( 'Blog Posts', 'avia_framework' );
+				$this->config['tab']		= __( 'Content Elements', 'avia_framework' );
 				$this->config['icon']		= AviaBuilder::$path['imagesURL']."sc-blog.png";
 				$this->config['order']		= 40;
 				$this->config['target']		= 'avia-target-insert';
 				$this->config['shortcode'] 	= 'av_blog';
-				$this->config['tooltip'] 	= __('Displays Posts from your Blog', 'avia_framework' );
+				$this->config['tooltip'] 	= __( 'Displays Posts from your Blog', 'avia_framework' );
 				$this->config['preview'] 	= false;
 				$this->config['disabling_allowed'] = "manually";
 				$this->config['disabled']	= array(
@@ -234,61 +234,13 @@ if ( ! class_exists( 'avia_sc_blog' ) )
 							"type" 	=> "close_div",
 							'nodescription' => true
 						),
-						
-						
-								array(
-									"type" 	=> "tab",
-									"name"	=> __("Screen Options",'avia_framework' ),
-									'nodescription' => true
-								),
+					
+					
+					array(	
+							'type'			=> 'template',
+							'template_id' 	=> 'screen_options_tab',
+						),
 								
-								
-								array(
-								"name" 	=> __("Element Visibility",'avia_framework' ),
-								"desc" 	=> __("Set the visibility for this element, based on the device screensize.", 'avia_framework' ),
-								"type" 	=> "heading",
-								"description_class" => "av-builder-note av-neutral",
-								),
-							
-								array(	
-										"desc" 	=> __("Hide on large screens (wider than 990px - eg: Desktop)", 'avia_framework'),
-										"id" 	=> "av-desktop-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-								
-								array(	
-									
-										"desc" 	=> __("Hide on medium sized screens (between 768px and 989px - eg: Tablet Landscape)", 'avia_framework'),
-										"id" 	=> "av-medium-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-										
-								array(	
-									
-										"desc" 	=> __("Hide on small screens (between 480px and 767px - eg: Tablet Portrait)", 'avia_framework'),
-										"id" 	=> "av-small-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-										
-								array(	
-									
-										"desc" 	=> __("Hide on very small screens (smaller than 479px - eg: Smartphone Portrait)", 'avia_framework'),
-										"id" 	=> "av-mini-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-			
-								
-							array(
-									"type" 	=> "close_div",
-									'nodescription' => true
-								),	
-								
-								
-						
 						
 					array(
 						"type" 	=> "close_div",
@@ -336,7 +288,7 @@ if ( ! class_exists( 'avia_sc_blog' ) )
 			{
 				$params['innerHtml'] = "<img src='".$this->config['icon']."' title='".$this->config['name']."' />";
 				$params['innerHtml'].= "<div class='avia-element-label'>".$this->config['name']."</div>";
-				$params['content'] 	 = NULL; //remove to allow content elements
+				$params['content'] 	 = null; //remove to allow content elements
 
 				return $params;
 			}
@@ -399,26 +351,26 @@ if ( ! class_exists( 'avia_sc_blog' ) )
                 }
 
 				$atts = shortcode_atts( array(
-											'blog_style'		=> '',
-											'bloglist_width'	=> '',
-											'columns'			=> 3,
-											'blog_type'			=> 'posts',
-											'items'				=> '16',
-											'paginate'			=> 'yes',
-											'categories'		=> '',
-											'preview_mode'		=> 'auto',
-											'image_size'		=> 'portfolio',
-											'taxonomy'			=> 'category',
-											'post_type'			=> get_post_types(),
-											'contents'			=> 'excerpt',
-											'content_length'	=> 'content',
-											'offset'			=> '0',
-											'conditional'		=> '',
-											'date_filter'		=> '',
-											'date_filter_start'	=> '',
-											'date_filter_end'	=> '',
-											'date_filter_format'	=> 'mm / dd / yy'
-										), $atts, $this->config['shortcode'] );
+								'blog_style'		=> '',
+								'bloglist_width'	=> '',
+								'columns'			=> 3,
+								'blog_type'			=> 'posts',
+								'items'				=> '16',
+								'paginate'			=> 'yes',
+								'categories'		=> '',
+								'preview_mode'		=> 'auto',
+								'image_size'		=> 'portfolio',
+								'taxonomy'			=> 'category',
+								'post_type'			=> get_post_types(),
+								'contents'			=> 'excerpt',
+								'content_length'	=> 'content',
+								'offset'			=> '0',
+								'conditional'		=> '',
+								'date_filter'		=> '',
+								'date_filter_start'	=> '',
+								'date_filter_end'	=> '',
+								'date_filter_format'	=> 'mm / dd / yy'
+							), $atts, $this->config['shortcode'] );
 				
 				$page = get_query_var( 'paged' ) ? get_query_var( 'paged' ) : get_query_var( 'page' );
 				if( ! $page ) 

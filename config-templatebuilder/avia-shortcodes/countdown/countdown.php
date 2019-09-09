@@ -7,11 +7,17 @@
 if ( ! defined( 'ABSPATH' ) ) {  exit;  }    // Exit if accessed directly
 
 
-if ( !class_exists( 'avia_sc_countdown' ) ) 
+if ( ! class_exists( 'avia_sc_countdown' ) ) 
 {
 	
 	class avia_sc_countdown extends aviaShortcodeTemplate
 	{
+			/**
+			 * @since 4.5.7.2
+			 * @var array 
+			 */
+			protected $time_array;
+			
 			/**
 			 * Create the config array for the shortcode button
 			 */
@@ -19,27 +25,40 @@ if ( !class_exists( 'avia_sc_countdown' ) )
 			{
 				$this->config['self_closing']	=	'yes';
 				
-				$this->config['name']		= __('Animated Countdown', 'avia_framework' );
-				$this->config['tab']		= __('Content Elements', 'avia_framework' );
+				$this->config['name']		= __( 'Animated Countdown', 'avia_framework' );
+				$this->config['tab']		= __( 'Content Elements', 'avia_framework' );
 				$this->config['icon']		= AviaBuilder::$path['imagesURL']."sc-countdown.png";
 				$this->config['order']		= 14;
 				$this->config['target']		= 'avia-target-insert';
 				$this->config['shortcode'] 	= 'av_countdown';
-				$this->config['tooltip'] 	= __('Display a countdown to a specific date', 'avia_framework' );
+				$this->config['tooltip'] 	= __( 'Display a countdown to a specific date', 'avia_framework' );
 				$this->config['preview'] 	= "xlarge";
 				$this->config['disabling_allowed'] = true;
+				$this->config['id_name']	= 'id';
+				$this->config['id_show']	= 'yes';
+				
 				$this->time_array = array(
-								__('Second',  	'avia_framework' ) 	=>'1',
-								__('Minute',  	'avia_framework' ) 	=>'2',	
-								__('Hour',  	'avia_framework' ) 	=>'3',
-								__('Day',  		'avia_framework' ) 	=>'4',
-								__('Week',  	'avia_framework' ) 	=>'5',
+								__( 'Second',  	'avia_framework' ) 	=> '1',
+								__( 'Minute',  	'avia_framework' ) 	=> '2',	
+								__( 'Hour',  	'avia_framework' ) 	=> '3',
+								__( 'Day',  	'avia_framework' ) 	=> '4',
+								__( 'Week',  	'avia_framework' ) 	=> '5',
 								/*
-								__('Month',  	'avia_framework' ) 	=>'6',
-								__('Year',  	'avia_framework' ) 	=>'7'
+								__( 'Month',  	'avia_framework' ) 	=> '6',
+								__( 'Year',  	'avia_framework' ) 	=> '7'
 								*/
 							);
-
+				
+			}
+			
+			/**
+			 * @since 4.5.7.2
+			 */
+			public function __destruct() 
+			{	
+				unset( $this->time_array );
+				
+				parent::__destruct();
 			}
 			
 			function extra_assets()
@@ -48,7 +67,7 @@ if ( !class_exists( 'avia_sc_countdown' ) )
 				wp_enqueue_style( 'avia-module-countdown' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/countdown/countdown.css' , array('avia-layout'), false );
 				
 				//load js
-				wp_enqueue_script( 'avia-module-countdown' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/countdown/countdown.js' , array('avia-shortcodes'), false, TRUE );
+				wp_enqueue_script( 'avia-module-countdown' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/countdown/countdown.js' , array('avia-shortcodes'), false, true );
 			}
 		
 		
@@ -181,109 +200,18 @@ if ( !class_exists( 'avia_sc_countdown' ) )
 							"type" 	=> "close_div",
 							'nodescription' => true
 						),
-						
-					array(
-									"type" 	=> "tab",
-									"name"	=> __("Screen Options",'avia_framework' ),
-									'nodescription' => true
-								),
-								
-								
-								array(
-								"name" 	=> __("Element Visibility",'avia_framework' ),
-								"desc" 	=> __("Set the visibility for this element, based on the device screensize.", 'avia_framework' ),
-								"type" 	=> "heading",
-								"description_class" => "av-builder-note av-neutral",
-								),
-							
-								array(	
-										"desc" 	=> __("Hide on large screens (wider than 990px - eg: Desktop)", 'avia_framework'),
-										"id" 	=> "av-desktop-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-								
-								array(	
-									
-										"desc" 	=> __("Hide on medium sized screens (between 768px and 989px - eg: Tablet Landscape)", 'avia_framework'),
-										"id" 	=> "av-medium-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-										
-								array(	
-									
-										"desc" 	=> __("Hide on small screens (between 480px and 767px - eg: Tablet Portrait)", 'avia_framework'),
-										"id" 	=> "av-small-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-										
-								array(	
-									
-										"desc" 	=> __("Hide on very small screens (smaller than 479px - eg: Smartphone Portrait)", 'avia_framework'),
-										"id" 	=> "av-mini-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-	
-								
-							array(
-									"type" 	=> "close_div",
-									'nodescription' => true
-								),	
-								
-							array(
-									"name" 	=> __("Number Font Size",'avia_framework' ),
-									"desc" 	=> __("Set the font size for the number, based on the device screensize.", 'avia_framework' ),
-									"type" 	=> "heading",
-									"description_class" => "av-builder-note av-neutral",
-									),
-										
-									array(	"name" 	=> __("Font Size for medium sized screens (between 768px and 989px - eg: Tablet Landscape)", 'avia_framework' ),
-						            "id" 	=> "av-medium-font-size-title",
-						            "type" 	=> "select",
-						            "subtype" => AviaHtmlHelper::number_array(10,60,1, array( __("Default", 'avia_framework' )=>'' , __("Hidden", 'avia_framework' )=>'hidden' ), "px"),
-						            "std" => ""),
-						            
-						            array(	"name" 	=> __("Font Size for small screens (between 480px and 767px - eg: Tablet Portrait)", 'avia_framework' ),
-						            "id" 	=> "av-small-font-size-title",
-						            "type" 	=> "select",
-						            "subtype" => AviaHtmlHelper::number_array(10,60,1, array( __("Default", 'avia_framework' )=>'', __("Hidden", 'avia_framework' )=>'hidden'), "px"),
-						            "std" => ""),
-						            
-									array(	"name" 	=> __("Font Size for very small screens (smaller than 479px - eg: Smartphone Portrait)", 'avia_framework' ),
-						            "id" 	=> "av-mini-font-size-title",
-						            "type" 	=> "select",
-						            "subtype" => AviaHtmlHelper::number_array(10,60,1, array( __("Default", 'avia_framework' )=>'', __("Hidden", 'avia_framework' )=>'hidden'), "px"),
-						            "std" => ""),
-						            
-						            
-						        array(
-									"name" 	=> __("Text Font Size",'avia_framework' ),
-									"desc" 	=> __("Set the font size for the text, based on the device screensize.", 'avia_framework' ),
-									"type" 	=> "heading",
-									"description_class" => "av-builder-note av-neutral",
-									),
-										
-									array(	"name" 	=> __("Font Size for medium sized screens (between 768px and 989px - eg: Tablet Landscape)", 'avia_framework' ),
-						            "id" 	=> "av-medium-font-size",
-						            "type" 	=> "select",
-						            "subtype" => AviaHtmlHelper::number_array(10,60,1, array( __("Default", 'avia_framework' )=>'', __("Hidden", 'avia_framework' )=>'hidden'), "px"),
-						            "std" => ""),
-						            
-						            array(	"name" 	=> __("Font Size for small screens (between 480px and 767px - eg: Tablet Portrait)", 'avia_framework' ),
-						            "id" 	=> "av-small-font-size",
-						            "type" 	=> "select",
-						            "subtype" => AviaHtmlHelper::number_array(10,60,1, array( __("Default", 'avia_framework' )=>'', __("Hidden", 'avia_framework' )=>'hidden'), "px"),
-						            "std" => ""),
-						            
-									array(	"name" 	=> __("Font Size for very small screens (smaller than 479px - eg: Smartphone Portrait)", 'avia_framework' ),
-						            "id" 	=> "av-mini-font-size",
-						            "type" 	=> "select",
-						            "subtype" => AviaHtmlHelper::number_array(10,60,1, array( __("Default", 'avia_framework' )=>'', __("Hidden", 'avia_framework' )=>'hidden'), "px"),
-						            "std" => ""),   
-						
+					
+					array(	
+							'type'				=> 'template',
+							'template_id'		=> 'screen_options_tab',
+							'templates_include'	=> array( 'screen_options_visibility', 'number_font_size', 'text_font_size' ),
+							"subtype"			=> array( 
+														'number_font_size'	=> AviaHtmlHelper::number_array( 10, 60, 1, array( __( 'Default', 'avia_framework' ) => '', __( 'Hidden', 'avia_framework' ) => 'hidden' ), 'px' ),
+														'text_font_size'	=> AviaHtmlHelper::number_array( 10, 60, 1, array( __( 'Default', 'avia_framework' ) => '', __( 'Hidden', 'avia_framework' ) => 'hidden' ), 'px' )
+													)
+						),
+				
+
 					array(
 							"type" 	=> "close_div",
 							'nodescription' => true
@@ -300,22 +228,25 @@ if ( !class_exists( 'avia_sc_countdown' ) )
 			 * @param string $shortcodename the shortcode found, when == callback name
 			 * @return string $output returns the modified html string 
 			 */
-			function shortcode_handler($atts, $content = "", $shortcodename = "", $meta = "")
+			function shortcode_handler( $atts, $content = "", $shortcodename = "", $meta = "" )
 			{
 				extract(AviaHelper::av_mobile_sizes($atts)); //return $av_font_classes, $av_title_font_classes and $av_display_classes 
-				extract(shortcode_atts(array(	'date' 		=> '', 
-											 	'hour' 		=> '12', 
-											 	'minute' 	=> '0',
-												'timezone'	=> '',
-											 	'min' 		=> '1', 
-											 	'max' 		=> '5',
-											 	'align'		=> 'center',
-											 	'size'		=> '', 
-											 	'style'		=> 'av-default-style', 
-											 	'link'		=> '', 
-											 	'title'		=> ''
-											 	)
-											 , $atts));
+				
+				$meta = aviaShortcodeTemplate::set_frontend_developer_heading_tag( $atts, $meta );
+				
+				extract( shortcode_atts( array(	
+							'date' 		=> '', 
+							'hour' 		=> '12', 
+							'minute' 	=> '0',
+							'timezone'	=> '',
+							'min' 		=> '1', 
+							'max' 		=> '5',
+							'align'		=> 'center',
+							'size'		=> '', 
+							'style'		=> 'av-default-style', 
+							'link'		=> '',			//	used by events_countown
+							'title'		=> ''			//	used by events_countown
+						), $atts, $this->config['shortcode'] ) );
 				
 				$this->full_time_array = array(
 				
@@ -350,10 +281,10 @@ if ( !class_exists( 'avia_sc_countdown' ) )
 					if(!empty($size)) $digit_style = "font-size:{$size}px; ";
 					$tags = !empty($link) ? array( "a href='{$link}' ", "a") : array('span', 'span');
 					
-					$default_heading = 'h3';
+					$default_heading = ! empty( $meta['heading_tag'] ) ? $meta['heading_tag'] : 'h3';
 					$args = array(
 								'heading'		=> $default_heading,
-								'extra_class'	=> ''
+								'extra_class'	=> $meta['heading_class']
 							);
 
 					$extra_args = array( $this, $atts, $content, 'title' );
@@ -365,9 +296,9 @@ if ( !class_exists( 'avia_sc_countdown' ) )
 					$args = apply_filters( 'avf_customize_heading_settings', $args, __CLASS__, $extra_args );
 
 					$heading = ! empty( $args['heading'] ) ? $args['heading'] : $default_heading;
-					$css = ! empty( $args['extra_class'] ) ? $args['extra_class'] : '';
+					$css = ! empty( $args['extra_class'] ) ? $args['extra_class'] : $meta['heading_class'];
 					
-					$output .= "<div class='av-countdown-timer {$av_display_classes} {$align} {$style} {$el}' {$final_time} data-interval='{$interval}' data-maximum='{$max}' >";
+					$output .= "<div {$meta['custom_el_id']} class='av-countdown-timer {$av_display_classes} {$align} {$style} {$el}' {$final_time} data-interval='{$interval}' data-maximum='{$max}' >";
 					
 					if( is_array( $title ) && isset( $title['top'] ) )
 					{

@@ -7,13 +7,13 @@
 if ( ! defined( 'ABSPATH' ) ) {  exit;  }    // Exit if accessed directly
 
 
-if( !class_exists( 'woocommerce' ) )
+if( ! class_exists( 'woocommerce' ) )
 {
 	add_shortcode('av_product_tabs', 'avia_please_install_woo');
 	return;
 }
 
-if ( !class_exists( 'avia_sc_product_tabs' ) )
+if ( ! class_exists( 'avia_sc_product_tabs' ) )
 {
 	class avia_sc_product_tabs extends aviaShortcodeTemplate
 	{
@@ -73,7 +73,7 @@ if ( !class_exists( 'avia_sc_product_tabs' ) )
 		 * @param string $shortcodename the shortcode found, when == callback name
 		 * @return string $output returns the modified html string
 		 */
-		function shortcode_handler($atts, $content = "", $shortcodename = "", $meta = "")
+		function shortcode_handler( $atts, $content = "", $shortcodename = "", $meta = "" )
 		{
 			add_filter('woocommerce_product_tabs', array($this, 'av_advanced_tabs_remove_content_tab'));
 		

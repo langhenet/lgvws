@@ -30,7 +30,7 @@ if ( !class_exists( 'aviaSaveBuilderTemplate' ) ) {
 		    $ver = AviaBuilder::VERSION;
 		
             #js
-			wp_enqueue_script('avia_template_save_js' , AviaBuilder::$path['assetsURL'].'js/avia-template-saving.js' , array('avia_element_js'), $ver, TRUE );
+			wp_enqueue_script('avia_template_save_js' , AviaBuilder::$path['assetsURL'].'js/avia-template-saving.js' , array('avia_element_js'), $ver, true );
 			
 			#ajax
 			add_action('wp_ajax_avia_ajax_save_builder_template', array($this,'save_builder_template'), 10);

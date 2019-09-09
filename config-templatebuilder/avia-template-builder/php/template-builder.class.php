@@ -358,7 +358,14 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 		public function handler_wp_head()
 		{
 			$this->wp_head_done = true;
-			ShortcodeHelper::$shortcode_index = 0;
+			
+			/**
+			 *	WP5.2 reports a problem: Class ‘ShortcodeHelper’ not found
+			 */
+			if( class_exists( 'ShortcodeHelper' ) )
+			{
+     				ShortcodeHelper::$shortcode_index = 0;
+			}
 		}
 		
 		/**
@@ -478,6 +485,7 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 			require_once( $this->paths['pluginPath'].'php/storage-post.class.php' );
 			require_once( $this->paths['pluginPath'].'php/font-manager.class.php' );
 			require_once( $this->paths['pluginPath'].'php/asset-manager.class.php' );
+			require_once( $this->paths['pluginPath'].'php/popup-templates.class.php' );
 			
 			
 			//autoload files in shortcodes folder and any other folders that were added by filter
@@ -591,11 +599,11 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 			$ver = AviaBuilder::VERSION;
 			
 			#js
-			wp_enqueue_script('avia_builder_js', $this->paths['assetsURL'].'js/avia-builder.js', array('jquery','jquery-ui-core', 'jquery-ui-sortable', 'jquery-ui-droppable','jquery-ui-datepicker','wp-color-picker','media-editor','post'), $ver, TRUE );
-			wp_enqueue_script('avia_element_js' , $this->paths['assetsURL'].'js/avia-element-behavior.js' , array('avia_builder_js'), $ver, TRUE );
-			wp_enqueue_script('avia_modal_js' , $this->paths['assetsURL'].'js/avia-modal.js' , array('jquery', 'avia_element_js', 'wp-color-picker'), $ver, TRUE );
-			wp_enqueue_script('avia_history_js' , $this->paths['assetsURL'].'js/avia-history.js' , array('avia_element_js'), $ver, TRUE );
-			wp_enqueue_script('avia_tooltip_js' , $this->paths['assetsURL'].'js/avia-tooltip.js' , array('avia_element_js'), $ver, TRUE );
+			wp_enqueue_script('avia_builder_js', $this->paths['assetsURL'].'js/avia-builder.js', array('jquery','jquery-ui-core', 'jquery-ui-sortable', 'jquery-ui-droppable','jquery-ui-datepicker','wp-color-picker','media-editor','post'), $ver, true );
+			wp_enqueue_script('avia_element_js' , $this->paths['assetsURL'].'js/avia-element-behavior.js' , array('avia_builder_js'), $ver, true );
+			wp_enqueue_script('avia_modal_js' , $this->paths['assetsURL'].'js/avia-modal.js' , array('jquery', 'avia_element_js', 'wp-color-picker'), $ver, true );
+			wp_enqueue_script('avia_history_js' , $this->paths['assetsURL'].'js/avia-history.js' , array('avia_element_js'), $ver, true );
+			wp_enqueue_script('avia_tooltip_js' , $this->paths['assetsURL'].'js/avia-tooltip.js' , array('avia_element_js'), $ver, true );
 
 			
 			#css
@@ -880,6 +888,65 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 			return $this->posts_shortcode_parser_state;
 		}
 		
+		/**
+		 * Returns option settings
+		 * 
+		 * @since 4.5.7.2
+		 * @param string $setting
+		 * @return string|false				depends on which setting
+		 */
+		public function get_developer_settings( $setting = '' )
+		{
+			$value = '';
+			
+			switch( $setting )
+			{
+				case 'custom_css':
+					$value = avia_get_option( 'developer_options', 'deactivate' );
+					if( '' == $value )
+					{
+						$value = 'hide';
+					}
+					
+					/**
+					 * Backwards compatibility - woll be removed in a future version
+					 * 
+					 * @since 4.6.1
+					 */
+					if( current_theme_supports( 'avia_template_builder_custom_css' ) )
+					{
+						$value = 'developer_options';
+					}
+					break;
+				case 'custom_id':
+					$value = avia_get_option( 'developer_id_attribute', 'deactivate' );
+					
+					/**
+					 * Backwards compatibility - woll be removed in a future version
+					 * 
+					 * @since 4.6.1
+					 */
+					if( current_theme_supports( 'avia_template_builder_custom_tab_toogle_id' ) )
+					{
+						$value = 'developer_id_attribute';
+					}
+					break;
+				case 'heading_tags':
+					$value = avia_get_option( 'developer_seo_heading_tags', 'deactivate' );
+					break;
+				default:
+					$value = false;
+			}
+			
+			/**
+			 * @since 4.5.7.2
+			 * @param string|false $value
+			 * @param string $setting
+			 * @return string|false
+			 */
+			return apply_filters( 'avf_alb_get_developer_settings', $value, $setting );
+		}
+
 		/**
 		 * Returns the state of the ALB for a given post id.
 		 * If null, checks for $_POST['aviaLayoutBuilder_active'] or the current post id.
@@ -1821,8 +1888,16 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 			 */
 			$output = apply_filters( 'avf_builder_metabox_editor_before', $output, $element );
 			
+			/**
+			 * Disable fix for tinyMCE bullet list indent/detent for special pages if it makes problems
+			 * 
+			 * @since 4.6.0
+			 * @return boolean
+			 */
+			$fix = apply_filters( 'avf_alb_tinymce_ignore_indent_fix', false );
+			$fix_class = false !== $fix ? 'avia-ignore-tiny-indent-fix' : '';
 			
-			$output .= '<div class="avia-builder-main-wrap">';
+			$output .= '<div class="avia-builder-main-wrap ' . $fix_class . '">';
 					
 			$this->shortcode_buttons = apply_filters('avia_show_shortcode_button', array());	
 			
@@ -2006,7 +2081,7 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 		
 		
 		
-		public function text_to_interface($text = NULL)
+		public function text_to_interface( $text = null )
 		{
 			if(!current_user_can('edit_posts')) die();
 			if(isset($_REQUEST['params']['_ajax_nonce'])) $_REQUEST['_ajax_nonce'] = $_REQUEST['params']['_ajax_nonce'];
@@ -2055,7 +2130,7 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 		 * 
 		 * @param string $text
 		 */
-		public function text_to_preview( $text = NULL )
+		public function text_to_preview( $text = null )
 		{
 			if( ! current_user_can( 'edit_posts' ) ) 
 			{
@@ -2119,7 +2194,7 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 			
 			//check for enclosing tag or self closing
 			$values['closing'] 	= strpos($m[0], '[/'.$m[2].']');
-			$values['content'] 	= $values['closing'] !== false ? $m[5] : NULL;
+			$values['content'] 	= $values['closing'] !== false ? $m[5] : null;
 	        $values['tag']		= $m[2];
 	        $values['attr']		= shortcode_parse_atts( stripslashes($m[3]) );
 	        

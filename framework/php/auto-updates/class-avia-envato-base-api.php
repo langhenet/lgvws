@@ -206,10 +206,10 @@ if( ! class_exists( 'Avia_Envato_Base_API' ) )
 		 * 
 		 * @since 4.4.3
 		 * @param array $response
-		 * @param array $body
+		 * @param array|null $body
 		 * @param string $prefix
 		 */
-		protected function add_envato_api_error( array $response, array $body, $prefix = '' )
+		protected function add_envato_api_error( array $response, $body = array(), $prefix = '' )
 		{
 			$code = wp_remote_retrieve_response_code( $response );
 			$message = wp_remote_retrieve_response_message( $response );
@@ -245,7 +245,7 @@ if( ! class_exists( 'Avia_Envato_Base_API' ) )
 				$message = $prefix . ' ' . $message;
 			}
 			
-			if( ! isset( $body['error'] ) )
+			if( ! is_array( $body ) || ! isset( $body['error'] ) )
 			{
 				$this->errors->add( 'Envato API Error', $message );
 				return;

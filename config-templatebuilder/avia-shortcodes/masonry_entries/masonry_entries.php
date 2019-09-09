@@ -7,10 +7,16 @@
 if ( ! defined( 'ABSPATH' ) ) {  exit;  }    // Exit if accessed directly
 
 
-if ( !class_exists( 'avia_sc_masonry_entries' ) ) 
+if ( ! class_exists( 'avia_sc_masonry_entries' ) ) 
 {
 	class avia_sc_masonry_entries extends aviaShortcodeTemplate
 	{	
+			/**
+			 * @since 4.5.7.2
+			 * @var int
+			 */
+			static protected $masonry_count = 0;
+			
 			/**
 			 * Create the config array for the shortcode button
 			 */
@@ -22,17 +28,20 @@ if ( !class_exists( 'avia_sc_masonry_entries' ) )
 				 */
 				$this->config['self_closing']	=	'yes';
 				
-				$this->config['name']			= __('Masonry', 'avia_framework' );
-				$this->config['tab']			= __('Content Elements', 'avia_framework' );
+				$this->config['name']			= __( 'Masonry', 'avia_framework' );
+				$this->config['tab']			= __( 'Content Elements', 'avia_framework' );
 				$this->config['icon']			= AviaBuilder::$path['imagesURL']."sc-masonry.png";
 				$this->config['order']			= 38;
 				$this->config['target']			= 'avia-target-insert';
 				$this->config['shortcode'] 		= 'av_masonry_entries';
-				$this->config['tooltip'] 	    = __('Display a fullwidth masonry/grid with blog entries', 'avia_framework' );
+				$this->config['tooltip'] 	    = __( 'Display a fullwidth masonry/grid with blog entries', 'avia_framework' );
 				$this->config['drag-level'] 	= 3;
 				$this->config['preview'] 		= false;
 				$this->config['disabling_allowed'] = true;
+				$this->config['id_name']		= 'id';
+				$this->config['id_show']		= 'always';
 			}
+			
 			function admin_assets()
 			{
 				add_action('wp_ajax_avia_ajax_masonry_more', array('avia_masonry','load_more'));
@@ -48,9 +57,9 @@ if ( !class_exists( 'avia_sc_masonry_entries' ) )
 				wp_enqueue_style( 'avia-siteloader', get_template_directory_uri()."/css/avia-snippet-site-preloader.css", array('avia-layout'), false);
 				
 				
-				wp_enqueue_script( 'avia-module-isotope' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/portfolio/isotope.js' , array('avia-shortcodes'), false , TRUE);
+				wp_enqueue_script( 'avia-module-isotope' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/portfolio/isotope.js' , array('avia-shortcodes'), false , true);
 
-				wp_enqueue_script( 'avia-module-masonry' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/masonry_entries/masonry_entries.js' , array('avia-module-isotope'), false, TRUE );
+				wp_enqueue_script( 'avia-module-masonry' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/masonry_entries/masonry_entries.js' , array('avia-module-isotope'), false, true );
 
 				//start sessions - only necessary for correct breadcrumb nav on single portfolio pages
 				if(!is_admin() && !current_theme_supports('avia_no_session_support') && !session_id()) session_start();
@@ -92,52 +101,9 @@ if ( !class_exists( 'avia_sc_masonry_entries' ) )
 						"std" 	=> "category"
 					),
 				
-				array(
-						"name" 	=> __("WooCommerce Product visibility?", 'avia_framework' ),
-						"desc" 	=> __("Select the visibility of WooCommerce products. Default setting can be set at Woocommerce -&gt Settings -&gt Products -&gt Inventory -&gt Out of stock visibility", 'avia_framework' ),
-						"id" 	=> "wc_prod_visible",
-						"type" 	=> "select",
-						"std" 	=> "",
-						"required" => array( 'link', 'parent_in_array', implode( ' ', get_object_taxonomies( 'product', 'names' ) ) ),
-						"subtype" => array(
-							__('Use default WooCommerce Setting (Settings -&gt; Products -&gt; Out of stock visibility)',  'avia_framework' ) => '',
-							__('Hide products out of stock',  'avia_framework' )	=> 'hide',
-							__('Show products out of stock',  'avia_framework' )	=> 'show')
-					),
-					
-				array(
-						"name" 	=> __( "WooCommerce Sorting Options", 'avia_framework' ),
-						"desc" 	=> __( "Here you can choose how to sort the products. Default setting can be set at Dashboard -&gt; Appearance -&gt; Customize -&gt; WooCommerce -&gt; Product Catalog -&gt; Default Product Sorting", 'avia_framework' ),
-						"id" 	=> "prod_order_by",
-						"type" 	=> "select",
-						"std" 	=> "",
-						"required" => array( 'link', 'parent_in_array', implode( ' ', get_object_taxonomies( 'product', 'names' ) ) ),
-						"subtype" => array( 
-								__( 'Use default (defined at Dashboard -&gt; Customize -&gt; WooCommerce)', 'avia_framework' )	=> '',
-								__( 'Sort alphabetically', 'avia_framework' )			=>	'title',
-								__( 'Sort by most recent', 'avia_framework' )			=>	'date',
-								__( 'Sort by price', 'avia_framework' )					=>	'price',
-								__( 'Sort by popularity', 'avia_framework' )			=>	'popularity',
-								__( 'Sort randomly', 'avia_framework' )					=>	'rand',
-								__( 'Sort by menu order and name', 'avia_framework' )	=>	'menu_order',
-								__( 'Sort by average rating', 'avia_framework' )		=>	'rating',
-								__( 'Sort by relevance', 'avia_framework' )				=>	'relevance',
-								__( 'Sort by Product ID', 'avia_framework' )			=>	'id'
-							)
-					),
-				
-				array(
-						"name" 	=> __( "WooCommerce Sorting Order", 'avia_framework' ),
-						"desc" 	=> __( "Here you can choose the order of the result products. Default setting can be set at Dashboard -&gt; Appearance -&gt; Customize -&gt; WooCommerce -&gt; Product Catalog -&gt; Default Product Sorting", 'avia_framework' ),
-						"id" 	=> "prod_order",
-						"type" 	=> "select",
-						"std" 	=> "",
-						"required" => array( 'link', 'parent_in_array', implode( ' ', get_object_taxonomies( 'product', 'names' ) ) ),
-						"subtype" => array( 
-								__('Use default (defined at Dashboard -&gt; Customize -&gt; WooCommerce)', 'avia_framework' ) =>	'',
-								__('Ascending', 'avia_framework' )			=>	'ASC',
-								__('Descending', 'avia_framework' )			=>	'DESC'
-							)
+				array(	
+						'type'			=> 'template',
+						'template_id' 	=> 'wc_options_non_products',
 					),
 					
 				array(	
@@ -280,7 +246,8 @@ if ( !class_exists( 'avia_sc_masonry_entries' ) )
 					"type" 	=> "select",
 					"std" 	=> "active",
 					"subtype" => array(
-						__('White overlay',  'avia_framework' ) =>'active',
+						__('Slightly fade in effect',  'avia_framework' ) =>'active',
+						__('Fade out effect', 'avia_framework' ) => 'fade_out',
 						__('Greyscale effect',  'avia_framework' ) =>'grayscale',
 						__('Desaturation effect',  'avia_framework' ) =>'desaturation',
 						__('Blur on hover effect',  'avia_framework' ) =>'bluronhover',
@@ -297,14 +264,6 @@ if ( !class_exists( 'avia_sc_masonry_entries' ) )
                             __('Animation activated',  'avia_framework' ) =>'active',
                             __('Animation deactivated',  'avia_framework' ) =>'',
                         )),
-
-
-                    array(	"name" 	=> __("For Developers: Section ID", 'avia_framework' ),
-						"desc" 	=> __("Apply a custom ID Attribute to the section, so you can apply a unique style via CSS. This option is also helpful if you want to use anchor links to scroll to a sections when a link is clicked", 'avia_framework' )."<br/><br/>".
-								   __("Use with caution and make sure to only use allowed characters. No special characters can be used.", 'avia_framework' ),
-			            "id" 	=> "id",
-			            "type" 	=> "input",
-			            "std" => ""),
 
 				array(
 							"type" 	=> "close_div",
@@ -398,53 +357,18 @@ if ( !class_exists( 'avia_sc_masonry_entries' ) )
 						'nodescription' => true
 					),
 					
-				array(
+					array(
 									"type" 	=> "tab",
 									"name"	=> __("Screen Options",'avia_framework' ),
 									'nodescription' => true
 								),
+					
+						array(	
+								'type'			=> 'template',
+								'template_id'	=> 'screen_options_visibility'
+							),
 								
-								
-								array(
-								"name" 	=> __("Element Visibility",'avia_framework' ),
-								"desc" 	=> __("Set the visibility for this element, based on the device screensize.", 'avia_framework' ),
-								"type" 	=> "heading",
-								"description_class" => "av-builder-note av-neutral",
-								),
-							
-								array(	
-										"desc" 	=> __("Hide on large screens (wider than 990px - eg: Desktop)", 'avia_framework'),
-										"id" 	=> "av-desktop-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-								
-								array(	
-									
-										"desc" 	=> __("Hide on medium sized screens (between 768px and 989px - eg: Tablet Landscape)", 'avia_framework'),
-										"id" 	=> "av-medium-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-										
-								array(	
-									
-										"desc" 	=> __("Hide on small screens (between 480px and 767px - eg: Tablet Portrait)", 'avia_framework'),
-										"id" 	=> "av-small-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-										
-								array(	
-									
-										"desc" 	=> __("Hide on very small screens (smaller than 479px - eg: Smartphone Portrait)", 'avia_framework'),
-										"id" 	=> "av-mini-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-									
-								
-								array(
+						array(
 								"name" 	=> __("Element Columns",'avia_framework' ),
 								"desc" 	=> 
 								__("Set the column count for this element, based on the device screensize.", 'avia_framework' )."<br/><small>".
@@ -453,33 +377,16 @@ if ( !class_exists( 'avia_sc_masonry_entries' ) )
 								"type" 	=> "heading",
 								"description_class" => "av-builder-note av-neutral",
 								),
-							
-							
-								array(	"name" 	=> __("Column count for medium sized screens (between 768px and 989px - eg: Tablet Landscape)", 'avia_framework' ),
-						            "id" 	=> "av-medium-columns",
-						            "type" 	=> "select",
-						            "subtype" => AviaHtmlHelper::number_array(1,4,1, array( __("Default", 'avia_framework' )=>'')),
-						            "std" => ""),
-						            
-						            array(	"name" 	=> __("Column count for small screens (between 480px and 767px - eg: Tablet Portrait)", 'avia_framework' ),
-						            "id" 	=> "av-small-columns",
-						            "type" 	=> "select",
-						            "subtype" => AviaHtmlHelper::number_array(1,4,1, array( __("Default", 'avia_framework' )=>'')),
-						            "std" => ""),
-						            
-									array(	"name" 	=> __("Column count for very small screens (smaller than 479px - eg: Smartphone Portrait)", 'avia_framework' ),
-						            "id" 	=> "av-mini-columns",
-						            "type" 	=> "select",
-						            "subtype" => AviaHtmlHelper::number_array(1,4,1, array( __("Default", 'avia_framework' )=>'')),
-						            "std" => ""),  
-							  
-				
-							
+					
+						array(	
+								'type'			=> 'template',
+								'template_id'	=> 'column_count'
+							),
 								
-							array(
-									"type" 	=> "close_div",
-									'nodescription' => true
-								),	
+					array(
+							"type" 	=> "close_div",
+							'nodescription' => true
+						),	
 				
 						
 				array(
@@ -577,16 +484,18 @@ if ( !class_exists( 'avia_sc_masonry_entries' ) )
 			 * @return string $output returns the modified html string 
 			 */
 			
-			function shortcode_handler($atts, $content = "", $shortcodename = "", $meta = "")
+			function shortcode_handler( $atts, $content = "", $shortcodename = "", $meta = "" )
 			{
-				extract(AviaHelper::av_mobile_sizes($atts)); //return $av_font_classes, $av_title_font_classes and $av_display_classes 
+				extract(AviaHelper::av_mobile_sizes( $atts ) ); //return $av_font_classes, $av_title_font_classes and $av_display_classes 
 				
 				$output  = "";
+				avia_sc_masonry_entries::$masonry_count ++;
 				
-				$params['class'] = "main_color {$av_display_classes} ".$meta['el_class'];
+				$params['class'] = "main_color {$av_display_classes} {$meta['el_class']}";
 				$params['open_structure'] = false;
-				$params['id'] = !empty($atts['id']) ? AviaHelper::save_string($atts['id'],'-') : "";
+				$params['id'] = AviaHelper::save_string( $meta['custom_id_val'] , '-', 'av-sc-masonry-entries-' . avia_sc_masonry_entries::$masonry_count );
 				$params['custom_markup'] = $meta['custom_markup'];
+				
 				if( ($atts['gap'] == 'no' && $atts['sort'] == "no") || $meta['index'] == 0) $params['class'] .= " avia-no-border-styling";
 				
 				//we dont need a closing structure if the element is the first one or if a previous fullwidth element was displayed before
@@ -602,6 +511,7 @@ if ( !class_exists( 'avia_sc_masonry_entries' ) )
 				if( ShortcodeHelper::is_top_level() )
 				{
 					$atts['custom_class'] = '';
+					$atts['id'] = '';
 				}
 				
 				$masonry  = new avia_masonry( $atts );
@@ -610,8 +520,10 @@ if ( !class_exists( 'avia_sc_masonry_entries' ) )
 				$masonry_html = $masonry->html();
 				
 
-				if(!ShortcodeHelper::is_top_level()) return $masonry_html;
-				
+				if( ! ShortcodeHelper::is_top_level() ) 
+				{
+					return $masonry_html;
+				}
 				
 				if( !empty( $atts['color'] ) && !empty( $atts['custom_bg']) )
 				{

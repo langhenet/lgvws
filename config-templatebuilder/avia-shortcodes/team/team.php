@@ -7,7 +7,7 @@
 if ( ! defined( 'ABSPATH' ) ) {  exit;  }    // Exit if accessed directly
 
 
-if ( !class_exists( 'avia_sc_team' ) )
+if ( ! class_exists( 'avia_sc_team' ) )
 {
 	class avia_sc_team extends aviaShortcodeTemplate
 	{
@@ -18,22 +18,24 @@ if ( !class_exists( 'avia_sc_team' ) )
 			{
 				$this->config['self_closing']	=	'no';
 				
-				$this->config['name']		= __('Team Member', 'avia_framework' );
-				$this->config['tab']		= __('Content Elements', 'avia_framework' );
+				$this->config['name']		= __( 'Team Member', 'avia_framework' );
+				$this->config['tab']		= __( 'Content Elements', 'avia_framework' );
 				$this->config['icon']		= AviaBuilder::$path['imagesURL']."sc-team.png";
 				$this->config['order']		= 35;
 				$this->config['target']		= 'avia-target-insert';
 				$this->config['shortcode'] 	= 'av_team_member';
 				$this->config['shortcode_nested'] = array('av_team_icon');
-				$this->config['tooltip'] 	= __('Display a team members image with additional information', 'avia_framework' );
-				$this->config['preview'] 		= true;
+				$this->config['tooltip'] 	= __( 'Display a team members image with additional information', 'avia_framework' );
+				$this->config['preview'] 	= true;
 				$this->config['disabling_allowed'] = true;
+				$this->config['id_name']	= 'id';
+				$this->config['id_show']	= 'yes';
 			}
 
 			function admin_assets()
 			{
 				$ver = AviaBuilder::VERSION;
-	            wp_enqueue_script('avia_tab_toggle_js' , AviaBuilder::$path['assetsURL'].'js/avia-tab-toggle.js' , array('avia_modal_js'), $ver, TRUE );
+	            wp_enqueue_script('avia_tab_toggle_js' , AviaBuilder::$path['assetsURL'].'js/avia-tab-toggle.js' , array('avia_modal_js'), $ver, true );
 			}
 			
 			function extra_assets()
@@ -204,56 +206,13 @@ if ( !class_exists( 'avia_sc_team' ) )
 										"type" 	=> "close_div",
 										'nodescription' => true
 									),
-								array(
-									"type" 	=> "tab",
-									"name"	=> __("Screen Options",'avia_framework' ),
-									'nodescription' => true
-								),
-								
-								
-								array(
-								"name" 	=> __("Element Visibility",'avia_framework' ),
-								"desc" 	=> __("Set the visibility for this element, based on the device screensize.", 'avia_framework' ),
-								"type" 	=> "heading",
-								"description_class" => "av-builder-note av-neutral",
-								),
-							
+					
+					
 								array(	
-										"desc" 	=> __("Hide on large screens (wider than 990px - eg: Desktop)", 'avia_framework'),
-										"id" 	=> "av-desktop-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-								
-								array(	
-									
-										"desc" 	=> __("Hide on medium sized screens (between 768px and 989px - eg: Tablet Landscape)", 'avia_framework'),
-										"id" 	=> "av-medium-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-										
-								array(	
-									
-										"desc" 	=> __("Hide on small screens (between 480px and 767px - eg: Tablet Portrait)", 'avia_framework'),
-										"id" 	=> "av-small-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-										
-								array(	
-									
-										"desc" 	=> __("Hide on very small screens (smaller than 479px - eg: Smartphone Portrait)", 'avia_framework'),
-										"id" 	=> "av-mini-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-	
-								
-							array(
-									"type" 	=> "close_div",
-									'nodescription' => true
-								),		
+										'type'			=> 'template',
+										'template_id'	=> 'screen_options_tab'
+									),
+
 								array(
 										"type" 	=> "close_div",
 										'nodescription' => true
@@ -352,22 +311,24 @@ if ( !class_exists( 'avia_sc_team' ) )
 			 * @param string $shortcodename the shortcode found, when == callback name
 			 * @return string $output returns the modified html string
 			 */
-			function shortcode_handler($atts, $content = "", $shortcodename = "", $meta = "")
+			function shortcode_handler( $atts, $content = "", $shortcodename = "", $meta = "" )
 			{
-				extract(AviaHelper::av_mobile_sizes($atts)); //return $av_font_classes, $av_title_font_classes and $av_display_classes 
+				extract( AviaHelper::av_mobile_sizes( $atts ) ); //return $av_font_classes, $av_title_font_classes and $av_display_classes 
 				
-				$atts =  shortcode_atts(array(	'name' => '',
-												'src' => '',
-												'image_width' => '',
-												'description' => '',
-												'job' => '',
-												'custom_markup' => '',
-												'font_color'=>'', 
-												'custom_title'=>'', 
-												'custom_content'=>'',
-			                                 
-			                                 ), $atts, $this->config['shortcode']);
-				extract($atts);
+				$atts =  shortcode_atts( array(	
+							'name'			=> '',
+							'src'			=> '',
+							'image_width'	=> '',
+							'description'	=> '',
+							'job'			=> '',
+							'custom_markup'	=> '',
+							'font_color'	=> '', 
+							'custom_title'	=> '', 
+							'custom_content' => ''
+
+						), $atts, $this->config['shortcode'] );
+				
+				extract( $atts );
 
 				$title_styling 		= "";
 				$content_styling 	= "";
@@ -391,13 +352,13 @@ if ( !class_exists( 'avia_sc_team' ) )
 					}
 				}
 
-				$socials = ShortcodeHelper::shortcode2array($content);
+				$socials = ShortcodeHelper::shortcode2array( $content );
 
 				$output  = "";
                 $markup = avia_markup_helper(array('context' => 'person','echo'=>false, 'custom_markup'=>$custom_markup));
 
-				$output .= "<section class='avia-team-member {$av_display_classes} ".$meta['el_class']."' $markup>";
-				if($src)
+				$output .= "<section {$meta['custom_el_id']} class='avia-team-member {$av_display_classes} {$meta['el_class']}' {$markup}>";
+				if( $src )
 				{
 					$cls = 'avia_image avia_image_team';
 					if( ! empty( $image_width) )

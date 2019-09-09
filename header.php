@@ -62,7 +62,7 @@
 <!-- mobile setting -->
 <?php
 
-if( strpos($responsive, 'responsive') !== false ) echo '<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">';
+if( strpos($responsive, 'responsive') !== false ) { echo '<meta name="viewport" content="width=device-width, initial-scale=1">';  }
 ?>
 
 
@@ -77,7 +77,6 @@ if( strpos($responsive, 'responsive') !== false ) echo '<meta name="viewport" co
 wp_head();
 
 ?>
-
 <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,400,600,300' rel='stylesheet' type='text/css'>
 </head>
 

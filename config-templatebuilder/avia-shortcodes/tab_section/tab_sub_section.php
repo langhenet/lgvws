@@ -356,33 +356,30 @@ if ( !class_exists( 'avia_sc_tab_sub_section' ) )
 			 * @param string $shortcodename the shortcode found, when == callback name
 			 * @return string $output returns the modified html string
 			 */
-			function shortcode_handler($atts, $content = "", $shortcodename = "", $meta = "")
+			function shortcode_handler( $atts, $content = "", $shortcodename = "", $meta = "" )
 			{
 				global $avia_config;
 				
-				$atts = shortcode_atts(array(
-					
-					'tab_title'				=> '',
-					'vertical_align'		=> '',
-					'color'					=> '',
-					'background_color'		=> '',
-					'background_position' 	=> '',
-					'background_repeat' 	=> '',
-					'background_attachment' => '',
-					'fetch_image'			=> '',
-					'attachment_size'		=> '',
-					'attachment'			=> '',
-					'icon'					=> '',
-					'font'					=> '',
-					'icon_select'			=> 'no',
-					'tab_image'				=> '',
-					'tab_image_style'		=> '',
-					
-					
+				$atts = shortcode_atts( array(
+							'tab_title'				=> '',
+							'vertical_align'		=> '',
+							'color'					=> '',
+							'background_color'		=> '',
+							'background_position' 	=> '',
+							'background_repeat' 	=> '',
+							'background_attachment' => '',
+							'fetch_image'			=> '',
+							'attachment_size'		=> '',
+							'attachment'			=> '',
+							'icon'					=> '',
+							'font'					=> '',
+							'icon_select'			=> 'no',
+							'tab_image'				=> '',
+							'tab_image_style'		=> ''
+						), $atts, $this->config['shortcode'] );
 				
-				), $atts, $this->config['shortcode']);
-				
-				if(avia_sc_tab_sub_section::$attr['content_height'] == "av-tab-content-auto"){
+				if( avia_sc_tab_sub_section::$attr['content_height'] == "av-tab-content-auto" )
+				{
 					$atts['vertical_align'] = "top";
 				}
 				

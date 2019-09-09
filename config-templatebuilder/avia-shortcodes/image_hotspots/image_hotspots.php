@@ -7,10 +7,16 @@
 if ( ! defined( 'ABSPATH' ) ) {  exit;  }    // Exit if accessed directly
 
 
-if ( !class_exists( 'avia_sc_image_hotspots' ) )
+if ( ! class_exists( 'avia_sc_image_hotspots' ) )
 {
 	class avia_sc_image_hotspots extends aviaShortcodeTemplate
 	{
+			/**
+			 * @since 4.5.7.2
+			 * @var int 
+			 */
+			static protected $img_hotspot_count = 0;
+			
 			/**
 			 * Create the config array for the shortcode button
 			 */
@@ -18,16 +24,18 @@ if ( !class_exists( 'avia_sc_image_hotspots' ) )
 			{
 				$this->config['self_closing']	=	'no';
 				
-				$this->config['name']			= __('Image with Hotspots', 'avia_framework' );
-				$this->config['tab']			= __('Media Elements', 'avia_framework' );
+				$this->config['name']			= __( 'Image with Hotspots', 'avia_framework' );
+				$this->config['tab']			= __( 'Media Elements', 'avia_framework' );
 				$this->config['icon']			= AviaBuilder::$path['imagesURL']."sc-image-hotspot.png";
 				$this->config['order']			= 95;
 				$this->config['target']			= 'avia-target-insert';
 				$this->config['shortcode'] 		= 'av_image_hotspot';
 				$this->config['shortcode_nested'] = array('av_image_spot');
-				$this->config['modal_data'] 	= array('modal_class' => 'bigscreen');
-				$this->config['tooltip'] 	    = __('Inserts an image with one or many hotspots that show tooltips', 'avia_framework' );
+				$this->config['modal_data'] 	= array( 'modal_class' => 'bigscreen' );
+				$this->config['tooltip'] 	    = __( 'Inserts an image with one or many hotspots that show tooltips', 'avia_framework' );
 				$this->config['disabling_allowed'] = true;
+				$this->config['id_name']		= 'id';
+				$this->config['id_show']		= 'yes';
 			}
 			
 			function extra_assets()
@@ -36,7 +44,7 @@ if ( !class_exists( 'avia_sc_image_hotspots' ) )
 				wp_enqueue_style( 'avia-module-hotspot' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/image_hotspots/image_hotspots.css' , array('avia-layout'), false );
 				
 					//load js
-				wp_enqueue_script( 'avia-module-hotspot' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/image_hotspots/image_hotspots.js' , array('avia-shortcodes'), false, TRUE );
+				wp_enqueue_script( 'avia-module-hotspot' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/image_hotspots/image_hotspots.js' , array('avia-shortcodes'), false, true );
 
 			
 			}
@@ -308,80 +316,41 @@ if ( !class_exists( 'avia_sc_image_hotspots' ) )
 						),
 						
 						
-								array(
-									"type" 	=> "tab",
-									"name"	=> __("Screen Options",'avia_framework' ),
-									'nodescription' => true
-								),
+						array(
+								"type" 	=> "tab",
+								"name"	=> __("Screen Options",'avia_framework' ),
+								'nodescription' => true
+							),
 								
-								array(	
-									"name" 	=> __("Hotspot on mobile devices", 'avia_framework' ),
-									"desc" 	=> __("Check if you always want to show the tooltips on mobile phones below the image. Recommended if your tooltips contain a lot of text", 'avia_framework' ) ,
-									"id" 	=> "hotspot_mobile",
-									"std" 	=> "true",
-									"type" 	=> "checkbox"),
+						array(	
+								"name" 	=> __("Hotspot on mobile devices", 'avia_framework' ),
+								"desc" 	=> __("Check if you always want to show the tooltips on mobile phones below the image. Recommended if your tooltips contain a lot of text", 'avia_framework' ) ,
+								"id" 	=> "hotspot_mobile",
+								"std" 	=> "true",
+								"type" 	=> "checkbox"
+							),
 									
-									
-									
-								array(
-								"name" 	=> __("Element Visibility",'avia_framework' ),
-								"desc" 	=> __("Set the visibility for this element, based on the device screensize.", 'avia_framework' ),
-								"type" 	=> "heading",
-								"description_class" => "av-builder-note av-neutral",
-								),
-							
-								array(	
-										"desc" 	=> __("Hide on large screens (wider than 990px - eg: Desktop)", 'avia_framework'),
-										"id" 	=> "av-desktop-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-								
-								array(	
-									
-										"desc" 	=> __("Hide on medium sized screens (between 768px and 989px - eg: Tablet Landscape)", 'avia_framework'),
-										"id" 	=> "av-medium-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-										
-								array(	
-									
-										"desc" 	=> __("Hide on small screens (between 480px and 767px - eg: Tablet Portrait)", 'avia_framework'),
-										"id" 	=> "av-small-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-										
-								array(	
-									
-										"desc" 	=> __("Hide on very small screens (smaller than 479px - eg: Smartphone Portrait)", 'avia_framework'),
-										"id" 	=> "av-mini-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-	
-								
-							array(
-									"type" 	=> "close_div",
-									'nodescription' => true
-								),	
+					
+						array(	
+								'type'			=> 'template',
+								'template_id'	=> 'screen_options_visibility'
+							),
+
+					
+						array(
+								"type" 	=> "close_div",
+								'nodescription' => true
+							),	
 								
 								
-						
-						
 					array(
 						"type" 	=> "close_div",
 						'nodescription' => true
-					),
+					)
 						
+				);
 						
-									
-						);
-						
-						
-						
-						
+
 			}
 
 			/**
@@ -458,7 +427,7 @@ if ( !class_exists( 'avia_sc_image_hotspots' ) )
 			 * @param string $shortcodename the shortcode found, when == callback name
 			 * @return string $output returns the modified html string
 			 */
-			function shortcode_handler($atts, $content = "", $shortcodename = "", $meta = "")
+			function shortcode_handler( $atts, $content = "", $shortcodename = "", $meta = "" )
 			{	
 				$output 	= "";
 				$class  	= "";
@@ -467,19 +436,21 @@ if ( !class_exists( 'avia_sc_image_hotspots' ) )
 				$src   		= "";
 				$markup 	= avia_markup_helper(array('context' => 'image','echo'=>false, 'custom_markup'=>$meta['custom_markup']));
 				$markup_url = avia_markup_helper(array('context' => 'image_url','echo'=>false, 'custom_markup'=>$meta['custom_markup']));
-				$hotspots 	= ShortcodeHelper::shortcode2array($content, 1);
+				$hotspots 	= ShortcodeHelper::shortcode2array( $content, 1 );
+				
+				avia_sc_image_hotspots::$img_hotspot_count ++;
 				
 				
-				extract(AviaHelper::av_mobile_sizes($atts)); //return $av_font_classes, $av_title_font_classes and $av_display_classes 
+				extract( AviaHelper::av_mobile_sizes( $atts ) ); //return $av_font_classes, $av_title_font_classes and $av_display_classes 
 
 				extract( shortcode_atts( array(
-											'animation'					=> 'no-animation', 
-											'attachment'				=> '', 
-											'attachment_size'			=> '', 
-											'hotspot_layout'			=> 'numbered', 
-											'hotspot_mobile'			=> '', 
-											'hotspot_tooltip_display'	=> ''
-										), $atts, $this->config['shortcode'] ) );
+								'animation'					=> 'no-animation', 
+								'attachment'				=> '', 
+								'attachment_size'			=> '', 
+								'hotspot_layout'			=> 'numbered', 
+								'hotspot_mobile'			=> '', 
+								'hotspot_tooltip_display'	=> ''
+							), $atts, $this->config['shortcode'] ) );
 				
 				$img_h = "";
 				$img_w = "";
@@ -490,13 +461,13 @@ if ( !class_exists( 'avia_sc_image_hotspots' ) )
 					 * Allows e.g. WPML to reroute to translated image
 					 */
 					$posts = get_posts( array(
-											'include'			=> $attachment,
-											'post_status'		=> 'inherit',
-											'post_type'			=> 'attachment',
-											'post_mime_type'	=> 'image',
-											'order'				=> 'ASC',
-											'orderby'			=> 'post__in' )
-										);
+									'include'			=> $attachment,
+									'post_status'		=> 'inherit',
+									'post_type'			=> 'attachment',
+									'post_mime_type'	=> 'image',
+									'order'				=> 'ASC',
+									'orderby'			=> 'post__in' )
+								);
 					
 					if( is_array( $posts ) && ! empty( $posts ) )
 					{
@@ -520,7 +491,10 @@ if ( !class_exists( 'avia_sc_image_hotspots' ) )
 				//no src? return
 				if(!empty($src))
 				{
-					if(!ShortcodeHelper::is_top_level()) $meta['el_class'] .= " av-non-fullwidth-hotspot-image";
+					if( ! ShortcodeHelper::is_top_level() ) 
+					{
+						$meta['el_class'] .= " av-non-fullwidth-hotspot-image";
+					}
 					
 					$hotspot_html 	= "";
 					$tooltip_html 	= "";
@@ -551,13 +525,14 @@ if ( !class_exists( 'avia_sc_image_hotspots' ) )
 					if(!empty($img_h)) $hw .= ' height="' . $img_h . '"';
 					if(!empty($img_w)) $hw .= ' width="' . $img_w . '"';
 					
+					$el_id = ShortcodeHelper::is_top_level() ? '' : $meta['custom_el_id'];
 					
-					$output .= "<div class='av-hotspot-image-container {$av_display_classes} {$class} {$meta['el_class']}' {$markup}>";
+					$output .= "<div {$el_id} class='av-hotspot-image-container {$av_display_classes} {$class} {$meta['el_class']}' {$markup}>";
 					$output .= 		"<div class='av-hotspot-container'>";
 					$output .= 			"<div class='av-hotspot-container-inner-cell'>";
 					$output .= 				"<div class='av-hotspot-container-inner-wrap'>";
 					$output .= 					$hotspot_html;
-					$output .= 					"<img class='avia_image ' src='{$src}' alt='{$alt}' title='{$title}'  {$hw} $markup_url />";
+					$output .= 					"<img class='avia_image' src='{$src}' alt='{$alt}' title='{$title}' {$hw} {$markup_url} />";
 					$output .= 				"</div>";
 					$output .= 			"</div>";
 					$output .= 		"</div>";
@@ -571,9 +546,9 @@ if ( !class_exists( 'avia_sc_image_hotspots' ) )
 				}
 				
 				$skipSecond = false;
-				$params['class'] = "main_color av-fullwidth-hotspots ".$meta['el_class']." {$av_display_classes}";
+				$params['class'] = "main_color av-fullwidth-hotspots {$meta['el_class']} {$av_display_classes}";
 				$params['open_structure'] = false;
-				$params['id'] = !empty($atts['id']) ? AviaHelper::save_string($atts['id'],'-') : "";
+				$params['id'] = AviaHelper::save_string( $meta['custom_id_val'] , '-', 'av-sc-img-hotspot-' . avia_sc_image_hotspots::$img_hotspot_count );
 				$params['custom_markup'] = $meta['custom_markup'];
 				
 				//we dont need a closing structure if the element is the first one or if a previous fullwidth element was displayed before
@@ -582,7 +557,7 @@ if ( !class_exists( 'avia_sc_image_hotspots' ) )
 				
 				$image = $output;
 				
-				$output  =  avia_new_section($params);
+				$output  = avia_new_section( $params );
 				$output .= $image;
 				$output .= "</div>"; //close section
 				
@@ -599,10 +574,9 @@ if ( !class_exists( 'avia_sc_image_hotspots' ) )
 				    $skipSecond = true;
 				}
 				
-				if(empty($skipSecond)) {
-				
-				$output .= avia_new_section(array('close'=>false, 'id' => "after_image_hotspots"));
-				
+				if( empty( $skipSecond ) ) 
+				{
+					$output .= avia_new_section(array('close'=>false, 'id' => "after_image_hotspots"));
 				}
 				
 				return $output;

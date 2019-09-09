@@ -224,13 +224,35 @@ if( ! function_exists( 'avia_bbpress_before_page_in_footer_compile' ) )
 	function avia_bbpress_before_page_in_footer_compile( WP_Post $footer_page, $post_id )
 	{
 		$current = get_post( $post_id );
+		$forum_page = false;
 		
-		if( ! $current instanceof WP_Post )
+		if( bbp_is_single_user() || bbp_is_single_user_edit() || bbp_is_user_home() || bbp_is_user_home_edit()  )
 		{
-			return;
+			$forum_page = true;
+		}
+		else if( bbp_is_topics_created() || bbp_is_replies_created() || bbp_is_favorites() || bbp_is_subscriptions() )
+		{
+			$forum_page = true;
+		}
+		else if( bbp_is_forum_archive() )
+		{
+			$forum_page = true;
+		}
+		else
+		{
+			if( ! $current instanceof WP_Post )
+			{
+				return;
+			}
 		}
 		
-		if( in_array( $current->post_type, array( 'forum', 'topic',  'reply' ) ) )
+		$bbp_post_types = array(
+								bbp_get_forum_post_type(),
+								bbp_get_topic_post_type(),
+								bbp_get_reply_post_type()
+							);
+		
+		if( $forum_page || in_array( $current->post_type, $bbp_post_types ) )
 		{
 			bbp_restore_all_filters( 'the_content' );
 		}

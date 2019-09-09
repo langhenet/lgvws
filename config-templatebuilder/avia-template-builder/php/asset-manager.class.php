@@ -1,6 +1,6 @@
 <?php
 // Don't load directly
-if ( !defined('ABSPATH') ) { die('-1'); }	
+if ( ! defined( 'ABSPATH' ) ) { die('-1'); }	
 
 /*
 Description:  	Allows for asset generation/inclusion like css files and js. Also allows to combine files.
@@ -12,7 +12,8 @@ Since:			4.2.4
 */
 	
 
-if ( !class_exists( 'aviaAssetManager' ) ) {
+if ( ! class_exists( 'aviaAssetManager' ) ) 
+{
 
 	class aviaAssetManager
 	{
@@ -26,13 +27,13 @@ if ( !class_exists( 'aviaAssetManager' ) ) {
 		var $compress_files = array('css' => true, 'js' => true);
 		
 		//files to exclude
-		var $exclude_files	= array('css' => array('admin-bar','dashicons'), 'js' => array( 'jquery-core', 'admin-bar','comment-reply', 'avia-recaptcha-api' ) );
+		var $exclude_files	= array( 'css' => array( 'admin-bar', 'dashicons' ), 'js' => array( 'jquery-core', 'admin-bar','comment-reply' ) );
 		
 		//collect all files to deregister
-		var $deregister_files = array('css' => array(), 'js' => array());
+		var $deregister_files = array( 'css' => array(), 'js' => array() );
 		
 		//files that will be removed from queue and instead ONLY printed to the head of the page, no matter if they are actually set to be minified
-		var $force_print_to_head = array('css' => array('layerslider','layerslider-front'), 'js' => array("avia-compat"));
+		var $force_print_to_head = array( 'css' => array( 'layerslider', 'layerslider-front' ), 'js' => array( 'avia-compat' ) );
 		
 		//files that will be printed to the head in addition to staying enqueued if they are enqueed. Helps with above the fold render blocking
 		var $additional_print_to_head = array('css' => array(), 'js' => array());
@@ -71,15 +72,15 @@ if ( !class_exists( 'aviaAssetManager' ) ) {
 
 
 			//before enqueuing the css and js files check if we can serve a compressed version (only frontend)
-			add_action('wp_enqueue_scripts', 	array(&$this, 'try_minifying_scripts') , 999999 );
+			add_action('wp_enqueue_scripts', 	array( $this, 'try_minifying_scripts') , 999999 );
 			
-			add_action('wp_print_footer_scripts', 	array(&$this, 'minimize_footer_scripts') , 9 );
+			add_action('wp_print_footer_scripts', 	array( $this, 'minimize_footer_scripts') , 9 );
 			
 			//if we got any compressed/combined scripts remove the default registered files
 			//add_action('wp_enqueue_scripts', 	array(&$this, 'try_deregister_scripts') , 9999999 );
 						
 			//print assets that are set for printing
-			add_action('wp_head', 	array(&$this, 'inline_print_assets') , 20 );
+			add_action('wp_head', 	array( $this, 'inline_print_assets') , 20 );
 			
 		}
 		
@@ -93,10 +94,10 @@ if ( !class_exists( 'aviaAssetManager' ) ) {
 			
 			
 			//compresses css files and stores them in a file called avia-merged-styles-HASH_ID.css
-			$this->merge('css', 'avia-merged-styles');
+			$this->merge( 'css', 'avia-merged-styles' );
 			
 			//compresses JS files and stores them in a file called avia-head-scripts-HASH_ID.js/avia-footer-scripts-HASH_ID.js// - footer scripts attr: (group 1)
-			$this->merge('js',  'avia-head-scripts',   array('groups'=>0));
+			$this->merge( 'js', 'avia-head-scripts',   array( 'groups' => 0 ) );
 			
 			
 		}
@@ -104,11 +105,18 @@ if ( !class_exists( 'aviaAssetManager' ) ) {
 		//extra hook that allows us to minimze scripts that were added to be printed in wp_footer
 		public function minimize_footer_scripts()
 		{
-			$this->merge('js',  'avia-footer-scripts', array('groups'=>1));
+			$this->merge( 'js', 'avia-footer-scripts', array( 'groups' => 1 ) );
 		}
 
-
-		//function that checks if we can merge a group of files based on the passed params
+		/**
+		 * Checks if we can merge a group of files based on the passed params
+		 * 
+		 * @since 4.2.4
+		 * @param string $file_type					'css' | 'js'
+		 * @param string $file_group_name
+		 * @param array $conditions
+		 * @return void
+		 */
 		public function merge( $file_type , $file_group_name , $conditions = array())
 		{
 			if( ! isset( $this->which_files[ $file_type ] ) || $this->which_files[$file_type] == "none" )
@@ -120,7 +128,7 @@ if ( !class_exists( 'aviaAssetManager' ) ) {
 			global $wp_styles, $wp_scripts;
 			
 			//get the data of the file we would generate
-			$enqueued	= ($file_type == "css") ? $wp_styles : $wp_scripts;
+			$enqueued	= ( $file_type == "css" ) ? $wp_styles : $wp_scripts;
 			$data 		= $this->get_file_data( $file_type , $file_group_name , $enqueued , $conditions );
 						
 			//check if we got a db entry with this hash. if so, no further merging needed and we can remove the registered files from the enque array
@@ -156,12 +164,12 @@ if ( !class_exists( 'aviaAssetManager' ) ) {
 				//if file exists enque it
 				if($file_type == 'css')
 				{
-					wp_enqueue_style( $file_group_name , $avia_dyn_file_url, array(), NULL, 'all' );
+					wp_enqueue_style( $file_group_name , $avia_dyn_file_url, array(), null, 'all' );
 				}
 				else
 				{
 					$footer = isset($conditions['groups']) ? $conditions['groups'] : true;
-					wp_enqueue_script( $file_group_name , $avia_dyn_file_url, array(), NULL, $footer );
+					wp_enqueue_script( $file_group_name , $avia_dyn_file_url, array(), null, $footer );
 				}
 				
 			}
@@ -271,15 +279,22 @@ if ( !class_exists( 'aviaAssetManager' ) ) {
 						);
 						
 						/**
-						 * @used_by			currently unused
+						 * Allow plugins to alter $data parameters (e.g. like path)
+						 * 
 						 * @since 4.5.6
+						 * @param array $data
+						 * @param int $enqueued_index			$enqueued->to_do index
+						 * @param string $file_type				'js' | 'css'
+						 * @param string $file_group_name		'avia-head-scripts' | 'avia-footer-scripts' | 'avia-merged-styles'
+						 * @param WP_Scripts $enqueued
+						 * @param array $conditions
 						 * @return array
 						 */
 						$data = apply_filters( 'avf_asset_mgr_get_file_data', $data, $enqueued_index, $file_type, $file_group_name, $enqueued, $conditions );
 						
 						
 						//check if the file already exists in our database of stored files. if not add it for future re-use
-						if( !isset( $stored_assets[$key] ) || $this->testmode)
+						if( ! isset( $stored_assets[ $key ] ) || $this->testmode )
 						{
 							$db_update = true;
 							$data['remove'][$key]['file_content'] = $this->get_file_content( $data['remove'][$key]['path'] , $file_type , $data['remove'][$key]['url']);
@@ -324,9 +339,17 @@ if ( !class_exists( 'aviaAssetManager' ) ) {
 			return $stylesheet_dir;
 		}
 		
-		
-		//retrieve the content of a css or js file, compress it and return it
-		public function get_file_content( $path , $file_type , $fallback_url = "")
+
+		/**
+		 * Retrieve the content of a css or js file, compress it and return it
+		 * 
+		 * @since 4.2.4
+		 * @param string $path
+		 * @param string $file_type
+		 * @param string $fallback_url
+		 * @return string
+		 */
+		public function get_file_content( $path , $file_type , $fallback_url = '' )
 		{
 			$new_content = false;
 			
@@ -345,7 +368,7 @@ if ( !class_exists( 'aviaAssetManager' ) ) {
 			}
 			
 			//we got a file that we cant read, lets try to access it via remote get
-			if(gettype($new_content) == "boolean" && $new_content === false)
+			if( is_bool( $new_content ) && $new_content === false)
 			{
 				if( empty( $fallback_url ) )
 				{
@@ -359,7 +382,13 @@ if ( !class_exists( 'aviaAssetManager' ) ) {
 				 */
 				$check_fallback_url = apply_filters( 'avf_compress_file_content_fallback_url', $fallback_url, $path , $file_type );
 				
-				$response = wp_remote_get( esc_url_raw( $check_fallback_url ) );
+				$args = array();
+				if( 'disable_ssl' == avia_get_option( 'merge_disable_ssl' ) )
+				{
+					$args['sslverify'] = false;
+				}
+				
+				$response = wp_remote_get( esc_url_raw( $check_fallback_url ), $args );
 				
 				if( ! is_wp_error( $response ) && ( $response['response']['code'] === 200 ) )
 				{
@@ -368,9 +397,9 @@ if ( !class_exists( 'aviaAssetManager' ) ) {
 			}
 			
 			//if we still did not retrieve the proper content we dont need to compress the output
-			if($new_content !== false)
+			if( $new_content !== false )
 			{
-				$new_content = $this->compress_content($new_content , $file_type, $path);
+				$new_content = $this->compress_content( $new_content , $file_type, $path );
 			}
 			else
 			{
@@ -380,10 +409,16 @@ if ( !class_exists( 'aviaAssetManager' ) ) {
 			return $new_content;
 		}
 
-	
-
-		//generates the merged and compressed file
-		public function generate_file( $file_type , $data , $enqueued)
+		/**
+		 * Generates the merged and compressed file
+		 * 
+		 * @since 4.2.4
+		 * @param string $file_type
+		 * @param array $data
+		 * @param WP_Scripts $enqueued
+		 * @return boolean
+		 */
+		public function generate_file( $file_type, $data, $enqueued )
 		{
 			$file_created = false;
 			
@@ -427,7 +462,14 @@ if ( !class_exists( 'aviaAssetManager' ) ) {
 					fclose( $handle );
 					
 					$file 		= $this->get_file_url($data, $file_type);
-					$request 	= wp_remote_get($file);
+					
+					$args = array();
+					if( 'disable_ssl' == avia_get_option( 'merge_disable_ssl' ) )
+					{
+						$args['sslverify'] = false;
+					}
+					
+					$request 	= wp_remote_get( $file, $args );
 					
 					$file_created = false;
 					if( ( ! $request instanceof WP_Error ) && is_array( $request ) && isset( $request['body'] ) )
@@ -436,7 +478,7 @@ if ( !class_exists( 'aviaAssetManager' ) ) {
 						$filecontent = trim($filecontent);
 					
 						//if the content does not match the file is not accessible
-						if($filecontent == $request['body'])
+						if( $filecontent == $request['body'] )
 						{
 							$file_created = true;
 						}
@@ -445,7 +487,10 @@ if ( !class_exists( 'aviaAssetManager' ) ) {
 			}
 			
 			//file creation failed
-			if(!$file_created) return false;
+			if( ! $file_created ) 
+			{
+				return false;
+			}
 			
 			//file creation succeeded, store the url of the file
 			$generated_files = get_option( $this->db_prefix.$data['file_group_name'] );
@@ -513,7 +558,7 @@ if ( !class_exists( 'aviaAssetManager' ) ) {
 			// test drive for the regexp : https://regexr.com/3kq8q
 			// @since 4.5.5 supports UNICODE characters &#8216; - &#8221;
 			
-			$this->base_url = trailingslashit(dirname( get_site_url( NULL, $path ) ) );
+			$this->base_url = trailingslashit(dirname( get_site_url( null, $path ) ) );
 			$reg_exUrl 		= '/url\s*?\([\"|\'|\s|\/|\x{2018}|\x{2019}|\x{201C}|\x{201D}]*([^\:]+?)[\"|\'|\s|\x{2018}|\x{2019}|\x{201C}|\x{201D}]*\)/imu';
 			
 			$content = preg_replace_callback( $reg_exUrl, array( $this, '_url_callback'), $content );

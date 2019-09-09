@@ -64,14 +64,45 @@ if ( ! class_exists( 'AviaHtmlHelper' ) )
 			return $element;
 		}
 		
-		
-	
-		static function render_element($element, $parent_class = false)
+		/**
+		 * Returns an element with all needed default keys
+		 * 
+		 * @since 4.5.7.2
+		 * @param array $element
+		 * @return array
+		 */
+		static public function validate_element( array $element = array() )
 		{
-		
-			$defaults		= array('id'=>'', 'name'=>'', 'label' => '', 'std' => '', 'class' =>'', 'container_class'=>'', 'desc' =>'', 'required'=>array(), 'target'=>array(), 'shortcode_data'=>array(), 'builder_active' => '');
-			$element		= array_merge($defaults, $element);
-			$output			= "";
+			$defaults = array(
+								'id'				=> '', 
+								'name'				=> '', 
+								'label'				=> '', 
+								'std'				=> '', 
+								'class'				=> '', 
+								'container_class'	=> '', 
+								'desc'				=> '', 
+								'required'			=> array(), 
+								'target'			=> array(), 
+								'shortcode_data'	=> array(), 
+								'builder_active'	=> ''
+							);
+			
+			$element = array_merge( $defaults, $element );
+			
+			return $element;
+		}
+
+		/**
+		 * 
+		 * @since < 4.0
+		 * @param array $element
+		 * @param aviaShortcodeTemplate|mixed $parent_class
+		 * @return string
+		 */
+		static public function render_element( $element, $parent_class = false )
+		{
+			$element = AviaHtmlHelper::validate_element( $element );
+			$output	= '';
 			
 			if( $element['builder_active'] )
 			{
@@ -316,7 +347,7 @@ if ( ! class_exists( 'AviaHtmlHelper' ) )
 			$output = "";
 			
 			$args = array();
-			$content = NULL;
+			$content = null;
 			
 			//iterate over the subelements and set user selected values or leave the predefined default values
 			foreach($element['subelements'] as $key => $subelement)
@@ -1234,6 +1265,18 @@ if ( ! class_exists( 'AviaHtmlHelper' ) )
 			$new_std = explode( ',', $element['std'], 2 );
 			$selected = ( ( $new_std[0] == $post_type ) && isset( $new_std[1] ) ) ? $new_std[1] : 0;
 			
+			/**
+			 * @used_by				config-wpml\config.php	avia_wpml_alb_options_select_hierarchical_post_type_id()					10
+			 * 
+			 * @since 4.5.7.2
+			 * @param int $selected
+			 * @param string $post_type
+			 * @param array $new_std
+			 * @param array $element
+			 * @return int
+			 */
+			$selected = apply_filters( 'avf_alb_options_select_hierarchical_post_type_id', $selected, $post_type, $new_std, $element );
+			
 			$data_string = "";
 			if( isset( $element['data'] ) ) 
 			{
@@ -1356,6 +1399,18 @@ if ( ! class_exists( 'AviaHtmlHelper' ) )
 			
 			$new_std = explode( ',', $element['std'], 2 );
 			$selected = ( ( $new_std[0] == $taxonomy ) && isset( $new_std[1] ) ) ? $new_std[1] : 0;
+			
+			/**
+			 * @used_by				config-wpml\config.php	avia_wpml_alb_options_select_hierarchical_post_type_id()					10
+			 * 
+			 * @since 4.5.7.2
+			 * @param int $selected
+			 * @param string $post_type
+			 * @param array $new_std
+			 * @param array $element
+			 * @return int
+			 */
+			$selected = apply_filters( 'avf_alb_options_select_hierarchical_post_type_id', $selected, $taxonomy, $new_std, $element );
 			
 			$data_string = "";
 			if( isset( $element['data'] ) ) 

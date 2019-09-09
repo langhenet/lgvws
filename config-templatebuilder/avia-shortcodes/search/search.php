@@ -14,11 +14,11 @@
  */
 
 // Don't load directly
-if (!defined('ABSPATH')) {
-    die('-1');
-}
+if ( ! defined( 'ABSPATH' ) ) {  die('-1');  }
 
-if (!class_exists('avia_sc_search')) {
+
+if ( ! class_exists('avia_sc_search')) 
+{
     class avia_sc_search extends aviaShortcodeTemplate
     {
 
@@ -29,16 +29,18 @@ if (!class_exists('avia_sc_search')) {
         {
             $this->config['self_closing'] = 'yes';
 
-            $this->config['name'] = __('Search', 'avia_framework');
-            $this->config['tab'] = __('Content Elements', 'avia_framework');
-            $this->config['icon'] = AviaBuilder::$path['imagesURL'] . "sc-search.png";
-            $this->config['order'] = 10;
-            $this->config['shortcode'] = 'avia_sc_search';
-            $this->config['tooltip'] = __('Displays a search form', 'avia_framework');
-            $this->config['target'] = 'avia-target-insert';
-            $this->config['tinyMCE'] = array('disable' => true);
-            $this->config['preview'] = 1;
+            $this->config['name']		= __( 'Search', 'avia_framework');
+            $this->config['tab']		= __( 'Content Elements', 'avia_framework');
+            $this->config['icon']		= AviaBuilder::$path['imagesURL'] . "sc-search.png";
+            $this->config['order']		= 10;
+            $this->config['shortcode']	= 'avia_sc_search';
+            $this->config['tooltip']	= __( 'Displays a search form', 'avia_framework');
+            $this->config['target']		= 'avia-target-insert';
+            $this->config['tinyMCE']	= array('disable' => true);
+            $this->config['preview']	= 1;
             $this->config['disabling_allowed'] = true;
+			$this->config['id_name']	= 'id';
+			$this->config['id_show']	= 'yes';
         }
 
         function extra_assets()
@@ -504,58 +506,12 @@ if (!class_exists('avia_sc_search')) {
                     "type" 	=> "close_div",
                     'nodescription' => true
                 ),
+				
+				array(	
+						'type'			=> 'template',
+						'template_id'	=> 'screen_options_tab'
+					),
 
-
-                // Screen Options Tab
-                array(
-                    "type" => "tab",
-                    "name" => __("Screen Options", 'avia_framework'),
-                    'nodescription' => true
-                ),
-
-                array(
-                    "name" => __("Element Visibility", 'avia_framework'),
-                    "desc" => __("Set the visibility for this element, based on the device screensize.", 'avia_framework'),
-                    "type" => "heading",
-                    "description_class" => "av-builder-note av-neutral",
-                ),
-
-                array(
-                    "desc" => __("Hide on large screens (wider than 990px - eg: Desktop)", 'avia_framework'),
-                    "id" => "av-desktop-hide",
-                    "std" => "",
-                    "container_class" => 'av-multi-checkbox',
-                    "type" => "checkbox"),
-
-                array(
-
-                    "desc" => __("Hide on medium sized screens (between 768px and 989px - eg: Tablet Landscape)", 'avia_framework'),
-                    "id" => "av-medium-hide",
-                    "std" => "",
-                    "container_class" => 'av-multi-checkbox',
-                    "type" => "checkbox"),
-
-                array(
-
-                    "desc" => __("Hide on small screens (between 480px and 767px - eg: Tablet Portrait)", 'avia_framework'),
-                    "id" => "av-small-hide",
-                    "std" => "",
-                    "container_class" => 'av-multi-checkbox',
-                    "type" => "checkbox"),
-
-                array(
-
-                    "desc" => __("Hide on very small screens (smaller than 479px - eg: Smartphone Portrait)", 'avia_framework'),
-                    "id" => "av-mini-hide",
-                    "std" => "",
-                    "container_class" => 'av-multi-checkbox',
-                    "type" => "checkbox"
-                ),
-
-                array(
-                    "type" 	=> "close_div",
-                    'nodescription' => true
-                ),
 
                 // end tab container
                 array(
@@ -579,7 +535,7 @@ if (!class_exists('avia_sc_search')) {
             extract(av_backend_icon($params)); // creates $font and $display_char if the icon was passed as param "icon" and the font as "font"
             $template  = $this->update_template("placeholder", "{{placeholder}}");
 
-            $params['content'] = NULL;
+            $params['content'] = null;
             $params['innerHtml']  = "<div class='avia_title_container'>";
             $params['innerHtml'] .= "<span class='avia-element-label avia-sc-search-fakeinput' {$template}>".$params['args']['placeholder']."</span>";
 
@@ -607,59 +563,58 @@ if (!class_exists('avia_sc_search')) {
          * @param string $shortcodename the shortcode found, when == callback name
          * @return string $output returns the modified html string
          */
-        function shortcode_handler($atts, $content = "", $shortcodename = "", $meta = "")
+        function shortcode_handler( $atts, $content = "", $shortcodename = "", $meta = "" )
         {
-            extract(AviaHelper::av_mobile_sizes($atts)); //return $av_font_classes, $av_title_font_classes and $av_display_classes
+            extract( AviaHelper::av_mobile_sizes( $atts ) ); //return $av_font_classes, $av_title_font_classes and $av_display_classes
 
-            extract(shortcode_atts(
-                array(
-                    'placeholder'   => '',
-                    'label_text'    => '',
-                    'font'  => '',
-                    'icon_display' => '',
-                    'icon'  => '',
-                    'post_types'    => '',
-                    'post_types_custom'  => '',
-                    'display'   => '',
-                    'ajax_location' => '',
-                    'ajax_container' => '',
-                    'numberposts' => 5,
+            extract(shortcode_atts( array(
+						'placeholder'   => '',
+						'label_text'    => '',
+						'font'  => '',
+						'icon_display' => '',
+						'icon'  => '',
+						'post_types'    => '',
+						'post_types_custom'  => '',
+						'display'   => '',
+						'ajax_location' => '',
+						'ajax_container' => '',
+						'numberposts' => 5,
 
-                    'border_color' => '',
-                    'custom_border_color' => '',
+						'border_color' => '',
+						'custom_border_color' => '',
 
-                    'input_bg' => '',
-                    'custom_input_bg' => '',
+						'input_bg' => '',
+						'custom_input_bg' => '',
 
-                    'button_bg' => '',
-                    'custom_button_bg' => '',
+						'button_bg' => '',
+						'custom_button_bg' => '',
 
-                    'results_bg' => '',
-                    'custom_results_bg' => '',
+						'results_bg' => '',
+						'custom_results_bg' => '',
 
-                    'input_color' => '',
-                    'custom_input_color' => '',
+						'input_color' => '',
+						'custom_input_color' => '',
 
-                    'button_color' => '',
-                    'custom_button_color' => '',
+						'button_color' => '',
+						'custom_button_color' => '',
 
-                    'results_color' => '',
-                    'custom_results_color' => '',
+						'results_color' => '',
+						'custom_results_color' => '',
 
-                    'custom_input_size' => '',
-                    'custom_button_size' => '',
+						'custom_input_size' => '',
+						'custom_button_size' => '',
 
-                    'custom_height' => '',
-                    'radius' => '',
-                    'border_width' => '',
+						'custom_height' => '',
+						'radius' => '',
+						'border_width' => '',
 
-                    'results_hide_titles' => '',
-                    'results_hide_meta' => '',
-                    'results_hide_image' => '',
-                    'results_padding' => '',
-                    'results_margin' => ''
+						'results_hide_titles' => '',
+						'results_hide_meta' => '',
+						'results_hide_image' => '',
+						'results_padding' => '',
+						'results_margin' => ''
 
-            ), $atts, $this->config['shortcode']));
+					), $atts, $this->config['shortcode'] ) );
 
             $icon = av_icon($icon, $font,false);
             $button_val = "";
@@ -865,7 +820,7 @@ if (!class_exists('avia_sc_search')) {
             }
 
             $output = "";
-            $output .= "<div class='avia_search_element {$av_display_classes}'>";
+            $output .= "<div {$meta['custom_el_id']} class='avia_search_element {$av_display_classes} {$meta['el_class']}'>";
 
             $output .= "<form action='{$form_action}' id='searchform_element' method='get' class='{$form_class}'{$results_container_attr} {$form_style}{$results_style_attr}>";
             $output .= "<div class='av_searchform_wrapper' {$form_wrapper_style}>";

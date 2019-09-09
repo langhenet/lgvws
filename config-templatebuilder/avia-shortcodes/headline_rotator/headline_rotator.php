@@ -7,7 +7,7 @@
 if ( ! defined( 'ABSPATH' ) ) {  exit;  }    // Exit if accessed directly
 
 
-if ( !class_exists( 'avia_sc_headline_rotator' ) )
+if ( ! class_exists( 'avia_sc_headline_rotator' ) )
 {
 	class avia_sc_headline_rotator extends aviaShortcodeTemplate
 	{
@@ -55,16 +55,18 @@ if ( !class_exists( 'avia_sc_headline_rotator' ) )
 			{
 				$this->config['self_closing']	=	'no';
 				
-				$this->config['name']		= __('Headline Rotator', 'avia_framework' );
-				$this->config['tab']		= __('Content Elements', 'avia_framework' );
+				$this->config['name']		= __( 'Headline Rotator', 'avia_framework' );
+				$this->config['tab']		= __( 'Content Elements', 'avia_framework' );
 				$this->config['icon']		= AviaBuilder::$path['imagesURL']."sc-heading.png";
 				$this->config['order']		= 83;
 				$this->config['target']		= 'avia-target-insert';
 				$this->config['shortcode'] 	= 'av_headline_rotator';
-				$this->config['shortcode_nested'] = array('av_rotator_item');
-				$this->config['tooltip'] 	= __('Creates a text rotator for dynamic headings', 'avia_framework' );
+				$this->config['shortcode_nested'] = array( 'av_rotator_item' );
+				$this->config['tooltip'] 	= __( 'Creates a text rotator for dynamic headings', 'avia_framework' );
 				$this->config['preview'] 	= "large";
 				$this->config['disabling_allowed'] = true;
+				$this->config['id_name']	= 'id';
+				$this->config['id_show']	= 'yes';
 			}
 			
 			function extra_assets()
@@ -73,7 +75,7 @@ if ( !class_exists( 'avia_sc_headline_rotator' ) )
 				wp_enqueue_style( 'avia-module-rotator' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/headline_rotator/headline_rotator.css' , array('avia-layout'), false );
 				
 					//load js
-				wp_enqueue_script( 'avia-module-rotator' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/headline_rotator/headline_rotator.js' , array('avia-shortcodes'), false, TRUE );
+				wp_enqueue_script( 'avia-module-rotator' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/headline_rotator/headline_rotator.js' , array('avia-shortcodes'), false, true );
 
 			}
 
@@ -303,86 +305,14 @@ if ( !class_exists( 'avia_sc_headline_rotator' ) )
 							"type" 	=> "close_div",
 							'nodescription' => true
 						),
+					
+					array(	
+							'type'				=> 'template',
+							'template_id'		=> 'screen_options_tab',
+							'templates_include'	=> array( 'screen_options_visibility', 'heading_font_size' )
+						),
 						
-					array(
-									"type" 	=> "tab",
-									"name"	=> __("Screen Options",'avia_framework' ),
-									'nodescription' => true
-								),
-								
-								
-								array(
-								"name" 	=> __("Element Visibility",'avia_framework' ),
-								"desc" 	=> __("Set the visibility for this element, based on the device screensize.", 'avia_framework' ),
-								"type" 	=> "heading",
-								"description_class" => "av-builder-note av-neutral",
-								),
-							
-								array(	
-										"desc" 	=> __("Hide on large screens (wider than 990px - eg: Desktop)", 'avia_framework'),
-										"id" 	=> "av-desktop-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-								
-								array(	
-									
-										"desc" 	=> __("Hide on medium sized screens (between 768px and 989px - eg: Tablet Landscape)", 'avia_framework'),
-										"id" 	=> "av-medium-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-										
-								array(	
-									
-										"desc" 	=> __("Hide on small screens (between 480px and 767px - eg: Tablet Portrait)", 'avia_framework'),
-										"id" 	=> "av-small-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-										
-								array(	
-									
-										"desc" 	=> __("Hide on very small screens (smaller than 479px - eg: Smartphone Portrait)", 'avia_framework'),
-										"id" 	=> "av-mini-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-									
-								
-									
-								array(
-									"name" 	=> __("Heading Font Size",'avia_framework' ),
-									"desc" 	=> __("Set the font size for the heading, based on the device screensize.", 'avia_framework' ),
-									"type" 	=> "heading",
-									"description_class" => "av-builder-note av-neutral",
-									),
-										
-									array(	"name" 	=> __("Font Size for medium sized screens (between 768px and 989px - eg: Tablet Landscape)", 'avia_framework' ),
-						            "id" 	=> "av-medium-font-size-title",
-						            "type" 	=> "select",
-						            "subtype" => AviaHtmlHelper::number_array(10,120,1, array( __("Default", 'avia_framework' )=>'' , __("Hidden", 'avia_framework' )=>'hidden' ), "px"),
-						            "std" => ""),
-						            
-						            array(	"name" 	=> __("Font Size for small screens (between 480px and 767px - eg: Tablet Portrait)", 'avia_framework' ),
-						            "id" 	=> "av-small-font-size-title",
-						            "type" 	=> "select",
-						            "subtype" => AviaHtmlHelper::number_array(10,120,1, array( __("Default", 'avia_framework' )=>'', __("Hidden", 'avia_framework' )=>'hidden'), "px"),
-						            "std" => ""),
-						            
-									array(	"name" 	=> __("Font Size for very small screens (smaller than 479px - eg: Smartphone Portrait)", 'avia_framework' ),
-						            "id" 	=> "av-mini-font-size-title",
-						            "type" 	=> "select",
-						            "subtype" => AviaHtmlHelper::number_array(10,120,1, array( __("Default", 'avia_framework' )=>'', __("Hidden", 'avia_framework' )=>'hidden'), "px"),
-						            "std" => ""),
-
-							
-								
-							array(
-									"type" 	=> "close_div",
-									'nodescription' => true
-								),
-						
+					
 					array(
 							"type" 	=> "close_div",
 							'nodescription' => true
@@ -436,27 +366,28 @@ if ( !class_exists( 'avia_sc_headline_rotator' ) )
 			 * @param string $shortcodename the shortcode found, when == callback name
 			 * @return string $output returns the modified html string
 			 */
-			function shortcode_handler($atts, $content = "", $shortcodename = "", $meta = "")
+			function shortcode_handler( $atts, $content = "", $shortcodename = "", $meta = "" )
 			{
-				$this->screen_options = AviaHelper::av_mobile_sizes($atts);
-				extract($this->screen_options); //return $av_font_classes, $av_title_font_classes and $av_display_classes	
+				$this->screen_options = AviaHelper::av_mobile_sizes( $atts );
+				extract( $this->screen_options ); //return $av_font_classes, $av_title_font_classes and $av_display_classes	
 							
-				extract(shortcode_atts(array(
+				extract( shortcode_atts( array(
+								'align'				=> 'left', 
+								'before_rotating'	=> '', 
+								'after_rotating'	=> '', 
+								'interval'			=> '5', 
+								'tag'				=> 'h3',
+								'size'				=> '',
+								'custom_title'		=> '',
+								'multiline'			=> 'disabled',
+								'animation'			=> '',
+								'margin'			=> ''
+							), $atts, $this->config['shortcode'] ) );
 				
-				'align'=>'left', 
-				'before_rotating'=>'', 
-				'after_rotating'=>'', 
-				'interval'=>'5', 
-				'tag'=>'h3',
-				'size' => "",
-				'custom_title' => '',
-				'multiline' => 'disabled',
-				'animation' => '',
-				'margin'=>''
-				
-				), $atts, $this->config['shortcode']));
-				
-				if(is_numeric($atts['size'])) $atts['size'] .= "px";
+				if( is_numeric( $atts['size'] ) ) 
+				{
+					$atts['size'] .= "px";
+				}
 				
 				$this->count = 0;
 				$style = "";
@@ -490,21 +421,20 @@ if ( !class_exists( 'avia_sc_headline_rotator' ) )
 				if(!empty($after_rotating)) $meta['el_class'] .= " av-after-rotation-text-active";
 				
 				$output	 = "";
-				$output .= "<div {$style} class='av-rotator-container av-rotation-container-".$atts['align']." {$av_display_classes} ".$meta['el_class']."' {$data}>";
-				$output .= "<{$tag} class='av-rotator-container-inner {$av_title_font_classes}'>";
-				$output .= apply_filters('avia_ampersand', $before_rotating);
-				$output .= "<span class='av-rotator-text av-rotator-multiline-{$multiline} '>";
-				$output .= ShortcodeHelper::avia_remove_autop( $content, true );
-				$output .= "</span>";
-				$output .= apply_filters('avia_ampersand', $after_rotating);
-				$output .= "</{$tag}>";
-				$output .= "</div>";
-
+				$output .=	"<div {$meta['custom_el_id']} {$style} class='av-rotator-container av-rotation-container-".$atts['align']." {$av_display_classes} ".$meta['el_class']."' {$data}>";
+				$output .=		"<{$tag} class='av-rotator-container-inner {$av_title_font_classes}'>";
+				$output .=			apply_filters( 'avia_ampersand', $before_rotating );
+				$output .=			"<span class='av-rotator-text av-rotator-multiline-{$multiline} '>";
+				$output .=				ShortcodeHelper::avia_remove_autop( $content, true );
+				$output .=			"</span>";
+				$output .=			apply_filters( 'avia_ampersand', $after_rotating );
+				$output .=		"</{$tag}>";
+				$output .=	"</div>";
 
 				return $output;
 			}
 
-			function av_rotator_item($atts, $content = "", $shortcodename = "")
+			function av_rotator_item( $atts, $content = '', $shortcodename = '' )
 			{
 				/**
 				 * Fixes a problem when 3-rd party plugins call nested shortcodes without executing main shortcode  (like YOAST in wpseo-filter-shortcodes)
@@ -516,34 +446,33 @@ if ( !class_exists( 'avia_sc_headline_rotator' ) )
 				
 				extract($this->screen_options); //return $av_font_classes, $av_title_font_classes and $av_display_classes	
 				
-                $atts = shortcode_atts(
-                array(	
-                	'title' 		=> '',
-                	'link' 			=> '',
-                	'linktarget' 	=> '',
-                	'custom_title' 	=> '',
-                ), 
-                $atts, 'av_rotator_item');
+                $atts = shortcode_atts( array(	
+											'title' 		=> '',
+											'link' 			=> '',
+											'linktarget' 	=> '',
+											'custom_title' 	=> '',
+										), $atts, 'av_rotator_item' );
                 
-                extract($atts);
+                extract( $atts );
                 
                 $this->count++;
                 
-				$style  = AviaHelper::style_string($atts, 'custom_title', 'color');
-				$style  = AviaHelper::style_string($style);
+				$style  = AviaHelper::style_string( $atts, 'custom_title', 'color' );
+				$style  = AviaHelper::style_string( $style );
 				
-				$link = AviaHelper::get_url($link);
-				$blank = (strpos($linktarget, '_blank') !== false || $linktarget == 'yes') ? ' target="_blank" ' : "";
-				$blank .= strpos($linktarget, 'nofollow') !== false ? ' rel="nofollow" ' : "";
+				$link = AviaHelper::get_url( $link );
+				$blank = ( strpos( $linktarget, '_blank' ) !== false || $linktarget == 'yes' ) ? ' target="_blank" ' : '';
+				$blank .= strpos( $linktarget, 'nofollow' ) !== false ? ' rel="nofollow" ' : '';
            
             
-            	$tags = !empty($link) ? array("a href='{$link}' {$blank} ",'a') : array('span','span');
+            	$tags = ! empty( $link ) ? array( "a href='{$link}' {$blank} ", 'a' ) : array( 'span','span' );
 				
 
-				$output  = "";
-				$output .= "<{$tags[0]} {$style} class='av-rotator-text-single av-rotator-text-single-{$this->count}'>";
-				$output .= ShortcodeHelper::avia_remove_autop( $title , true );
-				$output .= "</{$tags[1]}>";
+				$output  = '';
+				$output .=	"<{$tags[0]} {$style} class='av-rotator-text-single av-rotator-text-single-{$this->count}'>";
+				$output .=		ShortcodeHelper::avia_remove_autop( $title , true );
+				$output .=	"</{$tags[1]}>";
+				
 				return $output;
 			}
 

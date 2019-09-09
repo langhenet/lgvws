@@ -10,7 +10,7 @@ if ( !defined('ABSPATH') ) { die('-1'); }
 
 
 
-if ( !class_exists( 'avia_sc_columns' ) )
+if ( ! class_exists( 'avia_sc_columns' ) )
 {
 	class avia_sc_columns extends aviaShortcodeTemplate
 	{
@@ -68,16 +68,19 @@ if ( !class_exists( 'avia_sc_columns' ) )
 			{
 				$this->config['name']		= '1/1';
 				$this->config['icon']		= AviaBuilder::$path['imagesURL']."sc-full.png";
-				$this->config['tab']		= __('Layout Elements', 'avia_framework' );
+				$this->config['tab']		= __( 'Layout Elements', 'avia_framework' );
 				$this->config['order']		= 100;
 				$this->config['target']		= "avia-section-drop";
 				$this->config['shortcode'] 	= 'av_one_full';
 				$this->config['html_renderer'] 	= false;
-				$this->config['tinyMCE'] 	= array('instantInsert' => "[av_one_full first]Add Content here[/av_one_full]");
-				$this->config['tooltip'] 	= __('Creates a single full width column', 'avia_framework' );
+				$this->config['tooltip'] 	= __( 'Creates a single full width column', 'avia_framework' );
 				$this->config['drag-level'] = 2;
 				$this->config['drop-level'] = 2;
-
+				$this->config['tinyMCE'] 	= array( 
+													'instantInsert' => "[av_one_full first]Add Content here[/av_one_full]" 
+												);
+				$this->config['id_name']	= 'id';
+				$this->config['id_show']	= 'yes';
 			}
 				
 
@@ -107,7 +110,7 @@ if ( !class_exists( 'avia_sc_columns' ) )
 				
 				
 				$data['shortcodehandler'] 	= $this->config['shortcode'];
-				$data['modal_title'] 		= __('Edit Column','avia_framework' );
+				$data['modal_title'] 		= __( 'Edit Column','avia_framework' );
 				$data['modal_ajax_hook'] 	= $this->config['shortcode'];
 				$data['dragdrop-level']		= $this->config['drag-level'];
 				$data['allowed-shortcodes'] = $this->config['shortcode'];
@@ -119,7 +122,7 @@ if ( !class_exists( 'avia_sc_columns' ) )
 				}
 	
 				$dataString  = AviaHelper::create_data_string($data);
-
+				
                 // add background color or gradient to indicator
                 $el_bg = "";
 
@@ -1175,7 +1178,7 @@ array(
 				}
 				
 				
-				$output  .= '<div class="flex_column ' . $shortcodename . ' ' . $extraClass . ' ' . $first.' ' . $meta['el_class'] . ' ' . avia_sc_columns::$extraClass . '" ' . $outer_style . $link_data . '>';
+				$output  .= '<div class="flex_column ' . $shortcodename . ' ' . $extraClass . ' ' . $first.' ' . $meta['el_class'] . ' ' . avia_sc_columns::$extraClass . '" ' . $outer_style . $link_data . $meta['custom_el_id'] . '>';
 				$output .= $screen_reader_link;
 				//if the user uses the column shortcode without the layout builder make sure that paragraphs are applied to the text
 				$content =  (empty($avia_config['conditionals']['is_builder_template'])) ? ShortcodeHelper::avia_apply_autop(ShortcodeHelper::avia_remove_autop($content)) : ShortcodeHelper::avia_remove_autop($content, true);
@@ -1225,13 +1228,7 @@ array(
 
 
 
-
-
-
-
-
-
-if ( !class_exists( 'avia_sc_columns_one_half' ) )
+if ( ! class_exists( 'avia_sc_columns_one_half' ) )
 {
 	class avia_sc_columns_one_half extends avia_sc_columns{
 
@@ -1239,21 +1236,26 @@ if ( !class_exists( 'avia_sc_columns_one_half' ) )
 			{
 				$this->config['name']		= '1/2';
 				$this->config['icon']		= AviaBuilder::$path['imagesURL']."sc-half.png";
-				$this->config['tab']		= __('Layout Elements', 'avia_framework' );
+				$this->config['tab']		= __( 'Layout Elements', 'avia_framework' );
 				$this->config['order']		= 90;
 				$this->config['target']		= "avia-section-drop";
 				$this->config['shortcode'] 	= 'av_one_half';
 				$this->config['html_renderer'] 	= false;
-				$this->config['tinyMCE'] 	= array('name' => '1/2 + 1/2', 'instantInsert' => "[av_one_half first]Add Content here[/av_one_half]\n\n\n[av_one_half]Add Content here[/av_one_half]");
-				$this->config['tooltip'] 	= __('Creates a single column with 50&percnt; width', 'avia_framework' );
+				$this->config['tooltip'] 	= __( 'Creates a single column with 50&percnt; width', 'avia_framework' );
 				$this->config['drag-level'] = 2;
 				$this->config['drop-level'] = 2;
+				$this->config['tinyMCE'] 	= array( 
+													'name' => '1/2 + 1/2', 
+													'instantInsert' => "[av_one_half first]Add Content here[/av_one_half]\n\n\n[av_one_half]Add Content here[/av_one_half]" 
+												);
+				$this->config['id_name']	= 'id';
+				$this->config['id_show']	= 'yes';
 		}
 	}
 }
 
 
-if ( !class_exists( 'avia_sc_columns_one_third' ) )
+if ( ! class_exists( 'avia_sc_columns_one_third' ) )
 {
 	class avia_sc_columns_one_third extends avia_sc_columns{
 
@@ -1261,23 +1263,25 @@ if ( !class_exists( 'avia_sc_columns_one_third' ) )
 			{
 				$this->config['name']		= '1/3';
 				$this->config['icon']		= AviaBuilder::$path['imagesURL']."sc-third.png";
-				$this->config['tab']		= __('Layout Elements', 'avia_framework' );
+				$this->config['tab']		= __( 'Layout Elements', 'avia_framework' );
 				$this->config['order']		= 80;
 				$this->config['target']		= "avia-section-drop";
 				$this->config['shortcode'] 	= 'av_one_third';
 				$this->config['html_renderer'] 	= false;
-				$this->config['tooltip'] 	= __('Creates a single column with 33&percnt; width', 'avia_framework' );
+				$this->config['tooltip'] 	= __( 'Creates a single column with 33&percnt; width', 'avia_framework' );
 				$this->config['drag-level'] = 2;
 				$this->config['drop-level'] = 2;
 				$this->config['tinyMCE'] 	= array(
-		      		'name' => '1/3 + 1/3 + 1/3',
-				    'instantInsert' => "[av_one_third first]Add Content here[/av_one_third]\n\n\n[av_one_third]Add Content here[/av_one_third]\n\n\n[av_one_third]Add Content here[/av_one_third]"
-				                                    );
+													'name'			=> '1/3 + 1/3 + 1/3',
+													'instantInsert'	=> "[av_one_third first]Add Content here[/av_one_third]\n\n\n[av_one_third]Add Content here[/av_one_third]\n\n\n[av_one_third]Add Content here[/av_one_third]"
+												);
+				$this->config['id_name']	= 'id';
+				$this->config['id_show']	= 'yes';
 			}
 	}
 }
 
-if ( !class_exists( 'avia_sc_columns_two_third' ) )
+if ( ! class_exists( 'avia_sc_columns_two_third' ) )
 {
 	class avia_sc_columns_two_third extends avia_sc_columns{
 
@@ -1285,23 +1289,25 @@ if ( !class_exists( 'avia_sc_columns_two_third' ) )
 			{
 				$this->config['name']		= '2/3';
 				$this->config['icon']		= AviaBuilder::$path['imagesURL']."sc-two_third.png";
-				$this->config['tab']		= __('Layout Elements', 'avia_framework' );
+				$this->config['tab']		= __( 'Layout Elements', 'avia_framework' );
 				$this->config['order']		= 70;
 				$this->config['target']		= "avia-section-drop";
 				$this->config['shortcode'] 	= 'av_two_third';
 				$this->config['html_renderer'] 	= false;
-				$this->config['tooltip'] 	= __('Creates a single column with 67&percnt; width', 'avia_framework' );
+				$this->config['tooltip'] 	= __( 'Creates a single column with 67&percnt; width', 'avia_framework' );
 				$this->config['drag-level'] = 2;
 				$this->config['drop-level'] = 2;
 				$this->config['tinyMCE'] 	= array(
-				    'name' => '2/3 + 1/3',
-                    'instantInsert' => "[av_two_third first]Add 2/3 Content here[/av_two_third]\n\n\n[av_one_third]Add 1/3 Content here[/av_one_third]"
-				                                    );
+													'name'			=> '2/3 + 1/3',
+													'instantInsert'	=> "[av_two_third first]Add 2/3 Content here[/av_two_third]\n\n\n[av_one_third]Add 1/3 Content here[/av_one_third]"
+												);
+				$this->config['id_name']	= 'id';
+				$this->config['id_show']	= 'yes';
 			}
 	}
 }
 
-if ( !class_exists( 'avia_sc_columns_one_fourth' ) )
+if ( ! class_exists( 'avia_sc_columns_one_fourth' ) )
 {
 	class avia_sc_columns_one_fourth extends avia_sc_columns{
 
@@ -1309,23 +1315,25 @@ if ( !class_exists( 'avia_sc_columns_one_fourth' ) )
 			{
 				$this->config['name']		= '1/4';
 				$this->config['icon']		= AviaBuilder::$path['imagesURL']."sc-fourth.png";
-				$this->config['tab']		= __('Layout Elements', 'avia_framework' );
+				$this->config['tab']		= __( 'Layout Elements', 'avia_framework' );
 				$this->config['order']		= 60;
 				$this->config['target']		= "avia-section-drop";
 				$this->config['shortcode'] 	= 'av_one_fourth';
-				$this->config['tooltip'] 	= __('Creates a single column with 25&percnt; width', 'avia_framework' );
+				$this->config['tooltip'] 	= __( 'Creates a single column with 25&percnt; width', 'avia_framework' );
 				$this->config['html_renderer'] 	= false;
 				$this->config['drag-level'] = 2;
 				$this->config['drop-level'] = 2;
 				$this->config['tinyMCE'] 	= array(
-                    'name' => '1/4 + 1/4 + 1/4 + 1/4',
-                    'instantInsert' => "[av_one_fourth first]Add Content here[/av_one_fourth]\n\n\n[av_one_fourth]Add Content here[/av_one_fourth]\n\n\n[av_one_fourth]Add Content here[/av_one_fourth]\n\n\n[av_one_fourth]Add Content here[/av_one_fourth]"
-				                                    );
+													'name'			=> '1/4 + 1/4 + 1/4 + 1/4',
+													'instantInsert'	=> "[av_one_fourth first]Add Content here[/av_one_fourth]\n\n\n[av_one_fourth]Add Content here[/av_one_fourth]\n\n\n[av_one_fourth]Add Content here[/av_one_fourth]\n\n\n[av_one_fourth]Add Content here[/av_one_fourth]"
+												);
+				$this->config['id_name']	= 'id';
+				$this->config['id_show']	= 'yes';
 			}
 	}
 }
 
-if ( !class_exists( 'avia_sc_columns_three_fourth' ) )
+if ( ! class_exists( 'avia_sc_columns_three_fourth' ) )
 {
 	class avia_sc_columns_three_fourth extends avia_sc_columns{
 
@@ -1342,14 +1350,16 @@ if ( !class_exists( 'avia_sc_columns_three_fourth' ) )
 				$this->config['drag-level'] = 2;
 				$this->config['drop-level'] = 2;
 				$this->config['tinyMCE'] 	= array(
-                    'name' => '3/4 + 1/4',
-                    'instantInsert' => "[av_three_fourth first]Add 3/4 Content here[/av_three_fourth]\n\n\n[av_one_fourth]Add 1/4 Content here[/av_one_fourth]"
-				                                    );
+													'name'			=> '3/4 + 1/4',
+													'instantInsert'	=> "[av_three_fourth first]Add 3/4 Content here[/av_three_fourth]\n\n\n[av_one_fourth]Add 1/4 Content here[/av_one_fourth]"
+												);
+				$this->config['id_name']	= 'id';
+				$this->config['id_show']	= 'yes';
 			}
 	}
 }
 
-if ( !class_exists( 'avia_sc_columns_one_fifth' ) )
+if ( ! class_exists( 'avia_sc_columns_one_fifth' ) )
 {
 	class avia_sc_columns_one_fifth extends avia_sc_columns{
 
@@ -1357,23 +1367,25 @@ if ( !class_exists( 'avia_sc_columns_one_fifth' ) )
 			{
 				$this->config['name']		= '1/5';
 				$this->config['icon']		= AviaBuilder::$path['imagesURL']."sc-fifth.png";
-				$this->config['tab']		= __('Layout Elements', 'avia_framework' );
+				$this->config['tab']		= __( 'Layout Elements', 'avia_framework' );
 				$this->config['order']		= 40;
 				$this->config['target']		= "avia-section-drop";
 				$this->config['shortcode'] 	= 'av_one_fifth';
 				$this->config['html_renderer'] 	= false;
-				$this->config['tooltip'] 	= __('Creates a single column with 20&percnt; width', 'avia_framework' );
+				$this->config['tooltip'] 	= __( 'Creates a single column with 20&percnt; width', 'avia_framework' );
 				$this->config['drag-level'] = 2;
 				$this->config['drop-level'] = 2;
 				$this->config['tinyMCE'] 	= array(
-                    'name' => '1/5 + 1/5 + 1/5 + 1/5 + 1/5',
-                    'instantInsert' => "[av_one_fifth first]1/5[/av_one_fifth]\n\n\n[av_one_fifth]2/5[/av_one_fifth]\n\n\n[av_one_fifth]3/5[/av_one_fifth]\n\n\n[av_one_fifth]4/5[/av_one_fifth]\n\n\n[av_one_fifth]5/5[/av_one_fifth]"
-				                                    );
+													'name'			=> '1/5 + 1/5 + 1/5 + 1/5 + 1/5',
+													'instantInsert'	=> "[av_one_fifth first]1/5[/av_one_fifth]\n\n\n[av_one_fifth]2/5[/av_one_fifth]\n\n\n[av_one_fifth]3/5[/av_one_fifth]\n\n\n[av_one_fifth]4/5[/av_one_fifth]\n\n\n[av_one_fifth]5/5[/av_one_fifth]"
+												);
+				$this->config['id_name']	= 'id';
+				$this->config['id_show']	= 'yes';
 			}
 	}
 }
 
-if ( !class_exists( 'avia_sc_columns_two_fifth' ) )
+if ( ! class_exists( 'avia_sc_columns_two_fifth' ) )
 {
 	class avia_sc_columns_two_fifth extends avia_sc_columns{
 
@@ -1381,23 +1393,25 @@ if ( !class_exists( 'avia_sc_columns_two_fifth' ) )
 			{
 				$this->config['name']		= '2/5';
 				$this->config['icon']		= AviaBuilder::$path['imagesURL']."sc-two_fifth.png";
-				$this->config['tab']		= __('Layout Elements', 'avia_framework' );
+				$this->config['tab']		= __( 'Layout Elements', 'avia_framework' );
 				$this->config['order']		= 39;
 				$this->config['target']		= "avia-section-drop";
 				$this->config['shortcode'] 	= 'av_two_fifth';
 				$this->config['html_renderer'] 	= false;
-				$this->config['tooltip'] 	= __('Creates a single column with 40&percnt; width', 'avia_framework' );
+				$this->config['tooltip'] 	= __( 'Creates a single column with 40&percnt; width', 'avia_framework' );
 				$this->config['drag-level'] = 2;
 				$this->config['drop-level'] = 2;
 				$this->config['tinyMCE'] 	= array(
-                    'name' => '2/5',
-                    'instantInsert' => "[av_two_fifth first]2/5[/av_two_fifth]"
-				                                    );
+													'name'			=> '2/5',
+													'instantInsert'	=> "[av_two_fifth first]2/5[/av_two_fifth]"
+												);
+				$this->config['id_name']	= 'id';
+				$this->config['id_show']	= 'yes';
 			}
 	}
 }
 
-if ( !class_exists( 'avia_sc_columns_three_fifth' ) )
+if ( ! class_exists( 'avia_sc_columns_three_fifth' ) )
 {
 	class avia_sc_columns_three_fifth extends avia_sc_columns{
 
@@ -1405,23 +1419,25 @@ if ( !class_exists( 'avia_sc_columns_three_fifth' ) )
 			{
 				$this->config['name']		= '3/5';
 				$this->config['icon']		= AviaBuilder::$path['imagesURL']."sc-three_fifth.png";
-				$this->config['tab']		= __('Layout Elements', 'avia_framework' );
+				$this->config['tab']		= __( 'Layout Elements', 'avia_framework' );
 				$this->config['order']		= 38;
 				$this->config['target']		= "avia-section-drop";
 				$this->config['shortcode'] 	= 'av_three_fifth';
 				$this->config['html_renderer'] 	= false;
-				$this->config['tooltip'] 	= __('Creates a single column with 60&percnt; width', 'avia_framework' );
+				$this->config['tooltip'] 	= __( 'Creates a single column with 60&percnt; width', 'avia_framework' );
 				$this->config['drag-level'] = 2;
 				$this->config['drop-level'] = 2;
 				$this->config['tinyMCE'] 	= array(
-                    'name' => '3/5',
-                    'instantInsert' => "[av_three_fifth first]3/5[/av_three_fifth]"
-				                                    );
+													'name'			=> '3/5',
+													'instantInsert'	=> "[av_three_fifth first]3/5[/av_three_fifth]"
+												);
+				$this->config['id_name']	= 'id';
+				$this->config['id_show']	= 'yes';
 			}
 	}
 }
 
-if ( !class_exists( 'avia_sc_columns_four_fifth' ) )
+if ( ! class_exists( 'avia_sc_columns_four_fifth' ) )
 {
 	class avia_sc_columns_four_fifth extends avia_sc_columns{
 
@@ -1429,18 +1445,20 @@ if ( !class_exists( 'avia_sc_columns_four_fifth' ) )
 			{
 				$this->config['name']		= '4/5';
 				$this->config['icon']		= AviaBuilder::$path['imagesURL']."sc-four_fifth.png";
-				$this->config['tab']		= __('Layout Elements', 'avia_framework' );
+				$this->config['tab']		= __( 'Layout Elements', 'avia_framework' );
 				$this->config['order']		= 37;
 				$this->config['target']		= "avia-section-drop";
 				$this->config['shortcode'] 	= 'av_four_fifth';
 				$this->config['html_renderer'] 	= false;
-				$this->config['tooltip'] 	= __('Creates a single column with 80&percnt; width', 'avia_framework' );
+				$this->config['tooltip'] 	= __( 'Creates a single column with 80&percnt; width', 'avia_framework' );
 				$this->config['drag-level'] = 2;
 				$this->config['drop-level'] = 2;
 				$this->config['tinyMCE'] 	= array(
-                    'name' => '4/5',
-                    'instantInsert' => "[av_four_fifth first]4/5[/av_four_fifth]"
-				                                    );
+													'name'			=> '4/5',
+													'instantInsert'	=> "[av_four_fifth first]4/5[/av_four_fifth]"
+												);
+				$this->config['id_name']	= 'id';
+				$this->config['id_show']	= 'yes';
 			}
 	}
 }

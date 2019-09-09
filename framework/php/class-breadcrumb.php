@@ -68,7 +68,7 @@ if(!class_exists('avia_breadcrumb'))
 				if(isset($category[0]))
 				{
 					$ID = $category[0]->cat_ID;
-					$parents = get_category_parents($ID, TRUE, $markup, FALSE );
+					$parents = get_category_parents( $ID, true, $markup, false );
 					if(!is_object($parents)) echo $parents;
 					previous_post_link("%link $markup");
 				}
@@ -80,7 +80,7 @@ if(!class_exists('avia_breadcrumb'))
 				if($postType == 'post')
 				{
 					$ID = $category[0]->cat_ID;
-					echo get_category_parents($ID, TRUE, $markup, FALSE );
+					echo get_category_parents( $ID, true, $markup, false );
 				}
 				else if($postType == 'portfolio')
 				{
@@ -105,10 +105,10 @@ if(!class_exists('avia_breadcrumb'))
 			$i = $category[0]->cat_ID;
 			$parent = $category[0]-> category_parent;
 
-			if($parent > 0 && $category[0]->cat_name == single_cat_title("", false)){
-				echo get_category_parents($parent, TRUE, $markup, FALSE);
+			if($parent > 0 && $category[0]->cat_name == single_cat_title( "", false ) ){
+				echo get_category_parents( $parent, true, $markup, false );
 			}
-		return single_cat_title('',FALSE);
+		return single_cat_title( '', false );
 		}
 
 
@@ -116,7 +116,7 @@ if(!class_exists('avia_breadcrumb'))
 			$curauth = get_userdatabylogin(get_query_var('author_name'));
 			return "Author: ".$curauth->nickname;
 		}
-		if(is_tag()){ return "Tag: ".single_tag_title('',FALSE); }
+		if(is_tag()){ return "Tag: " . single_tag_title( '', false ); }
 
 		if(is_404()){ return __("404 - Page not Found",'avia_framework'); }
 
@@ -171,7 +171,7 @@ if(!class_exists('avia_breadcrumb'))
 
 
 function avia_breadcrumbs( $args = array() ) {
-  //ouptutta yoast!
+	//ouptutta yoast!
   $langhe_breadcrumb = yoast_breadcrumb('<p class="breadcrumb"><span class="breadcrumb_info">','</span></p>',false);
 
   return $langhe_breadcrumb;

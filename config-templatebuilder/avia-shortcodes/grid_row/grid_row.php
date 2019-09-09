@@ -8,7 +8,7 @@
  // Don't load directly
 if ( !defined('ABSPATH') ) { die('-1'); }
 
-if ( !class_exists( 'avia_sc_grid_row' ) )
+if ( ! class_exists( 'avia_sc_grid_row' ) )
 {
 	include_once( 'cell.php' );
 	
@@ -39,18 +39,21 @@ if ( !class_exists( 'avia_sc_grid_row' ) )
 														);
 				
 				
-				$this->config['name']		= __('Grid Row', 'avia_framework' );
-				$this->config['icon']		= AviaBuilder::$path['imagesURL']."sc-layout_row.png";
-				$this->config['tab']		= __('Layout Elements', 'avia_framework' );
-				$this->config['order']		= 15;
-				$this->config['shortcode'] 	= 'av_layout_row';
-				$this->config['html_renderer'] 	= false;
-				$this->config['tinyMCE'] 	= array('disable' => "true");
-				$this->config['tooltip'] 	= __('Add multiple Grid Rows below each other to create advanced grid layouts. Cells can be styled individually', 'avia_framework' );
-				$this->config['drag-level'] = 1;
-				$this->config['drop-level'] = 100;
-				$this->config['disabling_allowed'] = false;
+				$this->config['name']				= __( 'Grid Row', 'avia_framework' );
+				$this->config['icon']				= AviaBuilder::$path['imagesURL']."sc-layout_row.png";
+				$this->config['tab']				= __( 'Layout Elements', 'avia_framework' );
+				$this->config['order']				= 15;
+				$this->config['shortcode']			= 'av_layout_row';
+				$this->config['html_renderer']		= false;
+				$this->config['tinyMCE']			= array( 'disable' => "true" );
+				$this->config['tooltip']			= __( 'Add multiple Grid Rows below each other to create advanced grid layouts. Cells can be styled individually', 'avia_framework' );
+				$this->config['drag-level']			= 1;
+				$this->config['drop-level']			= 100;
+				$this->config['disabling_allowed']	= false;
 
+				$this->config['id_name']			= 'id';
+				$this->config['id_show']			= 'always';				//	we use original code - not $meta
+				$this->config['aria_label']			= 'yes';
 			}
 			
 			function extra_assets()
@@ -241,12 +244,12 @@ if ( !class_exists( 'avia_sc_grid_row' ) )
 									)
 				    ),
 				    
-				    array(	"name" 	=> __("For Developers: Section ID", 'avia_framework' ),
-							"desc" 	=> __("Apply a custom ID Attribute to the section, so you can apply a unique style via CSS. This option is also helpful if you want to use anchor links to scroll to a sections when a link is clicked", 'avia_framework' )."<br/><br/>".
-									   __("Use with caution and make sure to only use allowed characters. No special characters can be used.", 'avia_framework' ),
-				            "id" 	=> "id",
-				            "type" 	=> "input",
-				            "std" => ""),
+//				    array(	"name" 	=> __("For Developers: Section ID", 'avia_framework' ),
+//							"desc" 	=> __("Apply a custom ID Attribute to the section, so you can apply a unique style via CSS. This option is also helpful if you want to use anchor links to scroll to a sections when a link is clicked", 'avia_framework' )."<br/><br/>".
+//									   __("Use with caution and make sure to only use allowed characters. No special characters can be used.", 'avia_framework' ),
+//				            "id" 	=> "id",
+//				            "type" 	=> "input",
+//				            "std" => ""),
 				            
 				    array(	"id" 	=> "av_element_hidden_in_editor",
 				            "type" 	=> "hidden",
@@ -257,13 +260,13 @@ if ( !class_exists( 'avia_sc_grid_row' ) )
 						'nodescription' => true
 					),
 					
-				array(
-									"type" 	=> "tab",
-									"name"	=> __("Screen Options",'avia_framework' ),
-									'nodescription' => true
-								),
+					array(
+							"type" 	=> "tab",
+							"name"	=> __("Screen Options",'avia_framework' ),
+							'nodescription' => true
+						),
 								
-								array(
+						array(
 							"name" 	=> __("Mobile Breaking Point",'avia_framework' ),
 							"desc" 	=> __("Set the screen width when cells in this row should switch to full width", 'avia_framework' ),
 							"type" 	=> "heading",
@@ -272,73 +275,28 @@ if ( !class_exists( 'avia_sc_grid_row' ) )
 							
 							
 						array(	
-						"name" 	=> __("Fullwidth Break Point", 'avia_framework' ),
-						"desc" 	=> __("The cells in this row will switch to fullwidth at this screen width ", 'avia_framework' ),
-						"id" 	=> "mobile_breaking",
-						"type" 	=> "select",
-						"std" 	=> "",
-						"subtype" => array(	
-								__('On mobile devices (at a screen width of 767px or lower)','avia_framework' ) =>'',
-								__('On tablets (at a screen width of 989px or lower)',  'avia_framework' ) =>'av-break-at-tablet',
-									)
-					),	
+							"name" 	=> __( "Fullwidth Break Point", 'avia_framework' ),
+							"desc" 	=> __( "The cells in this row will switch to fullwidth at this screen width ", 'avia_framework' ),
+							"id" 	=> "mobile_breaking",
+							"type" 	=> "select",
+							"std" 	=> "",
+							"subtype" => array(	
+												__( 'On mobile devices (at a screen width of 767px or lower)', 'avia_framework' )	=> '',
+												__( 'On tablets (at a screen width of 989px or lower)', 'avia_framework' )			=> 'av-break-at-tablet',
+											)
+							),	
 					
-							
 					
-								array(
-								"name" 	=> __("Element Visibility",'avia_framework' ),
-								"desc" 	=> __("Set the visibility for this element, based on the device screensize.", 'avia_framework' ),
-								"type" 	=> "heading",
-								"description_class" => "av-builder-note av-neutral",
-								),
-							
-								array(	
-										"desc" 	=> __("Hide on large screens (wider than 990px - eg: Desktop)", 'avia_framework'),
-										"id" 	=> "av-desktop-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
+						array(	
+							'type'			=> 'template',
+							'template_id'	=> 'screen_options_visibility'
+						),
 								
-								array(	
-									
-										"desc" 	=> __("Hide on medium sized screens (between 768px and 989px - eg: Tablet Landscape)", 'avia_framework'),
-										"id" 	=> "av-medium-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-										
-								array(	
-									
-										"desc" 	=> __("Hide on small screens (between 480px and 767px - eg: Tablet Portrait)", 'avia_framework'),
-										"id" 	=> "av-small-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-										
-								array(	
-									
-										"desc" 	=> __("Hide on very small screens (smaller than 479px - eg: Smartphone Portrait)", 'avia_framework'),
-										"id" 	=> "av-mini-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-	
+						array(
+								"type" 	=> "close_div",
+								'nodescription' => true
+							),	
 								
-							array(
-									"type" 	=> "close_div",
-									'nodescription' => true
-								),	
-								
-								
-						
-						
-					array(
-						"type" 	=> "close_div",
-						'nodescription' => true
-					),		
-					
-					
-					
 				array(
 						"type" 	=> "close_div",
 						'nodescription' => true
@@ -355,7 +313,7 @@ if ( !class_exists( 'avia_sc_grid_row' ) )
 			 * @param string $shortcodename the shortcode found, when == callback name
 			 * @return string $output returns the modified html string
 			 */
-			function shortcode_handler($atts, $content = "", $shortcodename = "", $meta = "")
+			function shortcode_handler( $atts, $content = "", $shortcodename = "", $meta = "" )
 			{
 				
 				extract(AviaHelper::av_mobile_sizes($atts)); //return $av_font_classes, $av_title_font_classes and $av_display_classes 
@@ -363,16 +321,16 @@ if ( !class_exists( 'avia_sc_grid_row' ) )
 				avia_sc_grid_row::$count++;
 				
 			    $atts = shortcode_atts( array(
-											'color'					=> 'main_color',
-											'border'				=> '',
-											'min_height'			=> '0',
-											'min_height_percent'	=> '',
-											'min_height_pc'			=> 25,
-											'mobile'				=> 'av-flex-cells',
-											'mobile_breaking'		=> '',
-											'id'					=> ''
-				
-										), $atts, $this->config['shortcode'] );
+							'color'					=> 'main_color',
+							'border'				=> '',
+							'min_height'			=> '0',
+							'min_height_percent'	=> '',
+							'min_height_pc'			=> 25,
+							'mobile'				=> 'av-flex-cells',
+							'mobile_breaking'		=> '',
+							'id'					=> ''
+
+						), $atts, $this->config['shortcode'] );
 				
 				if( 'percent' == $atts['min_height_percent'] )
 				{
@@ -386,8 +344,9 @@ if ( !class_exists( 'avia_sc_grid_row' ) )
 				
 				$params['class'] = "av-layout-grid-container entry-content-wrapper {$color} {$mobile} {$mobile_breaking} {$av_display_classes} {$border} {$meta['el_class']}";
 				$params['open_structure'] = false; 
-				$params['id'] = ! empty( $id ) ? AviaHelper::save_string( $id, '-' ) : "av-layout-grid-" . avia_sc_grid_row::$count;
+				$params['id'] = AviaHelper::save_string( $id, '-', 'av-layout-grid-' . avia_sc_grid_row::$count );
 				$params['custom_markup'] = $meta['custom_markup'];
+				$params['aria_label'] = $meta['aria_label'];
 				$params['data'] = '';
 				
 				if( $min_height_percent != '' )

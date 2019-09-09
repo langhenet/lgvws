@@ -6,14 +6,21 @@ if ( ! defined( 'ABSPATH' ) ) {  exit;  }    // Exit if accessed directly
 /*
  * Adjustments for the Yoast WordPress SEO Plugin
  */
-if(!defined('WPSEO_VERSION') && !class_exists('wpSEO')) return;
+
+if( ! defined( 'WPSEO_VERSION' ) && ! class_exists( 'wpSEO' ) )		
+{
+	return;
+}
 
 function avia_wpseo_register_assets()
 {
 	wp_enqueue_script( 'avia-yoast-seo-js', AVIA_BASE_URL.'config-wordpress-seo/wpseo-mod.js', array('jquery'), 1, true);
 }
 
-if(is_admin()){ add_action('init', 'avia_wpseo_register_assets'); }
+if( is_admin() )  
+{
+	add_action( 'init', 'avia_wpseo_register_assets' );
+}
 
 
 
@@ -292,3 +299,43 @@ if( ! function_exists( 'avia_wpseo_sitemap_exclude_pages' ) )
 		return $post_ids;
 	}
 }
+
+if( ! function_exists( 'avia_wpseo_shortcode_handler_prepare_fallback' ) )
+{
+	
+	/**
+	 * This is a beta trial only.
+	 * Process shortcode in backend if not called with ajax
+	 * Ajax call wpseo_filter_shortcodes has only opening tags of shortcodes. Processing makes no sense.
+	 * 
+	 * @since 4.5.7.1
+	 * @param string $process
+	 * @param aviaShortcodeTemplate $class
+	 * @param array $atts
+	 * @param string $content
+	 * @param string $shortcodename
+	 * @param boolean $fake
+	 * @return string						'' | 'process_shortcode_in_backend'
+	 */
+	function avia_wpseo_process_shortcode_in_backend( $process, $class, $atts, $content, $shortcodename, $fake )
+	{
+		if( defined( 'DOING_AJAX' ) && DOING_AJAX && isset( $_REQUEST['action'] ) && ( 'wpseo_filter_shortcodes' == $_REQUEST['action'] ) )
+		{
+//			return '';		//	as a try we evaluate shortcodes even if we have no content
+			return 'process_shortcode_in_backend';
+		}
+		
+		/**
+		 * Currently we do not alter this
+		 */
+		if( defined( 'DOING_AJAX' ) && DOING_AJAX )
+		{
+			return $process;
+		}
+					
+		return 'process_shortcode_in_backend';
+	}
+	
+	add_filter( 'avf_process_shortcode_in_backend', 'avia_wpseo_process_shortcode_in_backend', 20, 6 );
+}
+

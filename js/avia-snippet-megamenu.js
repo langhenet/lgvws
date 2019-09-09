@@ -164,7 +164,7 @@
 			{
 				megaItems.each(function(i){
 
-					$(this).bind('click', function()
+					$(this).on('click', function()
 					{
 						if(mega_open["check"+i] != true) return false;
 					});
@@ -204,12 +204,12 @@
 					sublist.css({display:'block', opacity:0, visibility:'hidden'});
 					var currentLink = currentItem.find('>a');
 
-					currentLink.bind('mouseenter', function()
+					currentLink.on('mouseenter', function()
 					{
 						sublist.stop().css({visibility:'visible'}).animate({opacity:1});
 					});
 
-					currentItem.bind('mouseleave', function()
+					currentItem.on('mouseleave', function()
 					{
 						sublist.stop().animate({opacity:0}, function()
 						{

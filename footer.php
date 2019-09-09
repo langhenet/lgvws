@@ -159,7 +159,7 @@
 			<?php
 
 			//copyright
-			$copyright = do_shortcode( avia_get_option('copyright', "&copy; ".__('Copyright','avia_framework')."  - <a href='".home_url('/')."'>".get_bloginfo('name')."</a>") );
+			$copyright = do_shortcode( avia_get_option( 'copyright', "&copy; ".__('Copyright','avia_framework')."  - <a href='".home_url('/')."'>".get_bloginfo('name')."</a>") );
 
 			// you can filter and remove the backlink with an add_filter function
 			// from your themes (or child themes) functions.php file if you dont want to edit this file
@@ -168,12 +168,20 @@
 			$kriesi_at_backlink = kriesi_backlink(get_option(THEMENAMECLEAN."_initial_version"), 'Enfold');
 
 
-			
-			if($copyright && strpos($copyright, '[nolink]') !== false)
+			if( $copyright && strpos( $copyright, '[nolink]' ) !== false )
 			{
-				$kriesi_at_backlink = "";
-				$copyright = str_replace("[nolink]","",$copyright);
+				$kriesi_at_backlink = '';
+				$copyright = str_replace( '[nolink]', '', $copyright );
 			}
+			
+			/**
+			 * @since 4.5.7.2
+			 * @param string $copyright
+			 * @param string $copyright_option
+			 * @return string
+			 */
+			$copyright_option = avia_get_option( 'copyright' );
+			$copyright = apply_filters( 'avf_copyright_info', $copyright, $copyright_option );
 
 			if( in_array( $footer_widget_setting, array( 'all', 'nofooterwidgets', 'page_in_footer_socket' ) ) )
 			{
@@ -257,7 +265,7 @@
 	?>
 
 
-<a href='#top' title='<?php _e('Scroll to top','avia_framework'); ?>' id='scroll-top-link' <?php echo av_icon_string( 'scrolltop' ); ?>><span class="avia_hidden_link_text"><?php _e('Scroll to top','avia_framework'); ?></span></a>
+<a href='#top' title='<?php _e('Scroll to top','avia_framework'); ?>' id='scroll-top-link' aria-hidden='true' <?php echo av_icon_string( 'scrolltop' ); ?>><span class="avia_hidden_link_text"><?php _e('Scroll to top','avia_framework'); ?></span></a>
 
 <div id="fb-root"></div>
 

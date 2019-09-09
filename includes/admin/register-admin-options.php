@@ -82,13 +82,12 @@ __("By default compression is enabled. It is recommended to only disable the fea
 
 $avia_elements[] =	array(
 					"slug"	=> "performance",
-					"name" 	=> __("CSS file merging and compression", 'avia_framework'),
-					"desc" 	=> 
-					__("Select which level of file merging and compression you want to apply to your CSS files", 'avia_framework'),
+					"name" 	=> __( "CSS file merging and compression", 'avia_framework' ),
+					"desc" 	=> __( "Select which level of file merging and compression you want to apply to your CSS files", 'avia_framework' ),
 					"id" 	=> "merge_css",
 					"type" 	=> "select",
 					"std" 	=> "avia",
-					"no_first"=>true,
+					"no_first"	=> true,
 					"subtype" => array( __('Disable - no CSS file merging and compression', 'avia_framework') => 'none',
 										/*__('Compress advanced template builder CSS files (level 1)', 'avia_framework') =>'avia-module',*/
 										__('Enable - merge and compress all theme CSS files', 'avia_framework') => 'avia',
@@ -98,19 +97,31 @@ $avia_elements[] =	array(
 
 $avia_elements[] =	array(
 					"slug"	=> "performance",
-					"name" 	=> __("Javascript file merging and compression", 'avia_framework'),
-					"desc" 	=> 
-							   __("Select which level of file merging and compression you want to apply to your Javascript files.", 'avia_framework'),
-
+					"name" 	=> __( "Javascript file merging and compression", 'avia_framework' ),
+					"desc" 	=> __( "Select which level of file merging and compression you want to apply to your Javascript files.", 'avia_framework' ),
 					"id" 	=> "merge_js",
 					"type" 	=> "select",
 					"std" 	=> "avia",
-					"no_first"=>true,
+					"no_first"	=> true,
 					"subtype" => array( __('Disable - no Javascript file merging and compression', 'avia_framework') => 'none',
 										/*__('Compress advanced template builder javascript files (level 1)', 'avia_framework') =>'avia-module',*/
 										__('Enable - merge and compress all theme javascript files', 'avia_framework') => 'avia',
 										/* __('Compress all theme and plugin files (level 3)', 'avia_framework') => "all", */
 										));
+
+$avia_elements[] =	array(
+					'slug'	=> 'performance',
+					'name' 	=> __( 'Http security level for checking readability of merged files', 'avia_framework' ),
+					'desc' 	=> __( 'Some server configuration make problems with ssl certificates (mostly self-signed certificates) when we check the readability of created merged files. In that case the files are not created. If you experience such problems try to disable the ssl verification during the creation process. This does not effect the protocoll on frontend pageload.', 'avia_framework'),
+					'id' 	=> 'merge_disable_ssl',
+					'type' 	=> 'select',
+					'std' 	=> '',
+					'no_first'	=> true,
+					'subtype' => array( 
+									__( 'Use ssl verification if needed for site (= default)', 'avia_framework' )				=> '',
+									__( 'Disable ssl verification when checking readability of merged files', 'avia_framework')	=> 'disable_ssl',
+									)
+						);
 
 
 
@@ -138,7 +149,7 @@ $avia_elements[] =	array(
 					"id" 	=> "disable_alb_elements",
 					"type" 	=> "select",
 					"std" 	=> "auto",
-					"no_first"=>true,
+					"no_first"	=> true,
 					"subtype" => array( __('Always load all elements', 'avia_framework') =>'load_all',
 										__('Load only used elements (recommended)', 'avia_framework') =>'auto',
 										__('Manually manage loaded elements', 'avia_framework') =>'manually',
@@ -415,55 +426,160 @@ $avia_elements[] = array(
 
 
 /*builder*/
-
-
-$avia_elements[] = array(
-		"name" 	=> __("Disable advance layout builder preview in backend", 'avia_framework'),
-		"desc" 	=> __("Check to disable the live preview of your advanced layout builder elements", 'avia_framework'),
-		"id" 	=> "preview_disable",
-		"type" 	=> "checkbox",
-		"std"	=> "",
-		"slug"	=> "builder");
-
+$avia_elements[] = array(	
+						'slug'			=> 'builder', 
+						'type'			=> 'visual_group_start', 
+						'id'			=> 'avia_alb_general', 
+						'nodescription'	=> true
+					);
 
 $avia_elements[] = array(
-		"name" 	=> __("Show element options for developers", 'avia_framework'),
-		"desc" 	=> __("If checked this will display developer options like custom CSS classes or IDs", 'avia_framework'),
-		"id" 	=> "developer_options",
-		"type" 	=> "checkbox",
-		"std"	=> "",
-		"slug"	=> "builder");
+						'slug'          => 'builder',
+						'name'          => __( 'General Builder Options','avia_framework' ),
+						'desc'          => '',
+						'id'            => 'avia_builder_general',
+						'std'           => '',
+						'type'          => 'heading',
+						'nodescription' => true
+					);
+
+$avia_elements[] = array(
+						'slug'	=> 'builder',
+						'name' 	=> __( 'Disable advance layout builder preview in backend', 'avia_framework' ),
+						'desc' 	=> __( 'Check to disable the live preview of your advanced layout builder elements', 'avia_framework' ),
+						'id' 	=> 'preview_disable',
+						'type' 	=> 'checkbox',
+						'std'	=> ''
+					);
 
 
+$avia_elements[] = array(	
+						'slug'			=> 'builder', 
+						'type'			=> 'visual_group_end', 
+						'id'			=> 'avia_alb_general_close', 
+						'nodescription' => true
+					);	
 
-$loack_alb = "checkbox";
 
-if(!current_user_can('switch_themes'))
+$loack_alb = 'checkbox';
+
+if( ! current_user_can( 'switch_themes' ) )
 {
-	$loack_alb = "hidden";
+	$loack_alb = 'hidden';
 }
 
-$avia_elements[] = array(	"slug"	=> "builder", "type" => "visual_group_start", "id" => "avia_lock_alb", "nodescription" => true);
+$avia_elements[] = array(	
+						'slug'			=> 'builder', 
+						'type'			=> 'visual_group_start', 
+						'id'			=> 'avia_lock_alb', 
+						'nodescription'	=> true
+					);
 
 $avia_elements[] = array(
-		"name" 	=> __("Lock advanced layout builder", 'avia_framework'),
-		"desc" 	=> __("This removes the ability to move or delete existing template builder elements, or add new ones, for everyone who is not an administrator. The content of an existing element can still be changed by everyone who can edit that entry.", 'avia_framework'),
-		"id" 	=> "lock_alb",
-		"type" 	=> $loack_alb,
-		"std"	=> "",
-		"slug"	=> "builder");	
+						'name' 	=> __( 'Lock advanced layout builder', 'avia_framework' ),
+						'desc' 	=> __( 'This removes the ability to move or delete existing template builder elements, or add new ones, for everyone who is not an administrator. The content of an existing element can still be changed by everyone who can edit that entry.', 'avia_framework' ),
+						'id' 	=> 'lock_alb',
+						'type' 	=> $loack_alb,
+						'std'	=> '',
+						'slug'	=> 'builder'
+					);	
 
 
 $avia_elements[] = array(
-		"name" 	=> __("Lock advanced layout builder for admins as well?", 'avia_framework'),
-		"desc" 	=> __("This will lock the elements for all administrators including you, to prevent accidental changing of a page layout. In order to change a page layout later, you will need to uncheck this option first", 'avia_framework'),
-		"id" 	=> "lock_alb_for_admins",
-		"type" 	=> $loack_alb,
-		"std"	=> "",
-		"required" => array('lock_alb','{true}'),
-		"slug"	=> "builder");	
+						'name' 	=> __( 'Lock advanced layout builder for admins as well?', 'avia_framework' ),
+						'desc' 	=> __( 'This will lock the elements for all administrators including you, to prevent accidental changing of a page layout. In order to change a page layout later, you will need to uncheck this option first', 'avia_framework' ),
+						'id' 	=> 'lock_alb_for_admins',
+						'type' 	=> $loack_alb,
+						'std'	=> '',
+						'required' => array( 'lock_alb', '{true}' ),
+						'slug'	=> 'builder'
+					);	
 
-$avia_elements[] = array(	"slug"	=> "builder", "type" => "visual_group_end", "id" => "avia_lock_alb_close", "nodescription" => true);		
+$avia_elements[] = array(	
+						'slug'			=> 'builder', 
+						'type'			=> 'visual_group_end', 
+						'id'			=> 'avia_lock_alb_close', 
+						'nodescription'	=> true
+					);		
+
+
+$avia_elements[] = array(	
+						'slug'			=> 'builder', 
+						'type'			=> 'visual_group_start', 
+						'id'			=> 'avia_alb_developers', 
+						'nodescription'	=> true
+					);
+
+$avia_elements[] = array(
+						'slug'          => 'builder',
+						'name'          => __( 'Builder Options For Developers', 'avia_framework' ),
+						'desc'          => '',
+						'id'            => 'avia_builder_developer_title',
+						'std'           => '',
+						'type'          => 'heading',
+						'nodescription' => true
+					);
+
+$desc  = __( 'Select to display an input field that allows you to add custom CSS classes to an element for individual styling.', 'avia_framework' );
+$desc .= '<br />';
+$desc .= '<strong>' . __( 'Using theme support &quot;avia_template_builder_custom_css&quot; will override this option to &quot;Show and allow... &quot; - will be removed in a future version.', 'avia_framework' ) . '</strong>';
+
+$avia_elements[] = array(
+						'slug'		=> 'builder',
+						'name'		=> __( 'Custom CSS classes input field', 'avia_framework' ),
+						'desc'		=> $desc,
+						'id'		=> 'developer_options',
+						'type'		=> 'select',
+						'no_first'	=> true,
+						'std'	=> 'deactivate',
+						'subtype'	=> array( 
+											__( 'Do not show, ignore all added classes', 'avia_framework' )	=> 'deactivate',
+											__( 'Do not show, but use added classes', 'avia_framework' )	=> 'hide',
+											__( 'Show and allow to edit classes', 'avia_framework' )		=> 'developer_options',
+										)
+					);
+
+$desc  = __( 'Select to display an input field that allows you to add a unique ID to an element for individual styling or as anchor.', 'avia_framework' );
+$desc .= '<br />';
+$desc .= '<strong>' . __( 'Using theme support &quot;avia_template_builder_custom_tab_toogle_id&quot; will override this option to &quot;Show and allow... &quot; - will be removed in a future version.', 'avia_framework' ) . '</strong>';
+
+		
+$avia_elements[] = array(
+						'slug'		=> 'builder',
+						'name'		=> __( 'ID attribute input field', 'avia_framework' ),
+						'desc'		=> $desc,
+						'id'		=> 'developer_id_attribute',
+						'type'		=> 'select',
+						'no_first'	=> true,
+						'std'	=> 'deactivate',
+						'subtype'	=> array( 
+											__( 'Do not show - ignore all added ids', 'avia_framework' )	=> 'deactivate',
+											__( 'Do not show, but use added ids', 'avia_framework' )		=> 'hide',
+											__( 'Show and allow to edit ids', 'avia_framework' )			=> 'developer_id_attribute',
+										)
+					);
+
+$avia_elements[] = array(
+						'slug'	=> 'builder',
+						'name' 	=> __( 'Customize heading styling', 'avia_framework' ),
+						'desc' 	=> __( 'Select to display options to change heading tags and add custom classes for easier styling. Enfold only provides CSS for theme default tags so it might be necessary to add your own CSS rules when you change the tags.', 'avia_framework' ),
+						'id' 	=> 'developer_seo_heading_tags',
+						'type' 	=> 'select',
+						'no_first'	=> true,
+						'std'	=> 'deactivate',
+						'subtype'	=> array( 
+											__( 'Do not show - use theme defaults', 'avia_framework' )			=> 'deactivate',
+											__( 'Do not show, but use selected stylings', 'avia_framework' )	=> 'hide',
+											__( 'Show and allow to edit stylings', 'avia_framework' )			=> 'developer_seo_heading_tags',
+										)
+					);
+
+$avia_elements[] = array(	
+						'slug'			=> 'builder', 
+						'type'			=> 'visual_group_end', 
+						'id'			=> 'avia_alb_developers_close', 
+						'nodescription'	=> true
+					);		
 
 
 $avia_elements[] = array(	"slug"	=> "builder", "type" => "visual_group_start", "id" => "avia_markup", "nodescription" => true);
@@ -819,64 +935,304 @@ $avia_elements[] = array(	"slug"	=> "menu", "type" => "visual_group_end", "id" =
 
 
 
-
-
-
-
-
-
-
-										
-
-							
-							
-
-
 /*google*/
 
+$avia_elements[] = array(
+							'slug'	        => 'google', 
+							'type'          => 'visual_group_start', 
+							'id'            => 'avia_google_analytics_group', 
+							'nodescription' => true
+						);	
 
-
-$avia_elements[] =	array(
-					"slug"	=> "google",
-					"name" 	=> __("Google Analytics Tracking Code", 'avia_framework'),
-					"desc" 	=> __("Either enter your Google tracking id (UA-XXXXX-X) or your full Google Analytics tracking Code here.", 'avia_framework')."<br><br>".__("If you want to offer your visitors the option to stop being tracked you can place the shortcode [av_privacy_google_tracking] somewhere on your site", 'avia_framework'),
-    "class" => "av_small_textarea",
-					"id" 	=> "analytics",
-					"type" 	=> "textarea"
-					);
-
-$avia_elements[] = array("slug"	=> "google", "type" => "visual_group_start", "id" => "avia_google_maps_group", "nodescription" => true);	
-
-
-$google_link = "https://console.developers.google.com/flows/enableapi?apiid=maps_backend,geocoding_backend,directions_backend,distance_matrix_backend,elevation_backend,places_backend&keyType=CLIENT_SIDE&reusekey=true";
-$tutorial_link = "https://kriesi.at/documentation/enfold/how-to-register-a-google-maps-api-key/";
-
-
-$avia_elements[] = array(	"name" => 	__("Google Maps", 'avia_framework'),
-								"desc" => __("Google recently changed the way their map service works. New pages which want to use Google Maps need to register an API key for their website. Older pages should  work fine without this API key. If the google map elements of this theme do not work properly you need to register a new API key.", 'avia_framework')."<br><a href='{$google_link}' target='_blank'>".__("Register an API Key", 'avia_framework')."</a> | <a target='_blank' href='{$tutorial_link}'>".__("Tutorial: How to create an API key", 'avia_framework')."</a>",
-								"std" => "",
-								"slug"	=> "google",
-								"type" => "heading",
-								"nodescription"=>true);
-
+$avia_elements[] = array(
+							'slug'          => 'google',
+							'name'          => __( 'Google Analytics','avia_framework' ),
+							'desc'          => '',
+							'id'            => 'avia_google_analytics_heading',
+							'std'           => '',
+							'type'          => 'heading',
+							'nodescription' => true
+						);
 
 $avia_elements[] =	array(
-						"slug"	=>	"google",
-						"name" 	=>	__("Enter a valid Google Maps API Key to use all map related theme functions", 'avia_framework'),
-						"desc" 	=>	"",
-						"id" 	=>	"gmap_api",
-						"type" 	=> "verification_field",
-						"ajax"  => "av_maps_api_check",
-						"js_callback"  => "av_maps_js_api_check",
-						"class" => "av_full_description",
-						"button-label" => __('Check API Key', 'avia_framework'),
-						"button-relabel" => __('Check API Key', 'avia_framework'),
-						"std" 	=>	""
+							'slug'  => 'google',
+							'name'  => __( 'Google Analytics Tracking Code', 'avia_framework' ),
+							'desc'  => __( 'Either enter your Google tracking id (UA-XXXXX-X) or your full Google Analytics tracking Code here.', 'avia_framework') . '<br><br>' . __( 'If you want to offer your visitors the option to stop being tracked you can place the shortcode [av_privacy_google_tracking] somewhere on your site', 'avia_framework' ),
+							'class' => 'av_small_textarea',
+							'id'    => 'analytics',
+							'type'  => 'textarea'
+						);
+
+$avia_elements[] = array(
+							'slug'          => 'google', 
+							'type'          => 'visual_group_end', 
+							'id'            => 'avia_google_analytics_group_end', 
+							'nodescription' => true
+						);
+
+$avia_elements[] = array(
+							'slug'	        => 'google', 
+							'type'          => 'visual_group_start', 
+							'id'            => 'avia_google_maps_group', 
+							'nodescription' => true
+						);	
+
+
+$google_link = 'https://console.developers.google.com/flows/enableapi?apiid=maps_backend,geocoding_backend,directions_backend,distance_matrix_backend,elevation_backend,places_backend&keyType=CLIENT_SIDE&reusekey=true';
+$tutorial_link = 'https://kriesi.at/documentation/enfold/how-to-register-a-google-maps-api-key/';
+
+
+$avia_elements[] = array(	
+							'name'	=> __( 'Google Maps', 'avia_framework' ),
+							'desc'	=> __( 'Google recently changed the way their map service works. New pages which want to use Google Maps need to register an API key for their website. Older pages should  work fine without this API key. If the google map elements of this theme do not work properly you need to register a new API key.', 'avia_framework' ) . "<br><a href='{$google_link}' target='_blank'>" . __( 'Register an API Key', 'avia_framework' ) . "</a> | <a target='_blank' href='{$tutorial_link}'>" . __( 'Tutorial: How to create an API key', 'avia_framework' ) . '</a>',
+							'id'	=> 'avia_gmaps_heading',
+							'std'	=> '',
+							'slug'	=> 'google',
+							'type'	=> 'heading',
+							'nodescription' => true
 					);
 
+$avia_elements[] = array(
+							'slug'		=> 'google',
+							'name'		=> __( 'Enable Google Maps on your site', 'avia_framework' ),
+							'desc'		=> __( 'Select if you want to use Google Maps on your site. If it is disabled no Javascript to connect to Google Maps will be loaded in frontend.', 'avia_framework' ),
+							'id'		=> 'gmap_enabled',
+							'type'		=> 'select',
+							'std'		=> '',
+							'no_first'	=> true,
+							'subtype'	=> array(
+												__( 'Disable Google Maps', 'avia_framework' )	=> 'disable_gmap',
+												__( 'Use Google Maps', 'avia_framework')		=> ''
+											)
+						);								
+								
+								
+$avia_elements[] = array(
+							'slug'           => 'google',
+							'name'           => __('Enter a valid Google Maps API Key to use all map related theme functions', 'avia_framework'),
+							'desc'           => '',
+							'id'             => 'gmap_api',
+							'required'       => array( 'gmap_enabled', '' ),
+							'type'           => 'verification_field',
+							'ajax'           => 'av_maps_api_check',
+							'js_callback'    => 'av_maps_js_api_check',
+							'class'          => 'av_full_description',
+							'button-label'   => __( 'Check API Key', 'avia_framework' ),
+							'button-relabel' => __(' Check API Key', 'avia_framework' ),
+							'std'            => ''
+					);
 
-$avia_elements[] = array("slug"	=> "google", "type" => "visual_group_end", "id" => "avia_google_maps_group_end", "nodescription" => true);
+$avia_elements[] = array(	
+							'slug'      => 'google',
+							'std'       => '',
+							'name'      => __( 'Last verify state - hidden - used for internal use only', 'avia_framework' ),
+							'desc'      => '',
+							'id'        => 'gmap_verify_state',
+							'type'      => 'hidden',
+					);
 
+$avia_elements[] = array(	
+							'slug'      => 'google',
+							'std'       => '',
+							'name'      => __( 'Last verified keys - hidden - used for internal use only', 'avia_framework' ),
+							'desc'      => '',
+							'id'        => 'gmap_verified_key',
+							'type'      => 'hidden',
+					);
+
+$avia_elements[] = array(
+							'slug'          => 'google', 
+							'type'          => 'visual_group_end', 
+							'id'            => 'avia_google_maps_group_end', 
+							'nodescription' => true
+						);
+
+
+$avia_elements[] = array(
+							'slug'	        => 'google', 
+							'type'          => 'visual_group_start', 
+							'id'            => 'avia_google_recaptcha_group',
+							'class'         => 'av-verify-button-container',
+							'nodescription' => true
+						);	
+
+$recaptcha = 'https://developers.google.com/recaptcha/intro';
+$recaptcha_v3 = 'https://developers.google.com/recaptcha/docs/v3';
+$recaptcha_admin = 'https://www.google.com/recaptcha/admin';
+$recaptcha_doc = 'https://kriesi.at/documentation/enfold/contact-form/#captcha';
+
+$recaptcha_desc  = __( 'Add Google reCAPTCHA widget functionality to the theme to verify if user is a human. Currently only enfold contact forms are supported and you can choose for each form individually if you want to use a reCAPTCHA.', 'avia_framework' ) . '<br />';
+$recaptcha_desc .= sprintf( __( 'Info about <a href="%1$s" target="_blank">Google reCAPTCHA</a>. You need to create <a href="%2$s" target="_blank">API keys</a> for your site. Also check our <a href="%3$s" target="_blank">documentation.</a>', 'avia_framework' ), $recaptcha, $recaptcha_admin, $recaptcha_doc ) . '<br />';
+$recaptcha_v3 = sprintf( __( 'Please keep in mind that Version 3 needs to <a href="%1$s" target="_blank">monitor user behaviour and collects user data</a>. In case the score does not recognize a human Version 2 checkbox will be used additionally for verification. Therefore you must also register V2 keys.', ''), $recaptcha_v3 );
+$recaptcha_score = __( 'A score of 1.0 is very likely a good interaction, 0.0 is very likely a bot. Google recommends a threshold of 0.5 by default. In case we encounter a non human we ask user to verify with Version 2 chckbox.', 'avia_framework' );
+
+$avia_elements[] = array(
+							'slug'          => 'google',
+							'name'          => __( 'Google ReCAPTCHA','avia_framework' ),
+							'desc'          => $recaptcha_desc,
+							'id'            => 'avia_recaptcha',
+							'std'           => '',
+							'type'          => 'heading',
+							'nodescription' => true
+						);
+
+$avia_elements[] = array(
+							'slug'     => 'google',
+							'name'     => __( 'Select if you want to use Google reCAPTCHA', 'avia_framework' ),
+							'desc'     => $recaptcha_v3,
+							'id'       => 'avia_recaptcha_version',
+							'type'     => 'select',
+							'no_first' => true,
+							'std'      => '',
+							'subtype'  => array( 
+												__( 'Disable reCAPTCHA', 'avia_framework' )     => '',
+												__( 'reCAPTCHA Version 2', 'avia_framework' )   => 'avia_recaptcha_v2',
+												__( 'reCAPTCHA Version 3 (needs V2 as fallback verification)', 'avia_framework' )   => 'avia_recaptcha_v3',
+											)
+						);
+
+$avia_elements[] = array(
+							'slug'     => 'google',
+							'name'     => __( 'Site Key Version 2', 'avia_framework' ),
+							'desc'     => __( 'Enter the reCAPTCHA v2 API site key here.', 'avia_framework' ),
+							'id'       => 'avia_recaptcha_pkey_v2',
+							'type'     => 'text',
+							'required' => array( 'avia_recaptcha_version', '{contains_array}avia_recaptcha_v2;avia_recaptcha_v3' ),
+						);
+
+$avia_elements[] = array(
+							'slug'     => 'google',
+							'name'     => __( 'Secret Key Version 2', 'avia_framework' ),
+							'desc'     => __( 'Enter the reCAPTCHA v2 API secret key here.', 'avia_framework' ),
+							'id'       => 'avia_recaptcha_skey_v2',
+							'type'     => 'text',
+							'required' => array( 'avia_recaptcha_version', '{contains_array}avia_recaptcha_v2;avia_recaptcha_v3' ),
+						);
+
+$avia_elements[] = array(
+							'slug'     => 'google',
+							'name'     => __( 'Select Theme Style For Verification In Backend', 'avia_framework' ),
+							'desc'     => __( 'This selection is used in backend to verify the keys. Adjust it according to your WP backend settings to be able to see the reCAPTCHA checkbox in backend. This setting can also be used in frontend as default setting.', 'avia_framework' ),
+							'id'       => 'avia_recaptcha_v2_theme',
+							'type'     => 'select',
+							'no_first' => true,
+							'std'      => '5',
+							'required' => array( 'avia_recaptcha_version', '{contains_array}avia_recaptcha_v2;avia_recaptcha_v3' ),
+							'subtype'  => array( 
+												__( 'Light theme', 'avia_framework' )  => '',
+												__( 'Dark theme', 'avia_framework' )   => 'dark',
+											)
+						);
+
+$avia_elements[] = array(
+							'slug'           => 'google',
+							'name'           => '',
+							'desc'           => '',
+							'id'             => 'avia_recaptcha_key_verify_v2',
+							'required'       => array( 'avia_recaptcha_version','{contains_array}avia_recaptcha_v2;avia_recaptcha_v3'),
+							'type'           => 'verification_field',
+							'force_callback' => true,
+							'input_ids'		 => array( 'avia_recaptcha_version', 'avia_recaptcha_pkey_v2', 'avia_recaptcha_skey_v2', 'avia_recaptcha_pkey_v3', 'avia_recaptcha_skey_v3', 'avia_recaptcha_v2_theme' ),
+							'ajax'           => 'av_recaptcha_api_check',
+							'js_callback'    => 'av_recaptcha_js_api_check',
+							'class'          => 'av_full_description',
+							'button-label'   => __( 'Check reCAPTCHA API Keys Version 2', 'avia_framework' ),
+							'button-relabel' => __(' Check reCAPTCHA API Keys Version 2', 'avia_framework' ),
+							'std'            => ''
+					);
+
+$avia_elements[] = array(
+							'slug'     => 'google',
+							'name'     => __( 'Site Key Version 3', 'avia_framework' ),
+							'desc'     => __( 'Enter the reCAPTCHA v3 API site key here.', 'avia_framework' ),
+							'id'       => 'avia_recaptcha_pkey_v3',
+							'type'     => 'text',
+							'required' => array( 'avia_recaptcha_version', 'avia_recaptcha_v3' ),
+						);
+
+$avia_elements[] = array(
+							'slug'     => 'google',
+							'name'     => __( 'Secret Key Version 3', 'avia_framework' ),
+							'desc'     => __( 'Enter the reCAPTCHA v3 API secret key here.', 'avia_framework' ),
+							'id'       => 'avia_recaptcha_skey_v3',
+							'type'     => 'text',
+							'required' => array( 'avia_recaptcha_version', 'avia_recaptcha_v3' ),
+						);
+
+$numbers = array();
+for( $i = 0; $i <= 10; $i++ )
+{
+	$numbers[ number_format( $i / 10.0, 1, ',', ' ' ) ] = (string) $i;
+}
+
+$avia_elements[] = array(
+							'slug'     => 'google',
+							'name'     => __( 'Select Score For Human', 'avia_framework' ),
+							'desc'     => $recaptcha_score,
+							'id'       => 'avia_recaptcha_score',
+							'type'     => 'select',
+							'no_first' => true,
+							'std'      => '5',
+							'required' => array( 'avia_recaptcha_version', 'avia_recaptcha_v3' ),
+							'subtype'  => $numbers
+						);
+
+$avia_elements[] = array(
+							'slug'     => 'google',
+							'name'     => __( 'Google Legal Information', 'avia_framework' ),
+							'desc'     => __( 'Select if you want to show the default Google badge or only a message below the submit button. This is mandatory if you want to use V3.', 'avia_framework' ),
+							'id'       => 'avia_recaptcha_badge',
+							'type'     => 'select',
+							'no_first' => true,
+							'std'      => '',
+							'required' => array( 'avia_recaptcha_version', 'avia_recaptcha_v3' ),
+							'subtype'  => array(
+												__( 'Show default Google badge', 'avia_framework' )	=> '',
+												__( 'Show a default message string only', 'avia_framework' )		=> 'message',
+											),
+						);
+
+$avia_elements[] = array(
+							'slug'           => 'google',
+							'name'           => '',
+							'desc'           => '',
+							'id'             => 'avia_recaptcha_key_verify_v3',
+							'required'       => array( 'avia_recaptcha_version', 'avia_recaptcha_v3' ),
+							'type'           => 'verification_field',
+							'force_callback' => true,
+							'input_ids'		 => array( 'avia_recaptcha_version', 'avia_recaptcha_pkey_v2', 'avia_recaptcha_skey_v2', 'avia_recaptcha_pkey_v3', 'avia_recaptcha_skey_v3', 'avia_recaptcha_v2_theme' ),
+							'ajax'           => 'av_recaptcha_api_check',
+							'js_callback'    => 'av_recaptcha_js_api_check',
+							'class'          => 'av_full_description',
+							'button-label'   => __( 'Check reCAPTCHA API Keys V3', 'avia_framework' ),
+							'button-relabel' => __(' Check reCAPTCHA API Keys V3', 'avia_framework' ),
+							'std'            => ''
+					);
+
+$avia_elements[] = array(	
+							'slug'      => 'google',
+							'std'       => '',
+							'name'      => __( 'Last verified keys - hidden - used for internal use only', 'avia_framework' ),
+							'desc'      => '',
+							'id'        => 'recaptcha_verified_keys_v2',
+							'type'      => 'hidden',
+					);
+
+$avia_elements[] = array(	
+							'slug'      => 'google',
+							'std'       => '',
+							'name'      => __( 'Last verified keys - hidden - used for internal use only', 'avia_framework' ),
+							'desc'      => '',
+							'id'        => 'recaptcha_verified_keys_v3',
+							'type'      => 'hidden',
+					);
+
+$avia_elements[] = array(
+							'slug'          => 'google', 
+							'type'          => 'visual_group_end', 
+							'id'            => 'avia_google_recaptcha_group_end', 
+							'nodescription' => true
+						);
 
 /**
  * Privacy section
@@ -1051,19 +1407,32 @@ $avia_elements[] =	array(
     "name" => __("Shortcodes you can use in your Privacy Policy",'avia_framework')." - <a target='_blank' href='{$pp_url}'>({$pp_title})</a>",
     "desc" => __("In order to offer your users a better experience you can use the shortcodes listed here in your privacy policy. These shortcodes allow your users to change certain behavior of your website.",'avia_framework').
     "<ul>".
-    "<li><strong>[av_privacy_google_tracking]</strong> - "	.__("allows a user to disable google tracking in his or her browser",'avia_framework')."</li>".
-    "<li><strong>[av_privacy_google_webfonts]</strong> - "	.__(" allows a user to disable the use of google webfonts in his or her browser",'avia_framework')."</li>".
-    "<li><strong>[av_privacy_google_maps]</strong> - "		.__(" allows a user to disable the use of google maps in his or her browser",'avia_framework')."</li>".
+	"<li><strong>[av_privacy_allow_cookies]</strong> - "	.__(" allows a user to refuse cookies and hides message bar (needs 2 cookies for that, others are removed)",'avia_framework')."</li>".
+	"<li><strong>[av_privacy_accept_essential_cookies]</strong> - "	.__(" allows a user to opt out from essential theme and all other cookies (except 2 from av_privacy_allow_cookies)",'avia_framework')."</li>".
+    "<li><strong>[av_privacy_google_tracking]</strong> - "	.__(" allows a user to disable Google tracking in his or her browser",'avia_framework')."</li>".
+    "<li><strong>[av_privacy_google_webfonts]</strong> - "	.__(" allows a user to disable the use of Google webfonts in his or her browser",'avia_framework')."</li>".
+	"<li><strong>[av_privacy_google_recaptcha]</strong> - "	.__(" allows a user to disable the use of Google reCaptcha in his or her browser",'avia_framework')."</li>".
+    "<li><strong>[av_privacy_google_maps]</strong> - "		.__(" allows a user to disable the use of Google Maps in his or her browser",'avia_framework')."</li>".
     "<li><strong>[av_privacy_video_embeds]</strong> - "		.__(" allows a user to disable video embeds in his or her browser",'avia_framework')."</li>".
+	"<li><strong>[av_privacy_custom_cookie cookie_name='']</strong> - " .__(" allows a user to disable custom cookies (see options below) in his or her browser",'avia_framework')."</li>".
     "<li><strong>[av_privacy_link]</strong> - "				.__(" displays a link to the privacy policy page set in your WordPress admin panel or to a custom page",'avia_framework')."</li>".
-    //"<li><strong>[av_privacy_google_webfonts]</strong> - ".__(" allows a user to disable the use of google webfonts",'avia_framework')."</li>".
+//"<li><strong>[av_privacy_google_webfonts]</strong> - ".__(" allows a user to disable the use of google webfonts",'avia_framework')."</li>".
     "</ul><br>".
-    __("Please note: if you do not like the default text that is displayed by those shortcodes you can change it by using [shortcode]Your text here[/shortcode]",'avia_framework'),
+    __("Please note: if you do not like the default text that is displayed by those shortcodes you can change it by using [shortcode]Your text here[/shortcode]",'avia_framework') .
+	 '<br /><br />' .
+	'<ul>' .
+			
+	'<li><strong>[av_privacy_cookie_info id="" class=""]</strong> - ' . __( ' adds a list about used and accessable cookies in domain with value and additional info about the cookie', 'avia_framework' ) . '</li>' .
+	'<li><strong>[av_privacy_accept_button wrapper_class="" id="" class=""]your button text[/av_privacy_accept_button]</strong> - ' . __( ' adds an accept cookies button', 'avia_framework' ) . '</li>' .
+	'<li><strong>[av_privacy_do_not_accept_button wrapper_class="" id="" class=""]your button text[/av_privacy_do_not_accept_button]</strong> - ' . __( ' adds a do not accept cookies button', 'avia_framework' ) . '</li>' .
+	'<li><strong>[av_privacy_modal_popup_button wrapper_class="" id="" class=""]your button text[/av_privacy_modal_popup_button]</strong> - ' . __( ' adds a button that opens the privacy modal popup window - you have to enable cookie consent message bar', 'avia_framework' ) . '</li>' .
+	'</ul><br>',
     "id" => "gdpr_shortcodes",
     "std" => "",
     "slug"	=> "cookie",
     "type" => "heading",
-    "nodescription"=>true);
+    "nodescription"	=> true
+	);
 
 
 
@@ -1071,44 +1440,131 @@ $avia_elements[] =	array(
 /***************************************************************************************************/
 
 
-
-
- $avia_elements[] = array("slug"	=> "cookie", "type" => "visual_group_end", "id" => "avia_privacy_group_end", "nodescription" => true);
+ $avia_elements[] = array(
+			'slug'	=> 'cookie', 
+			'type'	=> 'visual_group_end', 
+			'id'	=> 'avia_privacy_group_end', 
+			'nodescription'	=> true
+		);
 
 /**
  * Cookie Consent section
  *
  * @author tinabillinger
  * @since 4.3
+ * @since 4.5.7.2 extended by Günter
  */
-$avia_elements[] =	array(
-    "name" => __("Cookie Consent Message",'avia_framework'),
-    "desc" => __("Make your site comply with the <a target='_blank' href='http://ec.europa.eu/ipg/basics/legal/cookies/index_en.htm'>EU cookie law</a> by informing users that your site uses cookies. <br><br> You can also use the field to display a one time message not related to cookies if you are using a plugin for this purpose or do not need to inform your customers about the use of cookies.",'avia_framework')." ".__("Colors and styling for the message can be edited in").
-							" <a href='#goto_customizer'>".
-							__("Advanced Styling",'avia_framework').
-							"</a>",
-    "id" => "overlay_description",
-    "std" => "",
-    "slug"	=> "cookie",
-    "type" => "heading",
-    "nodescription"=>true);
+$cookie_desc = '';
+$cookie_desc .= __( "Make your site comply with the <a target='_blank' href='http://ec.europa.eu/ipg/basics/legal/cookies/index_en.htm'>EU cookie law</a> by informing users that your site uses cookies.", 'avia_framework' );
+$cookie_desc .= '<br><br>'; 
+$cookie_desc .= __( 'If user decides not to accept any cookies Enfold will use browser session storage to remember this selection but this is removed when user closes the browser window and also not recognized when opening a new tab or a new window.', 'avia_framework' ) . ' ';
+$cookie_desc .= '<a href="https://developer.mozilla.org/en-US/docs/Web/API/Window/sessionStorage" target="_blank">' . __( 'See MDN documentation for more info,', 'avia_framework' ) . '</a> ';
+$cookie_desc .= __( 'We add a confirm popup to the &quot;Do not accept&quot; button where you can inform user about that and also that crucial functions of your site like e.g. sessions, shopping cart,... will not work properly. We also try to remove all cookies set in the site domain to respect his selection, but this is not guaranteed because of browser security or WP or plugins may continue to add cookies if they are removed (e.g. WooCommerce)', 'avia_framework' );
+$cookie_desc .= '<br><br>'; 
+$cookie_desc .= '<strong>' . __( 'Keep in mind that due to browser security Enfold cannot remove cookies in other domains and even in own domain, if cookie path is not accessable.', 'avia_framework' ) . '</strong>';
+$cookie_desc .= '<br><br>'; 
+$cookie_desc .= __( 'If user accepts cookies you can decide if he must opt in for non essential cookies. If he decides to refuse essential cookies only 2 cookie are kept to save this selection and to hide the message bar and another one if he must opt in - all other cookies will be removed. We provide a shortcode av_privacy_cookie_info to list used cookies of the site domain with the value and a short info text. Cookies of other domaines can only be inspected in the browser setting or with developer tools.', 'avia_framework' ) . ' ';
+$cookie_desc .= '<br><br>'; 
+$cookie_desc .= __( 'If you make changes to the message text or the button labels of the message bar users will be prompted again for confirmation.', 'avia_framework' ) . ' ';
+$cookie_desc .= __( "Colors and styling for the message can be edited in <a href='#goto_customizer'>Advanced Styling</a>", 'avia_framework' );
+$cookie_desc .= '<br><br>'; 
+$cookie_desc .= __( 'You can also use the message bar to display a one time message not related to cookies if you are using a plugin for this purpose or do not need to inform your customers about the use of cookies.', 'avia_framework' ) . ' ';
+$cookie_desc .= '<br><br>'; 
+$cookie_desc .= __( 'More detailed theme related information you can find here: ', 'avia_framework' ) . '<a href="https://kriesi.at/documentation/enfold/privacy-cookies/" target="_blank">' . __( 'Enfold Privacy And Cookies', 'avia_framework' ) . '</a>.'; 
+
 
 $avia_elements[] =	array(
-    "slug"	=> "cookie",
-    "desc" 	=> __("Enable cookie consent message bar", 'avia_framework'),
-    "id" 	=> "cookie_consent",
-    "type" 	=> "checkbox",
-    "std"	=> false,
-);
+			'name'	=> __( 'Cookie Handling and Cookie Consent Messages', 'avia_framework' ),
+			'desc'	=> $cookie_desc,
+			'id'	=> 'overlay_description',
+			'std'	=> '',
+			'slug'	=> 'cookie',
+			'type'	=> 'heading',
+			'nodescription'	=> true
+		);
+
+$avia_elements[] = array(
+			'slug'	=> 'cookie',
+			'name'	=> __( 'Enable cookie consent messages', 'avia_framework' ),
+			'desc'	=> __( 'Enable cookie consent messages to use message bar and modal popup.', 'avia_framework' ),
+			'id'	=> 'cookie_consent',
+			'type'	=> 'select',
+			'std'	=> '',
+			'no_first'	=> true,
+			'subtype'	=> array(
+								__( 'Disable cookie consent messages', 'avia_framework' )		=> '',
+								__( 'Enable and show message bar', 'avia_framework' )			=> 'cookie_consent',
+								__( 'Enable but do not show a message bar', 'avia_framework' )	=> 'cookie__consent_no_bar',
+								__( 'Use as a simple message bar only', 'avia_framework' )		=> 'message_bar',
+							)
+		);
+
+$avia_elements[] = array(
+			'slug'	=> 'cookie',
+			'name'	=> __( 'Show A Badge', 'avia_framework' ),
+			'desc'	=> __( 'Select to show a badge to reopen the message bar', 'avia_framework' ),
+			'id'	=> 'cookie_consent_badge',
+			'type'	=> 'select',
+			'std'	=> '',
+			'required'	=> array( 'cookie_consent', '{contains_array}cookie_consent' ),
+			'no_first'	=> true,
+			'subtype'	=> array(
+								__( 'Disable cookie consent badge', 'avia_framework' )		=> '',
+								__( 'Show badge left bottom', 'avia_framework' )			=> 'left bottom',
+								__( 'Show badge right bottom', 'avia_framework' )			=> 'right bottom'
+							)
+		);
+
+$avia_elements[] = array(
+			'slug'		=> 'cookie',
+			'name'		=> __( 'Default Cookie Option Settings', 'avia_framework' ),
+			'desc'		=> __( 'Select the default cookie option settings in modal &quot;Privacy and Cookie Info&quot; popup when user enters your site for the first time or refused to accept cookies.', 'avia_framework' ),
+			'id'		=> 'cookie_default_settings',
+			'type'		=> 'select',
+			'required'	=> array( 'cookie_consent', '{contains_array}cookie_consent;cookie__consent_no_bar' ),
+			'std'		=> '',
+			'no_first'	=> true,
+			'subtype'	=> array(
+								__( 'Select all by default, user can opt out', 'avia_framework' )			=>	'',
+								__( 'User must opt in, only essential cookies selected', 'avia_framework' )	=>	'needs_opt_in',
+							)
+		);
+
+$avia_elements[] = array(
+			'slug'	=> 'cookie',
+			'name' 	=> __( 'Refuse Cookie Warning', 'avia_framework' ),
+			'desc' 	=> __( 'Provide a short message for a modal popup when user clicks the &quot;Do not accept and hide notification&quot; button. Inform him that refusing cookies will show the message bar every time he opens a new window or tab. Leave empty if you do not want to show the popup window.', 'avia_framework' ),
+			'id' 	=> 'cookie_refuse_button_alert',
+			'type' 	=> 'textarea',
+			'required'	=> array( 'cookie_consent', '{contains_array}cookie_consent;cookie__consent_no_bar' ),
+			'std'   => __( "When refusing all cookies this site might not be able to work as expected. Please check our settings page and opt out for cookies or functions you do not want to use and accept cookies. You will be shown this message every time you open a new window or a new tab.\n\nAre you sure you want to continue?", 'avia_framework' )
+		);
+
+$avia_elements[] = array(
+			'slug'	=> 'cookie', 
+			'type'	=> 'visual_group_start', 
+			'id'	=> 'avia_cookielink_group_start', 
+			'nodescription'	=> true, 
+			'required'	=> array( 'cookie_consent', '{contains_array}cookie_consent;message_bar' ),
+		);
+
+$avia_elements[] = array(
+			'name'	=> __( 'Cookie Consent Message Bar', 'avia_framework' ),
+			'desc'	=> __( 'Define content and buttons for your message bar to inform users about the use of cookies and services and depending on your country laws to opt in or opt out for services and cookies. If you make changes to message text or button label the message bar will be show again.', 'avia_framework' ),
+			'id'	=> 'consent_msg_bar_headline',
+			'std'	=> '',
+			'slug'	=> 'cookie',
+			'type'	=> 'heading',
+			'nodescription'	=> true
+		);
 
 $avia_elements[] =	array(
     "slug"	=> "cookie",
     "name" 	=> __("Message", 'avia_framework'),
     "desc" 	=> __("Provide a message which indicates that your site uses cookies.", 'avia_framework'),
     "id" 	=> "cookie_content",
-    "required" => array("cookie_consent",'cookie_consent'),
     "type" 	=> "textarea",
-    "std"   => "This site uses cookies. By continuing to browse the site, you are agreeing to our use of cookies."
+    "std"   => __( 'This site uses cookies. By continuing to browse the site, you are agreeing to our use of cookies.', 'avia_framework')
 );
 
 
@@ -1118,7 +1574,6 @@ $avia_elements[] =	array(
     "desc" 	=> __("Where on the page should the message bar appear?", 'avia_framework'),
     "id" 	=> "cookie_position",
     "type" 	=> "select",
-    "required" => array("cookie_consent",'cookie_consent'),
     "std" 	=> "bottom",
     "no_first"=>true,
     "subtype" => array(
@@ -1131,123 +1586,242 @@ $avia_elements[] =	array(
     ));
 
 
-$avia_elements[] = array("slug"	=> "cookie", "type" => "visual_group_start", "id" => "avia_cookielink_group_start", "nodescription" => true, "required" => array("cookie_consent",'cookie_consent'));
 
-$avia_elements[] = array(		"name" => __("Buttons", 'avia_framework'),
-								"desc" => __("You can create any number of buttons/links for your message bar here:", 'avia_framework'),
-								"std" => "",
-								"slug"	=> "cookie",
-								"type" => "heading",
-								"nodescription"=>true);
+
+$avia_elements[] = array(		
+						"name"	=> __("Buttons", 'avia_framework'),
+						"desc"	=> __("You can create any number of buttons/links for your message bar here:", 'avia_framework'),
+						"std"	=> "",
+						"slug"	=> "cookie",
+						"type"	=> "heading",
+						"nodescription" => true
+					);
 
 $avia_elements[] =	array(
-					"type" 			=> "group",
-					"id" 			=> "msg_bar_buttons",
-					"slug"			=> "cookie",
-					"linktext" 		=> "+",
-					"deletetext" 	=> "×",
-					"blank" 		=> true,
-					"nodescription" => true,
-					"std"			=> array(
-										array('msg_bar_button_label'=>'OK', 'msg_bar_button_action'=>''),
-										array('msg_bar_button_label'=>'Learn more', 'msg_bar_button_action'=>'info_modal'),
+					'type' 			=> 'group',
+					'id' 			=> 'msg_bar_buttons',
+					'slug'			=> 'cookie',
+					'linktext' 		=> '+',
+					'deletetext' 	=> '×',
+					'blank' 		=> true,
+					'nodescription' => true,
+					'std'			=> array(
+										array( 
+											'msg_bar_button_label'		=> __( 'Accept settings', 'avia_framework' ),
+											'msg_bar_button_action'		=> '',
+											'msg_bar_button_tooltip'	=> __( 'Allow to use cookies, you can modify used cookies in settings', 'avia_framework' )
+											),
+										array( 
+											'msg_bar_button_label'		=> __( 'Hide notification only', 'avia_framework' ),
+											'msg_bar_button_action'		=> 'hide_notification',
+											'msg_bar_button_tooltip'	=> __( 'Do not allow to use cookies - some functionality on our site might not work as expected.', 'avia_framework' )
+											),
+										array( 
+											'msg_bar_button_label'		=> __( 'Settings', 'avia_framework' ), 
+											'msg_bar_button_action'		=> 'info_modal',
+											'msg_bar_button_tooltip'	=> __( 'Get more info about cookies and select which one you want to allow or not.', 'avia_framework' ), 
+											),
 										),
 					'subelements' 	=> array(
 
 							array(
-								"name" 	=> __("Button Label", 'avia_framework'),
-								"desc" 	=> "",
-								"id" 	=> "msg_bar_button_label",
-								"type" 	=> "text",
-								"slug"	=> "cookie",
-								"class" => "av_3columns av_col_1"),
-							
+								'name' 	=> __( 'Button Label', 'avia_framework' ),
+								'desc' 	=> '',
+								'id' 	=> 'msg_bar_button_label',
+								'type' 	=> 'text',
+								'slug'	=> 'cookie',
+								'class' => 'av_3columns av_col_1'
+								),
 							
 							array(
-								"name" 	=> __("Button Action", 'avia_framework'),
-								"desc" 	=> "",
-								"id" 	=> "msg_bar_button_action",
-								"type" 	=> "select",
-								"slug"	=> "cookie",
-								"class" => "av_3columns av_col_2",
-								"no_first"=>true,
-								"subtype" => array(
-
-									__('Dismiss the notification', 'avia_framework') => '',
-									__('Link to another page', 'avia_framework') => 'link',
-									__('Open info modal on privacy and cookies', 'avia_framework') => 'info_modal',
-
-								)),
+								'name' 	=> __( 'Button Action', 'avia_framework' ),
+								'desc' 	=> '',
+								'id' 	=> 'msg_bar_button_action',
+								'type' 	=> 'select',
+								'slug'	=> 'cookie',
+								'class' => 'av_3columns av_col_2',
+								'no_first'	=> true,
+								'subtype'	=> array(
+												__( 'Accept settings and dismiss notification', 'avia_framework' )	=> '',
+												__( 'Do not accept and hide notification', 'avia_framework' )		=> 'hide_notification',
+												__( 'Open info modal on privacy and cookies', 'avia_framework' )	=> 'info_modal',
+												__( 'Link to another page', 'avia_framework' )						=> 'link',
+											)
+								),
 
 							array(
-								"name" 	=> __("Button Link", 'avia_framework'),
-								"desc" 	=> "",
-								"id" 	=> "msg_bar_button_link",
-								"type" 	=> "text",
-								"slug"	=> "cookie",
-								"class" => "av_3columns av_col_3",
-								"required" => array('msg_bar_button_action','{contains}link')
-						        ))
+								'name' 	=> __( 'Button Link', 'avia_framework' ),
+								'desc' 	=> '',
+								'id' 	=> 'msg_bar_button_link',
+								'type' 	=> 'text',
+								'slug'	=> 'cookie',
+								'class' => 'av_3columns av_col_3',
+								'required' => array( 'msg_bar_button_action', '{contains}link' )
+						        ),
+						
+							array(
+								'name' 	=> __( 'Button Tooltip', 'avia_framework' ),
+								'desc' 	=> __( 'Enter an additional tooltip to give a closer information about use of the button', 'avia_framework' ),
+								'id' 	=> 'msg_bar_button_tooltip',
+								'type' 	=> 'text',
+								'slug'	=> 'cookie',
+								'class' => ''
+								),
+							)
+						);
+
+
+$avia_elements[] = array(
+			'slug'	=> 'cookie', 
+			'type'	=> 'visual_group_end', 
+			'id'	=> 'avia_cookielink_group_end', 
+			'nodescription'	=> true, 
+			'required'	=> array( 'cookie_consent', '{contains_array}cookie_consent;message_bar' ),
+	);
+
+$avia_elements[] = array(
+			'slug'	=> 'cookie', 
+			'type' => 'visual_group_start', 
+			'id' => 'avia_cookie_modal_window_start', 
+			'nodescription' => true, 
+			'required' => array( 'cookie_consent', '{contains_array}cookie_consent;cookie__consent_no_bar;message_bar' )
+		);
+
+$desc  = __( 'Define a modal popup window to inform visitors about your privacy policy and to opt in or out of services and cookies.', 'avia_framework' );
+$desc .= '<br /><br />';
+$desc .= __( 'By default we use the built in lightbox to show the popup. If you want to use your own lightbox you can assign a js wrapper function to avia_cookie_consent_modal_callback (see file enfold\js\avia-snippet-cookieconsent.js) to activate yours.', 'avia_framework' );
+
+$avia_elements[] = array(
+			'name'	=> __( 'Modal Popup Window', 'avia_framework' ),
+			'desc'	=> $desc,
+			'id'	=> 'modal_popup_window_headline',
+			'std'	=> '',
+			'slug'	=> 'cookie',
+			'type'	=> 'heading',
+			'nodescription'	=> true
+		);
+
+$avia_elements[] = array(
+			'name'	=> __( 'Display Modal Popup Actions', 'avia_framework' ),
+			'desc'	=> __( 'Select how to display your modal popup window. Country law regulation might enforce you to show the popup on first page load. If user does not accept cookies he will be prompted every time when opening a new window or tab.', 'avia_framework' ),
+			'id'	=> 'modal_popup_window_action',
+			'type'	=> 'select',
+			'slug'	=> 'cookie',
+			'std'	=> '',
+			'no_first'	=> true,
+			'subtype'	=> array(
+							__( 'Open with a button only', 'avia_framework' )		=> '',
+							__( 'Open immediately on pageload', 'avia_framework' )	=> 'page_load',
+						)
+			);
+
+$avia_elements[] =	array(
+					'type' 			=> 'group',
+					'id' 			=> 'modal_popup_window_buttons',
+					'slug'			=> 'cookie',
+					'linktext' 		=> '+',
+					'deletetext' 	=> '×',
+					'blank' 		=> true,
+					'nodescription' => true,
+					'std'			=> array(
+										array( 
+											'modal_popup_button_label'		=> __( 'Accept settings', 'avia_framework' ),
+											'modal_popup_button_action'		=> '',
+											'modal_popup_button_tooltip'	=> __( 'Allow to use cookies, you always can modify used cookies and services', 'avia_framework' )
+											),
+										array( 
+											'modal_popup_button_label'		=> __( 'Hide notification only', 'avia_framework' ),
+											'modal_popup_button_action'		=> 'hide_notification',
+											'modal_popup_button_tooltip'	=> __( 'Do not allow to use cookies or services - some functionality on our site might not work as expected.', 'avia_framework' )
+											)
+										),
+					'subelements' 	=> array(
+
+							array(
+								'name' 	=> __( 'Button Label', 'avia_framework' ),
+								'desc' 	=> '',
+								'id' 	=> 'modal_popup_button_label',
+								'type' 	=> 'text',
+								'slug'	=> 'cookie',
+								'class' => 'av_3columns av_col_1'
+								),
+							
+							array(
+								'name' 	=> __( 'Button Action', 'avia_framework' ),
+								'desc' 	=> '',
+								'id' 	=> 'modal_popup_button_action',
+								'type' 	=> 'select',
+								'slug'	=> 'cookie',
+								'class' => 'av_3columns av_col_2',
+								'no_first'	=> true,
+								'subtype'	=> array(
+												__( 'Accept settings and dismiss notification', 'avia_framework' )	=> '',
+												__( 'Do not accept and hide notification', 'avia_framework' )		=> 'hide_notification',
+												__( 'Link to another page', 'avia_framework' )						=> 'link',
+											)
+								),
+
+							array(
+								'name' 	=> __( 'Button Link', 'avia_framework' ),
+								'desc' 	=> '',
+								'id' 	=> 'modal_popup_button_link',
+								'type' 	=> 'text',
+								'slug'	=> 'cookie',
+								'class' => 'av_3columns av_col_3',
+								'required' => array( 'modal_popup_button_action', '{contains}link' )
+						        ),
+						
+							array(
+								'name' 	=> __( 'Button Tooltip', 'avia_framework' ),
+								'desc' 	=> __( 'Enter an additional tooltip to give a closer information about use of the button', 'avia_framework' ),
+								'id' 	=> 'modal_popup_button_tooltip',
+								'type' 	=> 'text',
+								'slug'	=> 'cookie',
+								'class' => ''
+								),
+							)
 						);
 
 
 $avia_elements[] =	array(
-				"slug"	=> "cookie",
-				"name" 	=> __("Modal Window with Privacy and Cookie Info", 'avia_framework'),
-				"desc" 	=> __("Instead of displaying the default content set custom content yourself.", 'avia_framework'),
-				"id" 	=> "cookie_info_custom_content",
-				"type" 	=> "checkbox",
-				"std"	=> false,
-			);
-
-
-$avia_elements[] = array("slug"	=> "cookie", "type" => "visual_group_end", "id" => "avia_cookielink_group_end", "nodescription" => true, "required" => array("cookie_consent",'cookie_consent'));
-
-$avia_elements[] = array("slug"	=> "cookie", "type" => "visual_group_start", "id" => "avia_cookielink_group_start2", "nodescription" => true, "required" => array("cookie_info_custom_content",'cookie_info_custom_content'));
+			'slug'	=> 'cookie',
+			'name'	=> __( 'Modal Window with Privacy and Cookie Info', 'avia_framework' ),
+			'desc'	=> __( 'Instead of displaying the default content set custom content yourself. We recommend to check the default content after theme updates for new features - unchecking this option will not change any of your settings.', 'avia_framework' ),
+			'id'	=> 'cookie_info_custom_content',
+			'type'	=> 'checkbox',
+			'std'	=> false,
+		);
 
 $avia_elements[] = array(
-								"name" 	=> __("Main Heading", 'avia_framework'),
-								"desc" 	=> "",
-								"id" 	=> "cookie_info_content_heading",
-								"type" 	=> "text",
-								"slug"	=> "cookie",
-								"std"	=> "Cookie and Privacy Settings",
-						);
+			'slug'	=> 'cookie', 
+			'type'	=> 'visual_group_start', 
+			'id'	=> 'avia_cookie_custom_content_start', 
+			'nodescription'	=> true, 
+			'required'	=> array( 'cookie_info_custom_content', 'cookie_info_custom_content' )
+		);
+
+$avia_elements[] = array(
+			'name'	=> __( 'Modal Popup Window Content', 'avia_framework' ),
+			'desc'	=> __( 'Define content of your modal popup window to inform visitors about your privacy policy. Use shortcodes to add toggles so visitors can opt in or out of services and cookies.', 'avia_framework' ),
+			'id'	=> 'modal_popup_window_content_headline',
+			'std'	=> '',
+			'slug'	=> 'cookie',
+			'type'	=> 'heading',
+			'nodescription'	=> true
+		);
+
+$avia_elements[] = array(
+			'name' 	=> __( 'Main Heading', 'avia_framework' ),
+			'desc' 	=> '',
+			'id' 	=> 'cookie_info_content_heading',
+			'type' 	=> 'text',
+			'slug'	=> 'cookie',
+			'std'	=> 'Cookie and Privacy Settings',
+		);
 
 
-$contents = array(
-							
-							array(	'label'		=> __( 'How we use cookies', 'avia_framework' ) , 
-									'content'	=> __( 'We may request cookies to be set on your device. We use cookies to let us know when you visit our websites, how you interact with us, to enrich your user experience, and to customize your relationship with our website. <br><br>Click on the different category headings to find out more. You can also change some of your preferences. Note that blocking some types of cookies may impact your experience on our websites and the services we are able to offer.', 'avia_framework' )),
-
-							array(	'label'		=> __( 'Essential Website Cookies', 'avia_framework' ), 
-									'content'	=> __( 'These cookies are strictly necessary to provide you with services available through our website and to use some of its features. <br><br>Because these cookies are strictly necessary to deliver the website, you cannot refuse them without impacting how our site functions. You can block or delete them by changing your browser settings and force blocking all cookies on this website.', 'avia_framework' )),
-							
-							);
-							
-$contents[] = array(	'label'		=> __( 'Google Analytics Cookies', 'avia_framework' ), 
-											'content'	=> __( 'These cookies collect information that is used either in aggregate form to help us understand how our website is being used or how effective our marketing campaigns are, or to help us customize our website and application for you in order to enhance your experience. <br><br>If you do not want that we track your visist to our site you can disable tracking in your browser here: [av_privacy_google_tracking]', 'avia_framework' ));
-				
-				
-$contents[] = array(	'label'		=> __( 'Other external services', 'avia_framework' ), 
-										'content'	=> __( 'We also use different external services like Google Webfonts, Google Maps and external Video providers. Since these providers may collect personal data like your IP address we allow you to block them here. Please be aware that this might heavily reduce the functionality and appearance of our site. Changes will take effect once you reload the page.<br><br>
-
-Google Webfont Settings:					
-[av_privacy_google_webfonts]
-
-Google Map Settings:
-[av_privacy_google_maps]
-
-Vimeo and Youtube video embeds:
-[av_privacy_video_embeds]', 'avia_framework' ));
-
-
-$contents[] = array(	'label'		=> __( 'Privacy Policy', 'avia_framework' ), 
-											'content'	=> __( 'You can read about our cookies and privacy settings in detail on our Privacy Policy Page. <br><br> [av_privacy_link]', 'avia_framework' ));
-											
-				
-
-
+$contents = av_privacy_helper()->get_default_modal_popup_content( 'no_filter' );
+		
 $avia_elements[] =	array(
 					"type" 			=> "group",
 					"id" 			=> "cookie_info_content",
@@ -1277,8 +1851,118 @@ $avia_elements[] =	array(
 						        ))
 						);
 
+$avia_elements[] = array(
+			'slug'	=> 'cookie', 
+			'type' => 'visual_group_end', 
+			'id' => 'avia_cookie_custom_content_end', 
+			'nodescription' => true, 
+			'required' => array( 'cookie_info_custom_content', 'cookie_info_custom_content' )
+		);
 
-$avia_elements[] = array("slug"	=> "cookie", "type" => "visual_group_end", "id" => "avia_cookielink_group_end2", "nodescription" => true, "required" => array("cookie_info_custom_content",'cookie_info_custom_content'));
+$avia_elements[] = array(
+			'slug'	=> 'cookie', 
+			'type'	=> 'visual_group_end', 
+			'id'	=> 'avia_cookie_modal_window_end', 
+			'nodescription'	=> true, 
+			'required'	=> array( 'cookie_consent', '{contains_array}cookie_consent;cookie__consent_no_bar;message_bar' )
+		);
+
+$avia_elements[] = array(
+			'slug'	=> 'cookie', 
+			'type'	=> 'visual_group_start', 
+			'id'	=> 'avia_cookie_custom_cookies_start', 
+			'nodescription'	=> true,
+			'required'	=> array( 'cookie_consent', '{contains_array}cookie_consent;cookie__consent_no_bar' )
+		);
+
+
+$desc  = __( 'Define additional custom cookies set by plugins. There are browser security limitations and it might not be possible to remove them using JavaScript or PHP.', 'avia_framework' ) . ' ';
+$desc .= __( 'Cookies must be in same domain and you need to specify exactly the name and the path (case sensitive) that is shown in the developer tools of the browser.', 'avia_framework' );
+$desc .= '<br /><br />';
+$desc .= __( 'To add a toggle for that cookie use the following shortcodes:', 'avia_framework' );
+$desc .= '<br /><br />';
+$desc .= '<strong>' . __( '[av_privacy_custom_cookie cookie_name=""]', 'avia_framework' ) . '</strong>';
+$desc .= '<br />';
+$desc .= '<strong>' . __( '[av_privacy_custom_cookie cookie_name=""]Your text here[/av_privacy_custom_cookie] ', 'avia_framework' ) . '</strong>';
+
+$avia_elements[] = array(
+			'name'	=> __( 'Additional Custom Cookies', 'avia_framework' ),
+			'desc'	=> $desc,
+			'id'	=> 'cookie_custom_cookies_headline',
+			'std'	=> '',
+			'slug'	=> 'cookie',
+			'type'	=> 'heading',
+			'nodescription'	=> true
+		);
+
+$avia_elements[] =	array(
+			'type'			=> 'group',
+			'id'			=> 'custom_cookies',
+			'slug'			=> 'cookie',
+			'linktext'		=> '+',
+			'deletetext'	=> '×',
+			'blank'			=> true,
+			'nodescription'	=> true,
+			'std'			=> '',
+			'subelements'	=> array(
+							array(
+								'name' 	=> __( 'Cookie Name', 'avia_framework' ),
+								'desc' 	=> '',
+								'id' 	=> 'cookie_name',
+								'type' 	=> 'text',
+								'slug'	=> 'cookie',
+								'class' => 'av_2columns av_col_1'
+								),
+							array(
+								'name' 	=> __( 'Cookie Path', 'avia_framework' ),
+								'desc' 	=> '',
+								'id' 	=> 'cookie_path',
+								'type' 	=> 'text',
+								'slug'	=> 'cookie',
+								'class' => 'av_2columns av_col_2'
+								),
+							array(
+								'name' 	=> __( 'Description For Toggle', 'avia_framework'),
+								'desc' 	=> '',
+								'id' 	=> 'cookie_content',
+								'type' 	=> 'text',
+								'slug'	=> 'cookie',
+								'class' => 'av_2columns av_col_1'
+						        ),
+							array(
+								'name' 	=> __( 'Description For Cookie Info List', 'avia_framework'),
+								'desc' 	=> '',
+								'id' 	=> 'cookie_info_desc',
+								'type' 	=> 'text',
+								'slug'	=> 'cookie',
+								'class' => 'av_2columns av_col_2'
+						        ),
+							array(
+								'name'	=> __( 'Compare Action', 'avia_framework' ),
+								'desc'	=> __( 'Select your compare action if you have to remove multiple cookies. Be carefull with contains as this removes all cookies that contain the string (except the disabled cookie).', 'avia_framework' ),
+								'id'	=> 'cookie_compare_action',
+								'type'	=> 'select',
+								'slug'	=> 'cookie',
+								'std'	=> '',
+								'no_first'	=> true,
+								'subtype'	=> array(
+												__( 'Cookie equals cookie name', 'avia_framework' )			=> '',
+												__( 'Cookie starts with cookie name', 'avia_framework' )	=> 'starts_with',
+												__( 'Cookie contains cookie name', 'avia_framework' )		=> 'contains'
+											)
+								)
+							)
+		);
+
+
+
+$avia_elements[] = array(
+			'slug'	=> 'cookie', 
+			'type'	=> 'visual_group_end', 
+			'id'	=> 'avia_cookie_custom_cookies_end', 
+			'nodescription'	=> true, 
+			'required'	=> array( 'cookie_consent', '{contains_array}cookie_consent;cookie__consent_no_bar' )
+		);
 
 
 /*newsletter*/
@@ -1303,7 +1987,14 @@ $avia_elements[] =	array(
 						"button-relabel" => __('Check Key again & renew Lists', 'avia_framework')
 						);	
 
-
+$avia_elements[] = array(	
+							'slug'      => 'newsletter',
+							'std'       => '',
+							'name'      => __( 'Last verified key - hidden - used for internal use only', 'avia_framework' ),
+							'desc'      => '',
+							'id'        => 'mailchimp_verified_key',
+							'type'      => 'hidden',
+					);
 
 
 
@@ -3318,8 +4009,8 @@ $avia_elements[] =	array(
 					"blank" 		=> true,
 					"nodescription" => true,
 					"std"			=> array(
-										array('social_icon'=>'twitter', 'social_icon_link'=>'http://twitter.com/kriesi'),
-										array('social_icon'=>'dribbble', 'social_icon_link'=>'http://dribbble.com/kriesi'),
+										array('social_icon'=>'twitter', 'social_icon_link'=>'https://twitter.com/kriesi'),
+										array('social_icon'=>'dribbble', 'social_icon_link'=>'https://dribbble.com/kriesi'),
 										),
 					'subelements' 	=> array(
 
@@ -3337,7 +4028,6 @@ $avia_elements[] =	array(
 									'Dribbble' 	=> 'dribbble',
 									'Facebook' 	=> 'facebook',
 									'Flickr' 	=> 'flickr',
-									'Google Plus' => 'gplus',
 									'Instagram'  => 'instagram',
 									'LinkedIn' 	=> 'linkedin',
 									'Pinterest' 	=> 'pinterest',
@@ -3350,6 +4040,7 @@ $avia_elements[] =	array(
 									'Vk' 		=> 'vk',
 									'Xing' 		=> 'xing',
 									'YouTube'   => 'youtube',
+									'WhatsApp'	=> 'whatsapp',
 									__('Special: RSS (add RSS URL, leave blank if you want to use default WordPress RSS feed)', 'avia_framework') => 'rss',
 									__('Special: Email Icon (add your own URL to link to a contact form)', 'avia_framework') => 'mail',
 
@@ -3649,6 +4340,15 @@ $avia_elements[] = array(
 		"std"	=> "true",
 		"class" => "av_3col av_col_2",
 		"slug"	=> "blog");			
+
+$avia_elements[] = array(
+		"name" 	=> __("WhatsApp link", 'avia_framework'),
+		"desc" 	=> __("Check to display", 'avia_framework'),
+		"id" 	=> "share_whatsapp",
+		"type" 	=> "checkbox",
+		"std"	=> "true",
+		"class" => "av_3col av_col_2",
+		"slug"	=> "blog");			
 		
 $avia_elements[] = array(
 		"name" 	=> __("Pinterest link ", 'avia_framework'),
@@ -3656,21 +4356,8 @@ $avia_elements[] = array(
 		"id" 	=> "share_pinterest",
 		"type" 	=> "checkbox",
 		"std"	=> "true",
-		"class" => "av_3col av_col_2",
-		"slug"	=> "blog");	
-		
-				
-		
-		
-$avia_elements[] = array(
-		"name" 	=> __("Google Plus link", 'avia_framework'),
-		"desc" 	=> __("Check to display", 'avia_framework'),
-		"id" 	=> "share_gplus",
-		"type" 	=> "checkbox",
-		"std"	=> "true",
 		"class" => "av_3col av_col_1",
 		"slug"	=> "blog");	
-		
 		
 $avia_elements[] = array(
 		"name" 	=> __("Reddit link", 'avia_framework'),
@@ -4408,9 +5095,6 @@ $avia_elements[] =	array(
 					"image"	=> "includes/admin/demo_files/demo_images/knowledgebase.jpg"
 					);
 	
-}		
-		
-		
-		
-		
-		
+}
+
+

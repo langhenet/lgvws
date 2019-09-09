@@ -3,7 +3,7 @@
     "use strict";
     
     //fix back forward cache issue: http://stackoverflow.com/questions/11979156/mobile-safari-back-button
-    $(window).bind("pageshow", function(event) {
+    $(window).on("pageshow", function(event) {
 	    if (event.originalEvent.persisted) {
 	     avia_site_preloader();
 	    }

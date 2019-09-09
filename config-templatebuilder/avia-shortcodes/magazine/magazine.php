@@ -8,7 +8,7 @@
 if ( ! defined( 'ABSPATH' ) ) {  exit;  }    // Exit if accessed directly
 
 
-if ( !class_exists( 'avia_sc_magazine' ))
+if ( ! class_exists( 'avia_sc_magazine' ))
 {
 	class avia_sc_magazine extends aviaShortcodeTemplate
 	{
@@ -20,16 +20,18 @@ if ( !class_exists( 'avia_sc_magazine' ))
 		{
 			$this->config['self_closing']	=	'yes';
 			
-			$this->config['name']		= __('Magazine', 'avia_framework' );
-			$this->config['tab']		= __('Content Elements', 'avia_framework' );
+			$this->config['name']		= __( 'Magazine', 'avia_framework' );
+			$this->config['tab']		= __( 'Content Elements', 'avia_framework' );
 			$this->config['icon']		= AviaBuilder::$path['imagesURL']."sc-magazine.png";
 			$this->config['order']		= 39;
 			$this->config['target']		= 'avia-target-insert';
 			$this->config['shortcode'] 	= 'av_magazine';
-			$this->config['tooltip'] 	= __('Display entries in a magazine like fashion', 'avia_framework' );
+			$this->config['tooltip'] 	= __( 'Display entries in a magazine like fashion', 'avia_framework' );
 			$this->config['drag-level'] = 3;
 			$this->config['preview'] 	= 1;
 			$this->config['disabling_allowed'] = true;
+			$this->config['id_name']	= 'id';
+			$this->config['id_show']	= 'yes';
 		}
 		
 		function extra_assets()
@@ -38,7 +40,7 @@ if ( !class_exists( 'avia_sc_magazine' ))
 			wp_enqueue_style( 'avia-module-magazine' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/magazine/magazine.css' , array('avia-layout'), false );
 			
 			//load js
-			wp_enqueue_script( 'avia-module-magazine' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/magazine/magazine.js' , array('avia-shortcodes'), false, TRUE );
+			wp_enqueue_script( 'avia-module-magazine' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/magazine/magazine.js' , array('avia-shortcodes'), false, true );
 
 		
 		}
@@ -122,11 +124,41 @@ if ( !class_exists( 'avia_sc_magazine' ))
 				
 				
 				array(	
-						"name" 	=> __("Display Thumbnails?", 'avia_framework' ),
-						"desc" 	=> __("If checked all entries that got a feature image will show it", 'avia_framework' ),
-						"id" 	=> "thumbnails",
-						"std" 	=> "true",
-						"type" 	=> "checkbox"),
+						'name' 	=> __( 'Display Thumbnails?', 'avia_framework' ),
+						'desc' 	=> __( 'If checked all entries that got a feature image will show it', 'avia_framework' ),
+						'id' 	=> 'thumbnails',
+						'std' 	=> 'true',
+						'type' 	=> 'checkbox',
+						'container_class'	=> 'av_half av_half_first',
+					),
+				
+				array(	
+						'name' 	=> __( 'Display Author?', 'avia_framework' ),
+						'desc' 	=> __( 'If checked author of this entry will be shown', 'avia_framework' ),
+						'id' 	=> 'meta_author',
+						'std' 	=> 'false',
+						'type' 	=> 'checkbox',
+						'container_class'	=> 'av_half',
+					),
+				
+				array(	
+						'name' 	=> __( 'Display Categories?', 'avia_framework' ),
+						'desc' 	=> __( 'If checked categories of this entry will be shown', 'avia_framework' ),
+						'id' 	=> 'meta_cats',
+						'std' 	=> 'false',
+						'type' 	=> 'checkbox',
+						'container_class'	=> 'av_half av_half_first',
+					),
+				
+				array(	
+						'name' 	=> __( 'Display Tags?', 'avia_framework' ),
+						'desc' 	=> __( 'If checked tags of this entry will be shown', 'avia_framework' ),
+						'id' 	=> 'meta_tags',
+						'std' 	=> 'false',
+						'type' 	=> 'checkbox',
+						'container_class'	=> 'av_half',
+					),
+				
 				
 				array(	
 						"name" 	=> __("Display Element Heading?", 'avia_framework' ),
@@ -141,6 +173,14 @@ if ( !class_exists( 'avia_sc_magazine' ))
 						"required"=> array('heading_active','not',''),
 						"std" 	=> "",
 						"type" 	=> "input"),
+				
+				array(	
+						'type'				=> 'template',
+						'template_id'		=> 'heading_tag',
+						'theme_default'		=> 'a',
+						'required'			=> array( 'heading_active', 'not', '' ),
+						'context'			=> __CLASS__
+					),
 						
 				array(	
 						"name" 	=> __("Heading Link?", 'avia_framework' ),
@@ -189,97 +229,44 @@ if ( !class_exists( 'avia_sc_magazine' ))
 						),	
 				
 				
-				array(	
-						"name" 	=> __("Should the first entry be displayed bigger?", 'avia_framework' ),
-						"desc" 	=> __("If checked the first entry will stand out with big image", 'avia_framework' ) ."</small>" ,
-						"id" 	=> "first_big",
-						"std" 	=> "",
-						"type" 	=> "checkbox"),
-				
-				array(
-						"name" 	=> __("First entry position", 'avia_framework' ),
-						"desc" 	=> __("Where do you want to display the first entry?", 'avia_framework' ),
-						"id" 	=> "first_big_pos",
-						"type" 	=> "select",
-						"std" 	=> "top",
-						"required"=> array('first_big','not',''),
-						"subtype" => array(	__('Display the first entry at the top of the others','avia_framework' ) =>'top',
-											__('Display the first entry beside the others','avia_framework' ) =>'left')),
-				
-				
-				
-				array(
-							"type" 	=> "close_div",
-							'nodescription' => true
+					array(	
+							"name" 	=> __("Should the first entry be displayed bigger?", 'avia_framework' ),
+							"desc" 	=> __("If checked the first entry will stand out with big image", 'avia_framework' ) ."</small>" ,
+							"id" 	=> "first_big",
+							"std" 	=> "",
+							"type" 	=> "checkbox"
 						),
-						
-						
-								array(
-									"type" 	=> "tab",
-									"name"	=> __("Screen Options",'avia_framework' ),
-									'nodescription' => true
-								),
-								
-								
-								array(
-								"name" 	=> __("Element Visibility",'avia_framework' ),
-								"desc" 	=> __("Set the visibility for this element, based on the device screensize.", 'avia_framework' ),
-								"type" 	=> "heading",
-								"description_class" => "av-builder-note av-neutral",
-								),
-							
-								array(	
-										"desc" 	=> __("Hide on large screens (wider than 990px - eg: Desktop)", 'avia_framework'),
-										"id" 	=> "av-desktop-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-								
-								array(	
-									
-										"desc" 	=> __("Hide on medium sized screens (between 768px and 989px - eg: Tablet Landscape)", 'avia_framework'),
-										"id" 	=> "av-medium-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-										
-								array(	
-									
-										"desc" 	=> __("Hide on small screens (between 480px and 767px - eg: Tablet Portrait)", 'avia_framework'),
-										"id" 	=> "av-small-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-										
-								array(	
-									
-										"desc" 	=> __("Hide on very small screens (smaller than 479px - eg: Smartphone Portrait)", 'avia_framework'),
-										"id" 	=> "av-mini-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-									
-								
-							  
 				
-							
-								
-							array(
-									"type" 	=> "close_div",
-									'nodescription' => true
-								),	
-								
-								
-						
+					array(
+							"name" 	=> __("First entry position", 'avia_framework' ),
+							"desc" 	=> __("Where do you want to display the first entry?", 'avia_framework' ),
+							"id" 	=> "first_big_pos",
+							"type" 	=> "select",
+							"std" 	=> "top",
+							"required"=> array('first_big','not',''),
+							"subtype" => array(	__('Display the first entry at the top of the others','avia_framework' ) =>'top',
+												__('Display the first entry beside the others','avia_framework' ) =>'left')
+						),
+
+
+
+					array(
+								"type" 	=> "close_div",
+								'nodescription' => true
+							),
+				
+				
+					array(	
+							'type'			=> 'template',
+							'template_id'	=> 'screen_options_tab'
+						),
+
 						
 					array(
 						"type" 	=> "close_div",
 						'nodescription' => true
-					),
+					)
 				
-				
-
-
 				);
 			
 			if(current_theme_supports('add_avia_builder_post_type_option'))
@@ -313,7 +300,7 @@ if ( !class_exists( 'avia_sc_magazine' ))
 		{
 			$params['innerHtml'] = "<img src='".$this->config['icon']."' title='".$this->config['name']."' />";
 			$params['innerHtml'].= "<div class='avia-element-label'>".$this->config['name']."</div>";
-			$params['content'] 	 = NULL; //remove to allow content elements
+			$params['content'] 	 = null; //remove to allow content elements
 			return $params;
 		}
 
@@ -329,10 +316,14 @@ if ( !class_exists( 'avia_sc_magazine' ))
 		 */
 		function shortcode_handler( $atts, $content = "", $shortcodename = "", $meta = "" )
 		{
+			$meta = aviaShortcodeTemplate::set_frontend_developer_heading_tag( $atts, $meta );
 			
 			$atts['class'] = $meta['el_class'];
 			$atts['custom_markup'] = $meta['custom_markup'];
-
+			$atts['custom_el_id'] = ! empty( $meta['custom_el_id'] ) ? $meta['custom_el_id'] : '';
+			$atts['heading_tag'] = ! empty( $meta['heading_tag'] ) ? $meta['heading_tag'] : '';
+			$atts['heading_class'] = ! empty( $meta['heading_class'] ) ? $meta['heading_class'] : '';
+					
 			$mag = new avia_magazine( $atts );
 			$mag -> query_entries();
 			return $mag->html();
@@ -383,34 +374,40 @@ if ( ! class_exists( 'avia_magazine' ) )
 		{	
 			$this->entries = null;
 			$this->screen_options = AviaHelper::av_mobile_sizes( $atts );
+			self::$magazine++;
 			
-			self::$magazine += 1;
-			$this->atts = shortcode_atts(array(	'class'					=> '',
-												'custom_markup' 		=> "",
-												'items' 				=> '16',
-												'paginate'				=> '',
-												'tabs' 					=> false,
-												'thumbnails'			=> true,
-												'heading_active'		=> false,
-												'heading'				=> "",
-												'heading_link'			=> "",
-												'heading_color'			=> "",
-												'heading_custom_color'	=> "",
-												'first_big'				=> false,
-												'first_big_pos'			=> 'top',
-		                                 		'taxonomy'  			=> 'category',
-		                                 		'link'					=> '',
-		                                 		'categories'			=> array(),
-		                                 		'extra_categories'		=> array(),
-												'post_type'				=> array(),
-		                                 		'offset'				=> 0,
-		                                 		'image_size'			=> array( 'small'=> 'thumbnail', 'big' => 'magazine'),
-												'date_filter'			=> '',	
-												'date_filter_start'		=> '',
-												'date_filter_end'		=> '',
-												'date_filter_format'	=> 'yy/mm/dd',		//	'yy/mm/dd' | 'dd-mm-yy'	| yyyymmdd
-		                                 		
-		                                 		), $atts, 'av_magazine' );
+			$this->atts = shortcode_atts( array(	
+								'class'					=> '',
+								'custom_markup' 		=> "",
+								'items' 				=> '16',
+								'paginate'				=> '',
+								'tabs' 					=> false,
+								'thumbnails'			=> true,
+								'meta_author'			=> false,
+								'meta_cats'				=> false,
+								'meta_tags'				=> false,
+								'heading_active'		=> false,
+								'heading'				=> "",
+								'heading_link'			=> "",
+								'heading_color'			=> "",
+								'heading_custom_color'	=> "",
+								'first_big'				=> false,
+								'first_big_pos'			=> 'top',
+								'taxonomy'  			=> 'category',
+								'link'					=> '',
+								'categories'			=> array(),
+								'extra_categories'		=> array(),
+								'post_type'				=> array(),
+								'offset'				=> 0,
+								'image_size'			=> array( 'small'=> 'thumbnail', 'big' => 'magazine'),
+								'date_filter'			=> '',	
+								'date_filter_start'		=> '',
+								'date_filter_end'		=> '',
+								'date_filter_format'	=> 'yy/mm/dd',		//	'yy/mm/dd' | 'dd-mm-yy'	| yyyymmdd
+								'custom_el_id'			=> '',
+								'heading_tag'			=> '',
+								'heading_class'			=> ''
+							), $atts, 'av_magazine' );
 			
 			/**
 			 * When pagination, tabs are not possible
@@ -684,17 +681,20 @@ if ( ! class_exists( 'avia_magazine' ) )
 		public function html()
 		{
 			$output = "";
-			$class	= !empty($this->atts['first_big_pos'])   ? " av-magazine-hero-".$this->atts['first_big_pos'] : "";
-			$class	.= " ".$this->atts['top_bar'];
-			if(!empty($this->atts['tabs'])) $class	.= " av-magazine-tabs-active";
+			$class	= ! empty($this->atts['first_big_pos'] ) ? " av-magazine-hero-" . $this->atts['first_big_pos'] : "";
+			$class	.= " " . $this->atts['top_bar'];
+			if( !empty( $this->atts['tabs'] ) ) 
+			{
+				$class	.= " av-magazine-tabs-active";
+			}
 			
+			extract( $this->screen_options ); //return $av_font_classes, $av_title_font_classes and $av_display_classes 
 			
-			extract($this->screen_options); //return $av_font_classes, $av_title_font_classes and $av_display_classes 
+			$id = ! empty( $this->atts['custom_el_id'] ) ? $this->atts['custom_el_id'] : ' id="' . self::$magazine . '" ';
 			
+			$output .= "<div {$id} class='av-magazine {$av_display_classes} ".$this->atts['class']." {$class}' >";
 			
-			$output .= "<div id='av-magazine-".self::$magazine."' class='av-magazine {$av_display_classes} ".$this->atts['class']." {$class}' >";
-			
-			if($this->atts['top_bar'])
+			if( $this->atts['top_bar'] )
 			{	
 				$link 	 = AviaHelper::get_url($this->atts['heading_link']);
 				$heading = $this->atts['heading'];
@@ -709,9 +709,24 @@ if ( ! class_exists( 'avia_magazine' ) )
 				
 				$output .= "<div class='av-magazine-top-bar {$b_class}' {$b_style}>";
 				
-				if($heading)
+				if( $heading )
 				{
-					$output .= "<a href='{$link}' class='av-magazine-top-heading'>{$heading}</a>";
+					$heading_tag = ( ! in_array( $this->atts['heading_tag'], array( '', 'a' ) ) ) ? $this->atts['heading_tag'] : '';
+					$heading_class = $this->atts['heading_class'];
+				
+					if( ! empty( $heading_tag ) )
+					{
+						$output .= "<{$heading_tag} class='{$heading_class}'>";
+						$heading_class = '';
+					}
+					
+					$output .= "<a href='{$link}' class='av-magazine-top-heading {$heading_class}'>{$heading}</a>";
+					
+					if( ! empty( $heading_tag ) )
+					{
+						$output .= "</{$heading_tag}>";
+						$heading_class = '';
+					}
 				}
 				
 				if(!empty($this->atts['tabs']))
@@ -827,33 +842,117 @@ if ( ! class_exists( 'avia_magazine' ) )
 			$link			= get_post_meta( $entry->ID ,'_portfolio_custom_link', true ) != "" ? get_post_meta( $entry->ID ,'_portfolio_custom_link_url', true ) : get_permalink( $entry->ID );
 			$titleAttr		= "title='".__('Link to:','avia_framework')." ".the_title_attribute(array('echo' => 0, 'post' => $entry->ID))."'";
 			$title	 		= "<a href='{$link}' {$titleAttr}>". apply_filters( 'avf_magazine_title', get_the_title( $entry->ID ), $entry ) ."</a>";
-			$titleTag		= "h3";
 			$excerpt		= "";
 			$time			= get_the_time(get_option('date_format'), $entry->ID);
-			$separator      = "<span class='av-magazine-text-sep text-sep-date'>/</span>";
+			$separator      = "";
 			
-			$author_link    = get_author_posts_url($entry->post_author);
-			$author_name    = apply_filters('avf_author_name', get_the_author_meta('display_name', $entry->post_author), $entry->post_author);
-			$author         = '<a href='.$author_link.' title="'.__('by','avia_framework').' '.$author_name.'" rel="author">'.$author_name.'</a>';
-			$author_output  = '<span class="av-magazine-author minor-meta">'.__('by','avia_framework')." ";
-			$author_output .= '<span class="av-magazine-author-link" '.avia_markup_helper(array('context' => 'author_name','echo'=>false)).'>';
- 			$author_output .= "<span class='av-magazine-author meta-color vcard author'><span class='fn'>";
- 			$author_output .= $author;
- 			$author_output .= '</span></span>';
- 			$author_output .= '</span>';
- 			$author_output .= '</span>';
+			$default_heading = 'h3';
+			$args = array(
+						'heading'		=> $default_heading,
+						'extra_class'	=> ''
+					);
+
+			$extra_args = array( $this, $entry, $style );
+
+			/**
+			 * @since 4.5.7.1
+			 * @return array
+			 */
+			$args = apply_filters( 'avf_customize_heading_settings', $args, __CLASS__, $extra_args );
+
+			$titleTag = ! empty( $args['heading'] ) ? $args['heading'] : $default_heading;
+			$titleCss = ! empty( $args['extra_class'] ) ? $args['extra_class'] : '';
+			
+			$author = '';
+			if( ! empty( $this->atts['meta_author'] ) )
+			{
+				$author_link    = get_author_posts_url($entry->post_author);
+				$author_name    = apply_filters('avf_author_name', get_the_author_meta('display_name', $entry->post_author), $entry->post_author);
+				$author_link    = '<a href='.$author_link.' title="'.__('by','avia_framework').' '.$author_name.'" rel="author">'.$author_name.'</a>';
+				
+				$author_output  =	'<span class="av-magazine-author minor-meta">'.__('by','avia_framework')." ";
+				$author_output .=		'<span class="av-magazine-author-link" '.avia_markup_helper(array('context' => 'author_name','echo'=>false)).'>';
+				$author_output .=			"<span class='av-magazine-author meta-color vcard author'><span class='fn'>";
+				$author_output .=				$author_link;
+				$author_output .=			'</span></span>';
+				$author_output .=		'</span>';
+				$author_output .=	'</span>';
+			
+				$author .=	'<span class="av-magazine-author-wrap">';
+				$author .=		'<span class="av-magazine-text-sep text-sep-date">/</span>';
+				$author .=		$author_output;
+				$author .=	'</span>';
+			}
+			
+			$cats = '';
+			if( ! empty( $this->atts['meta_cats'] ) )
+			{
+			
+				$taxonomies  = get_object_taxonomies( $entry->post_type );
+			
+				$excluded_taxonomies = array_merge( get_taxonomies( array( 'public' => false ) ), array( 'post_tag', 'post_format' ) );
+
+				/**
+				 * @since 4.5.7.1
+				 * @param array
+				 * @param string $entry->post_type
+				 * @param int $entry->ID
+				 * @return array
+				 */
+				$excluded_taxonomies = apply_filters('avf_exclude_taxonomies_magazine', $excluded_taxonomies, $entry->post_type, $entry->ID );
+
+				if( ! empty( $taxonomies ) )
+				{
+					foreach( $taxonomies as $taxonomy )
+					{
+						if( ! in_array( $taxonomy, $excluded_taxonomies ) )
+						{
+							$cats .= get_the_term_list( $entry->ID, $taxonomy, '', ', ','') . ' ';
+						}
+					}
+				}
+			
+				if( ! empty( $cats ) )
+				{
+					$cats_html =	'<span class="av-magazine-cats-wrap">';
+					$cats_html .=		'<span class="av-magazine-text-sep text-sep-cats">In</span>';
+					$cats_html .=		'<span class="av-magazine-cats minor-meta">';
+					$cats_html .=			$cats;
+					$cats_html .=		'</span>';
+					$cats_html .=	'</span>';
+
+					$cats = $cats_html;
+				}
+			}
+			
+			$tags = '';
+			if( ! empty( $this->atts['meta_tags'] ) )
+			{
+			
+				$tag_list = get_the_term_list( $entry->ID, 'post_tag', '<span class="av-magazine-text-sep text-sep-tags">' . __( 'Tags:', 'avia_framework' ) . '</span><span class="av-magazine-tags minor-meta">', ', ', '' );
+				if( ! empty( $tag_list ) )
+				{
+					$tags_html =	'<span class="av-magazine-tags-wrap">';
+					$tags_html .=		$tag_list;
+					$tags_html .=	'</span></span>';
+
+					$tags = $tags_html;
+				}
+			}
+					
 
 			$markupEntry  	= avia_markup_helper(array('context' => 'entry','echo'=>false, 'id'=>$entry->ID, 'custom_markup'=>$this->atts['custom_markup']));
 			$markupTitle 	= avia_markup_helper(array('context' => 'entry_title','echo'=>false, 'id'=>$entry->ID, 'custom_markup'=>$this->atts['custom_markup']));
 			$markupContent 	= avia_markup_helper(array('context' => 'entry_content','echo'=>false, 'id'=>$entry->ID, 'custom_markup'=>$this->atts['custom_markup']));
 			$markupTime 	= avia_markup_helper(array('context' => 'entry_time','echo'=>false, 'id'=>$entry->ID, 'custom_markup'=>$this->atts['custom_markup']));
+			
 			$format			= get_post_format($entry->ID) ? get_post_format($entry->ID) : 'standard';
 			$type			= get_post_type($entry->ID);
 			$icontype		= $type == 'post' ?  $format : $type;
 			$icon 			=  "<a href='{$link}' {$titleAttr} class='iconfont av-magazine-entry-icon' ".av_icon_string($icontype)."></a>";
 			$extraClass		= "";
 			
-			if($style == 'small')
+			if( $style == 'small' )
 			{
 				if(empty($this->atts['thumbnails']))
 				{
@@ -881,8 +980,10 @@ if ( ! class_exists( 'avia_magazine' ) )
 			$output .= 		"<div class='av-magazine-content-wrap'>";
 			$output .=		"<header class='entry-content-header'>";
 			$output .=			"<time class='av-magazine-time updated' {$markupTime}>".$time."</time>";
-			$output .=			$separator.$author_output;
-			$output .=			"<{$titleTag} class='av-magazine-title entry-title' {$markupTitle}>{$title}</{$titleTag}>";
+			$output .=			$author;
+			$output .=			$cats;
+			$output .=			$tags;
+			$output .=			"<{$titleTag} class='av-magazine-title entry-title {$titleCss}' {$markupTitle}>{$title}</{$titleTag}>";
 			$output .= 		"</header>";
 if($excerpt)$output .=		"<div class='av-magazine-content entry-content' {$markupContent}>{$excerpt}</div>";
 			$output .= 		"</div>";

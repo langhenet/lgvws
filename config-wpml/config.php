@@ -238,8 +238,7 @@ if(defined('ICL_SITEPRESS_VERSION') && defined('ICL_LANGUAGE_CODE'))
 	{
 		function avia_wpml_register_assets()
 		{
-			$theme = wp_get_theme(); 
-			$version = ( false === $theme->parent() ) ? $theme->get( 'Version' ) : $theme->parent()->get( 'Version' );
+			$version = avia_get_theme_version();
 			
 			wp_enqueue_style( 'avia-wpml', AVIA_BASE_URL.'config-wpml/wpml-mod.css', array(), $version );
 			wp_enqueue_script( 'avia-wpml-script', AVIA_BASE_URL.'config-wpml/wpml-mod.js', array( 'jquery' ), $version );
@@ -846,6 +845,26 @@ if(defined('ICL_SITEPRESS_VERSION') && defined('ICL_LANGUAGE_CODE'))
 		}
 	}
 
+	if( ! function_exists( 'avia_wpml_alb_options_select_hierarchical_post_type_id' ) )
+	{
+		/**
+		 * Fixes problem with links to posts/pages in ALB elements in modal popup in backend (reported and provided by WPML comp. team)
+		 * 
+		 * @since 4.5.7.2
+		 * @param int $selected_id
+		 * @param string $object_type			'page' | 'post' | 'category' | ......
+		 * @param array $option_selected
+		 * @param array $element
+		 * @return int
+		 */
+		function avia_wpml_alb_options_select_hierarchical_post_type_id( $selected_id, $object_type, array $option_selected, array $element )
+		{
+			$selected_id = apply_filters( 'wpml_object_id', $selected_id, $option_selected[0], true ); 
+			return $selected_id;
+		}
+		
+		add_filter( 'avf_alb_options_select_hierarchical_post_type_id', 'avia_wpml_alb_options_select_hierarchical_post_type_id', 10, 4 );
+	}
 
 }
 

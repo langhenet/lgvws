@@ -21,21 +21,22 @@ if ( ! class_exists( 'avia_sc_gmaps' ) )
 			{
 				$this->config['self_closing']	=	'no';
 				
-				$this->config['name']			= __('Google Map', 'avia_framework' );
-				$this->config['tab']			= __('Media Elements', 'avia_framework' );
-				$this->config['icon']			= AviaBuilder::$path['imagesURL']."sc-maps.png";
+				$this->config['name']			= __( 'Google Map', 'avia_framework' );
+				$this->config['tab']			= __( 'Media Elements', 'avia_framework' );
+				$this->config['icon']			= AviaBuilder::$path['imagesURL'] . 'sc-maps.png';
 				$this->config['order']			= 5;
 				$this->config['target']			= 'avia-target-insert';
 				$this->config['shortcode'] 		= 'av_google_map';
-				$this->config['shortcode_nested'] = array('av_gmap_location');
-				$this->config['tooltip'] 	    = __('Display a google map with one or multiple locations', 'avia_framework' );
+				$this->config['shortcode_nested'] = array( 'av_gmap_location' );
+				$this->config['tooltip'] 	    = __( 'Display a google map with one or multiple locations', 'avia_framework' );
 				$this->config['drag-level'] 	= 3;
 				$this->config['disabling_allowed'] = true;
-				
 				$this->config['disabled']		= array(
-												'condition'	=> apply_filters( 'avf_load_google_map_api_prohibited', false ), 
-												'text'		=> __( 'This element has been disabled with a filter', 'avia_framework' )
-												);
+														'condition'	=> Av_Google_Maps()->is_loading_prohibited(), 
+														'text'		=> __( 'This element has been disabled with a filter', 'avia_framework' )
+													);
+				$this->config['id_name']		= 'id';
+				$this->config['id_show']		= 'yes';
 			}
 			
 			
@@ -281,61 +282,13 @@ if ( ! class_exists( 'avia_sc_gmaps' ) )
 							'nodescription' => true
 						),
 						
-						
-					array(
-							"type" 	=> "tab",
-							"name"	=> __("Screen Options",'avia_framework' ),
-							'nodescription' => true
+					
+					array(	
+							'type'			=> 'template',
+							'template_id'	=> 'screen_options_tab'
 						),
-								
-								
-								array(
-								"name" 	=> __("Element Visibility",'avia_framework' ),
-								"desc" 	=> __("Set the visibility for this element, based on the device screensize.", 'avia_framework' ),
-								"type" 	=> "heading",
-								"description_class" => "av-builder-note av-neutral",
-								),
-							
-								array(	
-										"desc" 	=> __("Hide on large screens (wider than 990px - eg: Desktop)", 'avia_framework'),
-										"id" 	=> "av-desktop-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-								
-								array(	
-									
-										"desc" 	=> __("Hide on medium sized screens (between 768px and 989px - eg: Tablet Landscape)", 'avia_framework'),
-										"id" 	=> "av-medium-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-										
-								array(	
-									
-										"desc" 	=> __("Hide on small screens (between 480px and 767px - eg: Tablet Portrait)", 'avia_framework'),
-										"id" 	=> "av-small-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-										
-								array(	
-									
-										"desc" 	=> __("Hide on very small screens (smaller than 479px - eg: Smartphone Portrait)", 'avia_framework'),
-										"id" 	=> "av-mini-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-	
-								
-							array(
-									"type" 	=> "close_div",
-									'nodescription' => true
-								),	
-								
-								
 						
-						
+					
 					array(
 						"type" 	=> "close_div",
 						'nodescription' => true
@@ -430,7 +383,7 @@ if ( ! class_exists( 'avia_sc_gmaps' ) )
 				/**
 				 * If disabled with filter - only show a message to editors 
 				 */
-				if( apply_filters( 'avf_load_google_map_api_prohibited', false ) )
+				if( Av_Google_Maps()->is_loading_prohibited() )
 				{
 					$out = '';
 					
@@ -438,7 +391,7 @@ if ( ! class_exists( 'avia_sc_gmaps' ) )
 					{
 						$out .=	'<span class="av-shortcode-disabled-notice">';
 						$out .=		'<strong>' . __( 'Admin notice for:', 'avia_framework' ) . '</strong><br>';
-						$out .=		__( 'This element was disabled with filter &quot;avf_load_google_map_api_prohibited&quot;', 'avia_framework' ) . '<br>';
+						$out .=		__( 'This element was disabled with theme option', 'avia_framework' ) . '<br>';
 						$out .=	'</span>';
 					}
 					
@@ -449,24 +402,24 @@ if ( ! class_exists( 'avia_sc_gmaps' ) )
 		       	extract(AviaHelper::av_mobile_sizes($atts)); //return $av_font_classes, $av_title_font_classes and $av_display_classes 
 				
 				$atts = shortcode_atts( array(
-					'id'    	 	=> '',
-					'height'		=> '',
-					'hue'			=> '',
-					'saturation'	=> '',
-					'zoom'			=> '',
-					'zoom_control'  => '',
-					'streetview_control'	=> '',
-					'mobile_drag_control'	=> '',
-					'maptype_control'		=> '',
-					'maptype_id'			=> '',
-					'google_link'			=> '',
-					'confirm_button'		=> '',
-					'page_link_text'		=> '',
-					'google_fallback'		=> '',
-					'handle'				=> $shortcodename,
-					'content'				=> ShortcodeHelper::shortcode2array($content, 1)
-				
-				), $atts, $this->config['shortcode']);
+							'id'    	 	=> '',
+							'height'		=> '',
+							'hue'			=> '',
+							'saturation'	=> '',
+							'zoom'			=> '',
+							'zoom_control'  => '',
+							'streetview_control'	=> '',
+							'mobile_drag_control'	=> '',
+							'maptype_control'		=> '',
+							'maptype_id'			=> '',
+							'google_link'			=> '',
+							'confirm_button'		=> '',
+							'page_link_text'		=> '',
+							'google_fallback'		=> '',
+							'handle'				=> $shortcodename,
+							'content'				=> ShortcodeHelper::shortcode2array( $content, 1 )
+
+						), $atts, $this->config['shortcode'] );
 				
 				$atts['zoom_control'] 			= empty( $atts['zoom_control'] ) ? false : true;
 				$atts['pan_control']  			= empty( $atts['pan_control'] ) ? false : true;
@@ -498,9 +451,9 @@ if ( ! class_exists( 'avia_sc_gmaps' ) )
 				$skipSecond 	= false;
 				avia_sc_gmaps::$map_count = Av_Google_Maps()->get_maps_count() + 1;
 				
-				$params['class'] 				= "avia-google-maps avia-google-maps-section main_color {$av_display_classes} ".$meta['el_class'].$class;
-				$params['open_structure'] 		= false;
-				$params['id'] 					= empty($id) ? "avia-google-map-nr-" . avia_sc_gmaps::$map_count : $id;
+				$params['class'] = "avia-google-maps avia-google-maps-section main_color {$av_display_classes} ".$meta['el_class'].$class;
+				$params['open_structure'] = false;
+				$params['id'] = AviaHelper::save_string( $meta['custom_id_val'] ,'-', 'avia-google-map-nr-' . avia_sc_gmaps::$map_count );
 
 				
 				//we dont need a closing structure if the element is the first one or if a previous fullwidth element was displayed before
@@ -577,7 +530,7 @@ if ( ! class_exists( 'avia_sc_gmaps' ) )
 				//an overlay that might be necessary if the user disables the map by the use of our [av_privacy_google_maps] function
 				$by_browser_disabled_overlay = "";
 				$by_browser_disabled_overlay .= '<a class="av_gmaps_browser_disabled av_text_confirm_link av_text_confirm_link_visible" href="' . $url . '" target="_blank">';
-				$by_browser_disabled_overlay .= __("Maps were disabled by the visitor on this site.", 'avia_framework' );
+				$by_browser_disabled_overlay .= __( 'Maps were disabled by the visitor on this site. Click to open the map in a new window.', 'avia_framework' );
 				$by_browser_disabled_overlay .= '</a>';
 				
 				$map_id = '';
@@ -631,8 +584,10 @@ if ( ! class_exists( 'avia_sc_gmaps' ) )
 					$style = " style='" . implode( ' ', $styles ) . "'";
 				}
 				
+				$add_id = ShortcodeHelper::is_top_level() ? '' : $meta['custom_el_id'];
+				$add_css = ShortcodeHelper::is_top_level() ? '' : $meta['custom_class'];
 				
-				$out =	'<div class="av_gmaps_sc_main_wrap av_gmaps_main_wrap">';
+				$out =	"<div {$add_id} class='av_gmaps_sc_main_wrap av_gmaps_main_wrap {$add_css}'>";
 				
 				if( empty( $map_id ) )
 				{

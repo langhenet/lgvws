@@ -50,7 +50,7 @@ if ( ! class_exists( 'avia_sc_submenu' ) )
 				wp_enqueue_style( 'avia-module-menu' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/menu/menu.css' , array('avia-layout'), false );
 				
 					//load js
-				wp_enqueue_script( 'avia-module-menu' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/menu/menu.js' , array('avia-shortcodes'), false, TRUE );
+				wp_enqueue_script( 'avia-module-menu' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/menu/menu.js' , array('avia-shortcodes'), false, true );
 			}
 
 			/**
@@ -185,7 +185,7 @@ if ( ! class_exists( 'avia_sc_submenu' ) )
 				    
 				    array(	
 						"name" 	=> __("Sticky Submenu", 'avia_framework' ),
-						"desc" 	=> __("If checked the menu will stick at the top of the page once it touches it.", 'avia_framework' ),
+						"desc" 	=> __("If checked the menu will stick at the top of the page once it touches it. This option is ignored when burger menu icon is shown.", 'avia_framework' ),
 						"id" 	=> "sticky",
 						"std" 	=> "true",
 						"type" 	=> "checkbox"),
@@ -299,20 +299,20 @@ if ( ! class_exists( 'avia_sc_submenu' ) )
 			 * @param string $shortcodename the shortcode found, when == callback name
 			 * @return string $output returns the modified html string 
 			 */
-			function shortcode_handler($atts, $content = "", $shortcodename = "", $meta = "")
+			function shortcode_handler( $atts, $content = "", $shortcodename = "", $meta = "" )
 			{
 				$atts = shortcode_atts( array(
-										'style'			=> '',
-										'menu'			=> '',
-										'position'	 	=> 'center',
-										'sticky'		=> '',
-										'color'			=> 'main_color',
-										'mobile'		=> 'disabled',
-										'mobile_switch'	=> 'av-switch-768',
-										'mobile_submenu'=> '',
-										'which_menu'	=> ''
+								'style'			=> '',
+								'menu'			=> '',
+								'position'	 	=> 'center',
+								'sticky'		=> '',
+								'color'			=> 'main_color',
+								'mobile'		=> 'disabled',
+								'mobile_switch'	=> 'av-switch-768',
+								'mobile_submenu'=> '',
+								'which_menu'	=> ''
 				
-				), $atts, $this->config['shortcode'] );
+						), $atts, $this->config['shortcode'] );
 				
 				if( 'disabled' == $atts['mobile'] )
 				{

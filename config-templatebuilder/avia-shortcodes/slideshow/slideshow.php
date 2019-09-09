@@ -7,7 +7,7 @@
 if ( ! defined( 'ABSPATH' ) ) {  exit;  }    // Exit if accessed directly
 
 
-if ( !class_exists( 'avia_sc_slider' ) )
+if ( ! class_exists( 'avia_sc_slider' ) )
 {
 	class avia_sc_slider extends aviaShortcodeTemplate
 	{
@@ -18,15 +18,17 @@ if ( !class_exists( 'avia_sc_slider' ) )
 			{
 				$this->config['self_closing']	=	'no';
 				
-				$this->config['name']			= __('Easy Slider', 'avia_framework' );
-				$this->config['tab']			= __('Media Elements', 'avia_framework' );
+				$this->config['name']			= __( 'Easy Slider', 'avia_framework' );
+				$this->config['tab']			= __( 'Media Elements', 'avia_framework' );
 				$this->config['icon']			= AviaBuilder::$path['imagesURL']."sc-slideshow.png";
 				$this->config['order']			= 85;
 				$this->config['target']			= 'avia-target-insert';
 				$this->config['shortcode'] 		= 'av_slideshow';
-				$this->config['shortcode_nested'] = array('av_slide');
-				$this->config['tooltip'] 	    = __('Display a simple slideshow element', 'avia_framework' );
+				$this->config['shortcode_nested'] = array( 'av_slide' );
+				$this->config['tooltip'] 	    = __( 'Display a simple slideshow element', 'avia_framework' );
 				$this->config['disabling_allowed'] = true;
+				$this->config['id_name']		= 'id';
+				$this->config['id_show']		= 'yes';
 			}
 			
 			function extra_assets()
@@ -35,8 +37,8 @@ if ( !class_exists( 'avia_sc_slider' ) )
 				wp_enqueue_style( 'avia-module-slideshow' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/slideshow/slideshow.css' , array('avia-layout'), false );
 				
 					//load js
-				wp_enqueue_script( 'avia-module-slideshow' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/slideshow/slideshow.js' , array('avia-shortcodes'), false, TRUE );
-				wp_enqueue_script( 'avia-module-slideshow-video' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/slideshow/slideshow-video.js' , array('avia-shortcodes'), false, TRUE );
+				wp_enqueue_script( 'avia-module-slideshow' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/slideshow/slideshow.js' , array('avia-shortcodes'), false, true );
+				wp_enqueue_script( 'avia-module-slideshow-video' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/slideshow/slideshow-video.js' , array('avia-shortcodes'), false, true );
 
 			
 			}
@@ -214,6 +216,13 @@ if ( !class_exists( 'avia_sc_slider' ) )
 									"id" 	=> "title",
 									"std" 	=> "",
 									"type" 	=> "input"),
+								
+									array(	
+											'type'				=> 'template',
+											'template_id'		=> 'heading_tag',
+											'theme_default'		=> 'h2',
+											'context'			=> __CLASS__
+										),
 									
 									 array(	
 									"name" 	=> __("Caption Text", 'avia_framework' ),
@@ -415,62 +424,13 @@ if ( !class_exists( 'avia_sc_slider' ) )
 							"type" 	=> "close_div",
 							'nodescription' => true
 						),
+					
+					array(	
+							'type'			=> 'template',
+							'template_id'	=> 'screen_options_tab'
+						),
 						
-						
-								array(
-									"type" 	=> "tab",
-									"name"	=> __("Screen Options",'avia_framework' ),
-									'nodescription' => true
-								),
-								
-								
-								array(
-								"name" 	=> __("Element Visibility",'avia_framework' ),
-								"desc" 	=> __("Set the visibility for this element, based on the device screensize.", 'avia_framework' ),
-								"type" 	=> "heading",
-								"description_class" => "av-builder-note av-neutral",
-								),
-							
-								array(	
-										"desc" 	=> __("Hide on large screens (wider than 990px - eg: Desktop)", 'avia_framework'),
-										"id" 	=> "av-desktop-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-								
-								array(	
-									
-										"desc" 	=> __("Hide on medium sized screens (between 768px and 989px - eg: Tablet Landscape)", 'avia_framework'),
-										"id" 	=> "av-medium-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-										
-								array(	
-									
-										"desc" 	=> __("Hide on small screens (between 480px and 767px - eg: Tablet Portrait)", 'avia_framework'),
-										"id" 	=> "av-small-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-										
-								array(	
-									
-										"desc" 	=> __("Hide on very small screens (smaller than 479px - eg: Smartphone Portrait)", 'avia_framework'),
-										"id" 	=> "av-mini-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-	
-								
-							array(
-									"type" 	=> "close_div",
-									'nodescription' => true
-								),	
-								
-								
-						
-						
+
 					array(
 						"type" 	=> "close_div",
 						'nodescription' => true
@@ -537,26 +497,26 @@ if ( !class_exists( 'avia_sc_slider' ) )
 			 * @param string $shortcodename the shortcode found, when == callback name
 			 * @return string $output returns the modified html string
 			 */
-			function shortcode_handler($atts, $content = "", $shortcodename = "", $meta = "")
+			function shortcode_handler( $atts, $content = "", $shortcodename = "", $meta = "" )
 			{
-				extract(AviaHelper::av_mobile_sizes($atts)); //return $av_font_classes, $av_title_font_classes and $av_display_classes 
+				extract( AviaHelper::av_mobile_sizes( $atts) ); //return $av_font_classes, $av_title_font_classes and $av_display_classes 
 				
 				$atts = shortcode_atts( array(
-									'size'				=> 'featured',
-									'animation'			=> 'slide',
-									'conditional_play'	=> '',
-									'ids'				=> '',
-									'autoplay'			=> 'false',
-									'interval'			=> 5,
-									'control_layout'	=> '',
-									'perma_caption'		=> '',
-									'handle'			=> $shortcodename,
-									'content'			=> ShortcodeHelper::shortcode2array($content, 1),
-									'class'				=> $meta['el_class']." ".$av_display_classes,
-									'custom_markup'		=> $meta['custom_markup'],
-									'autoplay_stopper'	=>'',
+								'size'				=> 'featured',
+								'animation'			=> 'slide',
+								'conditional_play'	=> '',
+								'ids'				=> '',
+								'autoplay'			=> 'false',
+								'interval'			=> 5,
+								'control_layout'	=> '',
+								'perma_caption'		=> '',
+								'handle'			=> $shortcodename,
+								'content'			=> ShortcodeHelper::shortcode2array( $content, 1 ),
+								'class'				=> $meta['el_class'] . ' ' . $av_display_classes,
+								'custom_markup'		=> $meta['custom_markup'],
+								'autoplay_stopper'	=>''
 
-							), $atts, $this->config['shortcode']);
+						), $atts, $this->config['shortcode'] );
 
 
 				/**
@@ -564,13 +524,15 @@ if ( !class_exists( 'avia_sc_slider' ) )
 				 */
 				foreach ( $atts['content'] as &$slide ) 
 				{
-					if( isset($slide['attr']['slide_type']) && 'video' == $slide['attr']['slide_type'] )
+					if( isset( $slide['attr']['slide_type'] ) && 'video' == $slide['attr']['slide_type'] )
 					{
 						$slide['attr']['link_apply'] = '';
 					}
 				}
 				
 				unset( $slide );
+				
+				$atts['el_id'] = $meta['custom_el_id'];
 
 				$slider = new avia_slideshow( $atts );
 				return $slider->html();

@@ -25,22 +25,25 @@ if ( ! class_exists( 'avia_sc_section' ) )
 			 */
 			function shortcode_insert_button()
 			{
-				$this->config['type']			=	'layout';
-				$this->config['self_closing']	=	'no';
-				$this->config['contains_text']	=	'no';
+				$this->config['type']			= 'layout';
+				$this->config['self_closing']	= 'no';
+				$this->config['contains_text']	= 'no';
 				
-				$this->config['name']		= __('Color Section', 'avia_framework' );
+				$this->config['name']		= __( 'Color Section', 'avia_framework' );
 				$this->config['icon']		= AviaBuilder::$path['imagesURL']."sc-section.png";
-				$this->config['tab']		= __('Layout Elements', 'avia_framework' );
+				$this->config['tab']		= __( 'Layout Elements', 'avia_framework' );
 				$this->config['order']		= 20;
 				$this->config['shortcode'] 	= 'av_section';
 				$this->config['html_renderer'] 	= false;
-				$this->config['tinyMCE'] 	= array('disable' => "true");
+				$this->config['tinyMCE'] 	= array( 'disable' => "true" );
 				$this->config['tooltip'] 	= __('Creates a section with unique background image and colors', 'avia_framework' );
 				$this->config['drag-level'] = 1;
 				$this->config['drop-level'] = 1;
-				$this->config['preview'] = false;
-
+				$this->config['preview']	= false;
+				
+				$this->config['id_name']	= 'id';
+				$this->config['id_show']	= 'always';				//	we use original code - not $meta
+				$this->config['aria_label']	= 'yes';
 			}
 
 
@@ -57,6 +60,7 @@ if ( ! class_exists( 'avia_sc_section' ) )
 			function editor_element($params)
 			{
 				extract($params);
+				
 				$name = $this->config['shortcode'];
 				$data['shortcodehandler'] 	= $this->config['shortcode'];
     			$data['modal_title'] 		= $this->config['name'];
@@ -205,7 +209,7 @@ if ( ! class_exists( 'avia_sc_section' ) )
 											__( 'At least 75&percnt; of Browser Window height', 'avia_framework' )					=> '75',
 											__( 'At least 50&percnt; of Browser Window height', 'avia_framework' )					=> '50',
 											__( 'At least 25&percnt; of Browser Window height', 'avia_framework' )					=> '25',
-											__( 'Custom height in &percnt; based on browser windows height', 'avia_framework' )	=> 'percent',
+											__( 'Custom height in &percnt; based on browser windows height', 'avia_framework' )		=> 'percent',
 											__( 'Custom height in pixel', 'avia_framework' )										=> 'custom',
 						                  )
 						),
@@ -352,16 +356,6 @@ if ( ! class_exists( 'avia_sc_section' ) )
 							"required" => array('scroll_down','not',''),
 						),
 					
-					
-
-
-				  array(	"name" 	=> __("For Developers: Section ID", 'avia_framework' ),
-							"desc" 	=> __("Apply a custom ID Attribute to the section, so you can apply a unique style via CSS. This option is also helpful if you want to use anchor links to scroll to a sections when a link is clicked", 'avia_framework' )."<br/><br/>".
-									   __("Use with caution and make sure to only use allowed characters. No special characters can be used.", 'avia_framework' ),
-				            "id" 	=> "id",
-				            "type" 	=> "input",
-				            "std" => ""),
-				            
 					array(
 							"type" 	=> "close_div",
 							'nodescription' => true
@@ -537,7 +531,7 @@ if ( ! class_exists( 'avia_sc_section' ) )
 					
 
 					
-array(
+					array(
 							"type" 	=> "tab",
 							"name"  => __("Section Background Overlay" , 'avia_framework'),
 							'nodescription' => true
@@ -610,68 +604,22 @@ array(
 							"type" 	=> "close_div",
 							'nodescription' => true
 						),
+					
+					array(	
+							'type'			=> 'template',
+							'template_id'	=> 'screen_options_tab'
+						),
 
-					array(
-								"type" 	=> "tab",
-								"name"	=> __("Screen Options",'avia_framework' ),
-								'nodescription' => true
-							),
-							
-							
-							array(
-							"name" 	=> __("Element Visibility",'avia_framework' ),
-							"desc" 	=> __("Set the visibility for this element, based on the device screensize.", 'avia_framework' ),
-							"type" 	=> "heading",
-							"description_class" => "av-builder-note av-neutral",
-							),
-						
-							array(	
-									"desc" 	=> __("Hide on large screens (wider than 990px - eg: Desktop)", 'avia_framework'),
-									"id" 	=> "av-desktop-hide",
-									"std" 	=> "",
-									"container_class" => 'av-multi-checkbox',
-									"type" 	=> "checkbox"),
-							
-							array(	
-								
-									"desc" 	=> __("Hide on medium sized screens (between 768px and 989px - eg: Tablet Landscape)", 'avia_framework'),
-									"id" 	=> "av-medium-hide",
-									"std" 	=> "",
-									"container_class" => 'av-multi-checkbox',
-									"type" 	=> "checkbox"),
-									
-							array(	
-								
-									"desc" 	=> __("Hide on small screens (between 480px and 767px - eg: Tablet Portrait)", 'avia_framework'),
-									"id" 	=> "av-small-hide",
-									"std" 	=> "",
-									"container_class" => 'av-multi-checkbox',
-									"type" 	=> "checkbox"),
-									
-							array(	
-								
-									"desc" 	=> __("Hide on very small screens (smaller than 479px - eg: Smartphone Portrait)", 'avia_framework'),
-									"id" 	=> "av-mini-hide",
-									"std" 	=> "",
-									"container_class" => 'av-multi-checkbox',
-									"type" 	=> "checkbox"),
-
-							
-						array(
-								"type" 	=> "close_div",
-								'nodescription' => true
-							),		
-							
+					
 					array(
 							"type" 	=> "close_div",
 							'nodescription' => true
 						),
 						
-						
-						
 					array(	"id" 	=> "av_element_hidden_in_editor",
 				            "type" 	=> "hidden",
-				            "std" => "0"),
+				            "std" => "0"
+						),
                 );
 			}
 
@@ -683,51 +631,52 @@ array(
 			 * @param string $shortcodename the shortcode found, when == callback name
 			 * @return string $output returns the modified html string
 			 */
-			function shortcode_handler($atts, $content = "", $shortcodename = "", $meta = "")
+			function shortcode_handler( $atts, $content = "", $shortcodename = "", $meta = "" )
 			{
 				global $avia_config;
 				
-				extract(AviaHelper::av_mobile_sizes($atts)); //return $av_font_classes, $av_title_font_classes and $av_display_classes 
+				extract( AviaHelper::av_mobile_sizes( $atts ) ); //return $av_font_classes, $av_title_font_classes and $av_display_classes 
 
 				avia_sc_section::$section_count ++;
-			    $atts = shortcode_atts( array(	'src'				=> '', 
-			    								'position'			=> 'top left', 
-			    								'repeat'			=> 'no-repeat', 
-			    								'attach'			=> 'scroll', 
-			    								'color'				=> 'main_color',
-                                                'background'		=> '',
-                                                'custom_bg'			=> '',
-                                                'background_gradient_color1'		=> '',
-                                                'background_gradient_color2'		=> '',
-                                                'background_gradient_direction'		=> '',
-			    								'padding'			=> 'default' ,
-			    								'margin'			=> '',
-			    								'custom_margin'		=> '',
-			    								'shadow'			=> 'shadow', 
-			    								'id'				=> '', 
-			    								'min_height'		=> '', 
-												'min_height_pc'		=> 25,
-			    								'min_height_px'		=> '', 
-			    								'video'				=> '', 
-			    								'video_ratio'		=>' 16:9', 
-			    								'video_mobile_disabled'			=>'',
-			    								'custom_markup'		=> '',
-			    								'attachment'		=> '',
-			    								'attachment_size'	=> '',
-			    								'bottom_border'		=> '',
-			    								'overlay_enable'	=> '',
-			    								'overlay_opacity'	=> '',
-			    								'overlay_color'		=> '',
-			    								'overlay_pattern'	=> '',
-			    								'overlay_custom_pattern'	=> '',
-			    								'scroll_down'		=> '',
-			    								'bottom_border_diagonal_color'		=> '',
-			    								'bottom_border_diagonal_direction'	=> '',
-			    								'bottom_border_style'				=> '',
-			    								'custom_arrow_bg'					=> ''
-			    								
-			    								), 
-			    							$atts, $this->config['shortcode'] );
+				
+			    $atts = shortcode_atts( array(	
+								'src'				=> '', 
+								'position'			=> 'top left', 
+								'repeat'			=> 'no-repeat', 
+								'attach'			=> 'scroll', 
+								'color'				=> 'main_color',
+								'background'		=> '',
+								'custom_bg'			=> '',
+								'background_gradient_color1'		=> '',
+								'background_gradient_color2'		=> '',
+								'background_gradient_direction'		=> '',
+								'padding'			=> 'default' ,
+								'margin'			=> '',
+								'custom_margin'		=> '',
+								'shadow'			=> 'shadow', 
+								'id'				=> '', 
+								'min_height'		=> '', 
+								'min_height_pc'		=> 25,
+								'min_height_px'		=> '', 
+								'video'				=> '', 
+								'video_ratio'		=>' 16:9', 
+								'video_mobile_disabled'			=>'',
+								'custom_markup'		=> '',
+								'attachment'		=> '',
+								'attachment_size'	=> '',
+								'bottom_border'		=> '',
+								'overlay_enable'	=> '',
+								'overlay_opacity'	=> '',
+								'overlay_color'		=> '',
+								'overlay_pattern'	=> '',
+								'overlay_custom_pattern'	=> '',
+								'scroll_down'		=> '',
+								'bottom_border_diagonal_color'		=> '',
+								'bottom_border_diagonal_direction'	=> '',
+								'bottom_border_style'				=> '',
+								'custom_arrow_bg'					=> ''
+
+							), $atts, $this->config['shortcode'] );
 							    							
 			    							
 				if( 'percent' == $atts['min_height'] )
@@ -735,7 +684,7 @@ array(
 					$atts['min_height'] = $atts['min_height_pc'];
 				}
 				
-				extract($atts);
+				extract( $atts );
 				
 			    $output      = "";
 			    $class       = "avia-section ".$color." avia-section-".$padding." avia-".$shadow;
@@ -743,8 +692,9 @@ array(
 				$src		 = '';
 				$params	= array();
 				
-				$params['id'] = ! empty( $id ) ? AviaHelper::save_string($id,'-') : "av_section_".avia_sc_section::$section_count;
+				$params['id'] = AviaHelper::save_string( $id, '-', 'av_section_' . avia_sc_section::$section_count );
 				$params['custom_markup'] = $meta['custom_markup'];
+				$params['aria_label'] = $meta['aria_label'];
 				$params['attach'] = "";
 				
 				if( ! empty( $attachment ) && ! empty( $attachment_size ) )
@@ -1041,44 +991,71 @@ array(
 
 
 
-if(!function_exists('avia_new_section'))
+if( ! function_exists( 'avia_new_section' ) )
 {
-	function avia_new_section($params = array())
+	function avia_new_section( $params = array() )
 	{
 		global $avia_section_markup, $avia_config;
 		
-	    $defaults = array(	'class'=>'main_color', 
-	    					'bg'=>'',
-	    					'custom_margin' => '',
-	    					'close'=>true,
-	    					'open'=>true, 
-	    					'open_structure' => true, 
-	    					'open_color_wrap' => true, 
-	    					'data'=>'', 
-	    					"style"=>'', 
-	    					'id' => "", 
-	    					'main_container' => false, 
-	    					'min_height' => '',
-	    					'min_height_px' => '',
-	    					'video' => '',
-	    					'video_ratio' => '16:9',
-	    					'video_mobile_disabled' => '',
-	    					'attach' => "",
-	    					'before_new' => "",
-	    					'custom_markup' => ''
-	    					);
+	    $defaults = array(	
+						'class'			=> 'main_color', 
+						'bg'			=> '',
+						'custom_margin' => '',
+						'close'			=> true,
+						'open'			=> true, 
+						'open_structure'	=> true, 
+						'open_color_wrap'	=> true, 
+						'data'			=> '', 
+						"style"			=> '', 
+						'id'			=> '', 
+						'main_container'	=> false, 
+						'min_height'	=> '',
+						'min_height_px'	=> '',
+						'video'			=> '',
+						'video_ratio'	=> '16:9',
+						'video_mobile_disabled'	=> '',
+						'attach'		=> "",
+						'before_new'	=> "",
+						'custom_markup'	=> '',
+						'aria_label'	=> ''			//	set to true to force id as label
+					);
 	    
 	    
 	    
-	    $defaults = array_merge($defaults, $params);
+	    $defaults = array_merge( $defaults, $params );
 		
-	    extract($defaults);
+	    extract( $defaults );
 
 	    $post_class = "";
 	    $output     = "";
 	    $bg_slider  = "";
 	    $container_style = "";
-	    if($id) $id = "id='{$id}'";
+		$id_val = $id;
+		
+	    $id =  ! empty( $id_val ) ? "id='{$id_val}'" : '';
+				
+		if( ! empty( $aria_label ) || ! empty( $id_val ) )
+		{
+			if( true === $aria_label )
+			{
+				$label = $id_val;
+			}
+			else if ( ! empty( $aria_label ) )
+			{
+				$label = $aria_label;
+			}
+			else
+			{
+				$label = '';
+			}
+			
+			$aria_label = ! empty( $label ) ? "aria-label='{$label}'" : '';
+		}
+		else 
+		{
+			$aria_label = '';
+		}
+		
 	
 	    //close old content structure. only necessary when previous element was a section. other fullwidth elements dont need this
 	    if($close) 
@@ -1088,6 +1065,7 @@ if(!function_exists('avia_new_section'))
 			avia_sc_section::$add_to_closing = '';
 	    	avia_sc_section::$close_overlay = "";
 		}
+		
 	    //start new
 	    if($open)
 	    {	
@@ -1114,21 +1092,22 @@ if(!function_exists('avia_new_section'))
 	        	if(!empty($video)) 
 	        	{
 	        		$slide = array( 
-	        						'shortcode' => 'av_slideshow',  
-	        						'content' => '', 
-	        						'attr' => array( 	'id'=>'', 
-	        											'video'=>$video , 
-	        											'slide_type' => 'video', 
-	        											'video_mute' => true,
-	        											'video_loop' => true,
-	        											'video_ratio' => $video_ratio,
-	        											'video_controls' => 'disabled',
-	        											'video_section_bg' => true,
-	        											'video_format'=> '',
-	        											'video_mobile'	=>'',
-	        											'video_mobile_disabled'=> $video_mobile_disabled
-	        										)  
-	        						);
+								'shortcode' => 'av_slideshow',  
+								'content' => '', 
+								'attr' => array( 	
+											'id'			=> '', 
+											'video'			=> $video , 
+											'slide_type'	=> 'video', 
+											'video_mute'	=> true,
+											'video_loop'	=> true,
+											'video_ratio'	=> $video_ratio,
+											'video_controls'	=> 'disabled',
+											'video_section_bg'	=> true,
+											'video_format'	=> '',
+											'video_mobile'	=> '',
+											'video_mobile_disabled'	=> $video_mobile_disabled
+										)  
+								);
 	        		
 	        		
 	        		$bg_slider = new avia_slideshow( array('content' => array($slide) ) );
@@ -1159,7 +1138,7 @@ if(!function_exists('avia_new_section'))
 	        	
 	        	if($class == "main_color") $class .= " av_default_container_wrap";
 	        	
-	        	$output .= "<div {$id} class='{$class} container_wrap ".avia_layout_class( 'main' , false )."' {$style} {$data}>";
+	        	$output .= "<div {$id} {$aria_label} class='{$class} container_wrap ".avia_layout_class( 'main' , false )."' {$style} {$data}>";
 	        	$output .= !empty($bg_slider) ? $bg_slider->html() : "";
 	        	$output .= $attach;
 	        	$output .= apply_filters('avf_section_container_add','',$defaults);
@@ -1192,7 +1171,7 @@ if(!function_exists('avia_new_section'))
 
 
 
-if(!function_exists('avia_section_close_markup'))
+if( ! function_exists( 'avia_section_close_markup' ) )
 {
 	function avia_section_close_markup()
 	{
@@ -1213,9 +1192,9 @@ if(!function_exists('avia_section_close_markup'))
 	}
 }
 
-if(!function_exists('avia_section_after_element_content'))
+if( ! function_exists( 'avia_section_after_element_content' ) )
 {
-	function avia_section_after_element_content($meta, $second_id = "", $skipSecond = false, $extra = "")
+	function avia_section_after_element_content( $meta, $second_id = "", $skipSecond = false, $extra = "" )
 	{
 		$output = "</div>"; //close section
 		$output .= $extra;

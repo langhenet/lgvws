@@ -31,9 +31,9 @@ global 	$avia_config;
 $output = "";
 $body_color = "";
 
-extract($color_set);
-if ($main_color !== NULL) { extract($main_color); }
-extract($styles);
+extract( $color_set );
+if ( $main_color !== null ) { extract( $main_color ); }
+extract( $styles );
 
 unset($background_image);
 ######################################################################
@@ -165,7 +165,7 @@ background-color:$border;
 border-color: $bg;
 }
 
-$key table, $key .widget_nav_menu ul:first-child>.current-menu-item, $key .widget_nav_menu ul:first-child>.current_page_item, $key .widget_nav_menu ul:first-child>.current-menu-ancestor, $key .pagination .current, $key .pagination a, $key.iconbox_top .iconbox_content, $key .av_promobox, $key .toggle_content, $key .toggler:hover, #top $key .av-minimal-toggle .toggler, $key .related_posts_default_image, $key .search-result-counter, $key .container_wrap_meta, $key .avia-content-slider .slide-image, $key .avia-slider-testimonials .avia-testimonial-content, $key .avia-testimonial-arrow-wrap .avia-arrow, $key .news-thumb, $key .portfolio-preview-content, $key .portfolio-preview-content .avia-arrow, $key .av-magazine .av-magazine-entry-icon, $key .related_posts.av-related-style-full a, $key .aviaccordion-slide, $key.avia-fullwidth-portfolio .pagination, $key .isotope-item.special_av_fullwidth .av_table_col.portfolio-grid-image, $key .av-catalogue-list li:hover, $key .wp-playlist, $key .avia-slideshow-fixed-height > li, $key .avia-form-success, $key .av-boxed-grid-style .avia-testimonial{
+$key table, $key .widget_nav_menu ul:first-child>.current-menu-item, $key .widget_nav_menu ul:first-child>.current_page_item, $key .widget_nav_menu ul:first-child>.current-menu-ancestor, $key .pagination .current, $key .pagination a, $key.iconbox_top .iconbox_content, $key .av_promobox, $key .toggle_content, $key .toggler:hover, #top $key .av-minimal-toggle .toggler, $key .related_posts_default_image, $key .search-result-counter, $key .container_wrap_meta, $key .avia-content-slider .slide-image, $key .avia-slider-testimonials .avia-testimonial-content, $key .avia-testimonial-arrow-wrap .avia-arrow, $key .news-thumb, $key .portfolio-preview-content, $key .portfolio-preview-content .avia-arrow, $key .av-magazine .av-magazine-entry-icon, $key .related_posts.av-related-style-full a, $key .aviaccordion-slide, $key.avia-fullwidth-portfolio .pagination, $key .isotope-item.special_av_fullwidth .av_table_col.portfolio-grid-image, $key .av-catalogue-list li:hover, $key .wp-playlist, $key .avia-slideshow-fixed-height > li, $key .avia-form-success, $key .avia-form-error, $key .av-boxed-grid-style .avia-testimonial{
 background: $bg2;
 }
 
@@ -860,8 +860,8 @@ background-color:$bg2;
 			
 			#main{ border-color: $border;  }
 			
-			#scroll-top-link:hover{ background-color: $bg2; color: $primary; border:1px solid $border; }
-
+			#scroll-top-link:hover, #av-cookie-consent-badge:hover{ background-color: $bg2; color: $primary; border:1px solid $border; }
+			
 			";
 
 			/*contact form picker*/
@@ -913,8 +913,8 @@ background-color:$bg2;
 
 			$output .= "
 
-			html, #scroll-top-link{ background-color: $bg; }
-			#scroll-top-link{ color: $color; border:1px solid $border; }
+			html, #scroll-top-link, #av-cookie-consent-badge{ background-color: $bg; }
+			#scroll-top-link, #av-cookie-consent-badge{ color: $color; border:1px solid $border; }
 			
 			.html_stretched #wrap_all{
 			background-color:$bg;

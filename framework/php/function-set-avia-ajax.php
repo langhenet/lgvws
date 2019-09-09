@@ -733,7 +733,7 @@ if(!function_exists('avia_ajax_verify_input'))
 		
 		if(function_exists($callback))
 		{
-			$js_callback_value = isset($_POST['js_value']) ? $_POST['js_value'] : NULL;
+			$js_callback_value = isset($_POST['js_value']) ? $_POST['js_value'] : null;
 			$result = $callback( $_POST['value'] , true, $js_callback_value );
 			
 			if( ! is_array( $result ) )

@@ -48,6 +48,9 @@
 				send.validationError = false;
 				send.datastring = 'ajax=true';
 
+				//	Get in js added element (e.g. from reCAPTCHA)
+				send.formElements = form.find('textarea, select, input[type=text], input[type=checkbox], input[type=hidden]');
+				
 				send.formElements.each(function(i)
 				{
 					var currentElement = $(this),
@@ -59,7 +62,7 @@
 
 					 	if(currentElement.is(':checkbox'))
 					 	{
-					 		if(currentElement.is(':checked')) { value = true } else {value = ''}
+					 		if(currentElement.is(':checked')) { value = true; } else { value = ''; }
 					 	}
 					 	
 					 	send.dataObj[name] = encodeURIComponent(value);
@@ -135,7 +138,7 @@
 							nomatch = false;
 						}
 
-						if(classes && classes.match(/captcha/))
+						if(classes && classes.match(/captcha/) && ! classes.match(/recaptcha/) )
 						{
 							var verifier 	= form.find("#" + name + "_verifier").val(),
 								lastVer		= verifier.charAt(verifier.length-1),
@@ -178,6 +181,11 @@
 			function send_ajax_form()
 			{
 				if(form_sent){ return false; }
+				
+				if( send.button.hasClass( 'avia_button_inactive' ) )
+				{
+					return false;
+				}
 
 				form_sent = true;
 				send.button.addClass('av-sending-button');

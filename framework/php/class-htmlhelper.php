@@ -344,7 +344,8 @@ if( ! class_exists( 'avia_htmlhelper' ) )
 
 		
 		/**
-		 * Output a verification field with a callback button
+		 * Output a verification field with a callback button or 
+		 * a simple verification button for a group of option fields
 		 * 
 		 * @since < 4.0
 		 * @param array $element
@@ -358,12 +359,20 @@ if( ! class_exists( 'avia_htmlhelper' ) )
 			$output  			= '';
 			$ajax				= false;
 			
+			$ids_data = '';
+			
+			if( ! empty( $element['input_ids'] ) )
+			{
+				$ids_data = 'data-av-verify-fields="' . implode( ',', $element['input_ids'] ) . '"';
+			}
+			
+			
 			if(isset($element['button-relabel']) && !empty($element['std']))
 			{
 				$element['button-label'] = $element['button-relabel'];
 			}
 			
-			$input_field = $this->text($element);
+			$input_field = ( empty( $ids_data ) ) ? $this->text( $element ) : $this->hidden( $element );
 			
 			/**
 			 * Filter to replace normal input field with a password input field
@@ -380,7 +389,7 @@ if( ! class_exists( 'avia_htmlhelper' ) )
 			
 			$output .=	'<span class="avia_style_wrap avia_verify_input avia_upload_style_wrap">';
 			$output .=		$input_field;
-			$output .=		'<a href="#" data-av-verification-callback="'.$callback.'" data-av-verification-callback-javascript="'.$js_callback.'" class="avia_button avia_verify_button" id="avia_check'.$element['id'].'">'.$element['button-label'].'</a>';
+			$output .=		'<a href="#" ' . $ids_data . ' data-av-verification-callback="' . $callback . '" data-av-verification-callback-javascript="' . $js_callback . '" class="avia_button avia_verify_button" id="avia_check' . $element['id'] . '">' . $element['button-label'] . '</a>';
 			$output .=	'</span>';
 			
 			$output .= isset($element['help']) ? "<small>{$element['help']}</small>" : "";
@@ -389,7 +398,7 @@ if( ! class_exists( 'avia_htmlhelper' ) )
 			
 			if( ( $element['std'] != "" ) || ( ! empty( $element['force_callback'] ) ) )
 			{
-				$output .= str_replace( 'avia_trigger_save', '', $callback( $element['std'] , $ajax ) );
+				$output .= str_replace( 'avia_trigger_save', '', $callback( $element['std'] , $ajax, null, $element ) );
 			}
 			
 			$output .=	'</div>';

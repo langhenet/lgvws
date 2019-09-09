@@ -7,7 +7,7 @@
 if ( ! defined( 'ABSPATH' ) ) {  exit;  }    // Exit if accessed directly
 
 
-if ( !class_exists( 'avia_sc_toggle' ) )
+if ( ! class_exists( 'avia_sc_toggle' ) )
 {
     class avia_sc_toggle extends aviaShortcodeTemplate
     {
@@ -53,21 +53,23 @@ if ( !class_exists( 'avia_sc_toggle' ) )
         {
 			$this->config['self_closing']	=	'no';
 			
-            $this->config['name']		= __('Accordion', 'avia_framework' );
-            $this->config['tab']		= __('Content Elements', 'avia_framework' );
+            $this->config['name']		= __( 'Accordion', 'avia_framework' );
+            $this->config['tab']		= __( 'Content Elements', 'avia_framework' );
             $this->config['icon']		= AviaBuilder::$path['imagesURL']."sc-accordion.png";
             $this->config['order']		= 70;
             $this->config['target']		= 'avia-target-insert';
             $this->config['shortcode'] 	= 'av_toggle_container';
-            $this->config['shortcode_nested'] = array('av_toggle');
-            $this->config['tooltip'] 	= __('Creates toggles or accordions', 'avia_framework' );
+            $this->config['shortcode_nested'] = array( 'av_toggle' );
+            $this->config['tooltip'] 	= __( 'Creates toggles or accordions', 'avia_framework' );
             $this->config['disabling_allowed'] = true;
+			$this->config['id_name']	= 'id';
+			$this->config['id_show']	= 'yes';
         }
 
 		function admin_assets()
 		{
 			$ver = AviaBuilder::VERSION;
-            wp_enqueue_script('avia_tab_toggle_js' , AviaBuilder::$path['assetsURL'].'js/avia-tab-toggle.js' , array('avia_modal_js'), $ver, TRUE );
+            wp_enqueue_script('avia_tab_toggle_js' , AviaBuilder::$path['assetsURL'].'js/avia-tab-toggle.js' , array('avia_modal_js'), $ver, true );
 		}
 			
         function extra_assets()
@@ -76,7 +78,7 @@ if ( !class_exists( 'avia_sc_toggle' ) )
 				wp_enqueue_style( 'avia-module-toggles' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/toggles/toggles.css' , array('avia-layout'), false );
 				
 					//load js
-				wp_enqueue_script( 'avia-module-toggles' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/toggles/toggles.js' , array('avia-shortcodes'), false, TRUE );
+				wp_enqueue_script( 'avia-module-toggles' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/toggles/toggles.js' , array('avia-shortcodes'), false, true );
 
 			}
         
@@ -283,23 +285,22 @@ if ( !class_exists( 'avia_sc_toggle' ) )
                 ),
 
                 array(
-                    "name" 	=> __("Custom Font Color", 'avia_framework' ),
-                    "desc" 	=> __("Select a custom font color. Leave empty to use the default", 'avia_framework' ),
+                    "name" 	=> __("Custom Font Color Current Toggle", 'avia_framework' ),
+                    "desc" 	=> __("Select a custom font color for the current active toggle. Leave empty to use the default", 'avia_framework' ),
                     "id" 	=> "font_color_current",
                     "type" 	=> "colorpicker",
                     "std" 	=> "",
                     "rgba" 	=> true,
-                    "container_class" => 'av_third av_third_first',
                     "required" => array('colors_current','equals','custom')
                 ),
 
                 array(
-                    "name" 	=> __("Background",'avia_framework' ),
-                    "desc" 	=> __("Select the type of background for the title bar.", 'avia_framework' ),
+                    "name" 	=> __("Background Current Toggle",'avia_framework' ),
+                    "desc" 	=> __("Select the type of background for the current active toggle title bar.", 'avia_framework' ),
                     "id" 	=> "background_current",
                     "type" 	=> "select",
                     "std" 	=> "",
-                    "container_class" => 'av_third',
+					"required" => array('colors_current','equals','custom'),
                     "subtype" => array(
                         __('Default','avia_framework' )=>'',
                         __('Background Color','avia_framework' )=>'bg_color',
@@ -357,87 +358,37 @@ if ( !class_exists( 'avia_sc_toggle' ) )
 
 
 				array(
-							"type" 	=> "close_div",
-							'nodescription' => true
-				),		
-						
-								array(
-									"type" 	=> "tab",
-									"name"	=> __("Screen Options",'avia_framework' ),
-									'nodescription' => true
-								),
-								
-								
-								array(
-								"name" 	=> __("Element Visibility",'avia_framework' ),
-								"desc" 	=> __("Set the visibility for this element, based on the device screensize.", 'avia_framework' ),
-								"type" 	=> "heading",
-								"description_class" => "av-builder-note av-neutral",
-								),
-							
-								array(	
-										"desc" 	=> __("Hide on large screens (wider than 990px - eg: Desktop)", 'avia_framework'),
-										"id" 	=> "av-desktop-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-								
-								array(	
-									
-										"desc" 	=> __("Hide on medium sized screens (between 768px and 989px - eg: Tablet Landscape)", 'avia_framework'),
-										"id" 	=> "av-medium-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-										
-								array(	
-									
-										"desc" 	=> __("Hide on small screens (between 480px and 767px - eg: Tablet Portrait)", 'avia_framework'),
-										"id" 	=> "av-small-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-										
-								array(	
-									
-										"desc" 	=> __("Hide on very small screens (smaller than 479px - eg: Smartphone Portrait)", 'avia_framework'),
-										"id" 	=> "av-mini-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-									
-								
-							  
+						"type" 	=> "close_div",
+						'nodescription' => true
+					),		
 				
-							
-								
-							array(
-									"type" 	=> "close_div",
-									'nodescription' => true
-								),	
-								
-								
+				array(	
+						'type'			=> 'template',
+						'template_id'	=> 'screen_options_tab'
+					),
 						
+			
 						
-					array(
+				array(
 						"type" 	=> "close_div",
 						'nodescription' => true
 					),
 
             );
 
+			$setting_id = Avia_Builder()->get_developer_settings( 'custom_id' );
+			$class = in_array( $setting_id, array( 'deactivate', 'hide' ) ) ? 'avia-hidden' : '';
 
-            if(current_theme_supports('avia_template_builder_custom_tab_toogle_id'))
-            {
-                $this->elements[2]['subelements'][] = array(
-                    "name" 	=> __("For Developers: Custom Toggle ID",'avia_framework' ),
-                    "desc" 	=> __("Insert a custom ID for the element here. Make sure to only use allowed characters",'avia_framework' ),
-                    "id" 	=> "custom_id",
-                    "type" 	=> "input",
-                    "std" 	=> "");
-            }
-
-
+           
+			$this->elements[2]['subelements'][] = array(
+					'name' 	=> __( 'For Developers: Custom Tab ID','avia_framework' ),
+					'desc' 	=> __( 'Insert a custom ID for the element here. Make sure to only use allowed characters (latin characters, underscores, dashes and numbers, no special characters can be used)','avia_framework' ),
+					'id' 	=> 'custom_id',
+					'type' 	=> 'input',
+					'std' 	=> '',
+					'container_class'	=> $class,
+				);
+            
         }
 
         /**
@@ -467,43 +418,66 @@ if ( !class_exists( 'avia_sc_toggle' ) )
          * @param string $shortcodename the shortcode found, when == callback name
          * @return string $output returns the modified html string
          */
-        function shortcode_handler($atts, $content = "", $shortcodename = "", $meta = "")
+        function shortcode_handler( $atts, $content = "", $shortcodename = "", $meta = "" )
         {
 			$this->screen_options = AviaHelper::av_mobile_sizes( $atts );
 			
 	        extract( $this->screen_options ); //return $av_font_classes, $av_title_font_classes and $av_display_classes 
 
-            $atts =  shortcode_atts(array(
-                'initial' => '0',
-                'mode' => 'accordion',
-                'sort'=>'', 'styling'=>'',
-                'colors'=>'',
-                'border_color'=>'',
-                'font_color'=>'',
-                'background_color'=>'',
-                'colors_current'=>'',
-                'font_color_current'=>'',
-                'background_current'=>'',
-                'background_color_current'=>'',
-                'background_gradient_current_color1'=>'',
-                'background_gradient_current_color2'=>'',
-                'background_gradient_current_direction' => '',
-                'hover_colors' => '',
-                'hover_background_color' => '',
-                'hover_font_color' => ''
+            $atts = shortcode_atts( array(
+							'initial'			=> '0',
+							'mode'				=> 'accordion',
+							'sort'				=>'',
+							'styling'			=>'',
+							'colors'			=>'',
+							'border_color'		=>'',
+							'font_color'		=>'',
+							'background_color'	=>'',
+							'colors_current'	=>'',
+							'font_color_current'		=>'',
+							'background_current'		=>'',
+							'background_color_current'	=>'',
+							'background_gradient_current_color1'	=>'',
+							'background_gradient_current_color2'	=>'',
+							'background_gradient_current_direction'	=> '',
+							'hover_colors'				=> '',
+							'hover_background_color'	=> '',
+							'hover_font_color'			=> ''
 
-            ), $atts, $this->config['shortcode']);
-            extract($atts);
+						), $atts, $this->config['shortcode'] );
+			
+			
+            extract( $atts );
+			
+			
+			if( ! is_numeric( $initial ) || $initial < 0 )
+			{
+				$initial = 0;
+			}
+			else
+			{
+				$initial = (int) $initial;
+				$nr_toggles = substr_count( $content, '[av_toggle ' );
+				
+				if( $initial > $nr_toggles )
+				{
+					$initial = $nr_toggles;
+				}
+			}
+			
 
             $output = "";
             $addClass = '';
-            if($mode == 'accordion') $addClass = 'toggle_close_all ';
-
+            if( $mode == 'accordion' ) 
+			{
+				$addClass = 'toggle_close_all ';
+			}
 
             // custom title bar styling
             $current_colors = "";
 
-            if ($atts['colors_current'] == 'custom'){
+            if ($atts['colors_current'] == 'custom')
+			{
 
                 if ($atts['font_color_current'] !== '') {
                     $current_colors .= AviaHelper::style_string($atts,'font_color_current','color');
@@ -532,13 +506,14 @@ if ( !class_exists( 'avia_sc_toggle' ) )
             $current_colors_attr = "";
             if ($current_colors) $current_colors_attr = "data-currentstyle='{$current_colors}'";
 
-            $output  = '<div class="togglecontainer '.$av_display_classes.' '.$styling.' '.$addClass.$meta['el_class'].'" '.$current_colors_attr.'>';
-            avia_sc_toggle::$counter = 1;
+            $output  = '<div ' . $meta['custom_el_id'] . ' class="togglecontainer '.$av_display_classes.' '.$styling.' '.$addClass.$meta['el_class'].'" '.$current_colors_attr.'>';
+ 
+			avia_sc_toggle::$counter = 1;
             avia_sc_toggle::$initial = $initial;
             avia_sc_toggle::$tags 	 = array();
             avia_sc_toggle::$atts 	 = $atts;
 
-            $content  = ShortcodeHelper::avia_remove_autop($content, true);
+            $content  = ShortcodeHelper::avia_remove_autop( $content, true );
             $sortlist = !empty($sort) ? $this->sort_list($atts) : "";
 
             $output .= $sortlist.$content.'</div>';
@@ -547,7 +522,7 @@ if ( !class_exists( 'avia_sc_toggle' ) )
         }
 
 
-        function av_toggle($atts, $content = "", $shortcodename = "")
+        function av_toggle( $atts, $content = "", $shortcodename = "" )
         {
 			/**
 			 * Fixes a problem when 3-rd party plugins call nested shortcodes without executing main shortcode  (like YOAST in wpseo-filter-shortcodes)
@@ -556,9 +531,15 @@ if ( !class_exists( 'avia_sc_toggle' ) )
 			{
 				return '';
 			}
-				
-            $output = $titleClass = $contentClass = "";
-            $toggle_atts = shortcode_atts(array('title' => '', 'tags' => '', 'custom_id' => '', 'custom_markup' =>''), $atts, 'av_toggle');
+	
+            $toggle_atts = shortcode_atts( array(
+									'title'			=> '', 
+									'tags'			=> '', 
+									'custom_id'		=> '', 
+									'custom_markup'	=>''
+							), $atts, 'av_toggle' );
+			
+			$output = $titleClass = $contentClass = "";
 			$toggle_init_open_style = "";
 			
             if(is_numeric(avia_sc_toggle::$initial) && avia_sc_toggle::$counter == avia_sc_toggle::$initial)
@@ -573,10 +554,15 @@ if ( !class_exists( 'avia_sc_toggle' ) )
                 $toggle_atts['title'] = avia_sc_toggle::$counter;
             }
 
-            if(empty($toggle_atts['custom_id']))
+			$setting_id = Avia_Builder()->get_developer_settings( 'custom_id' );
+            if( empty( $toggle_atts['custom_id'] ) || in_array( $setting_id, array( 'deactivate' ) ) )
             {
                 $toggle_atts['custom_id'] = 'toggle-id-'.avia_sc_toggle::$toggle_id++;
             }
+			else
+			{
+				$toggle_atts['custom_id'] = AviaHelper::save_string( $toggle_atts['custom_id'], '-' );
+			}
             
             //custom colors
             $colors = $inherit = $icon_color = "";
@@ -622,10 +608,7 @@ if ( !class_exists( 'avia_sc_toggle' ) )
                 }
             }
 
-            $hover_styling_markup = '';
-            if ($hover_styling) {
-                $hover_styling_markup = "data-hoverstyle='{$hover_styling}'";
-            }
+            $hover_styling_markup = ! empty( $hover_styling ) ? "data-hoverstyle='{$hover_styling}'" : '';
 
 
             $markup_tab = avia_markup_helper(array('context' => 'entry','echo'=>false, 'custom_markup'=>$toggle_atts['custom_markup']));
@@ -634,7 +617,7 @@ if ( !class_exists( 'avia_sc_toggle' ) )
 
             $output .= '<section class="av_toggle_section" '.$markup_tab.' >';
             $output .= '    <div class="single_toggle" '.$this->create_tag_string($toggle_atts['tags'], $toggle_atts).'  >';
-            $output .= '        <p data-fake-id="#'.$toggle_atts['custom_id'].'" class="toggler '.$titleClass.$inherit.'" '.$markup_title.' '.$colors.' '.$hover_styling_markup.'>'.$toggle_atts['title'].'<span class="toggle_icon" '.$icon_color.'>';
+            $output .= '        <p data-fake-id="#'.$toggle_atts['custom_id'].'" class="toggler '.$titleClass.$inherit.'" '.$markup_title.' '.$colors.' '.$hover_styling_markup.' role="tab" tabindex="0" aria-controls="' . $toggle_atts['custom_id'] . '">'.$toggle_atts['title'].'<span class="toggle_icon" '.$icon_color.'>';
             $output .= '        <span class="vert_icon"></span><span class="hor_icon"></span></span></p>';
             $output .= '        <div id="'.$toggle_atts['custom_id'].'-container" class="toggle_wrap '.$contentClass.'"  '.$toggle_init_open_style.'>';
             $output .= '            <div class="toggle_content invers-color '.$inherit.'" '.$markup_text.' '.$colors.' >';
@@ -702,9 +685,6 @@ if ( !class_exists( 'avia_sc_toggle' ) )
 	        }
             return $output;
         }
-
-
-
 
     }
 }

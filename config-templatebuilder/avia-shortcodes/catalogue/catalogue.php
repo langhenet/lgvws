@@ -49,17 +49,18 @@ if ( !class_exists( 'avia_sc_catalogue' ) )
 			{
 				$this->config['self_closing']	=	'no';
 				
-				$this->config['name']		= __('Catalogue', 'avia_framework' );
-				$this->config['tab']		= __('Content Elements', 'avia_framework' );
+				$this->config['name']		= __( 'Catalogue', 'avia_framework' );
+				$this->config['tab']		= __( 'Content Elements', 'avia_framework' );
 				$this->config['icon']		= AviaBuilder::$path['imagesURL']."sc-catalogue.png";
 				$this->config['order']		= 20;
 				$this->config['target']		= 'avia-target-insert';
 				$this->config['shortcode'] 	= 'av_catalogue';
-				$this->config['shortcode_nested'] = array('av_catalogue_item');
-				$this->config['tooltip'] 	= __('Creates a pricing list', 'avia_framework' );
+				$this->config['shortcode_nested'] = array( 'av_catalogue_item' );
+				$this->config['tooltip'] 	= __( 'Creates a pricing list', 'avia_framework' );
 				$this->config['preview'] 	= true;
 				$this->config['disabling_allowed'] = true;
-
+				$this->config['id_name']	= 'id';
+				$this->config['id_show']	= 'yes';
 			}
 			
 			
@@ -170,61 +171,13 @@ if ( !class_exists( 'avia_sc_catalogue' ) )
 							"type" 	=> "close_div",
 							'nodescription' => true
 						),
-						
-						
-								array(
-									"type" 	=> "tab",
-									"name"	=> __("Screen Options",'avia_framework' ),
-									'nodescription' => true
-								),
-								
-								
-								array(
-								"name" 	=> __("Element Visibility",'avia_framework' ),
-								"desc" 	=> __("Set the visibility for this element, based on the device screensize.", 'avia_framework' ),
-								"type" 	=> "heading",
-								"description_class" => "av-builder-note av-neutral",
-								),
-							
-								array(	
-										"desc" 	=> __("Hide on large screens (wider than 990px - eg: Desktop)", 'avia_framework'),
-										"id" 	=> "av-desktop-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-								
-								array(	
-									
-										"desc" 	=> __("Hide on medium sized screens (between 768px and 989px - eg: Tablet Landscape)", 'avia_framework'),
-										"id" 	=> "av-medium-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-										
-								array(	
-									
-										"desc" 	=> __("Hide on small screens (between 480px and 767px - eg: Tablet Portrait)", 'avia_framework'),
-										"id" 	=> "av-small-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-										
-								array(	
-									
-										"desc" 	=> __("Hide on very small screens (smaller than 479px - eg: Smartphone Portrait)", 'avia_framework'),
-										"id" 	=> "av-mini-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-	
-								
-							array(
-									"type" 	=> "close_div",
-									'nodescription' => true
-								),	
-								
-								
-						
+					
+					
+					array(	
+							'type'			=> 'template',
+							'template_id'	=> 'screen_options_tab'
+						),
+
 						
 					array(
 						"type" 	=> "close_div",
@@ -266,27 +219,29 @@ if ( !class_exists( 'avia_sc_catalogue' ) )
 			 * @param string $shortcodename the shortcode found, when == callback name
 			 * @return string $output returns the modified html string
 			 */
-			function shortcode_handler($atts, $content = "", $shortcodename = "", $meta = "")
+			function shortcode_handler( $atts, $content = "", $shortcodename = "", $meta = "" )
 			{
 				$this->screen_options = AviaHelper::av_mobile_sizes( $atts );
 				
 	       		extract( $this->screen_options ); //return $av_font_classes, $av_title_font_classes and $av_display_classes 
 				
-				extract(shortcode_atts(array('title'=>''), $atts, $this->config['shortcode']));
+				extract( shortcode_atts( array(
+												'title'	=> ''
+											), $atts, $this->config['shortcode'] ) );
 
 				$output	 = "";
-				$output .= "<div class='av-catalogue-container {$av_display_classes} ".$meta['el_class']."'>";
+				$output .=	"<div {$meta['custom_el_id']} class='av-catalogue-container {$av_display_classes} ".$meta['el_class']."'>";
 				
-				$output .= "<ul class='av-catalogue-list'>";
-				$output .= ShortcodeHelper::avia_remove_autop( $content, true );
-				$output .= "</ul>";
-				$output .= "</div>";
+				$output .=		"<ul class='av-catalogue-list'>";
+				$output .=			ShortcodeHelper::avia_remove_autop( $content, true );
+				$output .=		"</ul>";
+				$output .=	"</div>";
 
 
 				return $output;
 			}
 
-			function av_catalogue_item($atts, $content = "", $shortcodename = "")
+			function av_catalogue_item( $atts, $content = "", $shortcodename = "" )
 			{
 				/**
 				 * Fixes a problem when 3-rd party plugins call nested shortcodes without executing main shortcode  (like YOAST in wpseo-filter-shortcodes)
@@ -296,11 +251,21 @@ if ( !class_exists( 'avia_sc_catalogue' ) )
 					return '';
 				}
 				
-				extract(shortcode_atts(array('title'=>'', 'price'=>'', 'link'=>'', 'target'=>'', 'disabled'=>'', 'id' => ''), $atts, $this->config['shortcode_nested'][0]));
+				extract( shortcode_atts( array(
+								'title'		=> '', 
+								'price'		=> '', 
+								'link'		=> '', 
+								'target'	=> '', 
+								'disabled'	=> '', 
+								'id'		=> ''
+							), $atts, $this->config['shortcode_nested'][0] ) );
 				
-				if($disabled) return;
+				if( $disabled ) 
+				{
+					return;
+				}
 				
-				$item_markup = array("open"=>"div", "close" => "div");
+				$item_markup = array( "open" => "div", "close" => "div" );
 				$image 		 = "";
 				$blank		 = "";
 				

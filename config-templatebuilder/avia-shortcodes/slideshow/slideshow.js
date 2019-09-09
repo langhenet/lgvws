@@ -291,7 +291,7 @@ Avia Slideshow
 			
 			if(typeof _self.imageUrls[key]['url'] == 'string')
 			{
-				$(objImage).bind('load error', function()
+				$(objImage).on('load error', function()
 				{ 
 					_self.imageUrls[key]['status'] = true; 
 					_self.$slides.eq(key).css('background-image','url(' + _self.imageUrls[key]['url'] + ')');

@@ -7,10 +7,16 @@
 if ( ! defined( 'ABSPATH' ) ) {  exit;  }    // Exit if accessed directly
 
 
-if ( !class_exists( 'avia_sc_masonry_gallery' ) ) 
+if ( ! class_exists( 'avia_sc_masonry_gallery' ) ) 
 {
 	class avia_sc_masonry_gallery extends aviaShortcodeTemplate
 	{	
+			/**
+			 * @since 4.5.7.2
+			 * @var int
+			 */
+			static protected $gallery_count = 0;
+			
 			/**
 			 * Create the config array for the shortcode button
 			 */
@@ -22,16 +28,18 @@ if ( !class_exists( 'avia_sc_masonry_gallery' ) )
 				 */
 				$this->config['self_closing']	=	'yes';
 				
-				$this->config['name']			= __('Masonry Gallery', 'avia_framework' );
-				$this->config['tab']			= __('Media Elements', 'avia_framework' );
+				$this->config['name']			= __( 'Masonry Gallery', 'avia_framework' );
+				$this->config['tab']			= __( 'Media Elements', 'avia_framework' );
 				$this->config['icon']			= AviaBuilder::$path['imagesURL']."sc-masonry-gallery.png";
 				$this->config['order']			= 5;
 				$this->config['target']			= 'avia-target-insert';
 				$this->config['shortcode'] 		= 'av_masonry_gallery';
-				$this->config['tooltip'] 	    = __('Display a fullwidth masonry/grid gallery', 'avia_framework' );
+				$this->config['tooltip'] 	    = __( 'Display a fullwidth masonry/grid gallery', 'avia_framework' );
 				$this->config['drag-level'] 	= 3;
 				$this->config['preview'] 		= false;
 				$this->config['disabling_allowed'] = true;
+				$this->config['id_name']		= 'id';
+				$this->config['id_show']		= 'always';
 			}
 			
 			function admin_assets()
@@ -48,9 +56,9 @@ if ( !class_exists( 'avia_sc_masonry_gallery' ) )
 				
 				wp_enqueue_style( 'avia-siteloader', get_template_directory_uri()."/css/avia-snippet-site-preloader.css", array('avia-layout'), false);
 				
-				wp_enqueue_script( 'avia-module-isotope' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/portfolio/isotope.js' , array('avia-shortcodes'), false , TRUE);
+				wp_enqueue_script( 'avia-module-isotope' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/portfolio/isotope.js' , array('avia-shortcodes'), false , true);
 
-				wp_enqueue_script( 'avia-module-masonry' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/masonry_entries/masonry_entries.js' , array('avia-module-isotope'), false, TRUE );
+				wp_enqueue_script( 'avia-module-masonry' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/masonry_entries/masonry_entries.js' , array('avia-module-isotope'), false, true );
 				
 				
 
@@ -179,7 +187,8 @@ if ( !class_exists( 'avia_sc_masonry_gallery' ) )
 					"type" 	=> "select",
 					"std" 	=> "active",
 					"subtype" => array(
-						__('White overlay',  'avia_framework' ) =>'active',
+						__('Slightly fade in effect',  'avia_framework' ) =>'active',
+						__('Fade out effect', 'avia_framework' ) => 'fade_out',
 						__('Greyscale effect',  'avia_framework' ) =>'grayscale',
 						__('Desaturation effect',  'avia_framework' ) =>'desaturation',
 						__('Blur on hover effect',  'avia_framework' ) =>'bluronhover',
@@ -207,15 +216,6 @@ if ( !class_exists( 'avia_sc_masonry_gallery' ) )
 						__('Lightbox linking deactivated. (Custom links will still be used)',  'avia_framework' ) =>'',
 					)),	
 				
-					
-					
-				 array(	"name" 	=> __("For Developers: Section ID", 'avia_framework' ),
-						"desc" 	=> __("Apply a custom ID Attribute to the section, so you can apply a unique style via CSS. This option is also helpful if you want to use anchor links to scroll to a sections when a link is clicked", 'avia_framework' )."<br/><br/>".
-								   __("Use with caution and make sure to only use allowed characters. No special characters can be used.", 'avia_framework' ),
-			            "id" 	=> "id",
-			            "type" 	=> "input",
-			            "std" => ""),
-					
 				array(
 							"type" 	=> "close_div",
 							'nodescription' => true
@@ -309,83 +309,36 @@ if ( !class_exists( 'avia_sc_masonry_gallery' ) )
 					),
 					
 				array(
-									"type" 	=> "tab",
-									"name"	=> __("Screen Options",'avia_framework' ),
-									'nodescription' => true
-								),
+						"type" 	=> "tab",
+						"name"	=> __( "Screen Options", 'avia_framework' ),
+						'nodescription' => true
+					),
 								
-								
-								array(
-								"name" 	=> __("Element Visibility",'avia_framework' ),
-								"desc" 	=> __("Set the visibility for this element, based on the device screensize.", 'avia_framework' ),
-								"type" 	=> "heading",
-								"description_class" => "av-builder-note av-neutral",
-								),
+						array(	
+								'type'			=> 'template',
+								'template_id'	=> 'screen_options_visibility'
+							),
+						
+					
+						array(
+								'name' 	=> __( 'Element Columns', 'avia_framework' ),
+								'desc' 	=>	
+											__( 'Set the column count for this element, based on the device screensize.', 'avia_framework' ) . '<br/><small>' .
+											__( 'Please note that changing the default will overwrite any individual &quot;landscape&quot; width settings. Each item will have the same width', 'avia_framework' ) . '</small>',
+								'type' 	=> 'heading',
+								'description_class' => 'av-builder-note av-neutral',
+							),
+					
+						array(	
+								'type'			=> 'template',
+								'template_id'	=> 'column_count'
+							),
 							
-								array(	
-										"desc" 	=> __("Hide on large screens (wider than 990px - eg: Desktop)", 'avia_framework'),
-										"id" 	=> "av-desktop-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
 								
-								array(	
-									
-										"desc" 	=> __("Hide on medium sized screens (between 768px and 989px - eg: Tablet Landscape)", 'avia_framework'),
-										"id" 	=> "av-medium-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-										
-								array(	
-									
-										"desc" 	=> __("Hide on small screens (between 480px and 767px - eg: Tablet Portrait)", 'avia_framework'),
-										"id" 	=> "av-small-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-										
-								array(	
-									
-										"desc" 	=> __("Hide on very small screens (smaller than 479px - eg: Smartphone Portrait)", 'avia_framework'),
-										"id" 	=> "av-mini-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-								array(
-								"name" 	=> __("Element Columns",'avia_framework' ),
-								"desc" 	=> 
-								__("Set the column count for this element, based on the device screensize.", 'avia_framework' )."<br/><small>".
-								__("Please note that changing the default will overwrite any individual 'landscape' width settings. Each item will have the same width", 'avia_framework' )."</small>"
-								,
-								"type" 	=> "heading",
-								"description_class" => "av-builder-note av-neutral",
-								),
-							
-							
-								array(	"name" 	=> __("Column count for medium sized screens (between 768px and 989px - eg: Tablet Landscape)", 'avia_framework' ),
-						            "id" 	=> "av-medium-columns",
-						            "type" 	=> "select",
-						            "subtype" => AviaHtmlHelper::number_array(1,4,1, array( __("Default", 'avia_framework' )=>'')),
-						            "std" => ""),
-						            
-						            array(	"name" 	=> __("Column count for small screens (between 480px and 767px - eg: Tablet Portrait)", 'avia_framework' ),
-						            "id" 	=> "av-small-columns",
-						            "type" 	=> "select",
-						            "subtype" => AviaHtmlHelper::number_array(1,4,1, array( __("Default", 'avia_framework' )=>'')),
-						            "std" => ""),
-						            
-									array(	"name" 	=> __("Column count for very small screens (smaller than 479px - eg: Smartphone Portrait)", 'avia_framework' ),
-						            "id" 	=> "av-mini-columns",
-						            "type" 	=> "select",
-						            "subtype" => AviaHtmlHelper::number_array(1,4,1, array( __("Default", 'avia_framework' )=>'')),
-						            "std" => ""),  	
-	
-								
-							array(
-									"type" 	=> "close_div",
-									'nodescription' => true
-								),	
+					array(
+							"type" 	=> "close_div",
+							'nodescription' => true
+						),	
 					
 				array(
 							"type" 	=> "close_div",
@@ -464,20 +417,17 @@ if ( !class_exists( 'avia_sc_masonry_gallery' ) )
 			 * @return string $output returns the modified html string 
 			 */
 			
-			function shortcode_handler($atts, $content = "", $shortcodename = "", $meta = "")
+			function shortcode_handler( $atts, $content = "", $shortcodename = "", $meta = "" )
 			{
-				extract(AviaHelper::av_mobile_sizes($atts)); //return $av_font_classes, $av_title_font_classes and $av_display_classes 
+				extract( AviaHelper::av_mobile_sizes( $atts ) ); //return $av_font_classes, $av_title_font_classes and $av_display_classes 
 				
 				$output  = "";
-				
+				avia_sc_masonry_gallery::$gallery_count ++;
 				$skipSecond = false;
-				
-				//check if we got a layerslider
-				global $wpdb;
 				
 				$params['class'] = "main_color {$av_display_classes} ".$meta['el_class'];
 				$params['open_structure'] = false;
-				$params['id'] = !empty($atts['id']) ? AviaHelper::save_string($atts['id'],'-') : "";
+				$params['id'] = AviaHelper::save_string( $meta['custom_id_val'] , '-', 'av-sc-masonry-gallery-' . avia_sc_masonry_gallery::$gallery_count );
 				
 				//we dont need a closing structure if the element is the first one or if a previous fullwidth element was displayed before
 				if($meta['index'] == 0) $params['close'] = false;
@@ -488,22 +438,34 @@ if ( !class_exists( 'avia_sc_masonry_gallery' ) )
 				
 				if($atts['gap'] == 'no') $params['class'] .= " avia-no-border-styling";
 				
-				$custom_class = !empty($meta['custom_class']) ? $meta['custom_class'] : "";
+				/**
+				 * Remove custom CSS from element if it is top level (otherwise added twice - $meta['el_class'] )
+				 */
+				if( ShortcodeHelper::is_top_level() )
+				{
+					$atts['custom_class'] = '';
+					$atts['id'] = '';
+				}
+				
+				$custom_class = ! empty( $atts['custom_class'] ) ? $atts['custom_class'] : "";
 				$atts['container_class'] = "av-masonry-gallery {$custom_class} ";
 				
-				$masonry  = new avia_masonry($atts);
+				$masonry  = new avia_masonry( $atts );
 				$masonry->query_entries_by_id();
 				$masonry_html = $masonry->html();
 				
-				if(!ShortcodeHelper::is_top_level()) return $masonry_html;
+				if( ! ShortcodeHelper::is_top_level() ) 
+				{
+					return $masonry_html;
+				}
 				
-				if( !empty( $atts['color'] ) && !empty( $atts['custom_bg']) )
+				if( ! empty( $atts['color'] ) && ! empty( $atts['custom_bg'] ) )
 				{
 					$params['class'] .= " masonry-no-border";
 				}
 				
 				
-				$output .=  avia_new_section($params);
+				$output .=  avia_new_section( $params );
 				$output .= $masonry_html;
 				$output .= "</div><!-- close section -->"; //close section
 				

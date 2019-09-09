@@ -6,11 +6,11 @@
  */
  
 // Don't load directly
-if ( !defined('ABSPATH') ) { die('-1'); }
+if ( ! defined('ABSPATH') ) { die('-1'); }
 
 
 
-if ( !class_exists( 'avia_sc_heading' ) ) 
+if ( ! class_exists( 'avia_sc_heading' ) ) 
 {
 	class avia_sc_heading extends aviaShortcodeTemplate{
 			
@@ -21,16 +21,18 @@ if ( !class_exists( 'avia_sc_heading' ) )
 			{
 				$this->config['self_closing']	=	'no';
 				
-				$this->config['name']		= __('Special Heading', 'avia_framework' );
-				$this->config['tab']		= __('Content Elements', 'avia_framework' );
+				$this->config['name']		= __( 'Special Heading', 'avia_framework' );
+				$this->config['tab']		= __( 'Content Elements', 'avia_framework' );
 				$this->config['icon']		= AviaBuilder::$path['imagesURL']."sc-heading.png";
 				$this->config['order']		= 93;
 				$this->config['target']		= 'avia-target-insert';
 				$this->config['shortcode'] 	= 'av_heading';
 				$this->config['modal_data'] = array('modal_class' => 'mediumscreen');
-				$this->config['tooltip'] 	= __('Creates a special Heading', 'avia_framework' );
+				$this->config['tooltip'] 	= __( 'Creates a special Heading', 'avia_framework' );
 				$this->config['preview'] 	= true;
 				$this->config['disabling_allowed'] = true;
+				$this->config['id_name']	= 'id';
+				$this->config['id_show']	= 'yes';
 			}
 			
 			function extra_assets()
@@ -231,117 +233,15 @@ if ( !class_exists( 'avia_sc_heading' ) )
 							"type" 	=> "close_div",
 							'nodescription' => true
 						),
+					
+					
+					array(	
+							'type'				=> 'template',
+							'template_id'		=> 'screen_options_tab',
+							'templates_include'	=> array( 'screen_options_visibility', 'heading_font_size', 'subheading_font_size' )
+						),
 
-								array(
-									"type" 	=> "tab",
-									"name"	=> __("Screen Options",'avia_framework' ),
-									'nodescription' => true
-								),
-								
-								
-								
-								
-								array(
-								"name" 	=> __("Element Visibility",'avia_framework' ),
-								"desc" 	=> __("Set the visibility for this element, based on the device screensize.", 'avia_framework' ),
-								"type" 	=> "heading",
-								"description_class" => "av-builder-note av-neutral",
-								),
-							
-								array(	
-										"desc" 	=> __("Hide on large screens (wider than 990px - eg: Desktop)", 'avia_framework'),
-										"id" 	=> "av-desktop-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-								
-								array(	
-									
-										"desc" 	=> __("Hide on medium sized screens (between 768px and 989px - eg: Tablet Landscape)", 'avia_framework'),
-										"id" 	=> "av-medium-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-										
-								array(	
-									
-										"desc" 	=> __("Hide on small screens (between 480px and 767px - eg: Tablet Portrait)", 'avia_framework'),
-										"id" 	=> "av-small-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-										
-								array(	
-									
-										"desc" 	=> __("Hide on very small screens (smaller than 479px - eg: Smartphone Portrait)", 'avia_framework'),
-										"id" 	=> "av-mini-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-									
-								
-									
-								array(
-									"name" 	=> __("Heading Font Size",'avia_framework' ),
-									"desc" 	=> __("Set the font size for the heading, based on the device screensize.", 'avia_framework' ),
-									"type" 	=> "heading",
-									"description_class" => "av-builder-note av-neutral",
-									),
-										
-									array(	"name" 	=> __("Font Size for medium sized screens (between 768px and 989px - eg: Tablet Landscape)", 'avia_framework' ),
-						            "id" 	=> "av-medium-font-size-title",
-						            "type" 	=> "select",
-						            "subtype" => AviaHtmlHelper::number_array(10,120,1, array( __("Default", 'avia_framework' )=>'' , __("Hidden", 'avia_framework' )=>'hidden' ), "px"),
-						            "std" => ""),
-						            
-						            array(	"name" 	=> __("Font Size for small screens (between 480px and 767px - eg: Tablet Portrait)", 'avia_framework' ),
-						            "id" 	=> "av-small-font-size-title",
-						            "type" 	=> "select",
-						            "subtype" => AviaHtmlHelper::number_array(10,120,1, array( __("Default", 'avia_framework' )=>'', __("Hidden", 'avia_framework' )=>'hidden'), "px"),
-						            "std" => ""),
-						            
-									array(	"name" 	=> __("Font Size for very small screens (smaller than 479px - eg: Smartphone Portrait)", 'avia_framework' ),
-						            "id" 	=> "av-mini-font-size-title",
-						            "type" 	=> "select",
-						            "subtype" => AviaHtmlHelper::number_array(10,120,1, array( __("Default", 'avia_framework' )=>'', __("Hidden", 'avia_framework' )=>'hidden'), "px"),
-						            "std" => ""),
-						            
-						            
-						        array(
-									"name" 	=> __("Subheading Font Size",'avia_framework' ),
-									"desc" 	=> __("Set the font size for the subheading, based on the device screensize.", 'avia_framework' ),
-									"type" 	=> "heading",
-									"description_class" => "av-builder-note av-neutral",
-									),
-										
-									array(	"name" 	=> __("Font Size for medium sized screens (between 768px and 989px - eg: Tablet Landscape)", 'avia_framework' ),
-						            "id" 	=> "av-medium-font-size",
-						            "type" 	=> "select",
-						            "subtype" => AviaHtmlHelper::number_array(10,120,1, array( __("Default", 'avia_framework' )=>'', __("Hidden", 'avia_framework' )=>'hidden'), "px"),
-						            "std" => ""),
-						            
-						            array(	"name" 	=> __("Font Size for small screens (between 480px and 767px - eg: Tablet Portrait)", 'avia_framework' ),
-						            "id" 	=> "av-small-font-size",
-						            "type" 	=> "select",
-						            "subtype" => AviaHtmlHelper::number_array(10,120,1, array( __("Default", 'avia_framework' )=>'', __("Hidden", 'avia_framework' )=>'hidden'), "px"),
-						            "std" => ""),
-						            
-									array(	"name" 	=> __("Font Size for very small screens (smaller than 479px - eg: Smartphone Portrait)", 'avia_framework' ),
-						            "id" 	=> "av-mini-font-size",
-						            "type" 	=> "select",
-						            "subtype" => AviaHtmlHelper::number_array(10,120,1, array( __("Default", 'avia_framework' )=>'', __("Hidden", 'avia_framework' )=>'hidden'), "px"),
-						            "std" => ""),    
-				
-							
-								
-							array(
-									"type" 	=> "close_div",
-									'nodescription' => true
-								),	
-								
-								
-						
-						
+	
 					array(
 						"type" 	=> "close_div",
 						'nodescription' => true
@@ -365,32 +265,33 @@ if ( !class_exists( 'avia_sc_heading' ) )
 			function editor_element($params)
 			{
 				$params['args'] = shortcode_atts( array(
-										'heading'		=> '',
-										'tag'			=> 'h3', 
-										'link_apply'	=> '',
-										'link'			=> '',
-										'link_target'	=> '',
-										'style'			=> '',
-										'size'			=> '',
-										'subheading_active' => '', 
-										'subheading_size'	=>'', 
-										'margin'		=> '',
-										'padding'		=> '5', 
-										'color'			=> '', 
-										'custom_font'	=> '', 
-					
-										'custom_class'				=> '', 
-										'admin_preview_bg'			=> '',
-										'av-desktop-hide'			=> '',
-										'av-medium-hide'			=> '',
-										'av-small-hide'				=> '',
-										'av-mini-hide'				=> '',
-										'av-medium-font-size-title'	=> '',
-										'av-small-font-size-title'	=> '',
-										'av-mini-font-size-title'	=> '',
-										'av-medium-font-size'		=> '',
-										'av-small-font-size'		=> '',
-										'av-mini-font-size'			=> ''
+													'heading'					=> '',
+													'tag'						=> 'h3', 
+													'link_apply'				=> '',
+													'link'						=> '',
+													'link_target'				=> '',
+													'style'						=> '',
+													'size'						=> '',
+													'subheading_active'			=> '', 
+													'subheading_size'			=>'', 
+													'margin'					=> '',
+													'padding'					=> '5', 
+													'color'						=> '', 
+													'custom_font'				=> '', 
+
+													'custom_class'				=> '', 
+													'id'						=> '',
+													'admin_preview_bg'			=> '',
+													'av-desktop-hide'			=> '',
+													'av-medium-hide'			=> '',
+													'av-small-hide'				=> '',
+													'av-mini-hide'				=> '',
+													'av-medium-font-size-title'	=> '',
+													'av-small-font-size-title'	=> '',
+													'av-mini-font-size-title'	=> '',
+													'av-medium-font-size'		=> '',
+													'av-small-font-size'		=> '',
+													'av-mini-font-size'			=> ''
 								), $params['args'], $this->config['shortcode'] );
 				
 				$templateNAME  	= $this->update_template("name", "{{name}}");
@@ -419,26 +320,26 @@ if ( !class_exists( 'avia_sc_heading' ) )
 			 * @param string $shortcodename the shortcode found, when == callback name
 			 * @return string $output returns the modified html string 
 			 */
-			function shortcode_handler($atts, $content = "", $shortcodename = "", $meta = "")
+			function shortcode_handler( $atts, $content = "", $shortcodename = "", $meta = "" )
 			{
 				
-				extract(AviaHelper::av_mobile_sizes($atts)); //return $av_font_classes, $av_title_font_classes and $av_display_classes 
+				extract( AviaHelper::av_mobile_sizes( $atts ) ); //return $av_font_classes, $av_title_font_classes and $av_display_classes 
 				
 				$atts = shortcode_atts( array(
-										'heading'		=> '',
-										'tag'			=> 'h3', 
-										'link_apply'	=> '',
-										'link'			=> '',
-										'link_target'	=> '',
-										'style'			=> '',
-										'size'			=> '',
-										'subheading_active' => '', 
-										'subheading_size'	=>'', 
-										'margin'		=> '',
-										'padding'		=> '5', 
-										'color'			=> '', 
-										'custom_font'	=> '', 
-								), $atts, $this->config['shortcode'] );
+								'heading'		=> '',
+								'tag'			=> 'h3', 
+								'link_apply'	=> '',
+								'link'			=> '',
+								'link_target'	=> '',
+								'style'			=> '',
+								'size'			=> '',
+								'subheading_active' => '', 
+								'subheading_size'	=>'', 
+								'margin'		=> '',
+								'padding'		=> '5', 
+								'color'			=> '', 
+								'custom_font'	=> '', 
+						), $atts, $this->config['shortcode'] );
 				
 				extract( $atts );
 				
@@ -521,7 +422,7 @@ if ( !class_exists( 'avia_sc_heading' ) )
 	        		}
 	        	
 	        		//html markup
-	        		$output .= "<div {$styling} class='av-special-heading av-special-heading-{$tag} {$color} {$style} {$class} {$av_display_classes}'>";
+	        		$output .= "<div {$meta['custom_el_id']} {$styling} class='av-special-heading av-special-heading-{$tag} {$color} {$style} {$class} {$av_display_classes}'>";
 	        		$output .= 		$before;
 	        		$output .= 		"<{$tag} class='av-special-heading-tag {$av_title_font_classes}' $markup >{$link_before}{$heading}{$link_after}</{$tag}>";
 	        		$output .= 		$after;

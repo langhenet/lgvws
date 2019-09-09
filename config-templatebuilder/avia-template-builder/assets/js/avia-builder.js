@@ -1886,7 +1886,7 @@ function avia_nl2br (str, is_xhtml)
 		}
 		
 		
-	}
+	};
 	
 	
 	/*function necessary for row/cell management*/

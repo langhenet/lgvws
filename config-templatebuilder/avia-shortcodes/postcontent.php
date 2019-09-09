@@ -27,17 +27,18 @@ if ( ! class_exists( 'avia_sc_postcontent' ) )
 				$this->config['self_closing']			=	'yes';
 				$this->config['forced_load_objects']	=	array( 'layerslider' );			//	we must load layerslider because content might contain one
 				
-				$this->config['name']		= __('Page Content', 'avia_framework' );
-				$this->config['tab']		= __('Content Elements', 'avia_framework' );
+				$this->config['name']		= __( 'Page Content', 'avia_framework' );
+				$this->config['tab']		= __( 'Content Elements', 'avia_framework' );
 				$this->config['icon']		= AviaBuilder::$path['imagesURL']."sc-postcontent.png";
 				$this->config['order']		= 30;
 				$this->config['target']		= 'avia-target-insert';
 				$this->config['shortcode'] 	= 'av_postcontent';
 //				$this->config['modal_data'] = array('modal_class' => 'flexscreen');
-				$this->config['tooltip'] 	= __('Display the content of another page (fullwidth)', 'avia_framework' );
+				$this->config['tooltip'] 	= __( 'Display the content of another page (fullwidth)', 'avia_framework' );
 				$this->config['drag-level'] = 1;
 				$this->config['drop-level'] = 1;
-				$this->config['preview'] = false;
+				$this->config['preview']	= false;
+				$this->config['custom_css_show']	= 'never';
 			}
 
 			/**

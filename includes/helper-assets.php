@@ -273,6 +273,15 @@ if( ! function_exists( 'av_disable_unused_assets' ) )
 			}
 		}
 		
+		//	tabs are needed in template-archive
+		if( isset( $disabled['av_tab_container'] ) )
+		{
+			if( '' != locate_template( array( 'template-archives.php' ) ) )
+			{
+				unset( $disabled['av_tab_container'] );
+			}
+		}
+		
 		return $disabled;
 	}
 	

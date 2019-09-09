@@ -4,7 +4,7 @@
  * 
  * @since 4.3.2 extended by Günter
  */
-if ( ! defined('AVIA_FW') ) { exit( 'No direct script access allowed' ); }
+if ( ! defined( 'AVIA_FW' ) ) { exit( 'No direct script access allowed' ); }
 
 
 if( ! class_exists( 'av_google_maps' ) )
@@ -27,7 +27,6 @@ if( ! class_exists( 'av_google_maps' ) )
 		 */
 		static private $_instance = null;
 		
-		
 		/**
 		 * Google Maps API key
 		 * 
@@ -35,6 +34,13 @@ if( ! class_exists( 'av_google_maps' ) )
 		 */
 		protected $key;
 		
+		/**
+		 * Google Maps last verified API key
+		 * 
+		 * @since 4.5.7.2
+		 * @var string					'' | 'last verified key' | 'verify_error'
+		 */
+		protected $verified_key;
 		
 		/**
 		 * Number of maps used on the page in frontend
@@ -65,7 +71,7 @@ if( ! class_exists( 'av_google_maps' ) )
 		 * true if loading of google script was canceled with filter 'avf_load_google_map_api_prohibited'
 		 * 
 		 * @since 4.3.2
-		 * @var boolean 
+		 * @var boolean|null
 		 */
 		protected $loading_prohibited;
 
@@ -93,10 +99,11 @@ if( ! class_exists( 'av_google_maps' ) )
 		protected function __construct( $key = '' )
 		{
 			$this->key = '';
+			$this->verified_key = '';
 			$this->usage_count = 0;
 			$this->unconditionally_count = 0;
 			$this->maps_array = array();
-			$this->loading_prohibited = false;
+			$this->loading_prohibited = null;
 			
 			
 			add_action( 'init', array( $this, 'handler_wp_register_scripts' ), 20 );
@@ -125,7 +132,7 @@ if( ! class_exists( 'av_google_maps' ) )
 			$api_key = $this->get_key();
 			$api_url = av_google_maps::api_url( $api_key );
 			
-			wp_register_script( 'avia-google-maps-api', $api_url, array( 'jquery' ), NULL, true );
+			wp_register_script( 'avia-google-maps-api', $api_url, array( 'jquery' ), null, true );
 			
 			wp_register_script( 'avia_google_maps_front_script' , AVIA_JS_URL . 'conditional_load/avia_google_maps_front.js', array( 'jquery' ), $vn, true );
 			wp_register_script( 'avia_google_maps_api_script' , AVIA_JS_URL . 'conditional_load/avia_google_maps_api.js', array( 'jquery' ), $vn, true );
@@ -140,8 +147,7 @@ if( ! class_exists( 'av_google_maps' ) )
 		 */
 		public function handler_wp_enqueue_scripts()
 		{		
-			$this->loading_prohibited = apply_filters( 'avf_load_google_map_api_prohibited', false );
-			if( $this->loading_prohibited )
+			if( $this->is_loading_prohibited() )
 			{
 				return;
 			}
@@ -155,12 +161,9 @@ if( ! class_exists( 'av_google_maps' ) )
 		 */
 		public function handler_wp_admin_enqueue_scripts()
 		{
-			$this->loading_prohibited = apply_filters( 'avf_load_google_map_api_prohibited', false );
-			if( $this->loading_prohibited )
-			{
-				return;
-			}
-			
+			/**
+			 * In backend we must enqueue to validate key
+			 */
 			wp_enqueue_script( 'avia-google-maps-api' );
 			wp_enqueue_script( 'avia_google_maps_api_script' );
 			
@@ -173,11 +176,17 @@ if( ! class_exists( 'av_google_maps' ) )
 	                'toomanyrequests'	=> __( "Too many requests at once, please refresh the page to complete geocoding", 'avia_framework' ),
 	                'latitude'			=> __( "Latitude and longitude for", 'avia_framework' ),
 	                'notfound'			=> __( "couldn't be found by Google, please add them manually", 'avia_framework' ),
-	                'insertaddress' 	=> __( "Please insert a valid address in the fields above", 'avia_framework' )
+	                'insertaddress' 	=> __( "Please insert a valid address in the fields above", 'avia_framework' ),
 	            );
 
 				wp_localize_script( 'avia-google-maps-api', 'AviaMapTranslation', $args );
 			}
+			
+			$args = array(
+						'api_load_error'	=> __( 'Google reCAPTCHA API could not be loaded. We are not able to verify keys. Check your internet connection and try again.', 'avia_framework' ),
+					);
+			
+			wp_localize_script( 'avia-google-maps-api', 'AviaMapData', $args );
 		}
 		
 		
@@ -189,6 +198,24 @@ if( ! class_exists( 'av_google_maps' ) )
 		 */
 		public function is_loading_prohibited()
 		{
+			if( is_null( $this->loading_prohibited ) )
+			{
+				$gmap_enabled = avia_get_option( 'gmap_enabled', '' );
+				$this->loading_prohibited = 'disable_gmap' == $gmap_enabled;
+				
+				$loading_prohibited = apply_filters( 'avf_load_google_map_api_prohibited', false );
+				if( false !== $loading_prohibited )
+				{
+					apply_filters_deprecated( 'avf_load_google_map_api_prohibited', array( false ), '4.5.7.1', false, __( 'Filter was replaced by theme option', 'avia_framework' ) );
+					$this->loading_prohibited = true;
+				}
+				
+				if( ! is_bool( $this->loading_prohibited ) )
+				{
+					$this->loading_prohibited = true;
+				}
+			}
+			
 			return $this->loading_prohibited;
 		}
 
@@ -383,13 +410,29 @@ var avia_framework_globals = avia_framework_globals || {};
 				
 				// fallback. not sure why the db field for storing has changed. broke all demo maps. 
 				// need to inquire about that since a user exporting his theme settings will not export a default get_option field
-				if(empty($this->key))
+				if( empty( $this->key ) )
 				{
 					$this->key = avia_get_option( 'gmap_api', '' );
 				}
 			}
 			
 			return $this->key;
+		}
+		
+		/**
+		 * Returns the last verified key - allows to check for a changed key without validation
+		 * 
+		 * @since 4.5.7.2
+		 * @return string
+		 */
+		protected function get_last_verified_key()
+		{
+			if( empty( $this->verified_key ) )
+			{
+				$this->verified_key = avia_get_option( 'gmap_verified_key', '' );
+			}
+			
+			return $this->verified_key;
 		}
 
 		/**
@@ -460,14 +503,18 @@ var avia_framework_globals = avia_framework_globals || {};
 		 * @param string|boolean $valid_key
 		 * @return string
 		 */
-		public function backend_html( $api_key = "", $ajax = true, $valid_key = false )
+		public function backend_html( $api_key = '', $ajax = true, $valid_key = false )
 		{
+			$return = array(
+							'html'                 => '',
+							'update_input_fields'  => array()
+						);
 			
 			$api_key = trim( $api_key );
-			$valid_key  = $valid_key == "true" && ! empty( $api_key ) ? true : false;
+			$valid_key  = $valid_key == 'true' && ! empty( $api_key ) ? true : false;
 			
-			$response_text  = __( "Could not connect to Google Maps with this API Key.", 'avia_framework' );
-			$response_class = "av-notice-error";
+			$response_text  = __( 'Could not connect to Google Maps with this API Key.', 'avia_framework' );
+			$response_class = 'av-notice-error';
 			
 			$content_default  =			'<h4>' . esc_html__( 'Troubleshooting:', 'avia_framework' ) . '</h4>';
 			$content_default .=			'<ol>';
@@ -482,51 +529,90 @@ var avia_framework_globals = avia_framework_globals || {};
 			$content_default .=				'</li>';
 			$content_default .=			'</ol>';
 			
-			
-		
-			//if called by user pressing the ajax check button
 			if( $ajax )
 			{	
+				/**
+				 * Callback from verification button
+				 */
 				if( $valid_key )
 				{	
 					$this->store_key( $api_key );
 					
-					$response_class = "";
-					$response_text  = __("We were able to properly connect to google maps with your API key",'avia_framework');
+					$response_class = '';
+					$response_text  = __( 'We were able to properly connect to google maps with your API key', 'avia_framework' );
 					
 					
 					//will be stripped from the final output but tells the ajax script to save the page after the check was performed
-					$response_text .= " avia_trigger_save"; 				
+					$response_text .= ' avia_trigger_save'; 				
 				}
 				else
 				{
 					$this->delete_key();
+					$api_key = '';
 				}
-			}
-			else // is called on a normal page load. in this case we either show the stored result or if we got no stored result we show nothing
-			{
-				$valid_key = $this->get_key();
 				
-				if( $valid_key )
+				$return['update_input_fields']['gmap_verified_key'] = $api_key;
+			}
+			else
+			{
+				/**
+				 * Normal page load - in this case we either show the stored result or if we got no stored result we show nothing
+				 */
+				$valid_key = $this->get_key();
+				$last_verified_key = $this->get_last_verified_key();
+				
+				//	see $this->get_key()
+				$valid_key = avia_get_option( 'gmap_api', '' );
+				
+				if( $this->is_loading_prohibited() || '' == $valid_key )
 				{
-					$response_class = "";
-					$response_text  = __("Last time we checked we were able to connected to google maps with your API key",'avia_framework');
+					$response_class = '';
+					$response_text = '';
+				}
+				else
+				{
+					if( $valid_key == $last_verified_key )
+					{
+						$response_class = '';
+						$response_text  = __( 'Last time we checked we were able to connected to google maps with your API key', 'avia_framework' );
+					}
+					else if( 'verify_error' == $last_verified_key )
+					{
+						$response_text  = __( 'A connection error occured last time we tried verify your key with Google Maps - please revalidate the key.', 'avia_framework' );
+					}
+					else if( '' == $last_verified_key )
+					{
+						$response_text  = __( 'Please verify the key.', 'avia_framework' );
+					}
+					else
+					{
+						$response_text  = __( 'Please verify the key - the last verified key is different.', 'avia_framework' );
+					}
 				}
 			}
 			
 			if( $valid_key )
 			{
-				$content_default  = __("If you ever change your API key or the URL restrictions of the key please verify the key here again, to test if it works properly",'avia_framework');
+				$content_default  = __( 'If you ever change your API key or the URL restrictions of the key please verify the key here again, to test if it works properly', 'avia_framework' );
 			}
 			
-			$output  = "<div class='av-verification-response-wrapper'>";
-			$output .= "<div class='av-text-notice {$response_class}'>";
-			$output .= $response_text;
-			$output .= "</div>";
-			$output .= "<div class='av-verification-cell'>".$content_default."</div>";
-			$output .= "</div>";
+			$output  =	"<div class='av-verification-response-wrapper'>";
+			$output .=		"<div class='av-text-notice {$response_class}'>";
+			$output .=			$response_text;
+			$output .=		"</div>";
+			$output .=		"<div class='av-verification-cell'>{$content_default}</div>";
+			$output .=	"</div>";
 			
-			return $output;
+			if( $ajax )
+			{
+				$return['html'] = $output;
+			}
+			else
+			{
+				$return = $output;
+			}
+			
+			return $return;
 		}
 		
 	}
@@ -559,7 +645,7 @@ if( ! function_exists( 'av_maps_api_check' ) )
 	 * @param string|null $js_value
 	 * @return string
 	 */
-	function av_maps_api_check( $value, $ajax = true, $js_value = NULL )
+	function av_maps_api_check( $value, $ajax = true, $js_value = null )
 	{
 		$api = Av_Google_Maps();
 		return $api->backend_html( $value, $ajax, $js_value );

@@ -75,6 +75,8 @@ if ( ! class_exists( 'avia_sc_events_countdown' ) )
 				$this->config['shortcode'] 	= 'av_events_countdown';
 				$this->config['tooltip'] 	= __( 'Display a countdown to the next upcoming event', 'avia_framework' );
 				$this->config['disabling_allowed'] = true;
+				$this->config['id_name']	= 'id';
+				$this->config['id_show']	= 'yes';
 				
 				$this->time_array = array(
 								__( 'Second',  	'avia_framework' ) 	=> '1',
@@ -97,24 +99,42 @@ if ( ! class_exists( 'avia_sc_events_countdown' ) )
 				wp_enqueue_style( 'avia-module-countdown' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/countdown/countdown.css' , array('avia-layout'), false );
 				
 				//load js
-				wp_enqueue_script( 'avia-module-countdown' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/countdown/countdown.js' , array('avia-shortcodes'), false, TRUE );
+				wp_enqueue_script( 'avia-module-countdown' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/countdown/countdown.js' , array('avia-shortcodes'), false, true );
 			}
 			
 			/**
 			 * 
 			 * @since < 4.0
 			 * @param int $offset
+			 * @param int $query_fix
+			 * @param string $categories
 			 * @return WP_Query
 			 */
-			protected function fetch_upcoming( $offset = 0 )
+			protected function fetch_upcoming( $offset = 0, $query_fix = 0, $categories = '' )
 			{
+				$start_date = date( 'Y-m-d', mktime( 0, 0, 0, date( 'm' ), date( 'd' ) - $query_fix, date( 'Y' ) ) );
+				
+				$terms = ( ! empty( $categories ) ) ? explode( ',', $categories ) : array();
+	
 				$query = array(
 								'paged'				=> 1, 
 								'posts_per_page'	=> 1, 
 								'eventDisplay'		=> 'list', 
 								'offset'			=> $offset,
-								'start_date'		=> date( 'Y-m-d' )
+								'start_date'		=> $start_date
 							);
+				
+				if( isset( $terms[0] ) && ! empty( $terms[0] ) && ! is_null( $terms[0] ) && $terms[0] != 'null' )
+				{
+					$query['tax_query'] = array( 	
+												array( 	'taxonomy' 	=> Tribe__Events__Main::TAXONOMY,
+														'field' 	=> 'id',
+														'terms' 	=> $terms,
+														'operator' 	=> 'IN'
+													)
+												);
+									
+				}
 				
 				$upcoming = Tribe__Events__Query::getEvents( $query, true );
 				
@@ -173,10 +193,20 @@ if ( ! class_exists( 'avia_sc_events_countdown' ) )
 						),
 						
 					array(
-							"type" 	=> "tab",
-							"name"  => __("Content" , 'avia_framework'),
-							'nodescription' => true
-						),
+						'type'			=> 'tab',
+						'name'			=> __( 'Content' , 'avia_framework' ),
+						'nodescription'	=> true
+					),
+					
+					array(
+						'name'		=> __( 'Which Entries?', 'avia_framework' ),
+						'desc'		=> __( 'Select one or more taxonomies to get the next event for countdown. If none are selected all events are used.', 'avia_framework' ),
+						'id'		=> 'categories',
+						'type'		=> 'select',
+						'taxonomy'	=> Tribe__Events__Main::TAXONOMY,
+						'subtype'	=> 'cat',
+						'multiple'	=> 6
+					),
 					
 					
 					array(	
@@ -204,7 +234,7 @@ if ( ! class_exists( 'avia_sc_events_countdown' ) )
 							"desc" 	=> __("Choose here, how to align your text", 'avia_framework' ),
 							"id" 	=> "align",
 							"type" 	=> "select",
-							"std" 	=> "center",
+							"std" 	=> "av-align-center",
 							"subtype" => array(
 												__('Center',  'avia_framework' ) =>'av-align-center',
 												__('Right',  'avia_framework' ) =>'av-align-right',
@@ -219,21 +249,35 @@ if ( ! class_exists( 'avia_sc_events_countdown' ) )
 				            "subtype" => AviaHtmlHelper::number_array(20,90,1, array( __("Default Size", 'avia_framework' )=>'')),
 				            "std" => ""),
 				   
-				   array(
+					array(
 							"name" 	=> __("Display Event Title?", 'avia_framework' ),
 							"desc" 	=> __("Choose here, if you want to display the event title", 'avia_framework' ),
 							"id" 	=> "title",
 							"type" 	=> "select",
 							"std" 	=> "",
 							"subtype" => array(
-												__('No Title, timer only',  'avia_framework' ) =>'',
-												__('Title on top',  'avia_framework' ) 	=>'top',
-												__('Title below',  'avia_framework' ) 	=>'bottom',
+												__( 'No Title, timer only', 'avia_framework' )	=> '',
+												__( 'Title on top', 'avia_framework' )			=> 'top',
+												__( 'Title below', 'avia_framework' )			=> 'bottom',
 												)
-							),
+						),
 				   
+				   array(	
+							'type'				=> 'template',
+							'template_id'		=> 'heading_tag',
+							'theme_default'		=> 'h3',
+							'required'			=> array( 'title', 'not', '' ),
+							'context'			=> __CLASS__
+						),
 				   
-				   
+					array(
+							'name' 	=> __( 'Problems with next upcoming event incorrect?', 'avia_framework' ),
+							'desc' 	=> __( 'Sometimes the next upcoming event is not queried correctly. This is a known bug. In this case select a number of days to start the query before today. Usually 3-4 days should fix the problem.', 'avia_framework' ),
+							'id' 	=> 'query_fix',
+							'type' 	=> 'select',
+							'std' 	=> '0',
+							'subtype' => AviaHtmlHelper::number_array( 1, 30, 1, array( __( 'No problems', 'avia_framework' ) => '0') )
+						),
 				            
 				   array(
 							"type" 	=> "close_div",
@@ -253,11 +297,11 @@ if ( ! class_exists( 'avia_sc_events_countdown' ) )
 							"type" 	=> "select",
 							"std" 	=> "center",
 							"subtype" => array(
-												__('Default',	'avia_framework' ) 	=>'av-default-style',
-												__('Theme colors',	'avia_framework' ) 	=>'av-colored-style',
-												__('Transparent Light', 'avia_framework' ) 	=>'av-trans-light-style',
-												__('Transparent Dark',  'avia_framework' )  =>'av-trans-dark-style',
-												)
+												__( 'Default',	'avia_framework' )			=>'av-default-style',
+												__( 'Theme colors',	'avia_framework' )		=>'av-colored-style',
+												__( 'Transparent Light', 'avia_framework' )	=>'av-trans-light-style',
+												__( 'Transparent Dark',  'avia_framework' )	=>'av-trans-dark-style',
+											)
 							),
 					array(
 							"type" 	=> "close_div",
@@ -282,12 +326,28 @@ if ( ! class_exists( 'avia_sc_events_countdown' ) )
 			 */
 			public function shortcode_handler( $atts, $content = '', $shortcodename = '', $meta = '' )
 			{
+				$meta = aviaShortcodeTemplate::set_frontend_developer_heading_tag( $atts, $meta );
+				
+				$atts = shortcode_atts( array(
+									'categories' 	=> '',
+									'min'			=> '1',
+									'max'			=> '5',
+									'align'			=> 'av-align-center',
+									'size'			=> '',
+									'title'			=> '',
+									'query_fix' 	=> '0',
+									'heading_tag'	=> $meta['heading_tag'],
+									'heading_class'	=> $meta['heading_class'],
+								), $atts, $this->config['shortcode'] );
+				
+				
 				$find_post = true;
 				$offset = 0;
 				
 				while( $find_post )
 				{
-					$next = $this->fetch_upcoming( $offset );
+					$next = $this->fetch_upcoming( $offset, $atts['query_fix'], $atts['categories'] );
+			
 					$offset ++;
 					
 					if( empty( $next->posts[0] ) || ! $this->already_started( $next ) )
@@ -340,7 +400,7 @@ if ( ! class_exists( 'avia_sc_events_countdown' ) )
 				$atts['timezone'] = 'UTC';
 				
 				$timer  = new avia_sc_countdown( $this->builder );
-				$output = $timer->shortcode_handler( $atts , $content, $shortcodename, $meta );
+				$output = $timer->shortcode_handler( $atts, $content, $shortcodename, $meta );
 				
 				return $output;
 			}

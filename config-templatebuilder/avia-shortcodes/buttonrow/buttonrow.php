@@ -73,23 +73,25 @@ if ( ! class_exists( 'avia_sc_buttonrow' ) )
         /**
          * Create the config array for the shortcode button
          */
-        function shortcode_insert_button()
+        public function shortcode_insert_button()
         {
             $this->config['self_closing']	=	'no';
 
-            $this->config['name'] = __('Button Row', 'avia_framework');
-            $this->config['tab'] = __('Content Elements', 'avia_framework');
-            $this->config['icon'] = AviaBuilder::$path['imagesURL'] . "sc-buttonrow.png";
-            $this->config['order'] = 84;
-            $this->config['target'] = 'avia-target-insert';
-            $this->config['shortcode'] = 'av_buttonrow';
-            $this->config['shortcode_nested'] = array('av_buttonrow_item');
-            $this->config['tooltip'] = __('Displays multiple buttons beside each other', 'avia_framework');
-            $this->config['preview'] = true;
+            $this->config['name']			= __( 'Button Row', 'avia_framework' );
+            $this->config['tab']			= __( 'Content Elements', 'avia_framework' );
+            $this->config['icon']			= AviaBuilder::$path['imagesURL'] . "sc-buttonrow.png";
+            $this->config['order']			= 84;
+            $this->config['target']			= 'avia-target-insert';
+            $this->config['shortcode']		= 'av_buttonrow';
+            $this->config['shortcode_nested'] = array( 'av_buttonrow_item' );
+            $this->config['tooltip']		= __( 'Displays multiple buttons beside each other', 'avia_framework' );
+            $this->config['preview']		= true;
 			$this->config['disabling_allowed'] = true;
+			$this->config['id_name']		= 'id';
+			$this->config['id_show']		= 'yes';
         }
 
-        function extra_assets()
+        public function extra_assets()
         {
             //load css
 			wp_enqueue_style( 'avia-module-button' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/buttons/buttons.css' , array('avia-layout'), false );
@@ -104,7 +106,7 @@ if ( ! class_exists( 'avia_sc_buttonrow' ) )
          *
          * @return void
          */
-        function popup_elements()
+        public function popup_elements()
         {
 
             $this->elements = array(
@@ -195,9 +197,19 @@ if ( ! class_exists( 'avia_sc_buttonrow' ) )
 									"type" 	=> "select",
 									"std" 	=> "",
 									"subtype" => array(
-										__('Always display',  'avia_framework' ) => '' ,	
-										__('Display on hover',  'avia_framework' ) =>'av-button-label-on-hover',
-								)),
+										__( 'Always display', 'avia_framework' )	=> '' ,	
+										__( 'Display on hover', 'avia_framework' )	=>'av-button-label-on-hover',
+										)
+									),
+							
+								array(	
+										'name'		=> __( 'Button Title Attribute', 'avia_framework' ),
+										'desc'		=> __( 'Add a title attribute for this button.', 'avia_framework' ),
+										'id'		=> 'title_attr',
+										'type'		=> 'input',
+										'required'	=> array( 'label_display', 'equals', '' ),
+										'std'		=> ''
+									),
 								
                                 array(
                                     "name" => __("Button Icon", 'avia_framework'),
@@ -350,57 +362,13 @@ if ( ! class_exists( 'avia_sc_buttonrow' ) )
                         "type" => "close_div",
                         'nodescription' => true
                     ),
-
-                    array(
-                        "type" => "tab",
-                        "name" => __("Screen Options", 'avia_framework'),
-                        'nodescription' => true
-                    ),
-
-                    array(
-                        "name" => __("Element Visibility", 'avia_framework'),
-                        "desc" => __("Set the visibility for this element, based on the device screensize.", 'avia_framework'),
-                        "type" => "heading",
-                        "description_class" => "av-builder-note av-neutral",
-                    ),
-
-                    array(
-                        "desc" => __("Hide on large screens (wider than 990px - eg: Desktop)", 'avia_framework'),
-                        "id" => "av-desktop-hide",
-                        "std" => "",
-                        "container_class" => 'av-multi-checkbox',
-                        "type" => "checkbox"
-                    ),
-
-                    array(
-                        "desc" => __("Hide on medium sized screens (between 768px and 989px - eg: Tablet Landscape)", 'avia_framework'),
-                        "id" => "av-medium-hide",
-                        "std" => "",
-                        "container_class" => 'av-multi-checkbox',
-                        "type" => "checkbox"
-                    ),
-
-                    array(
-                        "desc" => __("Hide on small screens (between 480px and 767px - eg: Tablet Portrait)", 'avia_framework'),
-                        "id" => "av-small-hide",
-                        "std" => "",
-                        "container_class" => 'av-multi-checkbox',
-                        "type" => "checkbox"
-                    ),
-
-                    array(
-                        "desc" => __("Hide on very small screens (smaller than 479px - eg: Smartphone Portrait)", 'avia_framework'),
-                        "id" => "av-mini-hide",
-                        "std" => "",
-                        "container_class" => 'av-multi-checkbox',
-                        "type" => "checkbox"
-                    ),
-
-                    // close tab screen-options
-                    array(
-                        "type" => "close_div",
-                        'nodescription' => true
-                    ),
+				
+				
+				array(	
+						'type'			=> 'template',
+						'template_id'	=> 'screen_options_tab'
+					),
+				
 
                 // close tab-container
                 array(
@@ -417,7 +385,7 @@ if ( ! class_exists( 'avia_sc_buttonrow' ) )
          * @param array $params this array holds the default values for $content and $args.
          * @return $params the return array usually holds an innerHtml key that holds item specific markup.
          */
-        function editor_sub_element($params)
+        public function editor_sub_element($params)
         {
             $template = $this->update_template("label", __("Button", 'avia_framework') . ": {{label}}");
 
@@ -458,7 +426,7 @@ if ( ! class_exists( 'avia_sc_buttonrow' ) )
          * @param string $shortcodename the shortcode found, when == callback name
          * @return string $output returns the modified html string
          */
-        function shortcode_handler($atts, $content = "", $shortcodename = "", $meta = "")
+        public function shortcode_handler( $atts, $content = "", $shortcodename = "", $meta = "" )
         {
 	        
             $this->screen_options = AviaHelper::av_mobile_sizes( $atts );
@@ -469,27 +437,25 @@ if ( ! class_exists( 'avia_sc_buttonrow' ) )
 
             extract($this->screen_options); //return $av_font_classes, $av_title_font_classes and $av_display_classes
 
-            extract(shortcode_atts(
-                    array(
-                        'alignment' => 'center',
-                        'button_spacing' => '5',
-                        'button_spacing_unit' => 'px'
-                    ), $atts, $this->config['shortcode'])
-            );
+            extract( shortcode_atts( array(
+							'alignment'			=> 'center',
+							'button_spacing'	=> '5',
+							'button_spacing_unit'	=> 'px'
+						), $atts, $this->config['shortcode'] ) );
 
             $this->alignment = $alignment;
             $this->spacing = $button_spacing;
             $this->spacing_unit = $button_spacing_unit;
 
-            $output = "";
-            $output .= "<div class='avia-buttonrow-wrap avia-buttonrow-{$this->alignment} {$av_display_classes} ".$meta['el_class']."'>";
-            $output .= ShortcodeHelper::avia_remove_autop($content, true);
-            $output .= '</div>';
+            $output = '';
+			$output .=	"<div {$meta['custom_el_id']} class='avia-buttonrow-wrap avia-buttonrow-{$this->alignment} {$av_display_classes} {$meta['el_class']}'>";
+            $output .=		ShortcodeHelper::avia_remove_autop( $content, true );
+            $output .=	'</div>';
 
             return $output;
         }
 
-        function av_buttonrow_item($atts, $content = "", $shortcodename = "")
+        function av_buttonrow_item( $atts, $content = "", $shortcodename = "" )
         {
 			/**
 			 * Fixes a problem when 3-rd party plugins call nested shortcodes without executing main shortcode  (like YOAST in wpseo-filter-shortcodes)
@@ -501,23 +467,22 @@ if ( ! class_exists( 'avia_sc_buttonrow' ) )
 			
             extract($this->screen_options); //return $av_font_classes, $av_title_font_classes and $av_display_classes
 
-            $atts = shortcode_atts(
-                array(
-                    'label' => 'Click me',
-                    'link' => '',
-                    'link_target' => '',
-                    'color' => 'theme-color',
-                    'custom_bg' => '#444444',
-                    'custom_font' => '#ffffff',
-                    'size' => 'small',
-                    'position' => 'center',
-                    'icon_select' => 'yes',
-                    'icon' => '',
-                    'font' => '',
-                    'icon_hover' => '',
-			        'label_display'=>'',
-                ),
-                $atts, 'av_buttonrow_item');
+            $atts = shortcode_atts( array(
+										'label'			=> 'Click me',
+										'link'			=> '',
+										'link_target'	=> '',
+										'color'			=> 'theme-color',
+										'custom_bg'		=> '#444444',
+										'custom_font'	=> '#ffffff',
+										'size'			=> 'small',
+										'position'		=> 'center',
+										'icon_select'	=> 'yes',
+										'icon'			=> '',
+										'font'			=> '',
+										'icon_hover'	=> '',
+										'label_display'	=> '',
+										'title_attr'	=> ''
+									), $atts, 'av_buttonrow_item' );
 
             $display_char = av_icon($atts['icon'], $atts['font']);
             $extraClass = $atts['icon_hover'] ? "av-icon-on-hover" : "";
@@ -567,6 +532,8 @@ if ( ! class_exists( 'avia_sc_buttonrow' ) )
             $link = AviaHelper::get_url($atts['link']);
             $link = (($link == "http://") || ($link == "manually")) ? "" : $link;
 			
+			$title_attr = ! empty( $atts['title_attr'] ) && empty( $atts['label_display'] ) ? 'title="' . esc_attr( $atts['title_attr'] ) . '"' : '';
+			
 			$data = "";
 			if(!empty($atts['label_display']) && $atts['label_display'] == "av-button-label-on-hover") 
 			{
@@ -577,15 +544,15 @@ if ( ! class_exists( 'avia_sc_buttonrow' ) )
 			
 			if(empty($atts['label'])) $extraClass .= " av-button-notext ";	
 					
-            $content_html = "";
+            $content_html = '';
             if ('yes-left-icon' == $atts['icon_select']) $content_html .= "<span class='avia_button_icon avia_button_icon_left ' {$display_char}></span>";
             $content_html .= "<span class='avia_iconbox_title' >" . $atts['label'] . "</span>";
             if ('yes-right-icon' == $atts['icon_select']) $content_html .= "<span class='avia_button_icon avia_button_icon_right' {$display_char}></span>";
 
-            $output = "";
-            $output .= "<a href='{$link}' {$data} class='avia-button {$extraClass} " . $this->class_by_arguments('icon_select, color, size', $atts, true) . "' {$blank} {$style} >";
-            $output .= $content_html;
-            $output .= "</a>";
+            $output = '';
+            $output .=	"<a href='{$link}' {$data} class='avia-button {$extraClass} " . $this->class_by_arguments('icon_select, color, size', $atts, true) . "' {$blank} {$style} {$title_attr}>";
+            $output .=		$content_html;
+            $output .=	'</a>';
 
             return $output;
 

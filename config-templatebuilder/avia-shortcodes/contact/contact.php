@@ -28,6 +28,10 @@ if ( !class_exists( 'avia_sc_contact' ) )
 				$this->config['tooltip'] 	= __('Creates a customizable contact form', 'avia_framework' );
 				$this->config['preview'] 	= "large";
 				$this->config['disabling_allowed'] = true;
+				
+				$this->config['id_name']	= 'id';
+				$this->config['id_show']	= 'yes';
+				$this->config['aria_label']	= 'yes';
 			}
 			
 			function extra_assets()
@@ -36,7 +40,7 @@ if ( !class_exists( 'avia_sc_contact' ) )
 				wp_enqueue_style( 'avia-module-contact' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/contact/contact.css' , array('avia-layout'), false );
 				
 					//load js
-				wp_enqueue_script( 'avia-module-contact' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/contact/contact.js' , array('avia-shortcodes'), false, TRUE );
+				wp_enqueue_script( 'avia-module-contact' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/contact/contact.js' , array('avia-shortcodes'), false, true );
 
 			
 			}
@@ -51,6 +55,16 @@ if ( !class_exists( 'avia_sc_contact' ) )
 			 */
 			function popup_elements()
 			{
+				$link = '<a target="_blank" href="' . admin_url( 'admin.php?page=avia#goto_google' ) . '">' . __( 'activated here', 'avia_framework' ) . '</a>';
+				$captcha_desc  = __( 'Do you want to display a Captcha field at the end of the form so users must prove they are human?', 'avia_framework' ) . '</br></br>';
+				$captcha_desc .= __( 'Either by solving a simply mathematical question or by Google reCaptcha, that needs to be', 'avia_framework' ) . ' ' . $link . '. ';
+				$captcha_desc .= __( 'In case Google reCAPTCHA is deactivated (maybe later) in theme options, Enfold captcha will be used, if you selected to use V2 then V2 will be used for this contact form (even if you selected V3 in theme options). If you selected V3 here and the score fails or you did not selected V3 in theme options then V2 will be used to check if user is a human.', 'avia_framework' );
+				$captcha_desc .= '</br></br>';
+				$captcha_desc .= __( '(It is recommended to only activate this if you receive spam from your contact form, since an invisible spam protection is also implemented that should filter most spam messages by robots anyway)', 'avia_framework' );
+
+				$default_from = parse_url( home_url() );
+				$default_from = ( ! empty( $default_from['host'] ) ) ? "no-reply@{$default_from['host']}" : 'no-reply@wp-message.com';
+				
 				$this->elements = apply_filters( 'avf_sc_contact_popup_elements',  array(
 						
 						array(
@@ -70,13 +84,28 @@ if ( !class_exists( 'avia_sc_contact' ) )
 						'container_class' =>"avia-element-fullwidth",
 						"std" 	=> get_option('admin_email'),
 						"type" 	=> "input"),
-						
+					
+						array(
+								'name'	=> __( 'Your from address', 'avia_framework' ),
+								'desc'	=> sprintf( __( 'Enter your from address for the form - if left blank it will default to user email or %s', 'avia_framework' ), $default_from ),
+								'id'	=> 'from_email',
+								'std'	=> '',
+								'type'	=> 'input'
+							),
+					
 						array(
 						"name" 	=> __("Form Title", 'avia_framework' ),
 						"desc" 	=> __("Enter a form title that is displayed above the form", 'avia_framework' ),
 						"id" 	=> "title",
 						"std" 	=> __("Send us mail", 'avia_framework' ),
 						"type" 	=> "input"),
+					
+						array(	
+								'type'				=> 'template',
+								'template_id'		=> 'heading_tag',
+								'theme_default'		=> 'h3',
+								'context'			=> __CLASS__
+							),
 
 						array(
 							"name" => __("Add/Edit Contact Form Elements", 'avia_framework' ),
@@ -256,13 +285,55 @@ if ( !class_exists( 'avia_sc_contact' ) )
 							),
 
 						array(
-							"name" 	=> __("Contact Form Captcha", 'avia_framework' ),
-							"desc" 	=> __("Do you want to display a Captcha field at the end of the form so users must prove they are human by solving a simply mathematical question?", 'avia_framework' )."</br></br>". 										   __("(It is recommended to only activate this if you receive spam from your contact form, since an invisible spam protection is also implemented that should filter most spam messages by robots anyway)", 'avia_framework' ),
-							"id" 	=> "captcha",
-							"type" 	=> "select",
-							"std" 	=> "",
-							"subtype" => array(__("Don't display Captcha", 'avia_framework' ) => '', __('Display Captcha', 'avia_framework' ) =>'active')
-						),
+							'name'		=> __( 'Contact Form Captcha', 'avia_framework' ),
+							'desc'		=> $captcha_desc,
+							'id'		=> 'captcha',
+							'type'		=> 'select',
+							'std'		=> '',
+							'subtype'	=> array(
+												__( 'Don\'t display Captcha', 'avia_framework' )								=> '', 
+												__( 'Use Enfold Numeric Captcha', 'avia_framework' )							=> 'active',
+												__( 'Use Google reCAPTCHA V2 if activated', 'avia_framework' )					=> 'recaptcha_v2',
+												__( 'Use Google reCAPTCHA V3 if activated (fallback is V2)', 'avia_framework' )	=> 'recaptcha_v3'
+											)
+							),
+					
+						array(
+							'name'		=> __( 'reCAPTCHA V2 theme color', 'avia_framework' ),
+							'desc'		=> __( 'Select a theme color for this contact form widget', 'avia_framework' ),
+							'id'		=> 'captcha_theme',
+							'type'		=> 'select',
+							'required'	=> array( 'captcha', 'parent_in_array', 'recaptcha_v2 recaptcha_v3' ),
+							'std'		=> '',
+							'subtype'	=> array(
+												__( 'Default', 'avia_framework' )	=> '', 
+												__( 'Light', 'avia_framework' )		=> 'light',
+												__( 'Dark', 'avia_framework' )		=> 'dark'
+											)
+							),
+					
+						array(
+							'name'		=> __( 'reCAPTCHA V2 theme size', 'avia_framework' ),
+							'desc'		=> __( 'Select a size for this contact form widget', 'avia_framework' ),
+							'id'		=> 'captcha_size',
+							'type'		=> 'select',
+							'required'	=> array( 'captcha', 'parent_in_array', 'recaptcha_v2 recaptcha_v3'),
+							'std'		=> 'normal',
+							'subtype'	=> array(
+												__( 'Normal', 'avia_framework' )		=> 'normal',
+												__( 'Compact', 'avia_framework' )		=> 'compact'
+											)
+							),
+					
+						array(	
+								'name'		=> __( 'Select score for human', 'avia_framework' ),
+								'id'		=> 'captcha_score',
+								'desc'		=> __( 'A score of 1.0 is very likely a good interaction, 0.0 is very likely a bot. Google recommends a threshold of 0.5 by default. In case we encounter a non human we ask user to verify with Version 2 chckbox.', 'avia_framework' ),
+								'type'		=> 'select',
+								'required'	=> array( 'captcha', 'equals', 'recaptcha_v3' ),
+								'subtype'	=> AviaHtmlHelper::number_array( 0, 1, 0.1, array( __( 'Default', 'avia_framework' ) => '' ) ),
+								'std'		=> '0.5'
+							),
 						
 						array(	
 							"name" 	=> __("Hide Form Labels", 'avia_framework' ),
@@ -311,67 +382,18 @@ if ( !class_exists( 'avia_sc_contact' ) )
 							"type" 	=> "close_div",
 							'nodescription' => true
 						),
-						
-					array(
-									"type" 	=> "tab",
-									"name"	=> __("Screen Options",'avia_framework' ),
-									'nodescription' => true
-								),
-								
-								
-								array(
-								"name" 	=> __("Element Visibility",'avia_framework' ),
-								"desc" 	=> __("Set the visibility for this element, based on the device screensize.", 'avia_framework' ),
-								"type" 	=> "heading",
-								"description_class" => "av-builder-note av-neutral",
-								),
-							
-								array(	
-										"desc" 	=> __("Hide on large screens (wider than 990px - eg: Desktop)", 'avia_framework'),
-										"id" 	=> "av-desktop-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-								
-								array(	
-									
-										"desc" 	=> __("Hide on medium sized screens (between 768px and 989px - eg: Tablet Landscape)", 'avia_framework'),
-										"id" 	=> "av-medium-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-										
-								array(	
-									
-										"desc" 	=> __("Hide on small screens (between 480px and 767px - eg: Tablet Portrait)", 'avia_framework'),
-										"id" 	=> "av-small-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-										
-								array(	
-									
-										"desc" 	=> __("Hide on very small screens (smaller than 479px - eg: Smartphone Portrait)", 'avia_framework'),
-										"id" 	=> "av-mini-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-									
-								
-							  
-				
-							
-								
-							array(
-									"type" 	=> "close_div",
-									'nodescription' => true
-								),
+					
+					
+					array(	
+							'type'			=> 'template',
+							'template_id'	=> 'screen_options_tab'
+						),
+					
 						
 					array(
 							"type" 	=> "close_div",
 							'nodescription' => true
 						),
-
 
 				));
 
@@ -408,28 +430,34 @@ if ( !class_exists( 'avia_sc_contact' ) )
 			 * @param string $shortcodename the shortcode found, when == callback name
 			 * @return string $output returns the modified html string
 			 */
-			function shortcode_handler($atts, $content = "", $shortcodename = "", $meta = "")
+			function shortcode_handler( $atts, $content = "", $shortcodename = "", $meta = "" )
 			{
 				
-				extract(AviaHelper::av_mobile_sizes($atts)); //return $av_font_classes, $av_title_font_classes and $av_display_classes 
+				extract( AviaHelper::av_mobile_sizes( $atts ) ); //return $av_font_classes, $av_title_font_classes and $av_display_classes 
 				
-				$atts =  shortcode_atts(
-							apply_filters( 'avf_sc_contact_default_atts', 
-										array('email' 		=> get_option('admin_email'),
-			                                 'button' 		=> __("Submit", 'avia_framework' ),
-											 'autoresponder_email'	=> '',
-			                                 'autorespond' 	=> '',
-			                                 'captcha' 		=> '',
-			                                 'subject'		=> '',
-			                                 'on_send'		=> '',
-			                                 'link'			=> '',
-			                                 'sent'			=> __("Your message has been sent!", 'avia_framework' ),
-			                                 'title'		=> __("Send us mail", 'avia_framework' ),
-			                                 'color'		=> "",
-			                                 'hide_labels'	=> "",
-			                                 'form_align'	=> ""
+				$meta = aviaShortcodeTemplate::set_frontend_developer_heading_tag( $atts, $meta );
+				
+				$atts =  shortcode_atts( apply_filters( 'avf_sc_contact_default_atts', array(
+					
+								'email'				=> get_option( 'admin_email' ),
+								'from_email'		=> '',
+								'button'			=> __( "Submit", 'avia_framework' ),
+								'autoresponder_email'	=> '',
+								'autorespond'		=> '',
+								'captcha'			=> '',
+								'captcha_theme'		=> '',
+								'captcha_size'		=> 'normal',
+								'captcha_score'		=> '',
+								'subject'			=> '',
+								'on_send'			=> '',
+								'link'				=> '',
+								'sent'				=> __( "Your message has been sent!", 'avia_framework' ),
+								'title'				=> __( "Send us mail", 'avia_framework' ),
+								'color'				=> "",
+								'hide_labels'		=> "",
+								'form_align'		=> ""
 
-			                                 )), $atts, $this->config['shortcode']);
+					) ), $atts, $this->config['shortcode'] );
 				
 				/**
 				 * For backwards comp. only - can be removed in future versions
@@ -449,24 +477,45 @@ if ( !class_exists( 'avia_sc_contact' ) )
 				
 				if(!empty($form_align)) $meta['el_class'] .= " av-centered-form ";
 				
+				$default_heading = ! empty( $meta['heading_tag'] ) ? $meta['heading_tag'] : 'h3';
+				$args = array(
+							'heading'		=> $default_heading,
+							'extra_class'	=> $meta['heading_class']
+						);
+
+				$extra_args = array( $this, $atts, $content, 'title' );
+
+				/**
+				 * @since 4.5.7.2
+				 * @return array
+				 */
+				$args = apply_filters( 'avf_customize_heading_settings', $args, __CLASS__, $extra_args );
+
+				$heading = ! empty( $args['heading'] ) ? $args['heading'] : $default_heading;
+				$css = ! empty( $args['extra_class'] ) ? $args['extra_class'] : $meta['heading_class'];
+				
+				
 				$form_args = array(
-					"heading" 				=> $title ? "<h3>".$title."</h3>" : "",
-					"success" 				=> "<h3 class='avia-form-success'>".$sent."</h3>",
-					"submit"  				=> $button,
-					"myemail" 				=> $email,
-					"action"  				=> get_permalink($post_id),
-					"myblogname" 			=> get_option('blogname'),
-					"autoresponder" 		=> $autorespond,
-					"autoresponder_subject" => __('Thank you for your Message!','avia_framework' ),
-					"autoresponder_email" 	=> $autoresponder_email,
-					"subject"				=> $subject,
-					"form_class" 			=> $meta['el_class']." ".$color." ".$av_display_classes,
-					"multiform"  			=> true, //allows creation of multiple forms without id collision
-					"label_first"  			=> true,
-					"redirect"				=> $redirect,
-					"placeholder"			=> $hide_labels,
-					"numeric_names"			=> true,
-				);
+								"heading" 				=> $title ? "<{$heading} class='{$css}'>{$title}</{$heading}>" : "",
+								"success" 				=> "<{$heading} class='avia-form-success {$css}'>{$sent}</{$heading}>",
+								"submit"  				=> $button,
+								"myemail" 				=> $email,
+								'myfrom'				=> $from_email,
+								"action"  				=> get_permalink($post_id),
+								"myblogname" 			=> get_option('blogname'),
+								"autoresponder" 		=> $autorespond,
+								"autoresponder_subject" => __( 'Thank you for your Message!', 'avia_framework' ),
+								"autoresponder_email" 	=> $autoresponder_email,
+								"subject"				=> $subject,
+								"form_class" 			=> $meta['el_class']." ".$color." ".$av_display_classes,
+								"multiform"  			=> true, //allows creation of multiple forms without id collision
+								"label_first"  			=> true,
+								"redirect"				=> $redirect,
+								"placeholder"			=> $hide_labels,
+								"numeric_names"			=> true,
+								'el-id'					=> $meta['custom_el_id'],
+								'aria_label'			=> $meta['aria_label'],
+							);
 				
 				if(trim($form_args['myemail']) == '') $form_args['myemail'] = get_option('admin_email');
 
@@ -477,11 +526,33 @@ if ( !class_exists( 'avia_sc_contact' ) )
 				$form_fields = $this->helper_array2form_fields(ShortcodeHelper::shortcode2array($content, 1));
 
 				//fake username field that is not visible. if the field has a value a spam bot tried to send the form
-				$elements['avia_username']  = array('type'=>'decoy', 'label'=>'', 'check'=>'must_empty');
+				$elements['avia_username']  = array('type'=>'decoy', 'label'=>'', 'check'=> 'must_empty' );
 
 				//captcha field for the user to verify that he is real
-				if($captcha)
-				$elements['avia_age'] =	array('type'=>'captcha', 'check'=>'captcha', 'label'=> __('Please prove that you are human by solving the equation','avia_framework' ));
+				$google = in_array( $captcha, array( 'recaptcha_v2', 'recaptcha_v3' ) );
+				if( 'active' == $captcha || ( $google && Avia_Google_reCAPTCHA()->is_loading_prohibited() ) )
+				{
+					$elements['avia_age'] = array(
+												'type'	=> 'captcha', 
+												'check'	=> 'captcha', 
+												'label'	=> __( 'Please prove that you are human by solving the equation', 'avia_framework' )
+											);
+				}
+				else if( $google )
+				{	
+					$elements['avia_age'] = array(
+												'type'				=> 'grecaptcha', 
+												'container_class'	=> '',
+												'custom_class'		=> '',
+												'context'			=> 'av_contact_form',
+												'token_input'		=> 'av_recaptcha_token',
+												'version'			=> 'avia_' . $captcha,
+												'theme'				=> $captcha_theme,
+												'size'				=> $captcha_size,
+												'score'				=> $captcha_score,
+												'text_to_preview'	=> Avia_Builder()->in_text_to_preview_mode()
+											);
+				}
 
 				//merge all fields
 				$form_fields = apply_filters('avia_contact_form_elements', array_merge($form_fields, $elements));
@@ -491,7 +562,6 @@ if ( !class_exists( 'avia_sc_contact' ) )
 				$contact_form = new avia_form($form_args);
 				$contact_form->create_elements($form_fields);
 				$output = $contact_form->display_form(true);
-
 
 				return $output;
 			}

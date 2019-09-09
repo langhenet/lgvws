@@ -519,6 +519,7 @@ if( ! class_exists( 'Avia_Theme_Updater' ) )
 			$data = array(
 					'updates_envato_token'			=> trim( avia_get_option( 'updates_envato_token' ) ),
 					'updates_envato_token_state'	=> trim( avia_get_option( 'updates_envato_token_state' ) ),
+					'updates_envato_verified_token'	=> trim( avia_get_option( 'updates_envato_verified_token' ) ),
 					'updates_username'				=> trim( avia_get_option( 'updates_username' ) ),
 					'updates_api_key'				=> trim( avia_get_option( 'updates_api_key' ) ),
 					'updates_envato_info'			=> trim( avia_get_option( 'updates_envato_info' ) )
@@ -565,7 +566,29 @@ if( ! class_exists( 'Avia_Theme_Updater' ) )
 					
 				if( ! empty( $data['updates_envato_token_state'] ) )
 				{
+					$warning = '';
+					if( $ajax )
+					{
+						$data['updates_envato_verified_token'] = $new_token;
+					}
+					else if( $data['updates_envato_token'] != $data['updates_envato_verified_token'] )
+					{
+						$warning .=		'<div class="av-verification-cell av-privacy-token-notice av-update-token-changed" style="font-size: 1.5em;">';
+						
+						if( '' == $data['updates_envato_verified_token'] )
+						{
+							$warning .=		__( 'Please verify the key.', 'avia_framework' );
+						}
+						else
+						{
+							$warning .=		__( 'Please verify the key - the last verified key is different.', 'avia_framework' );
+						}	
+						
+						$warning .=		'</div>' ;
+					}
+					
 					$notice .=	'<div class="av-text-notice">';
+					$notice .=		$warning;
 					$notice .=		'<p>';
 					$notice .=			sprintf( __( 'We checked the token on %s and we were able to connect to Envato and could access the following information:', 'avia_framework' ), $data['updates_envato_token_state'] ); 
 					$notice .=		'</p>';

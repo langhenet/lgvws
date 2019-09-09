@@ -302,6 +302,16 @@ if( ! class_exists( 'avia_auto_updates' ) )
 //						'readonly'		=> true
 					);
 			
+			$avia_elements[] =	array(	
+						"slug"			=> "update",
+						"std"			=> "",
+						"name"			=> __( "Last verify state - hidden - used for internal use only", 'avia_framework' ),
+						"desc"			=> '',
+						"id"			=> "updates_envato_verified_token",
+						"type"			=> "hidden",
+//						'readonly'		=> true
+					);
+			
 			/**
 			 * deprecated - can be removed in future releases
 			 */
@@ -375,6 +385,7 @@ if( ! class_exists( 'avia_auto_updates' ) )
 			$version 	= self::get_version();
 			$themename 	= self::get_themename();
 			$parent_string = is_child_theme() ? "Parent Theme (". ucfirst( $themename ).")" : ucfirst( $themename )." Theme";
+			$php_version = '<div class="avia_theme_update_php">' . sprintf( __( 'Your PHP version: %s', 'avia_framework' ), phpversion() ) . '</div>';
 			
 			$update = self::check_for_theme_update();
 					
@@ -388,6 +399,8 @@ if( ! class_exists( 'avia_auto_updates' ) )
 				{
 					$output .= ' - ' . sprintf( __( 'a new version %s is available.', 'avia_framework' ), $update['new_version'] );
 				}
+				
+				$output .=		$php_version;
 				$output .=	'</div>';
 			}
 			else if( false !== $update )
@@ -409,6 +422,8 @@ if( ! class_exists( 'avia_auto_updates' ) )
 				$output .=		'<span class="avia_style_wrap">';
 				$output .=			'<a href="#" data-avia-popup="avia-tmpl-theme-update" class="avia_button">' . __( 'Update Now!', 'avia_framework' ) . '</a>';
 				$output .=		'</span>';
+				
+				$output .=		$php_version;
 				$output .=	'</div>';
 				
 				$form = '<form method="post" action="'.$target.'" name="upgrade-themes" class="upgrade">
@@ -434,6 +449,7 @@ if( ! class_exists( 'avia_auto_updates' ) )
 				$output .=		"<h3>" . __( 'Theme Updates', 'avia_framework' ) . "</h3>";
 				$output .=		sprintf( __( "No Updates available. You are running the latest version! (%s)", 'avia_framework' ), $version );
 				$output .=		"<br/><br/> <a href='{$target}'>" . __( 'Check Manually', 'avia_framework' ) . "</a>";
+				$output .=		$php_version;
 				$output .=	'</div>';
 			}
 			

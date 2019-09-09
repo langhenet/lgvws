@@ -8,7 +8,7 @@
 if ( ! defined( 'ABSPATH' ) ) {  exit;  }    // Exit if accessed directly
 
 
-if ( !class_exists( 'avia_sc_postslider' ))
+if ( ! class_exists( 'avia_sc_postslider' ) )
 {
 	class avia_sc_postslider extends aviaShortcodeTemplate
 	{
@@ -20,15 +20,17 @@ if ( !class_exists( 'avia_sc_postslider' ))
 		{
 			$this->config['self_closing']	=	'yes';
 			
-			$this->config['name']		= __('Post Slider', 'avia_framework' );
-			$this->config['tab']		= __('Content Elements', 'avia_framework' );
+			$this->config['name']		= __( 'Post Slider', 'avia_framework' );
+			$this->config['tab']		= __( 'Content Elements', 'avia_framework' );
 			$this->config['icon']		= AviaBuilder::$path['imagesURL']."sc-postslider.png";
 			$this->config['order']		= 30;
 			$this->config['target']		= 'avia-target-insert';
 			$this->config['shortcode'] 	= 'av_postslider';
-			$this->config['tooltip'] 	= __('Display a Slideshow of Post Entries', 'avia_framework' );
+			$this->config['tooltip'] 	= __( 'Display a Slideshow of Post Entries', 'avia_framework' );
 			$this->config['drag-level'] = 3;
 			$this->config['disabling_allowed'] = true;
+			$this->config['id_name']	= 'id';
+			$this->config['id_show']	= 'yes';
 		}
 		
 		
@@ -39,7 +41,7 @@ if ( !class_exists( 'avia_sc_postslider' ))
 			wp_enqueue_style( 'avia-module-postslider' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/postslider/postslider.css' , array('avia-module-slideshow'), false );
 			
 				//load js
-			wp_enqueue_script( 'avia-module-slideshow' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/slideshow/slideshow.js' , array('avia-shortcodes'), false, TRUE );
+			wp_enqueue_script( 'avia-module-slideshow' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/slideshow/slideshow.js' , array('avia-shortcodes'), false, true );
 
 		
 		}
@@ -75,53 +77,11 @@ if ( !class_exists( 'avia_sc_postslider' ))
 						"std" 	=> "category"
 				),
 				
-				array(
-						"name" 	=> __("WooCommerce Product visibility?", 'avia_framework' ),
-						"desc" 	=> __("Select the visibility of WooCommerce products. Default setting can be set at Woocommerce -&gt Settings -&gt Products -&gt Inventory -&gt Out of stock visibility", 'avia_framework' ),
-						"id" 	=> "wc_prod_visible",
-						"type" 	=> "select",
-						"std" 	=> "",
-						"required" => array( 'link', 'parent_in_array', implode( ' ', get_object_taxonomies( 'product', 'names' ) ) ),
-						"subtype" => array(
-							__('Use default WooCommerce Setting (Settings -&gt; Products -&gt; Out of stock visibility)',  'avia_framework' ) => '',
-							__('Hide products out of stock',  'avia_framework' ) => 'hide',
-							__('Show products out of stock',  'avia_framework' )  => 'show')
+				array(	
+						'type'			=> 'template',
+						'template_id' 	=> 'wc_options_non_products',
 					),
 				
-				array(
-						"name" 	=> __( "WooCommerce Sorting Options", 'avia_framework' ),
-						"desc" 	=> __( "Here you can choose how to sort the products. Default setting can be set at Dashboard -&gt; Appearance -&gt; Customize -&gt; WooCommerce -&gt; Product Catalog -&gt; Default Product Sorting", 'avia_framework' ),
-						"id" 	=> "prod_order_by",
-						"type" 	=> "select",
-						"std" 	=> "",
-						"required" => array( 'link', 'parent_in_array', implode( ' ', get_object_taxonomies( 'product', 'names' ) ) ),
-						"subtype" => array( 
-								__( 'Use default (defined at Dashboard -&gt; Customize -&gt; WooCommerce) ', 'avia_framework' )	=> '',
-								__( 'Sort alphabetically', 'avia_framework' )			=> 'title',
-								__( 'Sort by most recent', 'avia_framework' )			=> 'date',
-								__( 'Sort by price', 'avia_framework' )					=> 'price',
-								__( 'Sort by popularity', 'avia_framework' )			=> 'popularity',
-								__( 'Sort randomly', 'avia_framework' )					=> 'rand',
-								__( 'Sort by menu order and name', 'avia_framework' )	=> 'menu_order',
-								__( 'Sort by average rating', 'avia_framework' )		=> 'rating',
-								__( 'Sort by relevance', 'avia_framework' )				=> 'relevance',
-								__( 'Sort by Product ID', 'avia_framework' )			=> 'id'
-							)
-					),
-				
-				array(
-						"name" 	=> __( "WooCommerce Sorting Order", 'avia_framework' ),
-						"desc" 	=> __( "Here you can choose the order of the result products. Default setting can be set at Dashboard -&gt; Appearance -&gt; Customize -&gt; WooCommerce -&gt; Product Catalog -&gt; Default Product Sorting", 'avia_framework' ),
-						"id" 	=> "prod_order",
-						"type" 	=> "select",
-						"std" 	=> "",
-						"required" => array( 'link', 'parent_in_array', implode( ' ', get_object_taxonomies( 'product', 'names' ) ) ),
-						"subtype" => array( 
-								__('Use default (defined at Dashboard -&gt; Customize -&gt; WooCommerce)', 'avia_framework' ) =>	'',
-								__('Ascending', 'avia_framework' )			=>	'ASC',
-								__('Descending', 'avia_framework' )			=>	'DESC'
-							)
-					),
 				
 				array(	
 						'type'			=> 'template',
@@ -224,74 +184,25 @@ array(
 							"type" 	=> "close_div",
 							'nodescription' => true
 						),
+				
+				array(	
+						'type'			=> 'template',
+						'template_id'	=> 'screen_options_tab'
+					),
 						
 						
-								array(
-									"type" 	=> "tab",
-									"name"	=> __("Screen Options",'avia_framework' ),
-									'nodescription' => true
-								),
-								
-								
-								array(
-								"name" 	=> __("Element Visibility",'avia_framework' ),
-								"desc" 	=> __("Set the visibility for this element, based on the device screensize.", 'avia_framework' ),
-								"type" 	=> "heading",
-								"description_class" => "av-builder-note av-neutral",
-								),
-							
-								array(	
-										"desc" 	=> __("Hide on large screens (wider than 990px - eg: Desktop)", 'avia_framework'),
-										"id" 	=> "av-desktop-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-								
-								array(	
-									
-										"desc" 	=> __("Hide on medium sized screens (between 768px and 989px - eg: Tablet Landscape)", 'avia_framework'),
-										"id" 	=> "av-medium-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-										
-								array(	
-									
-										"desc" 	=> __("Hide on small screens (between 480px and 767px - eg: Tablet Portrait)", 'avia_framework'),
-										"id" 	=> "av-small-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-										
-								array(	
-									
-										"desc" 	=> __("Hide on very small screens (smaller than 479px - eg: Smartphone Portrait)", 'avia_framework'),
-										"id" 	=> "av-mini-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-	
-								
-							array(
-									"type" 	=> "close_div",
-									'nodescription' => true
-								),	
-								
-								
-						
-						
-					array(
-						"type" 	=> "close_div",
-						'nodescription' => true
-					),	
+				array(
+					"type" 	=> "close_div",
+					'nodescription' => true
+				)
 					
 
-				);
+			);
 
 
-				if(current_theme_supports('add_avia_builder_post_type_option'))
-                {
-                    $element = array(
+			if( current_theme_supports( 'add_avia_builder_post_type_option' ) )
+			{
+				$element = array(
                         "name" 	=> __("Select Post Type", 'avia_framework' ),
                         "desc" 	=> __("Select which post types should be used. Note that your taxonomy will be ignored if you do not select an assign post type.
                                       If yo don't select post type all registered post types will be used", 'avia_framework' ),
@@ -302,8 +213,8 @@ array(
                         "subtype" => AviaHtmlHelper::get_registered_post_type_array()
                     );
 
-                    array_splice($this->elements, 2, 0, array($element));
-                }
+				array_splice( $this->elements, 2, 0, array( $element ) );
+			}
 		}
 
 		/**
@@ -319,7 +230,7 @@ array(
 		{
 			$params['innerHtml'] = "<img src='".$this->config['icon']."' title='".$this->config['name']."' />";
 			$params['innerHtml'].= "<div class='avia-element-label'>".$this->config['name']."</div>";
-			$params['content'] 	 = NULL; //remove to allow content elements
+			$params['content'] 	 = null; //remove to allow content elements
 			return $params;
 		}
 
@@ -333,23 +244,25 @@ array(
 		 * @param string $shortcodename the shortcode found, when == callback name
 		 * @return string $output returns the modified html string
 		 */
-		function shortcode_handler($atts, $content = "", $shortcodename = "", $meta = "")
+		function shortcode_handler( $atts, $content = "", $shortcodename = "", $meta = "" )
 		{	
-			$screen_sizes = AviaHelper::av_mobile_sizes($atts);
+			$screen_sizes = AviaHelper::av_mobile_sizes( $atts );
 			
 			if(isset($atts['link']))
 			{
 				$atts['link'] = explode(',', $atts['link'], 2 );
 				$atts['taxonomy'] = $atts['link'][0];
 
-				if(isset($atts['link'][1]))
+				if( isset( $atts['link'][1] ) )
 				{
 					$atts['categories'] = $atts['link'][1];
 				}
 			}
 
 			$atts['class'] = $meta['el_class'];
-			$atts = array_merge($atts, $screen_sizes);
+			$atts['el_id'] = $meta['custom_el_id'];
+			
+			$atts = array_merge( $atts, $screen_sizes );
 			
 			/**
 			 * @since 4.5.5
@@ -357,7 +270,7 @@ array(
 			 */
 			$atts = apply_filters( 'avf_post_slider_args', $atts, $this->config['shortcode'], $this );
 				   
-			$slider = new avia_post_slider($atts);
+			$slider = new avia_post_slider( $atts );
 			$slider->query_entries();
 			return $slider->html();
 		}
@@ -388,7 +301,7 @@ if ( ! class_exists( 'avia_post_slider' ) )
 		/**
 		 *
 		 * @since < 4.0
-		 * @var array 
+		 * @var WP_Query 
 		 */
 		protected $entries;
 
@@ -399,35 +312,37 @@ if ( ! class_exists( 'avia_post_slider' ) )
 		public function __construct( $atts = array() )
 		{
 			$this->atts = shortcode_atts( array(	
-												'type'				=> 'slider', // can also be used as grid
-												'style'				=> '', //no_margin
-												'columns'			=> '4',
-												'items'				=> '16',
-												'taxonomy'			=> 'category',
-												'wc_prod_visible'	=> '',
-												'prod_order_by'		=> '',
-												'prod_order'		=> '',
-												'show_meta_data'	=> '',		//	'' | 'always' | 'on_empty_title' | 'on_empty_content' (use filter to change)
-												'post_type'			=> get_post_types(),
-												'contents'			=> 'excerpt',
-												'preview_mode'		=> 'auto',
-												'image_size'		=> 'portfolio',
-												'autoplay'			=> 'no',
-												'animation'			=> 'fade',
-												'paginate'			=> 'no',
-												'use_main_query_pagination' => 'no',
-												'interval'			=> 5,
-												'class'				=> '',
-												'categories'		=> array(),
-												'custom_query'		=> array(),
-												'offset'			=> 0,
-												'custom_markup'		=> '',
-												'av_display_classes'	=> '',
-												'date_filter'		=> '',	
-												'date_filter_start'	=> '',
-												'date_filter_end'	=> '',
-												'date_filter_format'	=> 'yy/mm/dd',		//	'yy/mm/dd' | 'dd-mm-yy'	| yyyymmdd
-		                                 	), $atts, 'av_postslider' );
+								'type'				=> 'slider', // can also be used as grid
+								'style'				=> '', //no_margin
+								'columns'			=> '4',
+								'items'				=> '16',
+								'taxonomy'			=> 'category',
+								'wc_prod_visible'	=> '',
+								'prod_order_by'		=> '',
+								'prod_order'		=> '',
+								'show_meta_data'	=> '',		//	'' | 'always' | 'on_empty_title' | 'on_empty_content' (use filter to change)
+								'post_type'			=> get_post_types(),
+								'contents'			=> 'excerpt',
+								'preview_mode'		=> 'auto',
+								'image_size'		=> 'portfolio',
+								'autoplay'			=> 'no',
+								'animation'			=> 'fade',
+								'paginate'			=> 'no',
+								'use_main_query_pagination' => 'no',
+								'interval'			=> 5,
+								'class'				=> '',
+								'el_id'				=> '',
+								'categories'		=> array(),
+								'custom_query'		=> array(),
+								'offset'			=> 0,
+								'custom_markup'		=> '',
+								'av_display_classes'	=> '',
+								'date_filter'		=> '',	
+								'date_filter_start'	=> '',
+								'date_filter_end'	=> '',
+								'date_filter_format'	=> 'yy/mm/dd',		//	'yy/mm/dd' | 'dd-mm-yy'	| yyyymmdd
+				
+							), $atts, 'av_postslider' );
 		    
 			$this->entries = array();
 		}
@@ -449,8 +364,6 @@ if ( ! class_exists( 'avia_post_slider' ) )
 		 */
 		public function html()
 		{
-			global $avia_config;
-
 			$output = '';
 
 			if( empty( $this->entries ) || empty( $this->entries->posts ) ) 
@@ -459,16 +372,20 @@ if ( ! class_exists( 'avia_post_slider' ) )
 			}
 			
 			avia_post_slider::$slide ++;
-			extract($this->atts);
+			extract( $this->atts );
 
-			if($preview_mode == 'auto') $image_size = 'portfolio';
+			if( $preview_mode == 'auto' ) 
+			{
+				$image_size = 'portfolio';
+			}
+			
 			$extraClass 		= 'first';
 			$grid 				= 'one_third';
 			$post_loop_count 	= 1;
 			$loop_counter		= 1;
 			$autoplay 			= $autoplay == "no" ? false : true;
 			$total				= $columns % 2 ? "odd" : "even";
-			$blogstyle 			= function_exists('avia_get_option') ? avia_get_option('blog_global_style','') : "";
+			$blogstyle 			= function_exists('avia_get_option') ? avia_get_option( 'blog_global_style','' ) : '';
 			$excerpt_length 	= 60;
 			
 			
@@ -491,7 +408,7 @@ if ( ! class_exists( 'avia_post_slider' ) )
 
 			$thumb_fallback = "";
             $markup = avia_markup_helper(array('context' => 'blog','echo'=>false, 'custom_markup'=>$custom_markup));
-			$output .= "<div {$data} class='avia-content-slider avia-content-{$type}-active avia-content-slider".avia_post_slider::$slide." avia-content-slider-{$total} {$class} {$av_display_classes}' $markup>";
+			$output .= "<div {$el_id} {$data} class='avia-content-slider avia-content-{$type}-active avia-content-slider".avia_post_slider::$slide." avia-content-slider-{$total} {$class} {$av_display_classes}' $markup>";
 			$output .= 		"<div class='avia-content-slider-inner'>";
 
 				foreach ($this->entries->posts as $index => $entry)

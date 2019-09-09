@@ -486,16 +486,58 @@ if ( ! class_exists( 'AviaHelper' ) )
 		
 			return $data_string;
 		}
+		
+		/**
+		 * Create a lower case version of a string and sanatize it to be valid classnames.
+		 * Space seperated strings are kept as seperate to allow several classes
+		 * 
+		 * @since 4.5.7.2
+		 * @param string $string
+		 * @param string $replace
+		 * @param string $fallback
+		 * @return string
+		 */
+		static public function save_classes_string( $string , $replace = '_', $fallback = '' )
+		{
+			$parts = explode( ' ', $string );
+			
+			foreach( $parts as $key => $value ) 
+			{
+				$parts[ $key ] = AviaHelper::save_string( $value, $replace, $fallback );
+			}
+			
+			$new_string = implode( ' ', $parts );
+			
+			if( empty( $new_string ) )
+			{
+				$new_string = $fallback;
+			}
+			
+			return $new_string;
+		}
 
-    	/**
-    	* Create a lower case version of a string without spaces so we can use that string for database settings
-    	* 
-    	* @param string $string to convert
-    	* @return string the converted string
-    	*/
-    	static function save_string( $string , $replace = "_")
+		/**
+    	 * Create a lower case version of a string without spaces so we can use that string for database settings.
+		 * Returns a fallback if empty is rendered or resulting string would be empty.
+    	 * 
+		 * @since 4.5.7.2 extended
+    	 * @param string|mixed $string			string to convert
+		 * @param string $replace
+		 * @param string $fallback
+    	 * @return string the converted string
+    	 */
+    	static public function save_string( $string, $replace = '_', $fallback = '' )
     	{
-    		$string = strtolower($string);
+			$string = ! empty( $string ) ? (string) $string : '';
+			
+			$string = trim( $string );
+			
+			if( empty( $string ) )
+			{
+				return $fallback;
+			}
+			
+    		$string = strtolower( $string );
     	
     		$trans = array(
     					'&\#\d+?;'				=> '',
@@ -515,16 +557,23 @@ if ( ! class_exists( 'AviaHelper' ) )
     					'\.+$'					=> ''
     				  );
     				  
-    		$trans = apply_filters('avf_save_string_translations', $trans, $string, $replace);
+    		$trans = apply_filters( 'avf_save_string_translations', $trans, $string, $replace );
     
-    		$string = strip_tags($string);
+    		$string = strip_tags( $string );
     
-    		foreach ($trans as $key => $val)
+    		foreach( $trans as $key => $val )
     		{
-    			$string = preg_replace("#".$key."#i", $val, $string);
+    			$string = preg_replace( "#" . $key . "#i", $val, $string );
     		}
     		
-    		return stripslashes($string);
+			$string = stripslashes( $string );
+			
+			if( '' == $string )
+			{
+				$string = $fallback;
+			}
+			
+    		return $string;
     	}
 		
 		/**

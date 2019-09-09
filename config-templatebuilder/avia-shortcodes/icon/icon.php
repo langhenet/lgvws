@@ -5,9 +5,9 @@
  * Shortcode which displays an icon with optional hover effect
  */
 // Don't load directly
-if ( !defined('ABSPATH') ) { die('-1'); }
+if ( ! defined('ABSPATH') ) { die('-1'); }
 
-if ( !class_exists( 'av_font_icon' ) )
+if ( ! class_exists( 'av_font_icon' ) )
 {
     class av_font_icon extends aviaShortcodeTemplate
     {
@@ -18,17 +18,19 @@ if ( !class_exists( 'av_font_icon' ) )
         {
 			$this->config['self_closing']	=	'no';
 			
-            $this->config['name']       = __('Icon', 'avia_framework' );
-			$this->config['tab']		= __('Content Elements', 'avia_framework' );
+            $this->config['name']       = __( 'Icon', 'avia_framework' );
+			$this->config['tab']		= __( 'Content Elements', 'avia_framework' );
 			$this->config['icon']		= AviaBuilder::$path['imagesURL']."sc-icon.png";
             $this->config['order']      = 90;
             $this->config['shortcode']  = 'av_font_icon';
-            $this->config['tooltip'] 	    = __('Display an icon with optional hover effect', 'avia_framework' );
+            $this->config['tooltip'] 	    = __( 'Display an icon with optional hover effect', 'avia_framework' );
 			$this->config['target']		= 'avia-target-insert';
             //$this->config['inline']   = true;
-            $this->config['tinyMCE']    = array('tiny_always'=>true);
+            $this->config['tinyMCE']    = array( 'tiny_always' => true );
 			$this->config['preview'] 	= 1;
 			$this->config['disabling_allowed'] = true;
+			$this->config['id_name']	= 'id';
+			$this->config['id_show']	= 'yes';
         }
         
         function extra_assets()
@@ -178,65 +180,13 @@ if ( !class_exists( 'av_font_icon' ) )
 						"type" 	=> "close_div",
 						'nodescription' => true
 					),
+				
+				array(	
+						'type'			=> 'template',
+						'template_id'	=> 'screen_options_tab'
+					),
 					
-					
-				array(
-									"type" 	=> "tab",
-									"name"	=> __("Screen Options",'avia_framework' ),
-									'nodescription' => true
-								),
-								
-								
-								array(
-								"name" 	=> __("Element Visibility",'avia_framework' ),
-								"desc" 	=> __("Set the visibility for this element, based on the device screensize.", 'avia_framework' ),
-								"type" 	=> "heading",
-								"description_class" => "av-builder-note av-neutral",
-								),
-							
-								array(	
-										"desc" 	=> __("Hide on large screens (wider than 990px - eg: Desktop)", 'avia_framework'),
-										"id" 	=> "av-desktop-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-								
-								array(	
-									
-										"desc" 	=> __("Hide on medium sized screens (between 768px and 989px - eg: Tablet Landscape)", 'avia_framework'),
-										"id" 	=> "av-medium-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-										
-								array(	
-									
-										"desc" 	=> __("Hide on small screens (between 480px and 767px - eg: Tablet Portrait)", 'avia_framework'),
-										"id" 	=> "av-small-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-										
-								array(	
-									
-										"desc" 	=> __("Hide on very small screens (smaller than 479px - eg: Smartphone Portrait)", 'avia_framework'),
-										"id" 	=> "av-mini-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-							
-								
-							array(
-									"type" 	=> "close_div",
-									'nodescription' => true
-								),	
-					
-					
-					
-					
-					
-					
-					
+
 				array(
 						"type" 	=> "close_div",
 						'nodescription' => true
@@ -298,7 +248,7 @@ if ( !class_exists( 'av_font_icon' ) )
          * @param string $shortcodename the shortcode found, when == callback name
          * @return string $output returns the modified html string
          */
-        function shortcode_handler($atts, $content = "", $shortcodename = "", $meta = "")
+        function shortcode_handler( $atts, $content = "", $shortcodename = "", $meta = "" )
         {
             //this is a fix that solves the false paragraph removal by wordpress if the dropcaps shortcode is used at the beginning of the content of single posts/pages
             global $post, $avia_add_p;
@@ -311,26 +261,26 @@ if ( !class_exists( 'av_font_icon' ) )
                 $avia_add_p = true;
             }
             
-            extract(AviaHelper::av_mobile_sizes($atts)); //return $av_font_classes, $av_title_font_classes and $av_display_classes 
+            extract( AviaHelper::av_mobile_sizes( $atts ) ); //return $av_font_classes, $av_title_font_classes and $av_display_classes 
 
-            extract(shortcode_atts(array(
-                'icon'     => '',
-                'font'     => '',
-                'color'    => '',
-                'size'     => '',
-                'style'     => '',
-                'caption'	=> '',
-                'use_link' => 'no',
-                'position' => 'left',
-                'animation' => '',
-                'link' =>'',
-                'linktarget' => 'no',
-                'font' => ''
-            ), $atts, $this->config['shortcode']));
+            extract( shortcode_atts( array(
+						'icon'			=> '',
+						'font'			=> '',
+						'color'			=> '',
+						'size'			=> '',
+						'style'			=> '',
+						'caption'		=> '',
+						'use_link'		=> 'no',
+						'position'		=> 'left',
+						'animation'		=> '',
+						'link'			=> '',
+						'linktarget'	=> 'no',
+						'font'			=> ''
+					), $atts, $this->config['shortcode'] ) );
 
-            $char = av_icon($icon, $font);
+            $char = av_icon( $icon, $font );
 
-            $color = !empty($color) ? "color:{$color}; border-color:{$color};" : '';
+            $color = ! empty( $color ) ? "color:{$color}; border-color:{$color};" : '';
 			
 			if(empty($color)) $custom_class .= " av-no-color";
 			
@@ -364,10 +314,8 @@ if ( !class_exists( 'av_font_icon' ) )
             
             $display_char = "<{$tags[0]} class='av-icon-char' style='{$size_string}' {$char} {$tooltip}></{$tags[1]}>";
             
-            $output = '<span class="'.$shortcodename.' avia_animate_when_visible'.$animation_class.$av_display_classes.' av-icon-style-'.$style.' '.$custom_class.' avia-icon-pos-'.$position.' " style="'.$color.'">'.$display_char.$caption.'</span>';
+            $output = '<span ' . $meta['custom_el_id'] . ' class="'.$shortcodename.' avia_animate_when_visible'.$animation_class.$av_display_classes.' av-icon-style-'.$style.' '.$custom_class.' avia-icon-pos-'.$position.' " style="'.$color.'">'.$display_char.$caption.'</span>';
 
-			
-			
             return $output;
         }
 

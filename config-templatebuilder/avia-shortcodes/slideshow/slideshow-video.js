@@ -127,7 +127,34 @@
 		{
 			var _self = this;
 			
-			if(document.cookie.match(/aviaPrivacyVideoEmbedsDisabled/))
+			//	check if videos are disabled by user setting via cookie - or user must opt in.
+			var cookie_check = $('html').hasClass('av-cookies-needs-opt-in') || $('html').hasClass('av-cookies-can-opt-out');
+			var allow_continue = true;
+			
+			if( cookie_check )
+			{
+				if( ! document.cookie.match(/aviaCookieConsent/) || sessionStorage.getItem( 'aviaCookieRefused' ) )
+				{
+					allow_continue = false;
+				}
+				else
+				{
+					if( ! document.cookie.match(/aviaPrivacyRefuseCookiesHideBar/) )
+					{
+						allow_continue = false;
+					}
+					else if( ! document.cookie.match(/aviaPrivacyEssentialCookiesEnabled/) )
+					{
+						allow_continue = false;
+					}
+					else if( document.cookie.match(/aviaPrivacyVideoEmbedsDisabled/) )
+					{
+						allow_continue = false;
+					}
+				}
+			}
+			
+			if( ! allow_continue )
 			{
 				this._use_external_link();
 				return;

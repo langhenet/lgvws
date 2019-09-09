@@ -70,7 +70,7 @@
 			// close modal by pressing escape key. modify_binding_order makes sure that this is fired first. 
 			// bind event on keydown instead of keyup cause it will probably not interfere with other plugins
 			//fire save event on ENTER (13)
-			this.doc.bind('keydown'+this.namespace, function(e) 
+			this.doc.on('keydown'+this.namespace, function(e) 
 			{
 				if(obj.media_overlay_closed() && obj.link_overlay_closed())
 				{
@@ -243,7 +243,7 @@
    			
    			this.modal.remove();
    			this.backdrop.remove();
-   			this.doc.trigger('avia_modal_close', [ this ]).unbind('keydown'+this.namespace); 
+   			this.doc.trigger('avia_modal_close', [ this ]).off('keydown'+this.namespace); 
    			
    			if($.AviaModal.openInstance.length == 0)
    			{
@@ -389,9 +389,14 @@
    	
    	$.AviaModal.register_callback.modal_load_colorpicker = function()
 	{
-	
+		var palettes = ['#000000','#ffffff','#B02B2C','#edae44','#eeee22','#83a846','#7bb0e7','#745f7e','#5f8789','#d65799','#4ecac2'];
+		if( 'undefined' != typeof avia_globals.color_palettes )
+		{
+			palettes = avia_globals.color_palettes;
+		}
+		
 		var picerOpts 		= {
-				palettes:['#000000','#ffffff','#B02B2C','#edae44','#eeee22','#83a846','#7bb0e7','#745f7e','#5f8789','#d65799','#4ecac2'],
+				palettes: palettes,
 				change: function(event, ui)
 				{
 					$(this).trigger('av-update-preview');
@@ -404,7 +409,7 @@
 			scope			= this.modal,
 			colorpicker		= scope.find('.av-colorpicker').avia_wpColorPicker(picerOpts), 
 			picker_button	= scope.find('.wp-color-result');
-			//picker_button.unbind();
+			//picker_button.off();
 			
 			//
 						
@@ -443,8 +448,8 @@
 			//fixes the error caused by removing the modal window from the dom. unbinding the events and recalling the iris function both seems to be necessary
 			$(document).one('avia_modal_before_close_instance'+self.namespace, function()
 			{
-				picker_button.unbind().remove();
-				colorpicker.unbind().remove();
+				picker_button.off().remove();
+				colorpicker.off().remove();
 				colorpicker.iris();
 			});
 			
@@ -498,7 +503,7 @@
 					return;
 				}
 				
-				if( array_structur.includes( value ) )
+				if( $.inArray( value, array_structur ) >= 0 )
 				{
 					val = settings[lc].split(',');
 					val.map( function(s) { return s.trim() });
@@ -768,8 +773,9 @@
 		var _self	 = this,	
 			modal    = textareas.parents('.avia-modal:eq(0)'),
 			save_btn = modal.find('.avia-modal-save'),
-			$doc	 = $(document);
-	
+			$doc	 = $(document),
+			no_indent_fix = $( '#avia_builder' ).find('.avia-builder-main-wrap').first().hasClass( 'avia-ignore-tiny-indent-fix' );
+
 		textareas.each(function()
 		{
 			var el_id		= this.id,
@@ -815,7 +821,22 @@
 					var result = text.match( /\[caption /i );
 					var format = ( result ) ? 'wpeditimage' : 'raw';
 					
-					window.tinyMCE.get(el_id).setContent(window.switchEditors.wpautop(text), {format: format });
+					/**
+					 * Fixes a problem with lists: indent/dedent with tab and button does not work because there must be no space between list tags when rendering content
+					 */
+					var text_p = window.switchEditors.wpautop( text );
+					
+					if( ! no_indent_fix )
+					{
+						text_p = text_p.replace( />[.\s]+<li>/g, '><li>' );
+						text_p = text_p.replace( />[.\s]+<li /g, '><li ' );
+						text_p = text_p.replace( />[.\s]+<\/ul>/g, '></ul>' );
+						text_p = text_p.replace( />[.\s]+<\/ol>/g, '></ol>' );
+						text_p = text_p.replace( /<\/ul>[.\s]+<\/li>/g, '</ul></li>' );
+						text_p = text_p.replace( /<\/ol>[.\s]+<\/li>/g, '</ol></li>' );
+					}
+					
+					window.tinyMCE.get(el_id).setContent( text_p, {format: format });
 					
 					//trigger updates for preview window
 					tinymce.activeEditor.on('keyup change', function(e) 

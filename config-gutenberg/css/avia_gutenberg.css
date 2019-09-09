@@ -30,9 +30,12 @@ body.block-editor-page.avia-advanced-editor-enabled .edit-post-layout__content .
 
 
 
-body.block-editor-page.avia-advanced-editor-enabled .edit-post-header .edit-post-header-toolbar,
-body.block-editor-page.avia-advanced-editor-enabled .components-popover{
+body.block-editor-page.avia-advanced-editor-enabled .edit-post-header .edit-post-header-toolbar{
 	visibility: hidden;
+}
+
+body.block-editor-page.avia-advanced-editor-enabled .components-popover{
+	/*visibility: hidden;		removed with 4.5.7.1, publish and visibility not shown	*/
 }
 
 body.block-editor-page.avia-advanced-editor-enabled #normal-sortables .postbox#avia_builder:first-child{

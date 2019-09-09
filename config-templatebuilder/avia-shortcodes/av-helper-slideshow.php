@@ -6,7 +6,7 @@
 if ( ! defined( 'ABSPATH' ) ) {  exit;  }    // Exit if accessed directly
 
 
-if ( !class_exists( 'avia_slideshow' ) )
+if ( ! class_exists( 'avia_slideshow' ) )
 {
 	class avia_slideshow
 	{
@@ -60,28 +60,30 @@ if ( !class_exists( 'avia_slideshow' ) )
 			$this->need_conditional_load = false;
 
 			$this->config = array_merge( array(
-									'size'				=> 'featured',
-									'lightbox_size'		=> 'large',
-									'animation'			=> 'slide',
-									'conditional_play'	=> '',
-									'ids'				=> '',
-									'video_counter'		=> 0,
-									'autoplay'			=> 'false',
-									'bg_slider'			=> 'false',
-									'slide_height'		=> '',
-									'handle'			=> '',
-									'interval'			=> 5,
-									'class'				=> "",
-									'css_id'			=> "",
-									'scroll_down'		=> "",
-									'control_layout'	=> '',
-									'content'			=> array(),
-									'custom_markup'		=> '',
-									'perma_caption'		=> '',
-									'autoplay_stopper'	=> '',
-									'image_attachment'	=> '',
-									'min_height'		=> '0px'
-							), $config );
+								'size'				=> 'featured',
+								'lightbox_size'		=> 'large',
+								'animation'			=> 'slide',
+								'conditional_play'	=> '',
+								'ids'				=> '',
+								'video_counter'		=> 0,
+								'autoplay'			=> 'false',
+								'bg_slider'			=> 'false',
+								'slide_height'		=> '',
+								'handle'			=> '',
+								'interval'			=> 5,
+								'class'				=> '',
+								'el_id'				=> '',
+								'css_id'			=> '',
+								'scroll_down'		=> '',
+								'control_layout'	=> '',
+								'content'			=> array(),
+								'custom_markup'		=> '',
+								'perma_caption'		=> '',
+								'autoplay_stopper'	=> '',
+								'image_attachment'	=> '',
+								'min_height'		=> '0px'
+
+						), $config );
 
 			$this->config = apply_filters( 'avf_slideshow_config', $this->config );
 
@@ -275,7 +277,7 @@ if ( !class_exists( 'avia_slideshow' ) )
             $markup = avia_markup_helper(array('context' => 'image','echo'=>false, 'custom_markup'=>$this->config['custom_markup']));
 
 			
-			$html .= "<div {$data} class='avia-slideshow avia-slideshow-".avia_slideshow::$slider." {$extraClass} avia-slideshow-".$this->config['size']." ".$this->config['handle']." ".$this->config['class']." avia-".$this->config['animation']."-slider ' $markup>";
+			$html .= "<div {$this->config['el_id']} {$data} class='avia-slideshow avia-slideshow-".avia_slideshow::$slider." {$extraClass} avia-slideshow-".$this->config['size']." ".$this->config['handle']." ".$this->config['class']." avia-".$this->config['animation']."-slider ' $markup>";
 			
 			$html .= "<ul class='avia-slideshow-inner {$cond_play_class}' {$style} >";
 
@@ -349,6 +351,8 @@ if ( !class_exists( 'avia_slideshow' ) )
 
 			foreach( $this->id_array as $key => $id )
 			{
+				$dev_tags = aviaShortcodeTemplate::set_frontend_developer_heading_tag( $this->subslides[$key]['attr'] );
+				
 				$meta = array_merge( array( 'content'		=> $this->subslides[$key]['content'],
 											'title'			=>'',
 											'link_apply'	=>'',
@@ -396,8 +400,8 @@ if ( !class_exists( 'avia_slideshow' ) )
 										), $this->subslides[$key]['attr'] );
 				
 				//return $av_font_classes, $av_title_font_classes and $av_display_classes 
-				extract(AviaHelper::av_mobile_sizes($this->subslides[$key]['attr'])); 
-				extract($meta);
+				extract( AviaHelper::av_mobile_sizes( $this->subslides[$key]['attr'] ) ); 
+				extract( $meta );
 				
 				if(isset($this->slides[$id]) || $slide_type == 'video')
 				{
@@ -551,10 +555,11 @@ if ( !class_exists( 'avia_slideshow' ) )
 					
 					if( trim( $title ) != '' )   
 					{
-						$default_heading = 'h2';
+						
+						$default_heading = ! empty( $dev_tags['heading_tag'] ) ? $dev_tags['heading_tag'] : 'h2';
 						$args = array(
 									'heading'		=> $default_heading,
-									'extra_class'	=> ''
+									'extra_class'	=> $dev_tags['heading_class']
 								);
 						
 						$extra_args = array( $this, $key );
@@ -566,7 +571,7 @@ if ( !class_exists( 'avia_slideshow' ) )
 						$args = apply_filters( 'avf_customize_heading_settings', $args, __CLASS__, $extra_args );
 
 						$heading = ! empty( $args['heading'] ) ? $args['heading'] : $default_heading;
-						$css = ! empty( $args['extra_class'] ) ? $args['extra_class'] : '';
+						$css = ! empty( $args['extra_class'] ) ? $args['extra_class'] : $dev_tags['heading_class'];
 			
 						$title = "<{$heading} {$title_styling} class='avia-caption-title {$css} {$av_title_font_classes}' $markup_name>" . trim( apply_filters( 'avf_slideshow_title', $title ) ) . "</{$heading}>";
 					}

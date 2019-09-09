@@ -7,7 +7,7 @@
 if ( ! defined( 'ABSPATH' ) ) {  exit;  }    // Exit if accessed directly
 
 
-if ( !class_exists( 'avia_sc_progressbar' ) )
+if ( ! class_exists( 'avia_sc_progressbar' ) )
 {
 	class avia_sc_progressbar extends aviaShortcodeTemplate
 	{
@@ -18,16 +18,18 @@ if ( !class_exists( 'avia_sc_progressbar' ) )
 			{
 				$this->config['self_closing']	=	'no';
 				
-				$this->config['name']		= __('Progress Bars', 'avia_framework' );
-				$this->config['tab']		= __('Content Elements', 'avia_framework' );
+				$this->config['name']		= __( 'Progress Bars', 'avia_framework' );
+				$this->config['tab']		= __( 'Content Elements', 'avia_framework' );
 				$this->config['icon']		= AviaBuilder::$path['imagesURL']."sc-progressbar.png";
 				$this->config['order']		= 30;
 				$this->config['target']		= 'avia-target-insert';
 				$this->config['shortcode'] 	= 'av_progress';
-				$this->config['shortcode_nested'] = array('av_progress_bar');
-				$this->config['tooltip'] 	= __('Create some progress bars', 'avia_framework' );
+				$this->config['shortcode_nested'] = array( 'av_progress_bar' );
+				$this->config['tooltip'] 	= __( 'Create some progress bars', 'avia_framework' );
 				$this->config['preview'] 	= true;
 				$this->config['disabling_allowed'] = true;
+				$this->config['id_name']	= 'id';
+				$this->config['id_show']	= 'yes';
 			}
 			
 			function extra_assets()
@@ -36,9 +38,9 @@ if ( !class_exists( 'avia_sc_progressbar' ) )
 				wp_enqueue_style( 'avia-module-progress-bar' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/progressbar/progressbar.css' , array('avia-layout'), false );
 				
 				//load js
-				wp_enqueue_script( 'avia-module-numbers' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/numbers/numbers.js' , array('avia-shortcodes'), false, TRUE );
+				wp_enqueue_script( 'avia-module-numbers' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/numbers/numbers.js' , array('avia-shortcodes'), false, true );
 				
-				wp_enqueue_script( 'avia-module-progress-bar' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/progressbar/progressbar.js' , array('avia-shortcodes'), false, TRUE );
+				wp_enqueue_script( 'avia-module-progress-bar' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/progressbar/progressbar.js' , array('avia-shortcodes'), false, true );
 
 			
 			}
@@ -137,15 +139,17 @@ if ( !class_exists( 'avia_sc_progressbar' ) )
 									)
 								),
 								
-								array(
+							array(
 									"name" 	=> __("Progress Bar Coloring", 'avia_framework' ),
 									"desc" 	=> __("Choose the coloring of the progress bar here", 'avia_framework' ),
 									"id" 	=> "bar_styling",
 									"type" 	=> "select",
 									"std" 	=> "av-striped-bar",
 									"subtype" => array(
-									__('Striped',  'avia_framework' ) =>'av-striped-bar',
-									__('Single Color',  'avia_framework' ) =>'av-flat-bar')),
+														__( 'Striped',  'avia_framework' )		=> 'av-striped-bar',
+														__( 'Single Color',  'avia_framework' )	=> 'av-flat-bar' 
+													)
+								),
 															
 							array(
 									"name" 	=> __("Progress Bar Animation enabled?", 'avia_framework' ),
@@ -191,65 +195,16 @@ if ( !class_exists( 'avia_sc_progressbar' ) )
 									"subtype" => AviaHtmlHelper::number_array(1,50,1, array(), 'px')),
 	
 							array(
-							"type" 	=> "close_div",
-							'nodescription' => true
-						),
-						
-						
-								array(
-									"type" 	=> "tab",
-									"name"	=> __("Screen Options",'avia_framework' ),
-									'nodescription' => true
+									"type"			=> "close_div",
+									'nodescription'	=> true
 								),
-								
-								
-								array(
-								"name" 	=> __("Element Visibility",'avia_framework' ),
-								"desc" 	=> __("Set the visibility for this element, based on the device screensize.", 'avia_framework' ),
-								"type" 	=> "heading",
-								"description_class" => "av-builder-note av-neutral",
+					
+							array(	
+									'type'			=> 'template',
+									'template_id'	=> 'screen_options_tab'
 								),
-							
-								array(	
-										"desc" 	=> __("Hide on large screens (wider than 990px - eg: Desktop)", 'avia_framework'),
-										"id" 	=> "av-desktop-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-								
-								array(	
-									
-										"desc" 	=> __("Hide on medium sized screens (between 768px and 989px - eg: Tablet Landscape)", 'avia_framework'),
-										"id" 	=> "av-medium-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-										
-								array(	
-									
-										"desc" 	=> __("Hide on small screens (between 480px and 767px - eg: Tablet Portrait)", 'avia_framework'),
-										"id" 	=> "av-small-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-										
-								array(	
-									
-										"desc" 	=> __("Hide on very small screens (smaller than 479px - eg: Smartphone Portrait)", 'avia_framework'),
-										"id" 	=> "av-mini-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-	
-								
-							array(
-									"type" 	=> "close_div",
-									'nodescription' => true
-								),	
-								
-								
 						
-						
+
 					array(
 						"type" 	=> "close_div",
 						'nodescription' => true
@@ -316,17 +271,21 @@ if ( !class_exists( 'avia_sc_progressbar' ) )
 			 * @param string $shortcodename the shortcode found, when == callback name
 			 * @return string $output returns the modified html string
 			 */
-			function shortcode_handler($atts, $content = "", $shortcodename = "", $meta = "")
+			function shortcode_handler( $atts, $content = "", $shortcodename = "", $meta = "" )
 			{
-				extract(AviaHelper::av_mobile_sizes($atts)); //return $av_font_classes, $av_title_font_classes and $av_display_classes 
-				extract(shortcode_atts(array(	'position'		=>	'left', 
-												'bar_styling'	=>	'av-striped-bar', 
-												'bar_styling_secondary' => '',
-												'show_percentage'	=> false,
-												'bar_height'		=> false,
-												'bar_animation'	=>	'av-animated-bar' ), $atts, $this->config['shortcode']));
+				extract( AviaHelper::av_mobile_sizes( $atts ) ); //return $av_font_classes, $av_title_font_classes and $av_display_classes 
+				
+				extract( shortcode_atts( array(	
+							'position'				=> 'left', 
+							'bar_styling'			=> 'av-striped-bar', 
+							'bar_styling_secondary'	=> '',
+							'show_percentage'		=> false,
+							'bar_height'			=> false,
+							'bar_animation'			=> 'av-animated-bar' 
+						), $atts, $this->config['shortcode'] ) );
 
-				$bars = ShortcodeHelper::shortcode2array($content);
+				$bars = ShortcodeHelper::shortcode2array( $content );
+				
 				$extraClass = $bar_styling." ".$bar_animation." ".$bar_styling_secondary;
 				$output		= "";
 				$bar_style  = "";
@@ -336,9 +295,9 @@ if ( !class_exists( 'avia_sc_progressbar' ) )
 					$bar_style = "style='height:{$bar_height}px;'";
 				}
 				
-				if(!empty($bars))
+				if( ! empty( $bars ) )
 				{
-					$output .= "<div class='avia-progress-bar-container {$av_display_classes} avia_animate_when_almost_visible ".$meta['el_class']." {$extraClass}'>";
+					$output .= "<div {$meta['custom_el_id']} class='avia-progress-bar-container {$av_display_classes} avia_animate_when_almost_visible ".$meta['el_class']." {$extraClass}'>";
 
 						$defaults = array('color' => 'theme-color', 'progress' => "100", 'title'=>"", 'icon'=>'','font'=>'', "icon_select"=>"no");
 

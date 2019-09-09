@@ -19,7 +19,7 @@ if ( ! class_exists( 'avia_update_notifier' ) )
         public $latestversion = '';
         public $themeversion = '';
 
-        public function __construct($xmlurl = NULL, $deactivate = FALSE, $check_for_update_interval = 604800, $remind_me_later_interval = 86400)
+        public function __construct($xmlurl = null, $deactivate = false, $check_for_update_interval = 604800, $remind_me_later_interval = 86400)
         {
             if( empty($xmlurl) || !empty($deactivate) ) return;
             if(!is_admin()) return;

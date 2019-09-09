@@ -18,15 +18,17 @@ if ( !class_exists( 'avia_sc_button' ) )
 			{
 				$this->config['self_closing']	=	'yes';
 				
-				$this->config['name']		= __('Button', 'avia_framework' );
-				$this->config['tab']		= __('Content Elements', 'avia_framework' );
+				$this->config['name']		= __( 'Button', 'avia_framework' );
+				$this->config['tab']		= __( 'Content Elements', 'avia_framework' );
 				$this->config['icon']		= AviaBuilder::$path['imagesURL']."sc-button.png";
 				$this->config['order']		= 85;
 				$this->config['target']		= 'avia-target-insert';
 				$this->config['shortcode'] 	= 'av_button';
-				$this->config['tooltip'] 	= __('Creates a colored button', 'avia_framework' );
-				$this->config['tinyMCE']    = array('tiny_always'=>true);
+				$this->config['tooltip'] 	= __( 'Creates a colored button', 'avia_framework' );
+				$this->config['tinyMCE']    = array( 'tiny_always' => true );
 				$this->config['preview'] 	= true;
+				$this->config['id_name']	= 'id';
+				$this->config['id_show']	= 'yes';
 			}
 			
 			
@@ -62,7 +64,9 @@ if ( !class_exists( 'avia_sc_button' ) )
 							"desc" 	=> __("This is the text that appears on your button.", 'avia_framework' ),
 				            "id" 	=> "label",
 				            "type" 	=> "input",
-				            "std" => __("Click me", 'avia_framework' )),
+				            "std" => __("Click me", 'avia_framework' )
+						),
+					
 				    array(	
 							"name" 	=> __("Button Link?", 'avia_framework' ),
 							"desc" 	=> __("Where should your button link to?", 'avia_framework' ),
@@ -117,9 +121,19 @@ if ( !class_exists( 'avia_sc_button' ) )
 							"type" 	=> "select",
 							"std" 	=> "",
 							"subtype" => array(
-								__('Always display',  'avia_framework' ) => '' ,	
-								__('Display on hover',  'avia_framework' ) =>'av-button-label-on-hover',
-								)),
+								__( 'Always display', 'avia_framework' )	=> '',	
+								__( 'Display on hover', 'avia_framework' )	=> 'av-button-label-on-hover',
+								)
+						),
+					
+					array(	
+							'name'		=> __( 'Button Title Attribute', 'avia_framework' ),
+							'desc'		=> __( 'Add a title attribute for this button.', 'avia_framework' ),
+							'id'		=> 'title_attr',
+							'type'		=> 'input',
+							'required'	=> array( 'label_display', 'equals', '' ),
+							'std'		=> ''
+						),
 					
 					array(	
 							"name" 	=> __("Button Icon", 'avia_framework' ),
@@ -214,58 +228,12 @@ if ( !class_exists( 'avia_sc_button' ) )
 							"type" 	=> "close_div",
 							'nodescription' => true
 						),
-						
-						
-					array(
-									"type" 	=> "tab",
-									"name"	=> __("Screen Options",'avia_framework' ),
-									'nodescription' => true
-								),
-								
-								
-								array(
-								"name" 	=> __("Element Visibility",'avia_framework' ),
-								"desc" 	=> __("Set the visibility for this element, based on the device screensize.", 'avia_framework' ),
-								"type" 	=> "heading",
-								"description_class" => "av-builder-note av-neutral",
-								),
-							
-								array(	
-										"desc" 	=> __("Hide on large screens (wider than 990px - eg: Desktop)", 'avia_framework'),
-										"id" 	=> "av-desktop-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-								
-								array(	
-									
-										"desc" 	=> __("Hide on medium sized screens (between 768px and 989px - eg: Tablet Landscape)", 'avia_framework'),
-										"id" 	=> "av-medium-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-										
-								array(	
-									
-										"desc" 	=> __("Hide on small screens (between 480px and 767px - eg: Tablet Portrait)", 'avia_framework'),
-										"id" 	=> "av-small-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-										
-								array(	
-									
-										"desc" 	=> __("Hide on very small screens (smaller than 479px - eg: Smartphone Portrait)", 'avia_framework'),
-										"id" 	=> "av-mini-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-						
-								
-							array(
-									"type" 	=> "close_div",
-									'nodescription' => true
-								),	
+					
+					
+					array(	
+							'type'			=> 'template',
+							'template_id'	=> 'screen_options_tab'
+						),
 						
 						
 					array(
@@ -305,7 +273,7 @@ if ( !class_exists( 'avia_sc_button' ) )
 				$inner .= "</div>";
 				
 				$params['innerHtml'] = $inner;
-				$params['content'] = NULL;
+				$params['content'] = null;
 				$params['class'] = "";
 				
 				return $params;
@@ -321,24 +289,26 @@ if ( !class_exists( 'avia_sc_button' ) )
 			 * @param string $shortcodename the shortcode found, when == callback name
 			 * @return string $output returns the modified html string 
 			 */
-			function shortcode_handler($atts, $content = "", $shortcodename = "", $meta = "")
+			function shortcode_handler( $atts, $content = "", $shortcodename = "", $meta = "" )
 			{
 				extract(AviaHelper::av_mobile_sizes($atts)); //return $av_font_classes, $av_title_font_classes and $av_display_classes 
 				
-				$atts =  shortcode_atts(array('label' => 'Click me', 
-			                                 'link' => '', 
-			                                 'link_target' => '',
-			                                 'color' => 'theme-color',
-			                                 'custom_bg' => '#444444',
-			                                 'custom_font' => '#ffffff',
-			                                 'size' => 'small',
-			                                 'position' => 'center',
-			                                 'icon_select' => 'yes',
-			                                 'icon' => '', 
-			                                 'font' =>'',
-			                                 'icon_hover' => '',
-			                                 'label_display'=>'',
-			                                 ), $atts, $this->config['shortcode']);
+				$atts = shortcode_atts( array(
+								'label'			=> 'Click me', 
+								'link'			=> '', 
+								'link_target'	=> '',
+								'color'			=> 'theme-color',
+								'custom_bg'		=> '#444444',
+								'custom_font'	=> '#ffffff',
+								'size'			=> 'small',
+								'position'		=> 'center',
+								'icon_select'	=> 'yes',
+								'icon'			=> '', 
+								'font'			=> '',
+								'icon_hover'	=> '',
+								'label_display'	=> '',
+								'title_attr'	=> ''
+							), $atts, $this->config['shortcode'] );
 											 
 				$display_char 	= av_icon($atts['icon'], $atts['font']);
 				$extraClass 	= $atts['icon_hover'] ? "av-icon-on-hover" : "";
@@ -368,6 +338,8 @@ if ( !class_exists( 'avia_sc_button' ) )
 
 			    $link  = AviaHelper::get_url($atts['link']);
 			    $link  = ( ( $link == "http://" ) || ( $link == "manually" ) ) ? "" : $link;
+				
+				$title_attr = ! empty( $atts['title_attr'] ) && empty( $atts['label_display'] ) ? 'title="' . esc_attr( $atts['title_attr'] ) . '"' : '';
 			    
 			    $content_html = "";
 			    if('yes-left-icon' == $atts['icon_select']) $content_html .= "<span class='avia_button_icon avia_button_icon_left ' {$display_char}></span>";
@@ -375,11 +347,11 @@ if ( !class_exists( 'avia_sc_button' ) )
 			    if('yes-right-icon' == $atts['icon_select']) $content_html .= "<span class='avia_button_icon avia_button_icon_right' {$display_char}></span>";
 			    
 			    $output  = "";
-				$output .= "<a href='{$link}' {$data} class='avia-button {$extraClass} {$av_display_classes} ".$this->class_by_arguments('icon_select, color, size, position' , $atts, true)."' {$blank} {$style} >";
-				$output .= $content_html;
-				$output .= "</a>";
+				$output .=	"<a href='{$link}' {$data} class='avia-button {$extraClass} {$av_display_classes} ".$this->class_by_arguments('icon_select, color, size, position' , $atts, true)."' {$blank} {$style} >";
+				$output .=		$content_html;
+				$output .=	"</a>";
 				
-				$output =  "<div class='avia-button-wrap avia-button-".$atts['position']." ".$meta['el_class']."'>".$output."</div>";
+				$output =  "<div {$meta['custom_el_id']} class='avia-button-wrap avia-button-{$atts['position']} {$meta['el_class']}' {$title_attr}>{$output}</div>";
 				
 				return $output;
 			}

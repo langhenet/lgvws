@@ -440,7 +440,13 @@ opacity: 0.3; filter:alpha(opacity=30);
   width: calc(100% + 15px);
 }
 
-/*masonry grayscale/desat effect/blur */
+/*masonry fade_out/grayscale/desat effect/blur */
+#top .av-hover-overlay-fade_out .av-masonry-image-container{
+	opacity: 1.0;
+}
+#top .av-hover-overlay-fade_out .av-masonry-entry:hover .av-masonry-image-container{
+	opacity: 0.2;
+}
 
 #top .av-hover-overlay-grayscale .av-masonry-entry .av-masonry-image-container{
 -webkit-filter:grayscale(1);

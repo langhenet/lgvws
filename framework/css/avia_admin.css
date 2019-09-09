@@ -2140,6 +2140,10 @@ border: 1px solid #E1E1E1;
 text-align: center;
 }
 
+.avia_backend_theme_updates .avia_theme_update_php{
+	padding: 20px 0 0 0;
+	text-align: left;
+}
 
 
 #avia_options_page .avia_section.avia_checkbox .avia_control{width:16px;}

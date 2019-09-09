@@ -192,8 +192,8 @@ jQuery(function($) {
 				elements = $('input, select, textarea', container).not('.avia_button_inactive').not('.avia_dont_activate_save_buttons');
 				
 				//bind click events
-				elements.bind('keydown change', function(){ saveButton.removeClass('avia_button_inactive');});
-				$('.avia_clone_set, .avia_remove_set, .avia_dynamical_add_elements').bind('click', function(){ saveButton.removeClass('avia_button_inactive'); });
+				elements.on('keydown change', function(){ saveButton.removeClass('avia_button_inactive');});
+				$('.avia_clone_set, .avia_remove_set, .avia_dynamical_add_elements').on('click', function(){ saveButton.removeClass('avia_button_inactive'); });
 		},
 		
 		/**

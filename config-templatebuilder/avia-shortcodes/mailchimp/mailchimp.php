@@ -7,13 +7,13 @@
 if ( ! defined( 'ABSPATH' ) ) {  exit;  }    // Exit if accessed directly
 
 
-if ( !class_exists( 'avia_sc_mailchimp' ) )
+if ( ! class_exists( 'avia_sc_mailchimp' ) )
 {
 	class avia_sc_mailchimp extends aviaShortcodeTemplate
 	{
 			
 			//mailchimp api key
-			var $api_key = "";
+			var $api_key = '';
 			
 			// form fields
 			var $fields;
@@ -23,20 +23,22 @@ if ( !class_exists( 'avia_sc_mailchimp' ) )
 			 */
 			function shortcode_insert_button()
 			{
-				$this->api_key = avia_get_option('mailchimp_api');
+				$this->api_key = avia_get_option( 'mailchimp_api' );
 				
 				$this->config['self_closing']	=	'no';
 				
-				$this->config['name']		= __('Mailchimp Signup', 'avia_framework' );
-				$this->config['tab']		= __('Content Elements', 'avia_framework' );
+				$this->config['name']		= __( 'Mailchimp Signup', 'avia_framework' );
+				$this->config['tab']		= __( 'Content Elements', 'avia_framework' );
 				$this->config['icon']		= AviaBuilder::$path['imagesURL']."sc-contact.png";
 				$this->config['order']		= 10;
 				$this->config['target']		= 'avia-target-insert';
 				$this->config['shortcode'] 	= 'av_mailchimp';
 				$this->config['shortcode_nested'] = array('av_mailchimp_field');
-				$this->config['tooltip'] 	= __('Creates a mailschimp signup form', 'avia_framework' );
+				$this->config['tooltip'] 	= __( 'Creates a mailschimp signup form', 'avia_framework' );
 				$this->config['preview'] 	= false;
 				$this->config['disabling_allowed'] = true;
+				$this->config['id_name']	= 'id';
+				$this->config['id_show']	= 'yes';
 			}
 			
 			function extra_assets()
@@ -45,7 +47,7 @@ if ( !class_exists( 'avia_sc_mailchimp' ) )
 				wp_enqueue_style( 'avia-module-contact' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/contact/contact.css' , array('avia-layout'), false );
 				
 					//load js
-				wp_enqueue_script( 'avia-module-contact' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/contact/contact.js' , array('avia-shortcodes'), false, TRUE );
+				wp_enqueue_script( 'avia-module-contact' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/contact/contact.js' , array('avia-shortcodes'), false, true );
 			
 			}
 
@@ -300,58 +302,12 @@ if ( !class_exists( 'avia_sc_mailchimp' ) )
 							"type" 	=> "close_div",
 							'nodescription' => true
 						),
-						
-						array(
-									"type" 	=> "tab",
-									"name"	=> __("Screen Options",'avia_framework' ),
-									'nodescription' => true
-								),
-								
-								
-								array(
-								"name" 	=> __("Element Visibility",'avia_framework' ),
-								"desc" 	=> __("Set the visibility for this element, based on the device screensize.", 'avia_framework' ),
-								"type" 	=> "heading",
-								"description_class" => "av-builder-note av-neutral",
-								),
-							
-								array(	
-										"desc" 	=> __("Hide on large screens (wider than 990px - eg: Desktop)", 'avia_framework'),
-										"id" 	=> "av-desktop-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-								
-								array(	
-									
-										"desc" 	=> __("Hide on medium sized screens (between 768px and 989px - eg: Tablet Landscape)", 'avia_framework'),
-										"id" 	=> "av-medium-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-										
-								array(	
-									
-										"desc" 	=> __("Hide on small screens (between 480px and 767px - eg: Tablet Portrait)", 'avia_framework'),
-										"id" 	=> "av-small-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-										
-								array(	
-									
-										"desc" 	=> __("Hide on very small screens (smaller than 479px - eg: Smartphone Portrait)", 'avia_framework'),
-										"id" 	=> "av-mini-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-	
-								
-							array(
-									"type" 	=> "close_div",
-									'nodescription' => true
-								),	
-						
+					
+					array(	
+							'type'			=> 'template',
+							'template_id'	=> 'screen_options_tab'
+						),
+					
 					array(
 							"type" 	=> "close_div",
 							'nodescription' => true
@@ -360,9 +316,6 @@ if ( !class_exists( 'avia_sc_mailchimp' ) )
 
 				));
 				
-				
-				
-
 			}
 
 			/**
@@ -400,9 +353,12 @@ if ( !class_exists( 'avia_sc_mailchimp' ) )
 			 * @param string $shortcodename the shortcode found, when == callback name
 			 * @return string $output returns the modified html string
 			 */
-			function shortcode_handler($atts, $content = "", $shortcodename = "", $meta = "")
+			function shortcode_handler( $atts, $content = "", $shortcodename = "", $meta = "" )
 			{
-				if(empty($this->api_key)) return;
+				if( empty( $this->api_key ) ) 
+				{
+					return '';
+				}
 				
 				$lists 		= get_option('av_chimplist');
 				$newlist 	= array();
@@ -419,28 +375,29 @@ if ( !class_exists( 'avia_sc_mailchimp' ) )
 				
 				$lists = $newlist;
 				
-				extract(AviaHelper::av_mobile_sizes($atts)); //return $av_font_classes, $av_title_font_classes and $av_display_classes 
+				extract( AviaHelper::av_mobile_sizes( $atts ) ); //return $av_font_classes, $av_title_font_classes and $av_display_classes 
 				
-				$atts =  shortcode_atts(
-							apply_filters( 'avf_sc_mailchimp_atts', 
-										array(
-											'list' => "",
-											'email' 		=> get_option('admin_email'),
-											'button' 		=> __("Submit", 'avia_framework' ),
-											'captcha' 		=> '',
-											'subject'		=> '',
-											'on_send'		=> '',
-											'link'			=> '',
-											'sent'			=> __("Thank you for subscribing to our newsletter!", 'avia_framework' ),
-											'color'			=> "",
-											'hide_labels'	=> "",
-											'form_align'	=> "",
-											 'listonly'		=> false, //if we should only use the list items or sub shortcodes
-											 'double_opt_in'=> ""
+				$atts = shortcode_atts( apply_filters( 'avf_sc_mailchimp_atts', array(
+								'list'			=> "",
+								'email' 		=> get_option( 'admin_email' ),
+								'button' 		=> __( "Submit", 'avia_framework' ),
+								'captcha' 		=> '',
+								'subject'		=> '',
+								'on_send'		=> '',
+								'link'			=> '',
+								'sent'			=> __( "Thank you for subscribing to our newsletter!", 'avia_framework' ),
+								'color'			=> "",
+								'hide_labels'	=> "",
+								'form_align'	=> "",
+								'listonly'		=> false, //if we should only use the list items or sub shortcodes
+								'double_opt_in'	=> ""
 
-			                                 )), $atts, $this->config['shortcode']);
+							) ), $atts, $this->config['shortcode'] );
 				
-				if( empty( $atts['list'] ) ) return;
+				if( empty( $atts['list'] ) ) 
+				{
+					return '';
+				}
 				
 				//extract form fields
 				
@@ -454,9 +411,12 @@ if ( !class_exists( 'avia_sc_mailchimp' ) )
 					$form_fields = $this->helper_array2form_fields(ShortcodeHelper::shortcode2array($content, 1));
 				}
 				
-				if( empty( $form_fields ) ) return;
+				if( empty( $form_fields ) ) 
+				{
+					return '';
+				}
 				
-				extract($atts);
+				extract( $atts );
 
 				$post_id  = function_exists('avia_get_the_id') ? avia_get_the_id() : get_the_ID();
 				$redirect = !empty($on_send) ? AviaHelper::get_url($link) : "";
@@ -481,25 +441,24 @@ if ( !class_exists( 'avia_sc_mailchimp' ) )
 				if(!empty($form_align)) $meta['el_class'] .= " av-centered-form ";
 				
 				$form_args = array(
-					"heading" 				=> "",
-					"success" 				=> "<{$heading} class='avia-form-success avia-mailchimp-success {$css}'>{$sent}</{$heading}>",
-					"submit"  				=> $button,
-					"myemail" 				=> $email,
-					"action"  				=> get_permalink($post_id),
-					"myblogname" 			=> get_option('blogname'),
-					"subject"				=> $subject,
-					"form_class" 			=> $meta['el_class']." ".$color." avia-mailchimp-form"." ".$av_display_classes,
-					"form_data" 			=> array('av-custom-send'=>'mailchimp_send'),
-					"multiform"  			=> true, //allows creation of multiple forms without id collision
-					"label_first"  			=> true,
-					"redirect"				=> $redirect,
-					"placeholder"			=> $hide_labels,
-					"mailchimp"				=> $atts['list'],
-					"custom_send"			=> array($this, 'send'),
-					"double_opt_in"			=> $atts['double_opt_in'],
-			       
-					
-				);
+								"heading" 				=> "",
+								"success" 				=> "<{$heading} class='avia-form-success avia-mailchimp-success {$css}'>{$sent}</{$heading}>",
+								"submit"  				=> $button,
+								"myemail" 				=> $email,
+								"action"  				=> get_permalink($post_id),
+								"myblogname" 			=> get_option('blogname'),
+								"subject"				=> $subject,
+								"form_class" 			=> $meta['el_class']." ".$color." avia-mailchimp-form"." ".$av_display_classes,
+								"form_data" 			=> array('av-custom-send'=>'mailchimp_send'),
+								"multiform"  			=> true, //allows creation of multiple forms without id collision
+								"label_first"  			=> true,
+								"redirect"				=> $redirect,
+								"placeholder"			=> $hide_labels,
+								"mailchimp"				=> $atts['list'],
+								"custom_send"			=> array($this, 'send'),
+								"double_opt_in"			=> $atts['double_opt_in'],
+								'el-id'					=> $meta['custom_el_id']
+							);
 				
 				
 				
@@ -557,7 +516,11 @@ if ( !class_exists( 'avia_sc_mailchimp' ) )
 					}
 					
 					//make sure that the username is not filled in, otherwise a bot has sent the form. if so simply fake the send event
-					if(!empty($post_data['username']) ) return true;
+					if( ! empty( $post_data['username'] ) )
+					{
+						$instance->submit_error = __( 'Illegal request.', 'avia_framework' );
+						return false;
+					}
 					
 					//iterate over form fields to generate the merge field data
 					if( empty( $this->fields ) ) 

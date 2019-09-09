@@ -32,15 +32,17 @@ if ( ! class_exists( 'avia_sc_upcoming_events' ) )
 		{
 			$this->config['self_closing']	=	'yes';
 			
-			$this->config['name']		= __('Upcoming Events', 'avia_framework' );
-			$this->config['tab']		= __('Plugin Additions', 'avia_framework' );
+			$this->config['name']		= __( 'Upcoming Events', 'avia_framework' );
+			$this->config['tab']		= __( 'Plugin Additions', 'avia_framework' );
 			$this->config['icon']		= AviaBuilder::$path['imagesURL']."sc-blog.png";
 			$this->config['order']		= 30;
 			$this->config['target']		= 'avia-target-insert';
 			$this->config['shortcode'] 	= 'av_upcoming_events';
-			$this->config['tooltip'] 	= __('Show a list of upcoming events', 'avia_framework' );
+			$this->config['tooltip'] 	= __( 'Show a list of upcoming events', 'avia_framework' );
 			$this->config['drag-level'] = 3;
 			$this->config['disabling_allowed'] = true;
+			$this->config['id_name']	= 'id';
+			$this->config['id_show']	= 'yes';
 		}
 		
 		/**
@@ -65,14 +67,25 @@ if ( ! class_exists( 'avia_sc_upcoming_events' ) )
 			$this->elements = array(
 
 				array(
-						"name" 	=> __("Which Entries?", 'avia_framework' ),
-						"desc" 	=> __("Select which entries should be displayed by selecting a taxonomy", 'avia_framework' ),
-						"id" 	=> "categories",
-						"type" 	=> "select",
-						"taxonomy" => Tribe__Events__Main::TAXONOMY,
-					    "subtype" => "cat",
-						"multiple"	=> 6
-				),
+						'type'			=> 'tab_container', 
+						'nodescription'	=> true
+						),
+						
+				array(
+						'type'			=> 'tab',
+						'name'			=> __( 'Content' , 'avia_framework' ),
+						'nodescription'	=> true
+					),
+				
+				array(
+						'name'		=> __( 'Which Entries?', 'avia_framework' ),
+						'desc'		=> __( 'Select which entries should be displayed by selecting a taxonomy. If none are selected all events are shown.', 'avia_framework' ),
+						'id'		=> 'categories',
+						'type'		=> 'select',
+						'taxonomy'	=> Tribe__Events__Main::TAXONOMY,
+						'subtype'	=> 'cat',
+						'multiple'	=> 6
+					),
 
 				array(
 						"name" 	=> __("Entry Number", 'avia_framework' ),
@@ -83,14 +96,26 @@ if ( ! class_exists( 'avia_sc_upcoming_events' ) )
 						"subtype" => AviaHtmlHelper::number_array(1,100,1, array('All'=>'-1'))),
 
 				array(
-							"name" 	=> __("Pagination", 'avia_framework' ),
-							"desc" 	=> __("Should a pagination be displayed?", 'avia_framework' ),
-							"id" 	=> "paginate",
-							"type" 	=> "select",
-							"std" 	=> "no",
-							"subtype" => array(
-								__('yes',  'avia_framework' ) =>'yes',
-								__('no',  'avia_framework' ) =>'no')),
+						"name" 	=> __("Pagination", 'avia_framework' ),
+						"desc" 	=> __("Should a pagination be displayed?", 'avia_framework' ),
+						"id" 	=> "paginate",
+						"type" 	=> "select",
+						"std" 	=> "no",
+						"subtype" => array(
+											__( 'yes', 'avia_framework' )	=> 'yes',
+											__( 'no', 'avia_framework' )	=> 'no'
+										)
+					),
+				
+				array(
+						'type'			=> 'close_div',
+						'nodescription'	=> true
+					),
+
+				array(
+						'type'			=> 'close_div',
+						'nodescription'	=> true
+					),
 
 				);
 		}
@@ -108,7 +133,7 @@ if ( ! class_exists( 'avia_sc_upcoming_events' ) )
 		{
 			$params['innerHtml'] = "<img src='".$this->config['icon']."' title='".$this->config['name']."' />";
 			$params['innerHtml'].= "<div class='avia-element-label'>".$this->config['name']."</div>";
-			$params['content'] 	 = NULL; //remove to allow content elements
+			$params['content'] 	 = null; //remove to allow content elements
 			return $params;
 		}
 
@@ -124,11 +149,11 @@ if ( ! class_exists( 'avia_sc_upcoming_events' ) )
 		 */
 		function shortcode_handler( $atts, $content = "", $shortcodename = "", $meta = "" )
 		{
-			$atts =  shortcode_atts(array(
-											'categories' 	=> '',
-											'items' 		=> '3',
-											'paginate'		=> 'no',
-										), $atts, $this->config['shortcode'] );
+			$atts =  shortcode_atts( array(
+						'categories' 	=> '',
+						'items' 		=> '3',
+						'paginate'		=> 'no',
+					), $atts, $this->config['shortcode'] );
 			
 			$output = '';
 			$posts 	= $this->query_entries( $atts );
@@ -145,7 +170,7 @@ if ( ! class_exists( 'avia_sc_upcoming_events' ) )
 				global $post;
 				
 				$default_id = $post->ID;
-				$output .= "<div class='av-upcoming-events " . $meta['el_class'] . "'>";
+				$output .= "<div {$meta['custom_el_id']} class='av-upcoming-events {$meta['el_class']}'>";
 				
 				foreach( $entries as $index => $entry )
 				{	
@@ -236,12 +261,9 @@ if ( ! class_exists( 'avia_sc_upcoming_events' ) )
 				$params = $this->atts;
 			}
 
-			if( ! empty( $params['categories'] ) )
-			{
-				//get the portfolio categories
-				$terms 	= explode( ',', $params['categories'] );
-			}
-
+			//	get the event categories
+			$terms =( ! empty( $params['categories'] ) ) ? explode( ',', $params['categories'] ) : array();
+			
 			$page = get_query_var( 'paged' ) ? get_query_var( 'paged' ) : get_query_var( 'page' );
 			if( ! $page || $params['paginate'] == 'no') 
 			{
@@ -249,33 +271,26 @@ if ( ! class_exists( 'avia_sc_upcoming_events' ) )
 			}
 			
 			$start_date = date( 'Y-m-d' );
+			
+			$query = array(	
+							'paged'				=> $page, 
+							'posts_per_page'	=> $params['items'],
+							'start_date'		=> $start_date,
+							'eventDisplay'		=> 'list'
+						);
 
-			//if we find categories perform complex query, otherwise simple one
+			//if we find categories perform complex query
 			if( isset( $terms[0] ) && ! empty( $terms[0] ) && ! is_null( $terms[0] ) && $terms[0] != "null" )
 			{
-				$query = array(	
-								'paged'				=> $page,
-								'eventDisplay'		=> 'list',
-								'posts_per_page'	=> $params['items'],
-								'start_date'		=> $start_date,
-								'tax_query'			=> array( 	
-														array( 	'taxonomy' 	=> Tribe__Events__Main::TAXONOMY,
-																'field' 	=> 'id',
-																'terms' 	=> $terms,
-																'operator' 	=> 'IN'
-															)
-														)
-							);
+				$query['tax_query'] = array( 	
+										array( 	'taxonomy' 	=> Tribe__Events__Main::TAXONOMY,
+												'field' 	=> 'id',
+												'terms' 	=> $terms,
+												'operator' 	=> 'IN'
+											)
+										);
 			}
-			else
-			{
-				$query = array(	
-								'paged'				=> $page, 
-								'posts_per_page'	=> $params['items'],
-								'start_date'		=> $start_date,
-								'eventDisplay'		=> 'list'
-							);
-			}
+			
 
 			/**
 			 * @since < 4.0

@@ -104,8 +104,15 @@ if( ! class_exists( 'avia_social_media_icons' ) )
 		 */
 		protected function build_icon( $icon )
 		{
+			global $avia_config;
+					
+			$display_name = ucfirst( $icon['social_icon'] );
+			if( ! empty( $avia_config['font_icons'][ $icon['social_icon'] ]['display_name'] ) )
+			{
+				$display_name = $avia_config['font_icons'][ $icon['social_icon'] ]['display_name'];
+			}
 			
-			$aria_label = sprintf( __( 'Link to %s', 'avia_framework' ), ucfirst( $icon['social_icon'] ) );
+			$aria_label = sprintf( __( 'Link to %s', 'avia_framework' ), $display_name );
 			
 			/**
 			 * special cases
@@ -157,8 +164,8 @@ if( ! class_exists( 'avia_social_media_icons' ) )
 			
 			$html  = "";
 			$html .= "<{$this->args['inside']} class='{$this->args['class']}_{$icon['social_icon']} av-social-link-{$icon['social_icon']} social_icon_{$this->counter}'>";
-			$html .=	"<a {$blank} {$aria_label} href='" . esc_url( $icon['social_icon_link'] ) . "' " . av_icon_string( $icon['social_icon'] ) . " title='" . ucfirst( $icon['social_icon'] ) . "'>";
-			$html .=		"<span class='avia_hidden_link_text'>" . ucfirst($icon['social_icon']) . "</span>";
+			$html .=	"<a {$blank} {$aria_label} href='" . esc_url( $icon['social_icon_link'] ) . "' " . av_icon_string( $icon['social_icon'] ) . " title='{$display_name}'>";
+			$html .=		"<span class='avia_hidden_link_text'>{$display_name}</span>";
 			$html .=	'</a>';
 			
 			$html .= "</{$this->args['inside']}>";
@@ -247,6 +254,14 @@ if( ! class_exists( 'avia_social_share_links' ) )
 		protected $counter;
 		
 		/**
+		 *
+		 * @since 4.5.7.1
+		 * @var array 
+		 */
+		protected $post_data;
+		
+		
+		/**
 		 * Initialize the variables necessary for all social media links
 		 * 
 		 * @since < 4.0
@@ -260,9 +275,9 @@ if( ! class_exists( 'avia_social_share_links' ) )
 			(
 				'facebook' 	=> array("encode"=>true, "encode_urls"=>false, "pattern" => "https://www.facebook.com/sharer.php?u=[permalink]&amp;t=[title]"),
 				'twitter' 	=> array("encode"=>true, "encode_urls"=>false, "pattern" => "https://twitter.com/share?text=[title]&url=[shortlink]"),
-				'gplus' 	=> array("encode"=>true, "encode_urls"=>false, "pattern" => "https://plus.google.com/share?url=[permalink]" , 'label' => __("Share on Google+",'avia_framework')),
+				'whatsapp'	=> array("encode"=>true, "encode_urls"=>false, "pattern" => "https://api.whatsapp.com/send?text=[permalink]", 'label' => __( 'Share on WhatsApp', 'avia_framework' ) ),
 				'pinterest' => array("encode"=>true, "encode_urls"=>true, "pattern" => "https://pinterest.com/pin/create/button/?url=[permalink]&amp;description=[title]&amp;media=[thumbnail]"),
-				'linkedin' 	=> array("encode"=>true, "encode_urls"=>false, "pattern" => "https://linkedin.com/shareArticle?mini=true&amp;title=[title]&amp;url=[permalink]"),
+				'linkedin' 	=> array("encode"=>true, "encode_urls"=>false, "pattern" => "https://linkedin.com/shareArticle?mini=true&amp;title=[title]&amp;url=[permalink]" ),
 				'tumblr' 	=> array("encode"=>true, "encode_urls"=>true, "pattern" => "https://www.tumblr.com/share/link?url=[permalink]&amp;name=[title]&amp;description=[excerpt]"),
 				'vk' 		=> array("encode"=>true, "encode_urls"=>false, "pattern" => "https://vk.com/share.php?url=[permalink]"),
 				'reddit' 	=> array("encode"=>true, "encode_urls"=>false, "pattern" => "https://reddit.com/submit?url=[permalink]&amp;title=[title]"),
@@ -270,11 +285,13 @@ if( ! class_exists( 'avia_social_share_links' ) )
 			);
 			
 			$this->args = apply_filters( 'avia_social_share_link_arguments', array_merge( $default_arguments, $args ) );
+			
 			$this->options = ( empty( $options ) ) ? avia_get_option() : $options;
 			$this->title = $title !== false ? $title : __( 'Share this entry', 'avia_framework' );
 			$this->links = array();
 			$this->html = '';
 			$this->counter = 0;
+			$this->post_data = array();
 			
 			$this->build_share_links();
 		}
@@ -287,6 +304,7 @@ if( ! class_exists( 'avia_social_share_links' ) )
 			unset( $this->args );
 			unset( $this->options );
 			unset( $this->links );
+			unset( $this->post_data );
 		}
 		
 		/**
@@ -304,7 +322,7 @@ if( ! class_exists( 'avia_social_share_links' ) )
 			$replace['title'] 		= ! isset( $this->post_data['title'] ) ? get_the_title() : $this->post_data['title'];
 			$replace['excerpt'] 	= ! isset( $this->post_data['excerpt'] ) ? get_the_excerpt() : $this->post_data['excerpt'];
 			$replace['shortlink']	= ! isset( $this->post_data['shortlink'] ) ? wp_get_shortlink() : $this->post_data['shortlink'];
-			$replace['thumbnail']	= is_array( $thumb ) && isset($thumb[0] ) ? $thumb[0] : '';
+			$replace['thumbnail']	= is_array( $thumb ) && isset( $thumb[0] ) ? $thumb[0] : '';
 			$replace['thumbnail']	= ! isset( $this->post_data['thumbnail'] ) ? $replace['thumbnail'] : $this->post_data['thumbnail'];
 			
 			$replace = apply_filters( 'avia_social_share_link_replace_values', $replace );
@@ -349,6 +367,8 @@ if( ! class_exists( 'avia_social_share_links' ) )
 		 */
 		public function html()
 		{
+			global $avia_config;
+			
 			$this->html = '';
 			
 			if( $this->counter == 0 ) 
@@ -359,9 +379,27 @@ if( ! class_exists( 'avia_social_share_links' ) )
 			$this->html .=	"<div class='av-share-box'>";
 			if( $this->title )
 			{
-				$this->html .= 		"<h5 class='av-share-link-description av-no-toc'>";
+
+				$default_heading = 'h5';
+				$args = array(
+							'heading'		=> $default_heading,
+							'extra_class'	=> ''
+						);
+
+				$extra_args = array( $this, 'title' );
+
+				/**
+				 * @since 4.5.7.1
+				 * @return array
+				 */
+				$args = apply_filters( 'avf_customize_heading_settings', $args, __CLASS__, $extra_args );				
+				
+				$heading = ! empty( $args['heading'] ) ? $args['heading'] : $default_heading;
+				$css = ! empty( $args['extra_class'] ) ? $args['extra_class'] : '';
+				
+				$this->html .= 		"<{$heading} class='av-share-link-description av-no-toc {$css}'>";
 				$this->html .=			apply_filters( 'avia_social_share_title', $this->title , $this->args );
-				$this->html .= 		"</h5>";
+				$this->html .= 		"</{$heading}>";
 			}
 			$this->html .= 		"<ul class='av-share-box-list noLightbox'>";
 			
@@ -373,8 +411,14 @@ if( ! class_exists( 'avia_social_share_links' ) )
 				}
 				
 				$icon = isset( $share['icon'] ) ? $share['icon'] : $key;
-				$name = isset( $share['label'] )? $share['label']: __( 'Share on','avia_framework') . ' ' . ucfirst( $key );
 				
+				$source = ucfirst( $key );
+				if( ! empty( $avia_config['font_icons'][ $key ]['display_name'] ) )
+				{
+					$source = $avia_config['font_icons'][ $key ]['display_name'];
+				}
+				
+				$name = isset( $share['label'] )? $share['label']: __( 'Share on','avia_framework') . ' ' . $source;
 				$blank = strpos( $share['url'], 'mailto' ) !== false ? '' : 'target="_blank"';
 				
 				/**
@@ -391,11 +435,11 @@ if( ! class_exists( 'avia_social_share_links' ) )
 				$this->html .=			"<a {$blank} {$aria_label} href='" . esc_url( $share['url'] ) . "' " . av_icon_string( $icon ) . " title='' data-avia-related-tooltip='{$name}'>";
 				$this->html .=				"<span class='avia_hidden_link_text'>{$name}</span>";
 				$this->html .=			'</a>';
-				$this->html .=		"</li>";
+				$this->html .=		'</li>';
 			}
 			
-			$this->html .= 		"</ul>";
-			$this->html .=	"</div>";
+			$this->html .= 		'</ul>';
+			$this->html .=	'</div>';
 			
 			return $this->html;
 		}
@@ -414,7 +458,7 @@ if( ! function_exists('avia_social_share_links') )
 	 * @param type $echo
 	 * @return string
 	 */
-	function avia_social_share_links($args = array(), $options = false, $title = false, $echo = true)
+	function avia_social_share_links( $args = array(), $options = false, $title = false, $echo = true )
 	{
 		$icons = new avia_social_share_links( $args, $options, $title );
 		

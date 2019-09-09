@@ -18,16 +18,18 @@ if ( !class_exists( 'avia_sc_content_slider' ) )
 			{
 				$this->config['self_closing']	=	'no';
 				
-				$this->config['name']			= __('Content Slider', 'avia_framework' );
-				$this->config['tab']			= __('Content Elements', 'avia_framework' );
+				$this->config['name']			= __( 'Content Slider', 'avia_framework' );
+				$this->config['tab']			= __( 'Content Elements', 'avia_framework' );
 				$this->config['icon']			= AviaBuilder::$path['imagesURL']."sc-contentslider.png";
 				$this->config['order']			= 83;
 				$this->config['target']			= 'avia-target-insert';
 				$this->config['shortcode'] 		= 'av_content_slider';
-				$this->config['shortcode_nested'] = array('av_content_slide');
-				$this->config['tooltip'] 	    = __('Display a content slider element', 'avia_framework' );
+				$this->config['shortcode_nested'] = array( 'av_content_slide' );
+				$this->config['tooltip'] 	    = __( 'Display a content slider element', 'avia_framework' );
 				$this->config['preview'] 		= false;
 				$this->config['disabling_allowed'] = true;
+				$this->config['id_name']		= 'id';
+				$this->config['id_show']		= 'yes';
 			}
 			
 			function extra_assets()
@@ -38,7 +40,7 @@ if ( !class_exists( 'avia_sc_content_slider' ) )
 				wp_enqueue_style( 'avia-module-slideshow-contentpartner' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/contentslider/contentslider.css' , array('avia-module-slideshow'), false );
 				
 					//load js
-				wp_enqueue_script( 'avia-module-slideshow' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/slideshow/slideshow.js' , array('avia-shortcodes'), false, TRUE );
+				wp_enqueue_script( 'avia-module-slideshow' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/slideshow/slideshow.js' , array('avia-shortcodes'), false, true );
 
 			
 			}
@@ -86,7 +88,13 @@ if ( !class_exists( 'avia_sc_content_slider' ) )
                                 "id" 	=> "title",
                                 "std" 	=> "Slide Title",
                                 "type" 	=> "input"),
-
+							
+							array(	
+									'type'				=> 'template',
+									'template_id'		=> 'heading_tag',
+									'theme_default'		=> 'h3',
+									'context'			=> __CLASS__
+								),
 
                             array(
                                 "name" 	=> __("Title Link?", 'avia_framework' ),
@@ -132,6 +140,13 @@ if ( !class_exists( 'avia_sc_content_slider' ) )
                         "type"  => "input",
                         "std"   => "",
                     ),
+					
+					array(	
+								'type'				=> 'template',
+								'template_id'		=> 'heading_tag',
+								'theme_default'		=> 'h3',
+								'context'			=> __CLASS__
+							),
 
                     array(
                         "name" 	=> __("Columns", 'avia_framework' ),
@@ -226,57 +241,10 @@ if ( !class_exists( 'avia_sc_content_slider' ) )
 						),
 					
 					
-					array(
-									"type" 	=> "tab",
-									"name"	=> __("Screen Options",'avia_framework' ),
-									'nodescription' => true
-								),
-								
-								
-								array(
-								"name" 	=> __("Element Visibility",'avia_framework' ),
-								"desc" 	=> __("Set the visibility for this element, based on the device screensize.", 'avia_framework' ),
-								"type" 	=> "heading",
-								"description_class" => "av-builder-note av-neutral",
-								),
-							
-								array(	
-										"desc" 	=> __("Hide on large screens (wider than 990px - eg: Desktop)", 'avia_framework'),
-										"id" 	=> "av-desktop-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-								
-								array(	
-									
-										"desc" 	=> __("Hide on medium sized screens (between 768px and 989px - eg: Tablet Landscape)", 'avia_framework'),
-										"id" 	=> "av-medium-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-										
-								array(	
-									
-										"desc" 	=> __("Hide on small screens (between 480px and 767px - eg: Tablet Portrait)", 'avia_framework'),
-										"id" 	=> "av-small-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-										
-								array(	
-									
-										"desc" 	=> __("Hide on very small screens (smaller than 479px - eg: Smartphone Portrait)", 'avia_framework'),
-										"id" 	=> "av-mini-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-								
-								
-							array(
-									"type" 	=> "close_div",
-									'nodescription' => true
-								),
-					
+					array(	
+							'type'			=> 'template',
+							'template_id'	=> 'screen_options_tab'
+						),
 					
 					array(
 							"type" 	=> "close_div",
@@ -338,30 +306,30 @@ if ( !class_exists( 'avia_sc_content_slider' ) )
 			 * @param string $shortcodename the shortcode found, when == callback name
 			 * @return string $output returns the modified html string
 			 */
-			function shortcode_handler($atts, $content = "", $shortcodename = "", $meta = "")
+			function shortcode_handler( $atts, $content = "", $shortcodename = "", $meta = "" )
 			{
-			
-				$atts = shortcode_atts(array(
-                'type'          => 'slider',
-				'autoplay'		=> 'false',
-                'animation'     => 'fade',
-				'interval'		=> 5,
-                'navigation'    => 'arrows',
-				'heading'		=> '',
-                'columns'       => 3,
-				'handle'		=> $shortcodename,
-				'content'		=> ShortcodeHelper::shortcode2array($content, 1),
-				'class'			=> $meta['el_class'],
-                'custom_markup' => $meta['custom_markup'],
-                'font_color' 	=> '',
-                'color' 		=> '',
-                'styling'		=> '',
-                'av-desktop-hide'=>'',
-                'av-medium-hide'=>'',
-                'av-small-hide'=>'',
-                'av-mini-hide'=>'',
-                
-				), $atts, $this->config['shortcode']);
+				$meta = aviaShortcodeTemplate::set_frontend_developer_heading_tag( $atts, $meta );
+				
+				$atts = shortcode_atts( array(
+								'type'				=> 'slider',
+								'autoplay'			=> 'false',
+								'animation'			=> 'fade',
+								'interval'			=> 5,
+								'navigation'		=> 'arrows',
+								'heading'			=> '',
+								'columns'			=> 3,
+								'handle'			=> $shortcodename,
+								'content'			=> ShortcodeHelper::shortcode2array( $content, 1 ),
+								'class'				=> $meta['el_class'],
+								'custom_markup'		=> $meta['custom_markup'],
+								'font_color'		=> '',
+								'color'				=> '',
+								'styling'			=> '',
+								'av-desktop-hide'	=> '',
+								'av-medium-hide'	=> '',
+								'av-small-hide'		=> '',
+								'av-mini-hide'		=> ''
+							), $atts, $this->config['shortcode'] );
 				
 				
 				if($atts['font_color'] == "custom")
@@ -371,8 +339,12 @@ if ( !class_exists( 'avia_sc_content_slider' ) )
 					if($atts['styling']) $atts['styling'] = " style='".$atts['styling']."'" ;
 				}
 				
+				$atts['el_id'] = $meta['custom_el_id'];
+				$atts['heading_tag'] = $meta['heading_tag'];
+				$atts['heading_class'] = $meta['heading_class'];
+				$atts['caller'] = $this;
 				
-				$slider  = new avia_content_slider($atts);
+				$slider  = new avia_content_slider( $atts );
 				return $slider->html();
 			}
 
@@ -387,52 +359,81 @@ if ( !class_exists( 'avia_sc_content_slider' ) )
 
 
 
-if ( !class_exists( 'avia_content_slider' ) )
+if ( ! class_exists( 'avia_content_slider' ) )
 {
 	class avia_content_slider
 	{
-		static  $slider = 0; 				//slider count for the current page
-		protected $config;	 				//base config set on initialization
+		
+		/**
+		 * slider count for the current page
+		 * 
+		 * @var int 
+		 */
+		static public $slider = 0;
+		
+		/**
+		 * base config set on initialization
+		 * 
+		 * @var array 
+		 */
+		protected $config;
 
-		function __construct($config)
+		/**
+		 * 
+		 * @param array $config
+		 */
+		public function __construct( $config )
 		{
-            global $avia_config;
-            $output = "";
-
-			$this->config = array_merge(array(
-                'type'          => 'grid',
-				'autoplay'		=> 'false',
-                'animation'     => 'fade',
-				'handle'		=> '',
-				'heading'		=> '',
-                'navigation'    => 'arrows',
-                'columns'       => 3,
-				'interval'		=> 5,
-				'class'			=> "",
-                'custom_markup' => "",
-				'css_id'		=> "",
-				'content'		=> array(),
-				'styling'		=> ""
-				), $config);
+			$this->config = array_merge( array(
+									'type'          => 'grid',
+									'autoplay'		=> 'false',
+									'animation'     => 'fade',
+									'handle'		=> '',
+									'heading'		=> '',
+									'navigation'    => 'arrows',
+									'columns'       => 3,
+									'interval'		=> 5,
+									'class'			=> "",
+									'custom_markup' => "",
+									'css_id'		=> "",
+									'content'		=> array(),
+									'styling'		=> "",
+									'el_id'			=> '',
+									'heading_tag'	=> '',
+									'heading_class'	=> '',
+									'caller'		=> null
+								), $config );
 		}
 
+		/**
+		 * 
+		 * @since 4.5.7.2
+		 */
+		public function __destruct() 
+		{
+			unset( $this->config );
+		}
 
 		public function html()
 		{
-			$output = "";
+			$output = '';
 			$counter = 0;
             avia_content_slider::$slider++;
-			if(empty($this->config['content'])) return $output;
+			
+			if( empty( $this->config['content'] ) ) 
+			{
+				return $output;
+			}
 
             //$html .= empty($this->subslides) ? $this->default_slide() : $this->advanced_slide();
 			
-			extract(AviaHelper::av_mobile_sizes($this->config)); //return $av_font_classes, $av_title_font_classes and $av_display_classes 
-            extract($this->config);
+			extract( AviaHelper::av_mobile_sizes( $this->config ) ); //return $av_font_classes, $av_title_font_classes and $av_display_classes 
+            extract( $this->config );
 			
-			$default_heading = 'h3';
+			$default_heading = ! empty( $heading_tag ) ? $heading_tag : 'h3';
 			$args = array(
 						'heading'		=> $default_heading,
-						'extra_class'	=> ''
+						'extra_class'	=> $heading_class
 					);
 
 			$extra_args = array( $this, 'slider_title' );
@@ -444,7 +445,7 @@ if ( !class_exists( 'avia_content_slider' ) )
 			$args = apply_filters( 'avf_customize_heading_settings', $args, __CLASS__, $extra_args );
 
 			$heading1 = ! empty( $args['heading'] ) ? $args['heading'] : $default_heading;
-			$css = ! empty( $args['extra_class'] ) ? $args['extra_class'] : '';
+			$css = ! empty( $args['extra_class'] ) ? $args['extra_class'] : $heading_class;
 
             $extraClass 		= 'first';
             $grid 				= 'one_third';
@@ -452,7 +453,7 @@ if ( !class_exists( 'avia_content_slider' ) )
             $loop_counter		= 1;
             $total				= $columns % 2 ? "odd" : "even";
 			$heading 			= !empty($this->config['heading']) ? "<{$heading1} class='{$css}'>{$this->config['heading']}</{$heading1}>" : "&nbsp;";
-            $slide_count = count($content);
+            $slide_count = count( $content );
 
             switch($columns)
             {
@@ -467,7 +468,7 @@ if ( !class_exists( 'avia_content_slider' ) )
             $data = AviaHelper::create_data_string(array('autoplay'=>$autoplay, 'interval'=>$interval, 'animation' => $animation, 'show_slide_delay'=>30));
 
             $thumb_fallback = "";
-            $output .= "<div {$data} class='avia-content-slider-element-container avia-content-slider-element-{$type} avia-content-slider avia-smallarrow-slider avia-content-{$type}-active avia-content-slider".avia_content_slider::$slider." avia-content-slider-{$total} {$class} {$av_display_classes}' {$styling}>";
+            $output .= "<div {$el_id} {$data} class='avia-content-slider-element-container avia-content-slider-element-{$type} avia-content-slider avia-smallarrow-slider avia-content-{$type}-active avia-content-slider".avia_content_slider::$slider." avia-content-slider-{$total} {$class} {$av_display_classes}' {$styling}>";
 
                 $heading_class = '';
                 if($navigation == 'no') $heading_class .= ' no-content-slider-navigation ';
@@ -488,11 +489,13 @@ if ( !class_exists( 'avia_content_slider' ) )
 
 				$output .= "<div class='avia-content-slider-inner'>";
 
-                foreach($content as $key => $value)
+                foreach( $content as $key => $value )
                 {
 					$link = $linktarget = "";
+					
+					$meta = aviaShortcodeTemplate::set_frontend_developer_heading_tag( $value['attr'] );
 
-                    extract($value['attr']);
+                    extract( $value['attr'] );
 
                     $link = aviaHelper::get_url($link);
                     $blank = (strpos($linktarget, '_blank') !== false || $linktarget == 'yes') ? ' target="_blank" ' : "";
@@ -509,10 +512,10 @@ if ( !class_exists( 'avia_content_slider' ) )
 
                     $markup = avia_markup_helper(array('context' => 'entry_title','echo'=>false, 'custom_markup'=>$custom_markup));
 					
-					$default_heading = 'h3';
+					$default_heading = ! empty( $meta['heading_tag'] ) ? $meta['heading_tag'] : 'h3';
 					$args = array(
 								'heading'		=> $default_heading,
-								'extra_class'	=> ''
+								'extra_class'	=> $meta['heading_class']
 							);
 
 					$extra_args = array( $this, 'slider_entry' );
@@ -524,7 +527,7 @@ if ( !class_exists( 'avia_content_slider' ) )
 					$args = apply_filters( 'avf_customize_heading_settings', $args, __CLASS__, $extra_args );
 
 					$heading1 = ! empty( $args['heading'] ) ? $args['heading'] : $default_heading;
-					$css = ! empty( $args['extra_class'] ) ? $args['extra_class'] : '';
+					$css = ! empty( $args['extra_class'] ) ? $args['extra_class'] : $meta['heading_class'];
 					
                     $output .= !empty($title) ? "<{$heading1} class='slide-entry-title entry-title {$css}' $markup>" : '';
                     $output .= (!empty($link) && !empty($title)) ? "<a href='{$link}' $blank title='".esc_attr($title)."'>".$title."</a>" : $title;

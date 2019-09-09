@@ -8,13 +8,27 @@
 if ( ! defined( 'ABSPATH' ) ) {  exit;  }    // Exit if accessed directly
 
 
-if ( !class_exists( 'avia_sc_codeblock' ) )
+if ( ! class_exists( 'avia_sc_codeblock' ) )
 {
     class avia_sc_codeblock extends aviaShortcodeTemplate
     {
-        static $codeblock_id = 0;
-        static $codeblocks = array();
-		static $shortcodes_executed = array();
+		/**
+		 * @since < 4.0
+		 * @var int
+		 */
+        static public $codeblock_id = 0;
+		
+		/**
+		 * @since < 4.0
+		 * @var array 
+		 */
+        static public $codeblocks = array();
+		
+		/**
+		 * @since < 4.0
+		 * @var array 
+		 */
+		static public $shortcodes_executed = array();
         
         /**
          * Create the config array for the shortcode button
@@ -23,15 +37,16 @@ if ( !class_exists( 'avia_sc_codeblock' ) )
         {
 			$this->config['self_closing']	=	'no';
 			
-            $this->config['name']           = __('Code Block', 'avia_framework' );
-            $this->config['tab']            = __('Content Elements', 'avia_framework' );
+            $this->config['name']           = __( 'Code Block', 'avia_framework' );
+            $this->config['tab']            = __( 'Content Elements', 'avia_framework' );
             $this->config['icon']           = AviaBuilder::$path['imagesURL']."sc-codeblock.png";
             $this->config['order']          = 1;
             $this->config['target']         = 'avia-target-insert';
             $this->config['shortcode']      = 'av_codeblock';
-            $this->config['tinyMCE']        = array('disable' => true);
+            $this->config['tinyMCE']        = array( 'disable' => true );
             $this->config['tooltip']        = __( 'Add text, shortcodes, HTML, CSS, JavaScript and non executeable codesnippets to your website (without any formatting or text optimization).', 'avia_framework' );
-
+			$this->config['id_name']		= 'id';
+			$this->config['id_show']		= 'yes';
         }
 
         /**
@@ -115,70 +130,20 @@ if ( !class_exists( 'avia_sc_codeblock' ) )
                     "type"  => "checkbox"),
                     
                 array(
-							"type" 	=> "close_div",
-							'nodescription' => true
-						),
-						
-						
-								array(
-									"type" 	=> "tab",
-									"name"	=> __("Screen Options",'avia_framework' ),
-									'nodescription' => true
-								),
-								
-								
-								array(
-								"name" 	=> __("Element Visibility",'avia_framework' ),
-								"desc" 	=> __("Set the visibility for this element, based on the device screensize.", 'avia_framework' ),
-								"type" 	=> "heading",
-								"description_class" => "av-builder-note av-neutral",
-								),
-							
-								array(	
-										"desc" 	=> __("Hide on large screens (wider than 990px - eg: Desktop)", 'avia_framework'),
-										"id" 	=> "av-desktop-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-								
-								array(	
-									
-										"desc" 	=> __("Hide on medium sized screens (between 768px and 989px - eg: Tablet Landscape)", 'avia_framework'),
-										"id" 	=> "av-medium-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-										
-								array(	
-									
-										"desc" 	=> __("Hide on small screens (between 480px and 767px - eg: Tablet Portrait)", 'avia_framework'),
-										"id" 	=> "av-small-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-										
-								array(	
-									
-										"desc" 	=> __("Hide on very small screens (smaller than 479px - eg: Smartphone Portrait)", 'avia_framework'),
-										"id" 	=> "av-mini-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-	
-								
-							array(
-									"type" 	=> "close_div",
-									'nodescription' => true
-								),	
-								
-								
-						
-						
-					array(
 						"type" 	=> "close_div",
 						'nodescription' => true
 					),
-                
+				
+				array(	
+						'type'			=> 'template',
+						'template_id'	=> 'screen_options_tab'
+					),
+						
+
+				array(
+						"type" 	=> "close_div",
+						'nodescription' => true
+					),
                 
                 
             );
@@ -209,7 +174,7 @@ if ( !class_exists( 'avia_sc_codeblock' ) )
          * @param string $shortcodename the shortcode found, when == callback name
          * @return string $output returns the modified html string
          */
-        public function shortcode_handler($atts, $content = "", $shortcodename = "", $meta = "")
+        public function shortcode_handler( $atts, $content = '', $shortcodename = '', $meta = '' )
         {
 			/**
 			 * Fix in case shortcode is called before extraction has taken place. Occurs if post content is
@@ -222,11 +187,11 @@ if ( !class_exists( 'avia_sc_codeblock' ) )
 				return '';
 			}
 			
-	        extract(AviaHelper::av_mobile_sizes($atts)); //return $av_font_classes, $av_title_font_classes and $av_display_classes 
+	        extract( AviaHelper::av_mobile_sizes( $atts ) ); //return $av_font_classes, $av_title_font_classes and $av_display_classes 
 
             $custom_class = !empty($meta['custom_class']) ? $meta['custom_class'] : "";
 
-            $atts = shortcode_atts(array(
+            $atts = shortcode_atts( array(
 							'wrapper_element'				=> '',
 							'wrapper_element_attributes'	=> '',
 							'codeblock_type'				=> '',
@@ -251,7 +216,7 @@ if ( !class_exists( 'avia_sc_codeblock' ) )
                 $markup = avia_markup_helper(array('context' => 'entry', 'echo' => false, 'custom_markup'=>$meta['custom_markup']));
                 $markup_text = avia_markup_helper(array('context' => 'entry_content', 'echo' => false, 'custom_markup'=>$meta['custom_markup']));
 
-                $output .= '<section class="avia_codeblock_section '.$av_display_classes.' avia_code_block_' . avia_sc_codeblock::$codeblock_id . '" ' . $markup . '>';
+                $output .= '<section class="avia_codeblock_section '.$av_display_classes.' avia_code_block_' . avia_sc_codeblock::$codeblock_id . ' ' . $meta['custom_class'] . '" ' . $markup . $meta['custom_el_id'] . '>';
                 $output .=		"<div class='avia_codeblock {$custom_class}' $markup_text>" . $content . "</div>";
                 $output .= '</section>';
                 $content = $output;

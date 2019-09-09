@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: Enfold v3.6\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-05-30 17:13+0200\n"
-"PO-Revision-Date: 2019-03-27 10:57+0000\n"
-"Last-Translator: admin <gs@schoenmann.at>\n"
+"PO-Revision-Date: 2019-08-24 13:28+0000\n"
+"Last-Translator: admin <noreply@testdomain.at>\n"
 "Language-Team: German\n"
 "Language: de_DE\n"
 "MIME-Version: 1.0\n"
@@ -19,7 +19,7 @@ msgstr ""
 "X-Poedit-Bookmarks: -1,-1,-1,-1,-1,-1,-1,1513,-1,-1\n"
 "X-Textdomain-Support: yes\n"
 "X-Poedit-SearchPath-0: .\n"
-"X-Loco-Version: 2.2.1; wp-5.0.4"
+"X-Loco-Version: 2.3.0; wp-5.2.2"
 
 # @ avia_framework
 #: enfold/404.php:12
@@ -33251,7 +33251,7 @@ msgstr "Das könnte Dich auch interessieren"
 # @ avia_framework
 #: enfold/index.php:12 enfold/single.php:11
 msgid "Blog - Latest News"
-msgstr "Blog - Beiträge"
+msgstr "Blog - Die aktuellen Neuigkeiten"
 
 # @ avia_framework
 #: enfold/search.php:31

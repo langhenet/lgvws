@@ -11,12 +11,8 @@ if( class_exists( 'GFForms' ) )
 
 function avia_add_gravity_scripts()
 {
-	$theme = wp_get_theme();
-	if( false !== $theme->parent() )
-	{
-		$theme = $theme->parent();
-	}
-	$vn = $theme->get( 'Version' );
+	
+	$vn = avia_get_theme_version();
 	
 	wp_register_style( 'avia-gravity', get_template_directory_uri() . "/config-gravityforms/gravity-mod.css", array(), $vn, 'screen' );
 	wp_enqueue_style( 'avia-gravity');

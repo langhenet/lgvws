@@ -1,4 +1,4 @@
-<?php  if ( ! defined('AVIA_FW')) exit('No direct script access allowed');
+<?php
 /**
  * This file holds various helper functions that are needed by the frameworks FRONTEND
  *
@@ -9,7 +9,7 @@
  * @since		Version 1.0
  * @package 	AviaFramework
  */
-
+if ( ! defined( 'AVIA_FW' ) ) {   exit( 'No direct script access allowed' );   }
 
 
 if(!function_exists('avia_option'))
@@ -515,35 +515,98 @@ if(!function_exists('avia_logo'))
 	/**
 	 * return the logo of the theme. if a logo was uploaded and set at the backend options panel display it
 	 * otherwise display the logo file linked in the css file for the .bg-logo class
-	 * @return string the logo + url
+	 *
+	 * @since < 4.0
+	 * @param string $name
+	 * @param string $sub
+	 * @param string $headline_type
+	 * @param string|true $dimension
+	 * @return string			the logo + url
 	 */
-	function avia_logo($use_image = "", $sub = "", $headline_type = "h1", $dimension = "")
+	function avia_logo( $use_image = '', $sub = '', $headline_type = 'h1', $dimension = '' )
 	{
-		$use_image 		= apply_filters('avf_logo', $use_image);
-		$headline_type 	= apply_filters('avf_logo_headline', $headline_type);
-		$sub 			= apply_filters('avf_logo_subtext',  $sub);
-		$alt 			= apply_filters('avf_logo_alt', get_bloginfo('name'));
-		$link 			= apply_filters('avf_logo_link', home_url('/'));
+//		$use_image 		= apply_filters( 'avf_logo', $use_image );	//	since 4.5.7.2 changed as inconsistenty used again when logo is set
+		$headline_type	= apply_filters( 'avf_logo_headline', $headline_type );
+		$sub 			= apply_filters( 'avf_logo_subtext',  $sub );
+		$alt 			= apply_filters( 'avf_logo_alt', get_bloginfo( 'name' ) );
+		$link 			= apply_filters( 'avf_logo_link', home_url( '/' ) );
+		$title			= '';
 
-
-		if($sub) $sub = "<span class='subtext'>$sub</span>";
-		if($dimension === true) $dimension = "height='100' width='300'"; //basically just for better page speed ranking :P
-
-		if($logo = avia_get_option('logo'))
+		if( $sub )
 		{
-			 $logo = apply_filters('avf_logo', $logo);
-			 if(is_numeric($logo)){ $logo = wp_get_attachment_image_src($logo, 'full'); $logo = $logo[0]; }
-			 $logo = "<img {$dimension} src='{$logo}' alt='{$alt}' />";
-			 $logo = "<$headline_type class='logo'><a href='".$link."'>".$logo."$sub</a></$headline_type>";
+			$sub = "<span class='subtext'>{$sub}</span>";
+		}
+
+		if( $dimension === true )
+		{
+			$dimension = "height='100' width='300'"; //basically just for better page speed ranking :P
+		}
+
+		$logo = avia_get_option( 'logo' );
+		if( ! empty( $logo ) )
+		{
+			/**
+			 * @since 4.5.7.2
+			 * @return string
+			 */
+			$logo = apply_filters( 'avf_logo', $logo, 'option_set' );
+			if( is_numeric( $logo ) )
+			{
+				$logo_id = $logo;
+				$logo = wp_get_attachment_image_src( $logo_id, 'full' );
+				if( is_array( $logo ) )
+				{
+				   $logo = $logo[0];
+				   $title = get_the_title( $logo_id );
+				}
+			}
+
+			/**
+			 * @since 4.5.7.2
+			 * @return string
+			 */
+			$title = apply_filters( 'avf_logo_title', $title, 'option_set' );
+
+			$logo = "<img {$dimension} src='{$logo}' alt='{$alt}' title='{$title}' />";
+			$logo = "<{$headline_type} class='logo'><a href='{$link}'>{$logo}{$sub}</a></{$headline_type}>";
 		}
 		else
 		{
 			$logo = get_bloginfo('name');
-			if($use_image) $logo = "<img {$dimension} src='{$use_image}' alt='{$alt}' title='{$logo}'/>";
-			$logo = "<$headline_type class='logo bg-logo'><a href='".$link."'>".$logo."$sub</a></$headline_type>";
+
+			/**
+			 * @since 4.5.7.2
+			 * @return string
+			 */
+			$use_image = apply_filters( 'avf_logo', $use_image, 'option_not_set' );
+
+			$use_image = '';
+			if( ! empty( $use_image ) )
+			{
+				/**
+				  * @since 4.5.7.2
+				  * @return string
+				  */
+				$title = apply_filters( 'avf_logo_title', $logo, 'option_not_set' );
+				$logo = "<img {$dimension} src='{$use_image}' alt='{$alt}' title='{$title}'/>";
+			}
+
+			$logo = "<{$headline_type} class='logo bg-logo'><a href='{$link}'>{$logo}{$sub}</a></{$headline_type}>";
 		}
 
-		$logo = apply_filters('avf_logo_final_output', $logo, $use_image, $headline_type, $sub, $alt, $link);
+		/**
+		 *
+		 * @since < 4.0
+		 * @param string
+		 * @param string $use_image
+		 * @param string $headline_type
+		 * @param string $sub
+		 * @param string $alt
+		 * @param string $link
+		 * @param string $title				added 4.5.7.2
+		 * @return string
+		 */
+		$logo = apply_filters( 'avf_logo_final_output', $logo, $use_image, $headline_type, $sub, $alt, $link, $title );
 
 		return $logo;
 	}
@@ -595,7 +658,7 @@ if(!function_exists('avia_html5_video_embed'))
 	 * Creates HTML 5 output and also prepares flash fallback for a video of choice
 	 * @return string HTML5 video element
 	 */
-	function avia_html5_video_embed($path, $image = "", $types = array('webm' => 'type="video/webm"', 'mp4' => 'type="video/mp4"', 'ogv' => 'type="video/ogg"'), $attributes = array('autoplay' => 0, 'loop' => 1, 'preload' => ''  ))
+	function avia_html5_video_embed($path, $image = "", $types = array( 'webm' => 'type="video/webm"', 'mp4' => 'type="video/mp4"', 'ogv' => 'type="video/ogg"' ), $attributes = array( 'autoplay' => 0, 'loop' => 1, 'preload' => '', 'muted' => ''  ) )
 	{
 
 		preg_match("!^(.+?)(?:\.([^.]+))?$!", $path, $path_split);
@@ -687,7 +750,7 @@ if(!function_exists('avia_is_200'))
 	        'ignore_errors' => 1,
 	        'max_redirects' => 0
 	    );
-	    $body = @file_get_contents($url, NULL, stream_context_create($options), 0, 1);
+	    $body = @file_get_contents($url, null, stream_context_create($options), 0, 1);
 	    sscanf($http_response_header[0], 'HTTP/%*d.%*d %d', $code);
 	    return $code === 200;
 	}
@@ -1074,8 +1137,7 @@ if(!function_exists('avia_which_archive'))
 
 		if ( is_category() )
 		{
-			// $output = __('Archive for category:','avia_framework')." ".single_cat_title('',false);
-      $output = single_cat_title('',false);
+			$output = single_cat_title('',false);
 		}
 		elseif (is_day())
 		{
@@ -1134,8 +1196,8 @@ if(!function_exists('avia_which_archive'))
 		}
 		elseif(is_tax())
 		{
-			$term = get_term_by( 'slug', get_query_var( 'term' ), get_query_var( 'taxonomy' ) );
-			$output = $term->name;
+      $term = get_term_by( 'slug', get_query_var( 'term' ), get_query_var( 'taxonomy' ) );
+      $output = $term->name;
 		}
 		else
 		{
@@ -1537,14 +1599,21 @@ if(!function_exists('avia_header_class_filter'))
 }
 
 
-if(!function_exists('avia_theme_version_higher_than'))
+if( ! function_exists( 'avia_theme_version_higher_than' ) )
 {
-	function avia_theme_version_higher_than( $check_for_version = "")
+	/**
+	 * Checks for parent theme version >= a given version
+	 *
+	 * @since < 4.0
+	 * @param string $check_for_version
+	 * @return boolean
+	 */
+	function avia_theme_version_higher_than( $check_for_version = '' )
 	{
-		$theme = wp_get_theme( 'enfold' );
-		$theme_version = $theme->get( 'Version' );
+		$theme_version = avia_get_theme_version();
 
-		if (version_compare($theme_version, $check_for_version , '>=')) {
+		if( version_compare( $theme_version, $check_for_version , '>=' ) )
+		{
 			return true;
 		}
 

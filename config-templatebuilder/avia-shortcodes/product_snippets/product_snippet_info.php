@@ -7,13 +7,13 @@
 if ( ! defined( 'ABSPATH' ) ) {  exit;  }    // Exit if accessed directly
 
 
-if( !class_exists( 'woocommerce' ) )
+if( ! class_exists( 'woocommerce' ) )
 {
 	add_shortcode('av_product_info', 'avia_please_install_woo');
 	return;
 }
 
-if ( !class_exists( 'avia_sc_produc_info' ) )
+if ( ! class_exists( 'avia_sc_produc_info' ) )
 {
 	class avia_sc_produc_info extends aviaShortcodeTemplate
 	{
@@ -68,7 +68,7 @@ if ( !class_exists( 'avia_sc_produc_info' ) )
 		 * @param string $shortcodename the shortcode found, when == callback name
 		 * @return string $output returns the modified html string
 		 */
-		function shortcode_handler($atts, $content = "", $shortcodename = "", $meta = "")
+		function shortcode_handler( $atts, $content = "", $shortcodename = "", $meta = "" )
 		{
 			$output = "";
 			if( ! isset( $meta['el_class'] ) )

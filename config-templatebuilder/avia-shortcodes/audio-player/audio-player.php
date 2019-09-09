@@ -78,7 +78,7 @@ if ( ! class_exists( 'avia_sc_audio_player' ) )
 			$this->config['name']			= __( 'Audio Player', 'avia_framework' );
 			$this->config['tab']			= __( 'Media Elements', 'avia_framework' );
 			$this->config['icon']			= AviaBuilder::$path['imagesURL'] . "sc-audio-player.png";
-			$this->config['order']			= 60;
+			$this->config['order']			= 90;
 			$this->config['target']			= 'avia-target-insert';
 			$this->config['shortcode'] 		= 'av_player';
 			$this->config['shortcode_nested'] = array( 'av_playlist_element' );
@@ -88,11 +88,12 @@ if ( ! class_exists( 'avia_sc_audio_player' ) )
 			$this->config['preview']		= false;
 			$this->config['disabling_allowed'] = true;
 			$this->config['disabled']		= array(
-			'condition' =>( avia_get_option('disable_mediaelement') == 'disable_mediaelement' ), 
-			'text'   => __( 'This element is disabled in your theme options. You can enable it in Enfold &raquo; Performance', 'avia_framework' ));
-													
-													
-			
+									'condition'	=> ( avia_get_option('disable_mediaelement') == 'disable_mediaelement' ), 
+									'text'		=> __( 'This element is disabled in your theme options. You can enable it in Enfold &raquo; Performance', 'avia_framework' )
+								);
+			$this->config['id_name']		= 'id';
+			$this->config['id_show']		= 'yes';				//	we use original code - not $meta										
+
 		}
 		
 		function extra_assets()
@@ -101,7 +102,7 @@ if ( ! class_exists( 'avia_sc_audio_player' ) )
 			wp_enqueue_style( 'avia-module-audioplayer' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/audio-player/audio-player.css' , array('avia-layout'), false );
 			
 				//load js
-			wp_enqueue_script( 'avia-module-audioplayer' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/audio-player/audio-player.js' , array('avia-shortcodes'), false, TRUE );
+			wp_enqueue_script( 'avia-module-audioplayer' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/audio-player/audio-player.js' , array('avia-shortcodes'), false, true );
 
 		}
 		
@@ -162,7 +163,7 @@ if ( ! class_exists( 'avia_sc_audio_player' ) )
 				
 						array(	
 							"name"			=> __( "Loop playlist", 'avia_framework' ),
-							"desc"			=> __( "Choose if you want to stop after playing the list once or if you want to continue from beginning again", 'avia_framework' ),
+							"desc"			=> __( "Choose if you want to stop after playing the list once or if you want to continue from beginning again. <strong>Since WP 5.2 Firefox does not stop when Enfold javascript file merging and compression is enabled. Other browsers work as expected.</strong>", 'avia_framework' ),
 							"id"			=> "loop",
 							"type"			=> "select",
 							"std"			=> '',
@@ -245,15 +246,6 @@ if ( ! class_exists( 'avia_sc_audio_player' ) )
 									),		//	subelements
 															
 						),			//	modal_group
-				
-						array(	
-							"name" 	=> __("For Developers: Section ID", 'avia_framework' ),
-							"desc" 	=> __("Apply a custom ID Attribute to the section, so you can apply a unique style via CSS. This option is also helpful if you want to use anchor links to scroll to a sections when a link is clicked", 'avia_framework' )."<br/><br/>".
-									   __("Use with caution and make sure to only use allowed characters. No special characters can be used.", 'avia_framework' ),
-				            "id" 	=> "id",
-				            "type" 	=> "input",
-				            "std"	=> ""
-						),
 				
 					array(
 						"type"			=> "close_div",
@@ -464,60 +456,13 @@ if ( ! class_exists( 'avia_sc_audio_player' ) )
 						"type"			=> "close_div",
 						'nodescription' => true
 					),	
-
-					array(
-						"type" 	=> "tab",
-						"name"	=> __("Screen Options",'avia_framework' ),
-						'nodescription' => true
-					),
 				
 				
-						array(
-							"name"			=> __( "Element Visibility",'avia_framework' ),
-							"desc"			=> __( "Set the visibility for this element, based on the device screensize.", 'avia_framework' ),
-							"type"			=> "heading",
-							"description_class" => "av-builder-note av-neutral",
+					array(	
+							'type'			=> 'template',
+							'template_id' 	=> 'screen_options_tab',
 						),
 
-						array(	
-								"desc"		=> __( "Hide on large screens (wider than 990px - eg: Desktop)", 'avia_framework' ),
-								"id"		=> "av-desktop-hide",
-								"std"		=> "",
-								"container_class" => 'av-multi-checkbox',
-								"type"		=> "checkbox"
-						),
-				
-						array(	
-
-								"desc"		=> __( "Hide on medium sized screens (between 768px and 989px - eg: Tablet Landscape)", 'avia_framework' ),
-								"id"		=> "av-medium-hide",
-								"std"		=> "",
-								"container_class" => 'av-multi-checkbox',
-								"type"		=> "checkbox"
-						),
-
-						array(	
-								"desc"		=> __( "Hide on small screens (between 480px and 767px - eg: Tablet Portrait)", 'avia_framework' ),
-								"id"		=> "av-small-hide",
-								"std"		=> "",
-								"container_class" => 'av-multi-checkbox',
-								"type"		=> "checkbox"
-						),
-
-						array(	
-								"desc"		=> __( "Hide on very small screens (smaller than 479px - eg: Smartphone Portrait)", 'avia_framework' ),
-								"id"		=> "av-mini-hide",
-								"std"		=> "",
-								"container_class" => 'av-multi-checkbox',
-								"type"		=> "checkbox"
-						),
-	
-											
-					array(
-						"type"			=> "close_div",
-						'nodescription' => true
-					),	
-								
 								
 					array(
 						"type"			=> "close_div",
@@ -670,30 +615,30 @@ if ( ! class_exists( 'avia_sc_audio_player' ) )
 			
 			$this->extra_style = '';
 			$this->atts = shortcode_atts( array(
-								'handle'			=> $shortcodename,
-								'id'				=> '',
-								'autoplay'			=> 'manual',
-								'loop'				=> '',
-								'playorder'			=> 'normal',
-								'player_style'		=> 'classic',
-								'cover_id'			=> '',
-								'cover_size'		=> 'thumbnail',
-								'cover_location'	=> 'hide',
-								'playlist_style'	=> 'light',
-								'tracklist'			=> 'show',
-								'tracknumbers'		=> 'show',
-								'artists'			=> 'show',
-								'media_icon'		=> 'show',
-								'font_color'		=> '',
-								'custom_font_color'	=> '',
-								'background_color'	=> '',
-								'custom_background_color'	=>'',
-								'border_color'		=> '',
-								'custom_border_color'		=> '',
-								
-								'content'			=> ShortcodeHelper::shortcode2array( $content, 1 )
+									'handle'			=> $shortcodename,
+									'id'				=> '',
+									'autoplay'			=> 'manual',
+									'loop'				=> '',
+									'playorder'			=> 'normal',
+									'player_style'		=> 'classic',
+									'cover_id'			=> '',
+									'cover_size'		=> 'thumbnail',
+									'cover_location'	=> 'hide',
+									'playlist_style'	=> 'light',
+									'tracklist'			=> 'show',
+									'tracknumbers'		=> 'show',
+									'artists'			=> 'show',
+									'media_icon'		=> 'show',
+									'font_color'		=> '',
+									'custom_font_color'	=> '',
+									'background_color'	=> '',
+									'custom_background_color'	=>'',
+									'border_color'		=> '',
+									'custom_border_color'		=> '',
 
-						), $atts, $this->config['shortcode'] );
+									'content'			=> ShortcodeHelper::shortcode2array( $content, 1 )
+
+							), $atts, $this->config['shortcode'] );
 		
 			//replace some values that are removed for simplicity with defaults. can be later changed if user request those features
 			$this->atts['cover_location'] = "hide";
@@ -744,11 +689,14 @@ if ( ! class_exists( 'avia_sc_audio_player' ) )
 				$ids = array_reverse( $ids );
 			}
 			
+			/**
+			 * With WP 5.2 we need to show tracklist and hide with CSS to allow stop of loop
+			 */
 			$args = array(
 					'type'          => 'audio',
 					'ids'			=> $ids,
 					'style'         => empty( $playlist_style ) ? 'classic' : $playlist_style,
-					'tracklist'     => empty( $tracklist ) || ( 'hide' != $tracklist ) ? true : false,
+					'tracklist'     => true,			
 					'tracknumbers'  => empty( $tracknumbers ) || ( 'hide' != $tracknumbers )  ? true : false,
 					'images'        => empty( $media_icon) || ( 'hide' != $media_icon )  ? true : false,
 					'artists'       => empty( $artists ) || ( 'hide' != $artists )  ? true : false
@@ -774,8 +722,14 @@ if ( ! class_exists( 'avia_sc_audio_player' ) )
 			$outer_cls = array( 
 								'av-player',
 								'av-player-container',
-								$av_display_classes
+								$av_display_classes,
+								$meta['el_class']
 							);
+			
+			if( 'hide' == $tracklist )
+			{
+				$outer_cls[] = 'av-player-hide-playlist';
+			}
 			
 			if( 1 == avia_sc_audio_player::$instance )
 			{

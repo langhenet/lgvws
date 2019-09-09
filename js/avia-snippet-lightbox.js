@@ -78,12 +78,13 @@
 						var self = this;
 						self.wrap.removeClass('mfp-image-loaded');
 						setTimeout(function() { $.magnificPopup.proto.next.call(self); }, 120);
-					}
+					};
+					
 					$.magnificPopup.instance.prev = function() {
 						var self = this;
 						self.wrap.removeClass('mfp-image-loaded');
 						setTimeout(function() { $.magnificPopup.proto.prev.call(self); }, 120);
-					}
+					};
 					
 					//add custom css class for different styling
 					if( this.st.el && this.st.el.data('av-extra-class') )
@@ -118,7 +119,7 @@
 						    this.wrap.append( "<div class='av-extra-modal-markup'>" + markup + "</div>"  );
 					    }
 				    }
-				},
+				}
 			}
 		},
 
@@ -130,7 +131,7 @@
 			groups			:	['.avia-slideshow', '.avia-gallery', '.av-horizontal-gallery', '.av-instagram-pics', '.portfolio-preview-image', '.portfolio-preview-content', '.isotope', '.post-entry', '.sidebar', '#main', '.main_menu', '.woocommerce-product-gallery'], 
 			autolinkElements:   'a.lightbox, a[rel^="prettyPhoto"], a[rel^="lightbox"], a[href$=jpg], a[href$=png], a[href$=gif], a[href$=jpeg], a[href*=".jpg?"], a[href*=".png?"], a[href*=".gif?"], a[href*=".jpeg?"], a[href$=".mov"] , a[href$=".swf"] , a:regex(href, .vimeo\.com/[0-9]) , a[href*="youtube.com/watch"] , a[href*="screenr.com"], a[href*="iframe=true"]',
 			videoElements	: 	'a[href$=".mov"] , a[href$=".swf"] , a:regex(href, .vimeo\.com/[0-9]) , a[href*="youtube.com/watch"] , a[href*="screenr.com"], a[href*="iframe=true"]',
-			exclude			:	'.noLightbox, .noLightbox a, .fakeLightbox, .lightbox-added, a[href*="dropbox.com"]',
+			exclude			:	'.noLightbox, .noLightbox a, .fakeLightbox, .lightbox-added, a[href*="dropbox.com"]'
 		},
 		
 		options = $.extend({}, defaults, variables),
@@ -155,7 +156,7 @@
 				}
 			
 		});
-	}
+	};
 })(jQuery);
 
 

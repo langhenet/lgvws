@@ -505,7 +505,7 @@ if ( !class_exists( 'ShortcodeHelper' ) ) {
 		/** 
 		* holds the function that creates the shortcode based on variables that are passed
 		*/
-		static function create_shortcode_by_array($name, $content = NULL, $args = array())
+		static function create_shortcode_by_array($name, $content = null, $args = array())
 		{
 			$sc = "[".$name;
 		

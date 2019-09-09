@@ -1442,6 +1442,7 @@ text-align: center;
 #top #wrap_all .av-social-link-rss:hover	   	 a{color:#fff; background-color:#ffa133; }
 #top #wrap_all .av-social-link-facebook:hover  a{color:#fff; background-color:#37589b; }
 #top #wrap_all .av-social-link-twitter:hover   a{color:#fff; background-color:#46d4fe; }
+#top #wrap_all .av-social-link-whatsapp:hover   a{color:#fff; background-color:#00e676; }
 #top #wrap_all .av-social-link-mail:hover      a{color:#fff; background-color:#9fae37; }
 #top #wrap_all .av-social-link-dribbble:hover  a{color:#fff; background-color:#e44885; }
 #top #wrap_all .av-social-link-linkedin:hover  a{color:#fff; background-color:#419cca; }
@@ -2083,7 +2084,24 @@ z-index: 1030;
 visibility: hidden;
 }
 
-#scroll-top-link.avia_pop_class{
+#av-cookie-consent-badge{
+	position: fixed;
+	border-radius: 2px;
+	height: 30px;
+	width: 30px;
+	line-height: 30px;
+	text-decoration: none;
+	text-align: center;
+	opacity: 0;
+	right: 50px;
+	bottom: 50px;
+	z-index: 1030;
+	visibility: hidden;
+}
+
+
+#scroll-top-link.avia_pop_class,
+#av-cookie-consent-badge.avia_pop_class{
 opacity: 0.7;
 visibility: visible;
 }
@@ -2106,7 +2124,7 @@ visibility: visible;
 
 
 
-.small-preview, .avia-post-nav .entry-info-wrap, .avia-post-nav, .avia-menu-fx, .team-social, .button, .related-format-icon, .avia-slideshow-controls a, #top .social_bookmarks li a, .fallback-post-type-icon, #scroll-top-link, .avia-slideshow-button{
+.small-preview, .avia-post-nav .entry-info-wrap, .avia-post-nav, .avia-menu-fx, .team-social, .button, .related-format-icon, .avia-slideshow-controls a, #top .social_bookmarks li a, .fallback-post-type-icon, #scroll-top-link, #av-cookie-consent-badge, .avia-slideshow-button{
 -webkit-transition: all 0.3s ease-out;
 transition:         all 0.3s ease-out;
 }

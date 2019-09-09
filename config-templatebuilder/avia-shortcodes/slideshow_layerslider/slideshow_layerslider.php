@@ -27,14 +27,14 @@ if ( ! class_exists( 'avia_sc_layerslider' ) )
 				$this->config['self_closing']			=	'yes';
 				$class->config['forced_load_objects']	=	array( 'layerslider' );		//	fallback only to make sure we load in case user overwrites this class and direct checks for shortcode might fail
 				
-				$this->config['name']		= __('Advanced Layerslider', 'avia_framework' );
-				$this->config['tab']		= __('Media Elements', 'avia_framework' );
+				$this->config['name']		= __( 'Advanced Layerslider', 'avia_framework' );
+				$this->config['tab']		= __( 'Media Elements', 'avia_framework' );
 				$this->config['icon']		= AviaBuilder::$path['imagesURL']."sc-slideshow-layer.png";
 				$this->config['order']		= 10;
 				$this->config['target']		= 'avia-target-insert';
 				$this->config['shortcode'] 	= 'av_layerslider';
-				$this->config['tooltip'] 	= __('Display a Layerslider Slideshow', 'avia_framework' );
-				$this->config['tinyMCE'] 	= array('disable' => "true");
+				$this->config['tooltip'] 	= __( 'Display a Layerslider Slideshow', 'avia_framework' );
+				$this->config['tinyMCE'] 	= array( 'disable' => 'true' );
 				$this->config['drag-level'] = 1;
 			}
 			
@@ -44,7 +44,7 @@ if ( ! class_exists( 'avia_sc_layerslider' ) )
 				wp_enqueue_style( 'avia-module-slideshow-ls' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/slideshow_layerslider/slideshow_layerslider.css' , array('avia-layout'), false );
 				
 					//load js
-				wp_enqueue_script( 'avia-module-slideshow-ls' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/slideshow_layerslider/slideshow_layerslider.js' , array('avia-shortcodes'), false, TRUE );
+				wp_enqueue_script( 'avia-module-slideshow-ls' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/slideshow_layerslider/slideshow_layerslider.js' , array('avia-shortcodes'), false, true );
 
 			}
 			
@@ -101,11 +101,11 @@ if ( ! class_exists( 'avia_sc_layerslider' ) )
 			 * @param array $meta
 			 * @return string $output returns the modified html string 
 			 */
-			public function shortcode_handler($atts, $content = "", $shortcodename = "", $meta = array() )
+			public function shortcode_handler( $atts, $content = "", $shortcodename = "", $meta = array() )
 			{
 				 $atts = shortcode_atts( array(
-												'id'	=>	0
-											), $atts, $this->config['shortcode'] );
+								'id'	=>	0
+							), $atts, $this->config['shortcode'] );
 				
 				$output  = "";
 				
@@ -146,7 +146,7 @@ if ( ! class_exists( 'avia_sc_layerslider' ) )
 				}
 				
 				
-				$params['class'] = "avia-layerslider main_color avia-shadow ".$meta['el_class'];
+				$params['class'] = "avia-layerslider main_color avia-shadow {$meta['el_class']}";
 				$params['open_structure'] = false;
 				
 				//we dont need a closing structure if the element is the first one or if a previous fullwidth element was displayed before
@@ -156,12 +156,12 @@ if ( ! class_exists( 'avia_sc_layerslider' ) )
 				
 //				if(!empty($meta['index'])) $params['class'] .= " slider-not-first";
 				if( $meta['index'] > 0 ) $params['class'] .= " slider-not-first";
-				$params['id'] = "layer_slider_".( avia_sc_layerslider::$slide_count );
+				$params['id'] = "layer_slider_" . avia_sc_layerslider::$slide_count;
 				
 				
-				$output .=  avia_new_section($params);
+				$output .=  avia_new_section( $params );
 				
-				if(class_exists('LS_Shortcode') && method_exists('LS_Shortcode', 'handleShortcode')) //fix for search results page - only works with latest LayerSlider versions
+				if( class_exists( 'LS_Shortcode' ) && method_exists( 'LS_Shortcode', 'handleShortcode' ) ) //fix for search results page - only works with latest LayerSlider versions
 				{
 					$output .= LS_Shortcode::handleShortcode( $atts );
 				}
@@ -185,10 +185,9 @@ if ( ! class_exists( 'avia_sc_layerslider' ) )
 				    $skipSecond = true;
 				}
 				
-				if(empty($skipSecond)) {
-				
-				$output .= avia_new_section(array('close'=>false, 'id' => "after_layer_slider_".avia_sc_layerslider::$slide_count));
-				
+				if( empty( $skipSecond ) ) 
+				{
+					$output .= avia_new_section(array('close'=>false, 'id' => "after_layer_slider_".avia_sc_layerslider::$slide_count));
 				}
 				
 				return $output;

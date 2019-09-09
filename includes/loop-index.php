@@ -55,7 +55,7 @@ if (have_posts()) :
 	$current_post['post_format'] 	= get_post_format() ? get_post_format() : 'standard';
 	$current_post['post_layout']	= avia_layout_class('main', false);
   $blog_content = !empty($avia_config['blog_content']) ? $avia_config['blog_content'] : "content";
-  if(!is_single()) $blog_content = "excerpt_read_more";
+if(!is_single()) $blog_content = "excerpt_read_more";
 
 	/*If post uses builder change content to exerpt on overview pages*/
     if( Avia_Builder()->get_alb_builder_status( $current_post['the_id'] ) && !is_singular($current_post['the_id']) && $current_post['post_type'] == 'post')
@@ -97,21 +97,34 @@ if (have_posts()) :
 	}
 
 	$current_post['title']   	= get_the_title();
-	$current_post['content'] 	= $blog_content == "content" ? get_the_content(__('Read more','avia_framework').'<span class="more-link-arrow"></span>') : get_the_excerpt();
-	$current_post['content'] 	= $blog_content == "excerpt_read_more" ? $current_post['content'].'<div class="read-more-link"><a href="'.get_permalink().'" class="more-link">'.__('Read more','avia_framework').'<span class="more-link-arrow"></span></a></div>' : $current_post['content'];
-	$current_post['before_content'] = "";
 
-	/*
-     * ...now apply a filter, based on the post type... (filter function is located in includes/helper-post-format.php)
-     */
-	$current_post	= apply_filters( 'post-format-'.$current_post['post_format'], $current_post );
-	$with_slider    = empty($current_post['slider']) ? "" : "with-slider";
-	/*
-     * ... last apply the default wordpress filters to the content
-     */
+	/**
+	 * Allow 3rd party to hook and return a plugin specific content.
+	 * This returned content replaces Enfold's standard content building procedure.
+	 *
+	 * @since 4.5.7.2
+	 * @param string
+	 * @param string $context
+	 * @return string
+	 */
+	$current_post['content'] = apply_filters( 'avf_the_content', '', 'loop_index' );
+	if( '' == $current_post['content'] )
+	{
+		$current_post['content'] 	= $blog_content == "content" ? get_the_content(__('Read more','avia_framework').'<span class="more-link-arrow"></span>') : get_the_excerpt();
+		$current_post['content'] 	= $blog_content == "excerpt_read_more" ? $current_post['content'].'<div class="read-more-link"><a href="'.get_permalink().'" class="more-link">'.__('Read more','avia_framework').'<span class="more-link-arrow"></span></a></div>' : $current_post['content'];
+		$current_post['before_content'] = "";
 
+		/*
+		 * ...now apply a filter, based on the post type... (filter function is located in includes/helper-post-format.php)
+		 */
+		$current_post	= apply_filters( 'post-format-'.$current_post['post_format'], $current_post );
+		$with_slider    = empty($current_post['slider']) ? "" : "with-slider";
 
-	$current_post['content'] = str_replace(']]>', ']]&gt;', apply_filters('the_content', $current_post['content'] ));
+		/*
+		 * ... last apply the default wordpress filters to the content
+		 */
+		$current_post['content'] = str_replace(']]>', ']]&gt;', apply_filters('the_content', $current_post['content'] ));
+	}
 
 	/*
 	 * Now extract the variables so that $current_post['slider'] becomes $slider, $current_post['title'] becomes $title, etc

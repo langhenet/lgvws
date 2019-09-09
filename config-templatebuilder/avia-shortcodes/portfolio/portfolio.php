@@ -7,10 +7,18 @@
 if ( ! defined( 'ABSPATH' ) ) {  exit;  }    // Exit if accessed directly
 
 
-if ( !class_exists( 'avia_sc_portfolio' ) )
+if ( ! class_exists( 'avia_sc_portfolio' ) )
 {
 	class avia_sc_portfolio extends aviaShortcodeTemplate
 	{
+			/**
+			 * Needed for unique ID if no id specified
+			 * 
+			 * @since 4.5.7.2
+			 * @var int 
+			 */
+			static protected $portfolio_count = 0;
+			
 			/**
 			 * Create the config array for the shortcode button
 			 */
@@ -18,14 +26,16 @@ if ( !class_exists( 'avia_sc_portfolio' ) )
 			{
 				$this->config['self_closing']	=	'yes';
 				
-				$this->config['name']		= __('Portfolio Grid', 'avia_framework' );
-				$this->config['tab']		= __('Content Elements', 'avia_framework' );
+				$this->config['name']		= __( 'Portfolio Grid', 'avia_framework' );
+				$this->config['tab']		= __( 'Content Elements', 'avia_framework' );
 				$this->config['icon']		= AviaBuilder::$path['imagesURL']."sc-portfolio.png";
 				$this->config['order']		= 38;
 				$this->config['target']		= 'avia-target-insert';
 				$this->config['shortcode'] 	= 'av_portfolio';
-				$this->config['tooltip'] 	= __('Creates a grid of portfolio excerpts', 'avia_framework' );
+				$this->config['tooltip'] 	= __( 'Creates a grid of portfolio excerpts', 'avia_framework' );
 				$this->config['disabling_allowed'] = true;
+				$this->config['id_name']	= 'id';
+				$this->config['id_show']	= 'yes';
 			}
 
 			function extra_assets()
@@ -37,8 +47,8 @@ if ( !class_exists( 'avia_sc_portfolio' ) )
 				wp_enqueue_style( 'avia-module-portfolio' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/portfolio/portfolio.css' , array('avia-layout'), false );
 				
 				//load js
-				wp_enqueue_script( 'avia-module-isotope' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/portfolio/isotope.js' , array('avia-shortcodes'), false , TRUE);
-				wp_enqueue_script( 'avia-module-portfolio' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/portfolio/portfolio.js' , array('avia-shortcodes'), false , TRUE);
+				wp_enqueue_script( 'avia-module-isotope' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/portfolio/isotope.js' , array('avia-shortcodes'), false , true );
+				wp_enqueue_script( 'avia-module-portfolio' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/portfolio/portfolio.js' , array('avia-shortcodes'), false , true );
 			}
 
 			/**
@@ -217,86 +227,33 @@ if ( !class_exists( 'avia_sc_portfolio' ) )
 						),
 						
 						
-								array(
-									"type" 	=> "tab",
-									"name"	=> __("Screen Options",'avia_framework' ),
-									'nodescription' => true
+						array(
+								'type'		=> 'tab',
+								'name'		=> __( 'Screen Options', 'avia_framework' ),
+								'nodescription' => true
+							),
+					
+							array(	
+									'type'			=> 'template',
+									'template_id'	=> 'screen_options_visibility'
 								),
-								
-								
-								array(
-								"name" 	=> __("Element Visibility",'avia_framework' ),
-								"desc" 	=> __("Set the visibility for this element, based on the device screensize.", 'avia_framework' ),
-								"type" 	=> "heading",
-								"description_class" => "av-builder-note av-neutral",
-								),
-							
-								array(	
-										"desc" 	=> __("Hide on large screens (wider than 990px - eg: Desktop)", 'avia_framework'),
-										"id" 	=> "av-desktop-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-								
-								array(	
-									
-										"desc" 	=> __("Hide on medium sized screens (between 768px and 989px - eg: Tablet Landscape)", 'avia_framework'),
-										"id" 	=> "av-medium-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-										
-								array(	
-									
-										"desc" 	=> __("Hide on small screens (between 480px and 767px - eg: Tablet Portrait)", 'avia_framework'),
-										"id" 	=> "av-small-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-										
-								array(	
-									
-										"desc" 	=> __("Hide on very small screens (smaller than 479px - eg: Smartphone Portrait)", 'avia_framework'),
-										"id" 	=> "av-mini-hide",
-										"std" 	=> "",
-										"container_class" => 'av-multi-checkbox',
-										"type" 	=> "checkbox"),
-									
+
 							array(
-								"name" 	=> __("Element Columns",'avia_framework' ),
-								"desc" 	=> 
-								__("Set the column count for this element, based on the device screensize.", 'avia_framework' )
-								,
-								"type" 	=> "heading",
-								"description_class" => "av-builder-note av-neutral",
+									'name'		=> __( 'Element Columns', 'avia_framework' ),
+									'desc'		=> __( 'Set the column count for this element, based on the device screensize.', 'avia_framework' ),
+									'type'		=> 'heading',
+									'description_class' => 'av-builder-note av-neutral',
 								),
-							
-							
-								array(	"name" 	=> __("Column count for medium sized screens (between 768px and 989px - eg: Tablet Landscape)", 'avia_framework' ),
-						            "id" 	=> "av-medium-columns",
-						            "type" 	=> "select",
-						            "subtype" => AviaHtmlHelper::number_array(1,4,1, array( __("Default", 'avia_framework' )=>'')),
-						            "std" => ""),
-						            
-						            array(	"name" 	=> __("Column count for small screens (between 480px and 767px - eg: Tablet Portrait)", 'avia_framework' ),
-						            "id" 	=> "av-small-columns",
-						            "type" 	=> "select",
-						            "subtype" => AviaHtmlHelper::number_array(1,4,1, array( __("Default", 'avia_framework' )=>'')),
-						            "std" => ""),
-						            
-									array(	"name" 	=> __("Column count for very small screens (smaller than 479px - eg: Smartphone Portrait)", 'avia_framework' ),
-						            "id" 	=> "av-mini-columns",
-						            "type" 	=> "select",
-						            "subtype" => AviaHtmlHelper::number_array(1,4,1, array( __("Default", 'avia_framework' )=>'')),
-						            "std" => ""),  	
-							  
-				
-							
-								
-							array(
-									"type" 	=> "close_div",
-									'nodescription' => true
-								),	
+
+							array(	
+									'type'			=> 'template',
+									'template_id'	=> 'column_count'
+								),
+
+						array(
+								'type' 	=> 'close_div',
+								'nodescription' => true
+							),	
 								
 								
 						
@@ -368,7 +325,7 @@ if ( !class_exists( 'avia_sc_portfolio' ) )
 				$params['innerHtml'].= "	<span class='avia-flex-element-content'>| ".__('Adjust to content width','avia_framework')." |</span>";
 				$params['innerHtml'].= "</div></div>";
 				
-				$params['content'] 	 = NULL; //remove to allow content elements
+				$params['content'] 	 = null; //remove to allow content elements
 
 				return $params;
 			}
@@ -383,13 +340,11 @@ if ( !class_exists( 'avia_sc_portfolio' ) )
 			 * @param string $shortcodename the shortcode found, when == callback name
 			 * @return string $output returns the modified html string
 			 */
-			function shortcode_handler($atts, $content = "", $shortcodename = "", $meta = "")
+			function shortcode_handler( $atts, $content = "", $shortcodename = "", $meta = "" )
 			{
-				extract(AviaHelper::av_mobile_sizes($atts)); //return $av_font_classes, $av_title_font_classes and $av_display_classes 
+				extract( AviaHelper::av_mobile_sizes( $atts ) ); //return $av_font_classes, $av_title_font_classes and $av_display_classes 
 				
-				$atts['class'] = !empty($meta['custom_class']) ? $meta['custom_class'] : "";
-				
-				if(current_theme_supports('avia_template_builder_custom_post_type_grid'))
+				if( current_theme_supports( 'avia_template_builder_custom_post_type_grid' ) )
 				{
 				    if(isset($atts['link']))
 				    {
@@ -410,26 +365,36 @@ if ( !class_exists( 'avia_sc_portfolio' ) )
 					if(is_string($atts['post_type'])) $atts['post_type'] = explode(',', $atts['post_type']);
 				}
 				
+				self::$portfolio_count ++;
+				
+				$el_id =  ! empty( $meta['custom_el_id'] ) ? $meta['custom_el_id'] : ' id="av-sc-portfolio-' . self::$portfolio_count . '" ';
+				$atts['class'] = ! empty( $meta['custom_class'] ) ? $meta['custom_class'] : '';
+				$atts['el_id'] = '';
 				$atts['fullscreen'] = ShortcodeHelper::is_top_level();
+				if( ! $atts['fullscreen'] )
+				{
+					$atts['el_id'] = $el_id;
+				}
 
-				$grid = new avia_post_grid($atts);
+				$grid = new avia_post_grid( $atts );
 				$grid->query_entries();
 				$portfolio_html = $grid->html();
 			
-				if(!ShortcodeHelper::is_top_level()) 
-				return $portfolio_html;
+				if( ! ShortcodeHelper::is_top_level() ) 
+				{
+					return $portfolio_html;
+				}
 				
-				
-				$params['class'] = "main_color avia-no-border-styling avia-fullwidth-portfolio {$av_display_classes} ".$meta['el_class'];
+				$params['class'] = "main_color avia-no-border-styling avia-fullwidth-portfolio {$av_display_classes} {$meta['el_class']}";
 				$params['open_structure'] = false;
-				$params['id'] = !empty($atts['id']) ? AviaHelper::save_string($atts['id'],'-') : "";
+				$params['id'] = AviaHelper::save_string( $meta['custom_id_val'] , '-', 'av-sc-portfolio-' . self::$portfolio_count );
 				$params['custom_markup'] = $meta['custom_markup'];
 				
 				//we dont need a closing structure if the element is the first one or if a previous fullwidth element was displayed before
 				if(isset($meta['index']) && $meta['index'] == 0) $params['close'] = false;
 				if(!empty($meta['siblings']['prev']['tag']) && in_array($meta['siblings']['prev']['tag'], AviaBuilder::$full_el_no_section )) $params['close'] = false;
 					
-				$output  =  avia_new_section($params);
+				$output  =  avia_new_section( $params );
 				$output .= $portfolio_html;
 				$output .= avia_section_after_element_content( $meta , 'after_portfolio' );
 				
@@ -441,67 +406,122 @@ if ( !class_exists( 'avia_sc_portfolio' ) )
 
 
 
-if ( !class_exists( 'avia_post_grid' ) )
+if ( ! class_exists( 'avia_post_grid' ) )
 {
 	class avia_post_grid
 	{
-		static  $grid = 0;
-		static  $preview_template = array();
+		/**
+		 *
+		 * @var int 
+		 */
+		static protected $grid = 0;
+		
+		/**
+		 *
+		 * @var array 
+		 */
+		static protected $preview_template = array();
+		
+		/**
+		 *
+		 * @var array 
+		 */
 		protected $atts;
+		
+		/**
+		 *
+		 * @var WP_Query 
+		 */
 		protected $entries;
+		
+		/**
+		 *
+		 * @var array 
+		 */
+		protected $screen_options;
 
-		function __construct($atts = array())
+		/**
+		 * 
+		 * @param type $atts
+		 */
+		public function __construct( $atts = array() )
 		{
-			$this->screen_options = AviaHelper::av_mobile_sizes($atts);
+			$this->entries = null;
+			$this->screen_options = AviaHelper::av_mobile_sizes( $atts );
 			
 			$this->atts = shortcode_atts( array(	
-												'style'					=> '',
-										 		'linking'				=> '',
-										 		'columns'				=> '4',
-		                                 		'items'					=> '16',
-		                                 		'contents'				=> 'title',
-		                                 		'sort'					=> 'yes',
-		                                 		'paginate'				=> 'yes',
-		                                 		'categories'			=> '',
-		                                 		'preview_mode'			=> 'auto',
-                                                'image_size'			=> 'portfolio',
-		                                 		'post_type'				=> 'portfolio',
-		                                 		'taxonomy'				=> 'portfolio_entries',
-		                                 		'one_column_template'	=> 'special',
-		                                 		'set_breadcrumb'		=> true, //no shortcode option for this, modifies the breadcrumb nav, must be false on taxonomy overview
-		                                 		'class'					=> "",
-		                                 		'custom_markup'			=> '',
-		                                 		'fullscreen'			=> false,
-		                                 		'query_orderby'			=> 'date',
-		                                 		'query_order'			=> 'DESC',
-												'date_filter'			=> '',	
-												'date_filter_start'		=> '',
-												'date_filter_end'		=> '',
-												'date_filter_format'	=> 'yy/mm/dd',		//	'yy/mm/dd' | 'dd-mm-yy'	| yyyymmdd
-				
-		                                 	), $atts, 'av_portfolio' );
+							'style'					=> '',
+							'linking'				=> '',
+							'columns'				=> '4',
+							'items'					=> '16',
+							'contents'				=> 'title',
+							'sort'					=> 'yes',
+							'paginate'				=> 'yes',
+							'categories'			=> '',
+							'preview_mode'			=> 'auto',
+							'image_size'			=> 'portfolio',
+							'post_type'				=> 'portfolio',
+							'taxonomy'				=> 'portfolio_entries',
+							'one_column_template'	=> 'special',
+							'set_breadcrumb'		=> true, //no shortcode option for this, modifies the breadcrumb nav, must be false on taxonomy overview
+							'class'					=> '',
+							'el_id'					=> '',
+							'custom_markup'			=> '',
+							'fullscreen'			=> false,
+							'query_orderby'			=> 'date',
+							'query_order'			=> 'DESC',
+							'date_filter'			=> '',	
+							'date_filter_start'		=> '',
+							'date_filter_end'		=> '',
+							'date_filter_format'	=> 'yy/mm/dd',		//	'yy/mm/dd' | 'dd-mm-yy'	| yyyymmdd
+
+						), $atts, 'av_portfolio' );
 
 
 
 		    if( $this->atts['linking'] == 'ajax' )
 			{
-				add_action('wp_footer' , array( $this, 'print_preview_templates' ) );
+				add_action( 'wp_footer' , array( $this, 'print_preview_templates' ) );
 			}
 		}
+		
+		/**
+		 * 
+		 * @since 4.5.7.2
+		 */
+		public function __destruct() 
+		{
+			unset( $this->atts );
+			unset( $this->screen_options );
+			unset( $this->entries );
+		}
 
-		//generates the html of the post grid
+		/**
+		 * enerates the html of the post grid
+		 * 
+		 * @since < 4.0
+		 * @return string
+		 */
 		public function html()
 		{
-			if(empty($this->entries) || empty($this->entries->posts)) return;
-
+			if( empty( $this->entries ) || empty( $this->entries->posts ) ) 
+			{
+				return '';
+			}
+			
 			avia_post_grid::$grid ++;
-			extract($this->atts);
-			extract($this->screen_options); //return $av_font_classes, $av_title_font_classes and $av_display_classes 
+			
+			extract( $this->screen_options ); //return $av_font_classes, $av_title_font_classes and $av_display_classes
+			extract( $this->atts );
+			 
 			
 			$container_id 		= avia_post_grid::$grid;
 			$extraClass 		= 'first';
 			$grid 				= 'one_fourth';
-			if($preview_mode == 'auto') $image_size = 'portfolio';
+			if( $preview_mode == 'auto' ) 
+			{
+				$image_size = 'portfolio';
+			}
 			$post_loop_count 	= 1;
 			$loop_counter		= 1;
 			$output				= "";
@@ -527,7 +547,8 @@ if ( !class_exists( 'avia_post_grid' ) )
 
 			if( $sort != "no" )
 			{
-				$output .= '<div class="av-portfolio-grid-sorting-container">';
+				$output .= '<div ' . $el_id . ' class="av-portfolio-grid-sorting-container">';
+				$el_id = '';
 			}
 			
 			$output .= $sort != "no" ? $this->sort_buttons($this->entries->posts, $this->atts) : "";
@@ -547,7 +568,8 @@ if ( !class_exists( 'avia_post_grid' ) )
 								<div class='portfolio-details-inner'></div>
 							</div>";
 			}
-			$output .= "<div class='{$class} grid-sort-container isotope {$av_display_classes} {$av_column_classes} {$style_class}-container with-{$contents}-container grid-total-{$total} grid-col-{$columns} grid-links-{$linking}' data-portfolio-id='{$container_id}'>";
+			
+			$output .= "<div {$el_id} class='{$class} grid-sort-container isotope {$av_display_classes} {$av_column_classes} {$style_class}-container with-{$contents}-container grid-total-{$total} grid-col-{$columns} grid-links-{$linking}' data-portfolio-id='{$container_id}'>";
 
 			foreach( $this->entries->posts as $index => $entry )
 			{
