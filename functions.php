@@ -759,4 +759,4 @@ if ( ! function_exists( '_wp_render_title_tag' ) )
 
 require_once( 'functions-enfold.php');
 
-include 'templates\langhe-functions.php';
+include('templates/langhe-functions.php');
