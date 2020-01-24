@@ -211,28 +211,70 @@ add_action( 'product_cat_edit_form_fields', 'avia_woo_edit_category_fields' , 10
 
 function avia_woo_save_category_fields( $term_id ) 
 {
-	if ( isset( $_POST['av_cat_styling'] ) ) {
-		update_woocommerce_term_meta( $term_id, 'av_cat_styling', esc_attr( $_POST['av_cat_styling'] ) );
+	/**
+	 * WC tables for storing term meta are deprecated from WordPress 4.4 since 4.4 has its own table.
+	 * This is a wrapper, using the new table if present, or falling back to the WC table.
+	 * see woocommerce\includes\wc-deprecated-functions.php
+	 * 
+	 * @since WC 3.6
+	 * @since 4.6.4
+	 */
+	if ( isset( $_POST['av_cat_styling'] ) ) 
+	{
+		if( function_exists( 'update_term_meta' ) )
+		{
+			update_term_meta( $term_id, 'av_cat_styling', esc_attr( $_POST['av_cat_styling'] ) );
+		}
+		else
+		{
+			update_woocommerce_term_meta( $term_id, 'av_cat_styling', esc_attr( $_POST['av_cat_styling'] ) );
+		}
 	}
 	
-	if ( isset( $_POST['av-banner-font'] ) ) {
-		update_woocommerce_term_meta( $term_id, 'av-banner-font', esc_attr( $_POST['av-banner-font'] ) );
+	if ( isset( $_POST['av-banner-font'] ) ) 
+	{
+		if( function_exists( 'update_term_meta' ) )
+		{
+			update_term_meta( $term_id, 'av-banner-font', esc_attr( $_POST['av-banner-font'] ) );
+		}
+		else
+		{
+			update_woocommerce_term_meta( $term_id, 'av-banner-font', esc_attr( $_POST['av-banner-font'] ) );
+		}
 	}
 	
-	if ( isset( $_POST['av-banner-overlay'] ) ) {
-		update_woocommerce_term_meta( $term_id, 'av-banner-overlay', esc_attr( $_POST['av-banner-overlay'] ) );
+	if ( isset( $_POST['av-banner-overlay'] ) ) 
+	{
+		if( function_exists( 'update_term_meta' ) )
+		{
+			update_term_meta( $term_id, 'av-banner-overlay', esc_attr( $_POST['av-banner-overlay'] ) );
+		}
+		else
+		{
+			update_woocommerce_term_meta( $term_id, 'av-banner-overlay', esc_attr( $_POST['av-banner-overlay'] ) );
+		}
 	}
 	
-	if ( isset( $_POST['av_cat_styling'] ) ) {
-		update_woocommerce_term_meta( $term_id, 'av-banner-overlay-opacity', esc_attr( $_POST['av-banner-overlay-opacity'] ) );
+	if ( isset( $_POST['av_cat_styling'] ) ) 
+	{
+		if( function_exists( 'update_term_meta' ) )
+		{
+			update_term_meta( $term_id, 'av-banner-overlay-opacity', esc_attr( $_POST['av-banner-overlay-opacity'] ) );
+		}
+		else
+		{
+			update_woocommerce_term_meta( $term_id, 'av-banner-overlay-opacity', esc_attr( $_POST['av-banner-overlay-opacity'] ) );
+		}
 	}
 }
  
 
 add_action( 'admin_enqueue_scripts', 'av_woo_enqueue_color_picker' );
-function av_woo_enqueue_color_picker( $hook_suffix ) {
+function av_woo_enqueue_color_picker( $hook_suffix ) 
+{
     // first check that $hook_suffix is appropriate for your admin page
-    if( ($hook_suffix == 'edit-tags.php' || $hook_suffix == 'term.php') && isset($_GET['taxonomy']) && $_GET['taxonomy'] == 'product_cat'){
+    if( ($hook_suffix == 'edit-tags.php' || $hook_suffix == 'term.php') && isset($_GET['taxonomy']) && $_GET['taxonomy'] == 'product_cat')
+	{
     
     	wp_enqueue_style(  'wp-color-picker' );
 		wp_enqueue_script( 'wp-color-picker' );

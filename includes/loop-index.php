@@ -20,12 +20,12 @@ if($blog_disabled)
 						__('Blog Posts', 'avia_framework' )."<br><br>".
 						__('This element was disabled in your theme settings. You can activate it here:' )."<br>".
 					   '<a target="_blank" href="'.admin_url('admin.php?page=avia#goto_performance').'">'.__("Performance Settings",'avia_framework' )."</a>";
-
+		
 		$content 	= "<span class='av-shortcode-disabled-notice'>{$msg}</span>";
-
+		
 		echo $content;
 	}
-
+	
 	 return;
 }
 
@@ -39,7 +39,7 @@ if (have_posts()) :
 
 	while (have_posts()) : the_post();
 
-
+		
 	/*
      * get the current post id, the current post class and current post format
  	 */
@@ -54,54 +54,54 @@ if (have_posts()) :
 	$current_post['post_class']	.= ($current_post['post_type'] == "post") ? '' : ' post';
 	$current_post['post_format'] 	= get_post_format() ? get_post_format() : 'standard';
 	$current_post['post_layout']	= avia_layout_class('main', false);
-  $blog_content = !empty($avia_config['blog_content']) ? $avia_config['blog_content'] : "content";
-if(!is_single()) $blog_content = "excerpt_read_more";
-
+	$blog_content = !empty($avia_config['blog_content']) ? $avia_config['blog_content'] : "content";
+	if(!is_single()) $blog_content = "excerpt_read_more";
+	
 	/*If post uses builder change content to exerpt on overview pages*/
     if( Avia_Builder()->get_alb_builder_status( $current_post['the_id'] ) && !is_singular($current_post['the_id']) && $current_post['post_type'] == 'post')
     {
 	   $current_post['post_format'] = 'standard';
 	   $blog_content = "excerpt_read_more";
     }
-
+	
 	/**
 	 * Allows especially for ALB posts to change output to 'content'
 	 * Supported since 4.5.5
-	 *
+	 * 
 	 * @since 4.5.5
 	 * @return string
 	 */
 	$blog_content = apply_filters( 'avf_blog_content_in_loop', $blog_content, $current_post, $blog_style, $blog_global_style );
-
+	
 
 	/*
      * retrieve slider, title and content for this post,...
      */
     $size = strpos($blog_style, 'big') ? (strpos($current_post['post_layout'], 'sidebar') !== false) ? 'entry_with_sidebar' : 'entry_without_sidebar' : 'square';
-
+    
     if(!empty($avia_config['preview_mode']) && !empty($avia_config['image_size']) && $avia_config['preview_mode'] == 'custom') $size = $avia_config['image_size'];
-
+	
 	/**
 	 * @since 4.5.4
-	 * @return string
+	 * @return string 
 	 */
 	$current_post['slider'] = apply_filters( 'avf_post_featured_image_link', get_the_post_thumbnail( $current_post['the_id'], $size ), $current_post, $size );
-
+	
 	/**
 	 * Backwards comp. to checkbox prior v4.5.3 (now selectbox with '' or '1')
 	 */
 	$hide_featured_image = empty( get_post_meta( $current_post['the_id'], '_avia_hide_featured_image', true ) ) ? false : true;
-	if( is_single( $initial_id ) && $hide_featured_image )
+	if( is_single( $initial_id ) && $hide_featured_image ) 
 	{
 		$current_post['slider'] = '';
 	}
-
+	
 	$current_post['title']   	= get_the_title();
-
+	
 	/**
-	 * Allow 3rd party to hook and return a plugin specific content.
+	 * Allow 3rd party to hook and return a plugin specific content. 
 	 * This returned content replaces Enfold's standard content building procedure.
-	 *
+	 * 
 	 * @since 4.5.7.2
 	 * @param string
 	 * @param string $context
@@ -119,7 +119,7 @@ if(!is_single()) $blog_content = "excerpt_read_more";
 		 */
 		$current_post	= apply_filters( 'post-format-'.$current_post['post_format'], $current_post );
 		$with_slider    = empty($current_post['slider']) ? "" : "with-slider";
-
+		
 		/*
 		 * ... last apply the default wordpress filters to the content
 		 */
@@ -143,16 +143,52 @@ if(!is_single()) $blog_content = "excerpt_read_more";
 	 */
 
 	echo "<article class='".implode(" ", get_post_class('post-entry post-entry-type-'.$post_format . " " . $post_class . " ".$with_slider))."' ".avia_markup_helper(array('context' => 'entry','echo'=>false)).">";
-
-
-
+		
+		
+		
         //default link for preview images
         $link = !empty($url) ? $url : get_permalink();
-
+        
         //preview image description
-        $desc = get_post( get_post_thumbnail_id() );
-        if(is_object($desc))  $desc = $desc -> post_excerpt;
-		$featured_img_desc = ( $desc != "" ) ? $desc : the_title_attribute( 'echo=0' );
+		$desc = '';
+        $thumb_post = get_post( get_post_thumbnail_id() );
+		if( $thumb_post instanceof WP_Post )
+		{
+			if( '' != trim( $thumb_post->post_excerpt ) )
+			{
+				//	return "Caption" from media gallery
+				$desc = $thumb_post->post_excerpt;
+			}
+			else if( '' != trim( $thumb_post->post_title ) )
+			{
+				//	return "Title" from media gallery
+				$desc = $thumb_post->post_title;
+			}
+			else if( '' != trim( $thumb_post->post_content ) )
+			{
+				//	return "Description" from media gallery
+				$desc = $thumb_post->post_content;
+			}
+		}
+		
+		$desc = trim( $desc );
+		if( '' == $desc )
+		{
+			$desc = trim( the_title_attribute( 'echo=0' ) );
+		}
+        
+		/**
+		 * Allows to change the title attribute text for the featured image. 
+		 * If '' is returned, then no title attribute is added.
+		 * 
+		 * @since 4.6.4
+		 * @param string $desc
+		 * @param string $context				'loop_index'
+		 * @param WP_Post $thumb_post
+		 */
+		$featured_img_title = apply_filters( 'avf_featured_image_title_attr', $desc, 'loop_index', $thumb_post );
+		
+		$featured_img_title = '' != trim( $featured_img_title ) ? ' title="' . esc_attr( $featured_img_title ) . '" ' : '';
 
         //on single page replace the link with a fullscreen image
         if(is_singular())
@@ -164,7 +200,7 @@ if(!is_single()) $blog_content = "excerpt_read_more";
             //echo preview image
             if (strpos($blog_global_style, 'elegant-blog') === false) {
                 if (strpos($blog_style, 'big') !== false) {
-                    if ($slider) $slider = '<a href="' . $link . '" title="' . $featured_img_desc . '">' . $slider . '</a>';
+                    if ($slider) $slider = '<a href="' . $link . '" ' . $featured_img_title . '>' . $slider . '</a>';
                     if ($slider) echo '<div class="big-preview ' . $blog_style . '">' . $slider . '</div>';
                 }
 
@@ -172,7 +208,7 @@ if(!is_single()) $blog_content = "excerpt_read_more";
                     echo '<div class="big-preview ' . $blog_style . '">' . $before_content . '</div>';
             }
         }
-
+		
         echo "<div class='blog-meta'>";
 
         $blog_meta_output = "";
@@ -186,7 +222,7 @@ if(!is_single()) $blog_content = "excerpt_read_more";
                 {
                 	$author_name = apply_filters('avf_author_name', get_the_author_meta('display_name', $post->post_author), $post->post_author);
 					$author_email = apply_filters('avf_author_email', get_the_author_meta('email', $post->post_author), $post->post_author);
-
+                	
 					$gravatar_alt = esc_html($author_name);
 					$gravatar = get_avatar($author_email, '81', "blank", $gravatar_alt);
 					$link = get_author_posts_url($post->post_author);
@@ -196,7 +232,7 @@ if(!is_single()) $blog_content = "excerpt_read_more";
             }
             else if(strpos($blog_style, 'small')  !== false)
             {
-                $blog_meta_output = "<a href='{$link}' class='small-preview' title='{$featured_img_desc}'>".$slider.$icon."</a>";
+                $blog_meta_output = "<a href='{$link}' class='small-preview' {$featured_img_title}>".$slider.$icon."</a>";
             }
 
         echo apply_filters('avf_loop_index_blog_meta', $blog_meta_output);
@@ -211,13 +247,13 @@ if(!is_single()) $blog_content = "excerpt_read_more";
                     echo "<span class=' fallback-post-type-icon' ".av_icon_string($format)."></span>";
                 }
 
-            	$close_header 	= "</header>";
-
+            	$close_header 	= "</header>"; 
+            	
             	$content_output  =  '<div class="entry-content" '.avia_markup_helper(array('context' => 'entry_content','echo'=>false)).'>';
 				$content_output .=  $content;
 				$content_output .=  '</div>';
-
-
+            	
+            	
             	$taxonomies  = get_object_taxonomies(get_post_type($the_id));
                 $cats = '';
                 $excluded_taxonomies = array_merge( get_taxonomies( array( 'public' => false ) ), array('post_tag','post_format') );
@@ -233,15 +269,15 @@ if(!is_single()) $blog_content = "excerpt_read_more";
                         }
                     }
                 }
-
-
-
+            	
+            	
+            	
             	//elegant blog
             	//prev: if( $blog_global_style == 'elegant-blog' )
             	if( strpos($blog_global_style, 'elegant-blog') !== false )
             	{
 	            	$cat_output = "";
-
+	            	
 	            	if(!empty($cats))
                     {
                         $cat_output .= '<span class="blog-categories minor-meta">';
@@ -277,7 +313,7 @@ if(!is_single()) $blog_content = "excerpt_read_more";
 
                        //echo preview image
                        if (strpos($blog_style, 'big') !== false) {
-                           if ($slider) $slider = '<a href="' . $link . '" title="' . $featured_img_desc . '">' . $slider . '</a>';
+                           if ($slider) $slider = '<a href="' . $link . '" ' . $featured_img_title . '>' . $slider . '</a>';
                            if ($slider) echo '<div class="big-preview ' . $blog_style . '">' . $slider . '</div>';
                        }
 
@@ -288,19 +324,19 @@ if(!is_single()) $blog_content = "excerpt_read_more";
 
                        echo $content_output;
                    }
-
+					
 					$cats = "";
 					$title = "";
 					$content_output = "";
 				}
-
-
-
-
+				
+				
+				
+				
 				echo $title;
 
                 if ($blog_style !== 'bloglist-compact') :
-
+				
                     echo "<span class='post-meta-infos'>";
 
                     echo "<time class='date-container minor-meta updated' >".get_the_time(get_option('date_format'))."</time>";
@@ -378,12 +414,12 @@ if(!is_single()) $blog_content = "excerpt_read_more";
                 	the_tags('<strong>'.__('Tags:','avia_framework').'</strong><span> ');
                 	echo '</span></span>';
             	}
-
+            	
             	//share links on single post
             	avia_social_share_links();
-
+   
             }
-
+            
             do_action('ava_after_content', $the_id, 'post');
 
             echo '</footer>';
@@ -403,13 +439,13 @@ if(!is_single()) $blog_content = "excerpt_read_more";
 						'heading'		=> $default_heading,
 						'extra_class'	=> ''
 					);
-
+			
 			/**
 			 * @since 4.5.5
 			 * @return array
 			 */
 			$args = apply_filters( 'avf_customize_heading_settings', $args, 'loop_index::nothing_found', array() );
-
+			
 			$heading = ! empty( $args['heading'] ) ? $args['heading'] : $default_heading;
 			$css = ! empty( $args['extra_class'] ) ? $args['extra_class'] : '';
 ?>

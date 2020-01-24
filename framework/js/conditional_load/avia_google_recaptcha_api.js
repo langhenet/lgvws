@@ -200,14 +200,13 @@
 			}
 			
 			var src = this.api;
-			var defer = false;
+			var defer = true;
 			var obj = this;
 			
 			switch( this.version )
 			{
 				case 'avia_recaptcha_v2':
 					src += '?onload=av_recaptcha_main_api_loaded&render=explicit';
-					defer = true;
 					break;
 				case 'avia_recaptcha_v3':
 					src += '?onload=av_recaptcha_main_api_loaded&render=' + this.site_key3;
@@ -607,14 +606,14 @@
 		
 		showErrors: function( action )
 		{
+			var obj = this.self;
+			
 			if( 0 == this.recaptcha_areas.length )
 			{
 				obj.errors = [];
 				obj.error_report = [];
 				return;
 			}
-			
-			var obj = this.self;
 		
 			this.recaptcha_areas.each( function( index, element ) {
 								var container = $( element );

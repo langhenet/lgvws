@@ -142,7 +142,8 @@ cursor:pointer;
 .avia-style .wp-picker-container{ position: relative;  width: 100%;}
 .avia-style .wp-picker-holder{position: absolute; z-index: 1001;}
 .avia-style .iris-picker{-webkit-box-shadow: 0 1px 27px 0px rgba(0,0,0,0.3); -moz-box-shadow: 0 1px 27px 0px rgba(0,0,0,0.3); box-shadow: 0 1px 27px 0px rgba(0,0,0,0.3);}
-.avia-style .wp-picker-input-wrap{display:block; overflow: hidden;}
+.avia-style .wp-picker-input-wrap,
+.avia-style .wp-picker-input-wrap.hidden{display:block; overflow: hidden;}
 .avia-style .wp-picker-input-wrap input{display:inline-block !important; width: 69px; padding: 6px 4px 6px 4px;}
 .avia-style .wp-color-result{top: 0px; display:block; white-space: nowrap; overflow: hidden; float:left; height:27px; min-width: 79px;}
 .avia-style .wp-color-result:after{line-height:27px; }
@@ -351,6 +352,16 @@ background: #fff;
 clear: both;
 }
 
+.avia-modal .avia-modal-toggle-container-inner .avia-form-element-container{
+	border-bottom:none;
+	border-top:1px dashed #e1e1e1;
+}
+
+.avia-modal .avia-modal-toggle-container-inner .avia-form-element-container:first-child,
+.avia-modal .avia-modal-toggle-container-inner .avia-toggle-description + .avia-form-element-container{
+	border-top:none;
+}
+
 .avia-modal .avia-form-element-container > p{color: #777;}
 
 .avia-modal .avia-form-element-container:hover, .smallscreen .avia-modal-inner-content:hover{
@@ -476,6 +487,10 @@ border-bottom:none;
     border: none;
     padding: 4px 20px;
     font-weight: bold;
+}
+
+.avia-modal .avia-modal-toggle-container-inner .avia-form-element-container.av-multi-checkbox{
+	border:none;
 }
 
 .avia-modal  .av-multi-checkbox .avia-form-element{

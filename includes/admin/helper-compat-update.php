@@ -694,6 +694,18 @@ function avia_remove_google_plus( $prev_version, $new_version )
 	
 }
 
+add_action( 'ava_trigger_updates', 'avia_add_gdpr2_notice', 20, 2 );
+
+function avia_add_gdpr2_notice( $prev_version, $new_version )
+{	
+	//if the previous theme version is equal or bigger to 4.6.2 we don't need to update
+	if( version_compare( $prev_version, '4.6.2', ">=") ) 
+	{
+		return; 
+	}
+	
+	update_option( 'avia_admin_notice', 'gdpr_update_2' );
+}
 
 
 

@@ -102,6 +102,8 @@
 		    	_self.$slider.removeClass('av-blinking-caret');  
 		    	_self.$next = _self.$slides.eq(_self.open);
 		    	var content = _self.$next.data('av_typewriter_text') || _self.$next.html();
+			content = content.replace(/&amp;/g, '&');
+			
 		    	_self.$current.css({display:'none'});
 		    	_self.$next.css({display:'inline'});
 		    	_self.$next.html("");

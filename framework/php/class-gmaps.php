@@ -14,7 +14,7 @@ if( ! class_exists( 'av_google_maps' ) )
 	{
 			//	maintain URL and version number here for all objects using this element
 		const API_URL			=	'https://maps.googleapis.com/maps/api/js';
-		const API_VERSION		=	'3.35';				
+		const API_VERSION		=	'3.38';				
 		const MAPS_SEARCH_URL	=	'https://www.google.com/maps/search/';
 		
 		const AJAX_NONCE		=	'av_google_maps_nonce';

@@ -8,7 +8,6 @@
  * @since 5.0.3
  * @author John Gera
  * @copyright Copyright (c) 2013  John Gera, George Krupa, and Kreatura Media Kft.
- * @license http://codecanyon.net/licenses/faq Envato marketplace licenses
  */
 
 class LS_ExportUtil {
@@ -204,6 +203,7 @@ class LS_ExportUtil {
 
 						$this->_addImageToList( $layer, 'imageId', 'image' );
 						$this->_addImageToList( $layer, 'posterId', 'poster' );
+						$this->_addImageToList( $layer, 'layerBackgroundId', 'layerBackground' );
 					}
 				}
 			}

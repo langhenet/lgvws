@@ -131,30 +131,75 @@ if ( ! class_exists( 'aviaAssetManager' ) )
 			$enqueued	= ( $file_type == "css" ) ? $wp_styles : $wp_scripts;
 			$data 		= $this->get_file_data( $file_type , $file_group_name , $enqueued , $conditions );
 						
-			//check if we got a db entry with this hash. if so, no further merging needed and we can remove the registered files from the enque array
+
+			/**
+			 * Check if we got a db entry with this hash. if so, no further merging needed and we can remove the registered files from the enque array.
+			 * 
+			 * A problem occurs that if user makes changes to file content without changing theme version numbers or adding/removing files the same hash is returned and browsers
+			 * do not recognise the changing until their cache expires.
+			 * Therefore we add a timestamp to each new generated hash.
+			 */
 			$generated_files = get_option( $this->db_prefix.$file_group_name );
-			if(!is_array($generated_files)) $generated_files = array();
+			if( ! is_array( $generated_files ) ) 
+			{
+				$generated_files = array();
+			}
+			
+			$exists = false;
+			
+			foreach( $generated_files as $generated_file => $value ) 
+			{
+				if( 'error-generating-file' === $value )
+				{
+					continue;
+				}
+				
+				$split = strpos( $generated_file, '---' );
+				
+				/**
+				 * Fallback for possible old files - in this case we use this
+				 */
+				if( false === $split )
+				{
+					if( $generated_file == $data['hash'] )
+					{
+						$exists = true;
+						break;
+					}
+				}
+				else
+				{
+					$filtered = substr( $generated_file, 0, $split );
+					if( $filtered == $data['hash'] )
+					{
+						$exists = true;
+						$data['hash'] = $generated_file;
+						break;
+					}
+				}
+			}
 			
 			//if the file does not exist try to generate it
-			if( empty($generated_files[$data['hash']]) || $this->testmode )
+			if( ! $exists || $this->testmode )
 			{
-				$generated_files[$data['hash']] = $this->generate_file( $file_type, $data , $enqueued);
+				$data['hash'] = $data['hash'] . uniqid( '---' );
+				$generated_files[ $data['hash'] ] = $this->generate_file( $file_type, $data, $enqueued );
 			}
 			
 			//if the file exists and was properly generated at one time in the past, enque the new file and remove all the others. otherwise do nothing
-			if($generated_files[$data['hash']] && $generated_files[$data['hash']] !== "error-generating-file")
+			if( $generated_files[ $data['hash'] ] && $generated_files[ $data['hash'] ] !== 'error-generating-file' )
 			{
-				if(is_array($data['remove']))
+				if( is_array($data['remove'] ) )
 				{
-					foreach($data['remove'] as $remove)
+					foreach( $data['remove'] as $remove )
 					{
 						//for future iterations, exlude all files we used here
-						$this->exclude_files[$file_type][] = $remove['name'];
+						$this->exclude_files[ $file_type ][] = $remove['name'];
 						
 						//if we know the file content deregister it, otherwise dont do it. might be that the file was not readable
-						if($remove['file_content'] !== false)
+						if( $remove['file_content'] !== false )
 						{
-							$this->deregister_files[$file_type][] = $remove['name'];
+							$this->deregister_files[ $file_type ][] = $remove['name'];
 						}
 					}
 				}
@@ -162,14 +207,14 @@ if ( ! class_exists( 'aviaAssetManager' ) )
 				$avia_dyn_file_url = $this->get_file_url($data, $file_type);
 				
 				//if file exists enque it
-				if($file_type == 'css')
+				if( $file_type == 'css' )
 				{
 					wp_enqueue_style( $file_group_name , $avia_dyn_file_url, array(), null, 'all' );
 				}
 				else
 				{
-					$footer = isset($conditions['groups']) ? $conditions['groups'] : true;
-					wp_enqueue_script( $file_group_name , $avia_dyn_file_url, array(), null, $footer );
+					$footer = isset( $conditions['groups'] ) ? $conditions['groups'] : true;
+					wp_enqueue_script( $file_group_name, $avia_dyn_file_url, array(), null, $footer );
 				}
 				
 			}
@@ -205,7 +250,13 @@ if ( ! class_exists( 'aviaAssetManager' ) )
 			
 		}
 		
-		public function get_file_url($data, $file_type)
+		/**
+		 * 
+		 * @param array $data
+		 * @param string $file_type
+		 * @return string
+		 */
+		public function get_file_url( $data, $file_type )
 		{
 			$avia_upload_dir = wp_upload_dir();
 			if(is_ssl()) $avia_upload_dir['baseurl'] = str_replace("http://", "https://", $avia_upload_dir['baseurl']);
@@ -731,11 +782,11 @@ if ( ! class_exists( 'aviaAssetManager' ) )
 			foreach($this->deregister_files as $file_type => $files)
 			{
 				//get the data of the file we would generate
-				$enqueued	= ($file_type == "css") ? $wp_styles : $wp_scripts;
+				$enqueued	= ($file_type == 'css') ? $wp_styles : $wp_scripts;
 				
 				foreach($files as $remove)
 				{
-					$enqueued->registered[$remove]->src = "";
+					$enqueued->registered[$remove]->src = '';
 					
 					//the extra data needs to be attached to the compressed file in order to be printed properly
 					if($attach_data_to && isset($enqueued->registered[$remove]->extra))
@@ -745,11 +796,11 @@ if ( ! class_exists( 'aviaAssetManager' ) )
 						{
 							if(!isset($enqueued->registered[$attach_data_to]->extra['data']))
 							{
-								$enqueued->registered[$attach_data_to]->extra['data'] = "";
+								$enqueued->registered[$attach_data_to]->extra['data'] = '';
 							}
 							
 							$enqueued->registered[$attach_data_to]->extra['data'] .= $enqueued->registered[$remove]->extra['data'];
-							// reset data $enqueued->registered[$remove]->extra['data'] = "";
+							// reset data $enqueued->registered[$remove]->extra['data'] = '';
 						}
 						
 						//now merge the before and after arrays
@@ -792,70 +843,86 @@ if ( ! class_exists( 'aviaAssetManager' ) )
 
 		}
 		
+		/**
+		 * 
+		 * @param string $registered_path
+		 * @return string
+		 */
 		public function set_path( $registered_path )
 		{
-			$path =  str_replace(site_url(), "", $registered_path);
+			$path =  str_replace( site_url(), '', $registered_path );
 			
-			if(strpos($path, "//") === 0) //if the path starts with // - eg: used by plugins like woocommerce
+			if( strpos( $path, '//') === 0 ) //if the path starts with // - eg: used by plugins like woocommerce
 			{
-				$remove = explode("//", site_url());
-				$path = str_replace("//" . $remove[1], "", $registered_path);
+				$remove = explode( '//', site_url() );
+				$path = str_replace( '//' . $remove[1], '', $registered_path );
 			}
 			
-			$path = ltrim($path, "/");
+			$path = ltrim( $path, '/' );
 			
 			return $path;
-			
 		}
 		
-		
+		/**
+		 * 
+		 * @global type $wp_styles
+		 * @global type $wp_scripts
+		 */
 		public function inline_print_assets()
 		{
 
 			global $wp_styles, $wp_scripts;
 			
-			$assets_to_print = array_merge_recursive($this->force_print_to_head, $this->additional_print_to_head);
-			$output = "";
+			$assets_to_print = array_merge_recursive( $this->force_print_to_head, $this->additional_print_to_head );
+			$output = '';
 			
-			foreach($assets_to_print as $file_type => $assets)
+			foreach( $assets_to_print as $file_type => $assets )
 			{
 				// skip if no assets are set to be printed
-				if(empty($assets)) continue;
+				if( empty( $assets ) ) 
+				{
+					continue;
+				}
 				
-				$stored_assets 	= get_option( $this->db_prefix.$file_type."_filecontent");
-				$enqueued		= ($file_type == "css") ? $wp_styles : $wp_scripts;
-				$print 			= "";
+				$stored_assets = get_option( $this->db_prefix . $file_type . '_filecontent' );
+				if( false === $stored_assets || ! is_array( $stored_assets ) || empty( $stored_assets ) )
+				{
+					continue;
+				}
 				
-				foreach($assets as $asset)
+				$enqueued = ( $file_type == 'css' ) ? $wp_styles : $wp_scripts;
+				$print = '';
+				
+				foreach( $assets as $asset )
 				{
 					//skip if the file is not enqueued
-					if(!in_array($asset, $enqueued->queue)) continue;
+					if( ! in_array( $asset, $enqueued->queue ) ) 
+					{
+						continue;
+					}
 					
-					$print .= $stored_assets[$asset."-".$file_type]['file_content'];
+					$print .= $stored_assets[ $asset . '-' . $file_type ]['file_content'];
 				}
 				
-				if(!empty($print) && $file_type == "css")
+				if( ! empty( $print ) && $file_type == 'css' )
 				{
-					$output.= '<style type="text/css" media="screen">'.$print.'</style>';
+					$output.= '<style type="text/css" media="screen">' . $print . '</style>';
 				}
 				
-				if(!empty($print) && $file_type == "js")
+				if( ! empty( $print ) && $file_type == 'js' )
 				{
-					$output.= '<script type="text/javascript">'.$print.'</script>';
+					$output.= '<script type="text/javascript">' . $print . '</script>';
 				}
 				
 			}
 			
-			if(!empty($output))
+			if( ! empty( $output ) )
 			{
 				$output = "\n<!-- To speed up the rendering and to display the site as fast as possible to the user we include some styles and scripts for above the fold content inline -->\n" . $output;
 				echo $output;
 			}
 			
-			
 		}
-		
-		
 		
 
 	} // end class

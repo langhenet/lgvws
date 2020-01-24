@@ -1,5 +1,6 @@
 <?php
 
+
 	if(!defined('LS_ROOT_FILE')) {
 		header('HTTP/1.0 403 Forbidden');
 		exit;
@@ -18,6 +19,8 @@
 	$curPage = (!empty($_GET['paged']) && is_numeric($_GET['paged'])) ? (int) $_GET['paged'] : 1;
 	// $curPage = ($curPage >= $maxPage) ? $maxPage : $curPage;
 
+	$layout = get_user_meta( get_current_user_id(), 'ls-sliders-layout', true );
+
 	// Set filters
 	$userFilters 	= false;
 	$showPopupSlider= false;
@@ -33,6 +36,10 @@
 		'page' => $curPage,
 		'limit' => (int) $lsScreenOptions['numberOfSliders']
 	);
+
+	if( $layout !== 'list' ) {
+		$filters['groups'] = true;
+	}
 
 	if( ! empty($_GET['filter']) && $_GET['filter'] === 'all' ) {
 		$userFilters = true;
@@ -73,18 +80,15 @@
 	$maxPage = ceil($maxItem / (int) $lsScreenOptions['numberOfSliders']);
 	$maxPage = $maxPage ? $maxPage : 1;
 
-	$layout = get_user_meta(get_current_user_id(), 'ls-sliders-layout', true);
 
 
 	// Site activation
 	$code 		= get_option('layerslider-purchase-code', '');
-	$validity 	= get_option('layerslider-authorized-site', false);
+	$validity 	= LS_Config::isActivatedSite();
 	$channel 	= get_option('layerslider-release-channel', 'stable');
 
-	// GDPR
-	$lsGDPRConsent = get_option('layerslider-gdpr-consent', false);
 
-	// Purchase code
+	// License key
 	$codeFormatted = '';
 	if(!empty($code)) {
 		$start = substr($code, 0, -6);
@@ -135,6 +139,8 @@
 
 		'deleteSelectError' => __('No sliders were selected.', 'LayerSlider'),
 		'deleteSuccess' => __('The selected sliders were permanently deleted.', 'LayerSlider'),
+		'groupSuccess' => __('A new group has been created from the selected items.', 'LayerSlider'),
+		'groupSelectError' => __('You need to select at least 2 sliders to group them.', 'LayerSlider'),
 		'mergeSelectError' => __('You need to select at least 2 sliders to merge them.', 'LayerSlider'),
 		'mergeSuccess' => __('The selected items were merged together as a new slider.', 'LayerSlider'),
 		'restoreSelectError' => __('No sliders were selected.', 'LayerSlider'),
@@ -146,7 +152,7 @@
 
 		'importSelectError' => __('Choose a file to import sliders.', 'LayerSlider'),
 		'importFailed' => __('The import file seems to be invalid or corrupted.', 'LayerSlider'),
-		'importSuccess' => sprintf( _n( '%d slider has been successfully imported.', '%d sliders has been successfully imported.', $importSliderCount, 'LayerSlider' ), $importSliderCount ),
+		'importSuccess' => sprintf( _n( '%d slider has been successfully imported.', '%d sliders have been successfully imported.', $importSliderCount, 'LayerSlider' ), $importSliderCount ),
 
 		'generalUpdated' => __('Your settings has been updated.', 'LayerSlider')
 	);
@@ -154,8 +160,17 @@
 
 <script type="text/javascript">
 	window.lsSiteActivation = <?php echo ! empty( $validity ) ? 'true' : 'false' ?>;
-	window.lsGDPRConsent 	= <?php echo ! empty( $lsGDPRConsent ) ? 'true' : 'false' ?>;
 </script>
+
+<div id="ls-guides" class="metabox-prefs hidden">
+	<div id="ls-guides-wrap" class="hidden">
+		<h5><?php _e('Interactive guides coming soon!', 'LayerSlider') ?></h5>
+		<p><?php _e('Interactive step-by-step tutorial guides will shortly arrive to help you get started using LayerSlider.', 'LayerSlider') ?></p>
+	</div>
+	<div id="show-guides-link-wrap" class="hide-if-no-js screen-meta-toggle">
+		<button type="button" id="show-guides-link" class="button show-settings" aria-controls="ls-guides-wrap" aria-expanded="false"><?php _e('Guides', 'LayerSlider') ?></button>
+	</div>
+</div>
 
 <div id="ls-screen-options" class="metabox-prefs hidden">
 	<div id="screen-options-wrap" class="hidden">
@@ -174,18 +189,8 @@
 </div>
 
 
-<div id="ls-guides" class="metabox-prefs">
-	<div id="ls-guides-wrap" class="hidden">
-		<h5><?php _e('Interactive guides coming soon!', 'LayerSlider') ?></h5>
-		<p><?php _e('Interactive step-by-step tutorial guides will shortly arrive to help you get started using LayerSlider.', 'LayerSlider') ?></p>
-	</div>
-	<div id="show-guides-link-wrap" class="hide-if-no-js screen-meta-toggle">
-		<button type="button" id="show-guides-link" class="button show-settings" aria-controls="ls-guides-wrap" aria-expanded="false"><?php _e('Guides', 'LayerSlider') ?></button>
-	</div>
-</div>
-
 <!-- WP hack to place notification at the top of page -->
-<div class="wrap ls-wp-hack">
+<div class="wrap ls-wrap ls-wp-hack">
 	<h2></h2>
 
 	<!-- Error messages -->
@@ -197,7 +202,7 @@
 	<!-- End of error messages -->
 </div>
 
-<div class="wrap" id="ls-list-page">
+<div class="wrap ls-wrap" id="ls-list-page">
 	<h2><?php _e('Your Sliders', 'LayerSlider') ?></h2>
 
 	<!-- Beta version -->
@@ -206,6 +211,9 @@
 	<!-- Add slider template -->
 	<?php include LS_ROOT_PATH . '/templates/tmpl-add-slider-list.php'; ?>
 	<?php include LS_ROOT_PATH . '/templates/tmpl-add-slider-grid.php'; ?>
+	<?php include LS_ROOT_PATH . '/templates/tmpl-slider-group-item.php'; ?>
+	<?php include LS_ROOT_PATH . '/templates/tmpl-slider-group-placeholder.php'; ?>
+	<?php include LS_ROOT_PATH . '/templates/tmpl-slider-group-remove-area.php'; ?>
 
 	<!-- Import sample sliders template -->
 	<?php include LS_ROOT_PATH . '/templates/tmpl-import-templates.php'; ?>
@@ -215,19 +223,17 @@
 
 	<!-- Import sample sliders template -->
 	<?php include LS_ROOT_PATH . '/templates/tmpl-upload-sliders.php'; ?>
+	<?php include LS_ROOT_PATH . '/templates/tmpl-quick-import.php'; ?>
+
 
 	<!-- Activation required -->
 	<?php include LS_ROOT_PATH . '/templates/tmpl-activation.php'; ?>
+	<?php include LS_ROOT_PATH . '/templates/tmpl-purchase-ww-popups.php'; ?>
+
 
 	<!-- Embed slider template -->
 	<?php include LS_ROOT_PATH . '/templates/tmpl-embed-slider.php'; ?>
 
-	<!-- Share sheet template -->
-	<?php include LS_ROOT_PATH . '/templates/tmpl-share-sheet.php'; ?>
-
-	<?php if( ! $lsGDPRConsent ) {
-		include LS_ROOT_PATH . '/templates/tmpl-gdpr.php';
-	} ?>
 
 
 	<!-- Slider Filters -->
@@ -327,7 +333,7 @@
 								<td><span><?php echo human_time_diff($item['date_m']) ?> <?php _e('ago', 'LayerSlider') ?></span></td>
 								<td class="center">
 									<?php if(!$item['flag_deleted']) : ?>
-									<span class="slider-actions dashicons dashicons-arrow-down-alt2"
+									<span class="slider-actions-button dashicons dashicons-arrow-down-alt2"
 										data-id="<?php echo $item['id'] ?>"
 										data-slug="<?php echo htmlentities($item['slug']) ?>"
 										data-export-url="<?php echo wp_nonce_url('?page=layerslider&action=export&id='.$item['id'], 'export-sliders') ?>"
@@ -398,116 +404,94 @@
 			<!-- Slider List -->
 			<div class="ls-sliders-grid clearfix">
 
-				<div class="slider-item hero import-templates <?php echo $lsStoreHasUpdate ? 'has-updates' : '' ?>">
-					<div class="slider-item-wrapper">
-						<a href="#" id="ls-import-samples-button" class="preview import-templates <?php echo $lsStoreHasUpdate ? 'has-updates' : '' ?>">
-							<i class="import dashicons dashicons-star-filled"></i>
-							<span><?php _e('Template Store', 'LayerSlider') ?></span>
-						</a>
-					</div>
-				</div>
-				<div class="slider-item hero">
-					<div class="slider-item-wrapper">
-						<a href="#" id="ls-import-button" class="preview">
-							<i class="import dashicons dashicons-upload"></i>
-							<span><?php _e('Import Sliders', 'LayerSlider') ?></span>
-						</a>
-					</div>
-				</div>
-				<div class="slider-item hero">
-					<div class="slider-item-wrapper">
-						<a href="#" id="ls-add-slider-button" class="preview">
-							<i class="add dashicons dashicons-plus"></i>
-							<span><?php _e('Add New Slider', 'LayerSlider') ?></span>
-						</a>
-					</div>
-				</div>
-				<?php if( ! empty($sliders) ) : ?>
-				<?php
-					foreach($sliders as $key => $item) :
-					$class = ($item['flag_deleted'] == '1') ? 'dimmed' : '';
-					$preview = apply_filters('ls_preview_for_slider', $item );
-				?>
-				<div class="slider-item <?php echo $class ?>">
-					<div class="slider-item-wrapper">
-						<input type="checkbox" name="sliders[]" class="checkbox ls-hover" value="<?php echo $item['id'] ?>">
-						<?php if(!$item['flag_deleted']) : ?>
-						<span class="ls-hover slider-actions dashicons dashicons-arrow-down-alt2"></span>
-						<?php else : ?>
-						<a href="<?php echo wp_nonce_url('?page=layerslider&action=restore&id='.$item['id'], 'restore_'.$item['id']) ?>">
-							<span class="ls-hover dashicons dashicons-backup" data-help="<?php _e('Restore removed slider', 'LayerSlider') ?>"></span>
-						</a>
-						<?php endif; ?>
-						<a class="preview" style="background-image: url(<?php echo  ! empty( $preview ) ? $preview : LS_ROOT_URL . '/static/admin/img/blank.gif' ?>);" href="?page=layerslider&action=edit&id=<?php echo $item['id'] ?>">
-							<?php if( empty( $preview ) ) : ?>
-							<div class="no-preview">
-								<h5><?php _e('No Preview', 'LayerSlider') ?></h5>
-								<small><?php _e('Previews are automatically generated from slide images in sliders.', 'LayerSlider') ?></small>
-							</div>
-							<?php endif ?>
-						</a>
-						<div class="info">
-							<div class="name">
-								<?php echo apply_filters('ls_slider_title', stripslashes($item['name']), 40) ?>
-							</div>
+				<div class="ls-grid-buttons ls-center clearfix">
+					<div class="slider-item hero import-templates <?php echo $lsStoreHasUpdate ? 'has-updates' : '' ?>">
+						<div class="slider-item-wrapper">
+							<a href="#" id="ls-import-samples-button" class="preview import-templates <?php echo $lsStoreHasUpdate ? 'has-updates' : '' ?>">
+								<i class="import dashicons dashicons-star-filled"></i>
+								<span><?php _e('Template Store', 'LayerSlider') ?></span>
+							</a>
 						</div>
-
-						<ul class="slider-actions-sheet ls-hidden">
-							<li>
-								<a href="#" class="embed" data-id="<?php echo $item['id'] ?>" data-slug="<?php echo htmlentities($item['slug']) ?>">
-									<i class="dashicons dashicons-plus"></i>
-									<?php _e('Embed Slider', 'LayerSlider') ?>
-								</a>
-							</li>
-							<li class="half">
-								<a href="<?php echo wp_nonce_url('?page=layerslider&action=export&id='.$item['id'], 'export-sliders') ?>">
-									<i class="dashicons dashicons-share-alt2"></i>
-									<?php _e('Export', 'LayerSlider') ?>
-								</a>
-								<a href="#" class="ls-export-options-button">
-									<i class="dashicons dashicons-arrow-right-alt2"></i>
-								</a>
-							</li>
-							<li>
-								<a href="<?php echo wp_nonce_url('?page=layerslider&action=duplicate&id='.$item['id'], 'duplicate_'.$item['id']) ?>">
-									<i class="dashicons dashicons-admin-page"></i>
-									<?php _e('Duplicate', 'LayerSlider') ?>
-								</a>
-							</li>
-							<li>
-								<a href="<?php echo admin_url('admin.php?page=layerslider-addons&section=revisions&id='.$item['id']) ?>">
-									<i class="dashicons dashicons-backup"></i>
-									<?php _e('Revisions', 'LayerSlider') ?>
-								</a>
-							</li>
-							<li>
-								<a href="<?php echo wp_nonce_url('?page=layerslider&action=remove&id='.$item['id'], 'remove_'.$item['id']) ?>" class="remove">
-									<i class="dashicons dashicons-trash"></i>
-									<?php _e('Remove', 'LayerSlider') ?>
-								</a>
-							</li>
-						</ul>
-
-						<ul class="ls-export-options">
-							<li>
-								<a href="<?php echo wp_nonce_url('?page=layerslider&action=export&id='.$item['id'], 'export-sliders') ?>">
-									<i class="dashicons dashicons-wordpress"></i>
-									<?php _e('Export for WordPress sites', 'LayerSlider') ?>
-									<small><?php _e('Usual method. Used for backups or to move sliders across WP sites.', 'LayerSlider') ?></small>
-								</a>
-							</li>
-							<li>
-								<a class="ls-html-export" href="<?php echo wp_nonce_url('?page=layerslider&action=export-html&id='.$item['id'], 'export-sliders') ?>">
-									<i class="dashicons dashicons-editor-code"></i>
-									<?php _e('Export as HTML', 'LayerSlider') ?>
-									<small><?php _e('Not suitable for WP sites. Used for the jQuery version of LayerSlider.', 'LayerSlider') ?></small>
-								</a>
-							</li>
-						</ul>
+					</div>
+					<div class="slider-item hero import-sliders">
+						<div class="slider-item-wrapper" data-drop-text="<?= _e('Drop file to import', 'LayerSlider') ?>" data-import-text="<?= _e('Uploading, please wait ...', 'LayerSlider') ?>">
+							<a href="#" id="ls-import-button" class="preview">
+								<i class="import dashicons dashicons-upload"></i>
+								<span><?php _e('Import Sliders', 'LayerSlider') ?></span>
+							</a>
+						</div>
+					</div>
+					<div class="slider-item hero">
+						<div class="slider-item-wrapper">
+							<a href="#" id="ls-add-slider-button" class="preview">
+								<i class="add dashicons dashicons-plus"></i>
+								<span><?php _e('Add New Slider', 'LayerSlider') ?></span>
+							</a>
+						</div>
 					</div>
 				</div>
-				<?php endforeach; ?>
-				<?php endif ?>
+
+
+
+				<?php
+				if( ! empty($sliders) ) {
+					foreach($sliders as $key => $item) {
+						$class = ($item['flag_deleted'] == '1') ? 'dimmed' : '';
+						$preview = apply_filters('ls_preview_for_slider', $item );
+
+						if( ! empty( $item['flag_group'] ) ) {
+							$groupItems = $item['items'];
+
+							if( empty( $groupItems ) ) { continue; }
+							?>
+							<div class="slider-item group-item" data-id="<?php echo $item['id'] ?>">
+								<div class="slider-item-wrapper">
+									<div class="items">
+										<?php
+											if( ! empty( $item['items'] ) ) {
+											foreach( $groupItems as $groupKey => $groupItem )  {
+											$groupPreview = apply_filters('ls_preview_for_slider', $groupItem ); ?>
+												<div class="item <?php echo ($groupItem['flag_deleted'] == '1') ? 'dimmed' : '' ?>">
+													<div class="preview" style="background-image: url(<?php echo  ! empty( $groupPreview ) ? $groupPreview : LS_ROOT_URL . '/static/admin/img/blank.gif' ?>);">
+														<?php if( empty( $groupPreview ) ) : ?>
+														<div class="no-preview">
+															<?php _e('No Preview', 'LayerSlider') ?>
+														</div>
+														<?php endif ?>
+													</div>
+												</div>
+											<?php } } ?>
+									</div>
+								</div>
+								<div class="info">
+									<div class="name">
+										<?php echo apply_filters('ls_slider_title', stripslashes($item['name']), 40) ?>
+									</div>
+								</div>
+							</div>
+							<div class="ls-hidden">
+								<div class="clearfix">
+									<?php
+										if( ! empty( $item['items'] ) ) {
+											foreach( $groupItems as $groupKey => $item ) {
+												$class = ($item['flag_deleted'] == '1') ? 'dimmed' : '';
+												$preview = apply_filters('ls_preview_for_slider', $item );
+
+												include LS_ROOT_PATH.'/templates/tmpl-slider-grid-item.php';
+											}
+										}
+									?>
+								</div>
+							</div>
+							<?php
+
+						} else {
+							include LS_ROOT_PATH.'/templates/tmpl-slider-grid-item.php';
+						}
+					}
+				}
+				?>
+
 			</div>
 			<?php endif ?>
 
@@ -540,6 +524,7 @@
 					<?php if( $showAllSlider ) : ?>
 					<option value="restore"><?php _e('Restore selected', 'LayerSlider') ?></option>
 					<?php endif; ?>
+					<option value="group"><?php _e('Create group from selected', 'LayerSlider') ?></option>
 					<option value="merge"><?php _e('Merge selected as new', 'LayerSlider') ?></option>
 				</select>
 				<button class="button"><?php _e('Apply', 'LayerSlider') ?></button>
@@ -623,8 +608,8 @@
 					<input type="hidden" name="action" value="layerslider_authorize_site">
 
 					<div class="main-controls">
-						<span class="enter"><?php _e('Enter your purchase code:', 'LayerSlider') ?></span>
-						<a target="_blank" class="button button-small where-button" href="https://layerslider.kreaturamedia.com/documentation/#activation-purchase-code"><?php _e('Where’s my purchase code?', 'LayerSlider') ?></a>
+						<span class="enter"><?php _e('Enter your license key:', 'LayerSlider') ?></span>
+						<a target="_blank" class="button button-small where-button" href="https://layerslider.kreaturamedia.com/documentation/#activation-purchase-code"><?php _e('Where’s my license key?', 'LayerSlider') ?></a>
 
 						<div class="key">
 							<input type="text" name="purchase_code" value="<?php echo $codeFormatted ?>" placeholder="e.g. bc8e2b24-3f8c-4b21-8b4b-90d57a38e3c7">
@@ -632,7 +617,7 @@
 						<p>
 							<?php if( ! LS_Config::get('autoupdate') ) {
 								echo sprintf(
-									__('In case you’ve received LayerSlider with a theme, you will need a purchase code, which is payable. Product activation is optional, it’s for additional features only. For more information, read %sour documentation%s or Envato’s %sBundled Plugins%s help article.', 'LayerSlider'), '<a href="https://layerslider.kreaturamedia.com/documentation/#activation" target="_blank">', '</a>', '<a href="https://help.market.envato.com/hc/en-us/articles/213762463" target="_blank">', '</a>');
+									__('In case you’ve received LayerSlider with a theme, you will need a license key, which is payable. Product activation is optional, it’s for additional features only. For more information, read %sour documentation%s.', 'LayerSlider'), '<a href="https://layerslider.kreaturamedia.com/documentation/#activation" target="_blank">', '</a>');
 							} else {
 								echo sprintf(__('If you experience any issue or need further information, please read our %sactivation guide%s.', 'LayerSlider'), '<a href="https://layerslider.kreaturamedia.com/documentation/#activation" target="_blank">', '</a>');
 							} ?>
@@ -659,7 +644,6 @@
 						<div class="controls">
 							<a href="update-core.php"><?php _e('Check for updates', 'LayerSlider') ?></a>
 							<a href="#" class="ls-deauthorize"><?php _e('Deactivate this site', 'LayerSlider') ?></a>
-							<!-- <a href="<?php //echo LS_REPO_BASE_URL.'download?domain='.base64_encode($_SERVER['SERVER_NAME']).'&channel='.$channel.'&code='.base64_encode($code) ?>" class="dl-link"><?php //_e('Download install file', 'LayerSlider') ?></a> -->
 							<span></span>
 						</div>
 					</div>
@@ -731,8 +715,6 @@
 						</li>
 					</ul>
 					<form method="post" action="https://kreaturamedia.com/newsletter/" target="_blank">
-						<input type="hidden" name="code" value="<?php echo $code ?>">
-						<input type="hidden" name="item" value="<?php echo LS_MARKETPLACE_ID ?>">
 						<div class="email"><input type="text" name="email" placeholder="<?php _e('Enter your email address', 'LayerSlider') ?>"></div>
 						<button class="button"><?php _e('Subscribe', 'LayerSlider') ?></button>
 					</form>
@@ -741,39 +723,43 @@
 		</div>
 
 
-		<!-- Tips & Recommendations -->
-		<?php if( LS_Config::get('promotions') ) : ?>
+		<!-- Social Media -->
 		<div class="half">
-			<div class="ls-box ls-product-banner ls-product-tips">
+			<div class="ls-box ls-product-banner ls-social-media-box">
 				<div class="header medium">
-					<h2><?php _e('Need help with customization?', 'LayerSlider') ?></h2>
+					<h2><?php _e('Stay in Touch with Kreatura', 'LayerSlider') ?></h2>
 				</div>
 				<div class="inner">
-					<?php echo sprintf(__('%sWPKraken%s has a professional team of WordPress experts to offer a variety of customization jobs. We’ve partnered with them in order to provide these kinds of services to you. Get a free quote if you’re looking for someone to manage your site, build sliders and customize LayerSlider according to your needs.', 'LayerSlider'), '<a href="https://wpkraken.io/?ref=kreatura" target="_blank">', '</a>') ?>
-					<a href="https://wpkraken.io/?ref=kreatura" target="_blank" class="button"><?php _e('Learn More & Get a Free Quote', 'LayerSlider') ?></a>
+					<div><?php _e('Follow us on Social Media and get notified about the latest product updates, sales, deals, and participate in giveaways and other programs.', 'LayerSlider') ?></div>
+					<div class="ls-social-media-buttons">
+
+						<a class="ls-facebook button" href="https://www.facebook.com/kreaturamedia/" target="_blank">
+							<span class="dashicons dashicons-facebook-alt"></span> Facebook
+						</a>
+
+						<a class="ls-twitter button" href="https://twitter.com/kreaturamedia" target="_blank">
+							<span class="dashicons dashicons-twitter"></span> Twitter
+						</a>
+
+						<a class="ls-youtube button" href="https://www.youtube.com/user/kreaturamedia" target="_blank">
+							<span class="dashicons dashicons-video-alt3"></span> YouTube
+						</a>
+					</div>
+
 				</div>
 			</div>
 		</div>
-		<?php endif ?>
 	</div>
 
 
 	<div class="ls-box ls-news">
 		<div class="header medium">
 			<h2><?php _e('LayerSlider News', 'LayerSlider') ?></h2>
-			<div class="filters">
-				<span><?php _e('Filter:', 'LayerSlider') ?></span>
-				<ul>
-					<li class="active" data-page="all"><?php _e('All', 'LayerSlider') ?></li>
-					<li data-page="announcements"><?php _e('Announcements', 'LayerSlider') ?></li>
-					<li data-page="changes"><?php _e('Release log', 'LayerSlider') ?></li>
-					<li data-page="betas"><?php _e('Beta versions', 'LayerSlider') ?></li>
-				</ul>
-			</div>
 			<div class="ls-version"><?php echo sprintf(__('You have version %s installed', 'LayerSlider'), LS_PLUGIN_VERSION) ?></div>
 		</div>
 		<div>
-			<iframe src="https://news.kreaturamedia.com/layerslider/"></iframe>
+			<?php $updateVersion = get_option( 'ls-latest-version', LS_PLUGIN_VERSION ); ?>
+			<iframe src="https://news.kreaturamedia.com/layerslider/?ver=<?php echo $updateVersion ?>"></iframe>
 		</div>
 	</div>
 </div>
@@ -800,4 +786,5 @@ add_user_meta(get_current_user_id(), 'layerslider_help_wp_pointer', '1'); ?>
 <?php } ?>
 <script type="text/javascript">
 	var lsScreenOptions = <?php echo json_encode($lsScreenOptions) ?>;
+	var pluginPath = '<?php echo LS_ROOT_URL ?>/static/';
 </script>

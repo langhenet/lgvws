@@ -126,7 +126,7 @@ function avia_prepare_dynamic_styles($options = false)
 			if(is_numeric($color_set[$key]['img']))
 			{
 				$color_set[$key]['img'] = wp_get_attachment_image_src($color_set[$key]['img'], 'full'); 
-				$color_set[$key]['img'] = $color_set[$key]['img'][0];
+				$color_set[$key]['img'] = is_array( $color_set[ $key ]['img'] ) ? $color_set[ $key ]['img'][0] : '';
 			}
 			
 			$url = empty($color_set[$key]['img']) ? "" : "url(".$color_set[$key]['img'].")";

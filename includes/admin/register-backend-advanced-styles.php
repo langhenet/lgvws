@@ -768,12 +768,14 @@ $advanced['slideshow_button'] = array(
 							)
 );
 
+
+
 $advanced['cookie_consent'] = array(
     "id"			=> "cookie_consent", //needs to match array key
     "name"			=> "Cookie Consent Message Bar",
-    "group" 		=> __("Misc",'avia_framework'),
+    "group" 		=> __("Cookie Consent Bar",'avia_framework'),
     "description"	=> __("Change the styling for your cookie consent message bar",'avia_framework'),
-    "selector"		=> array(".avia-cookie-consent"=> "", ".avia-cookie-consent p"=> ""),
+    "selector"		=> array("div.avia-cookie-consent"=> "", "div.avia-cookie-consent p"=> ""),
     "sections"		=> false,
     "hover"			=> false,
     "edit"			=> array(
@@ -789,10 +791,82 @@ $advanced['cookie_consent'] = array(
 
 $advanced['cookie_consent_button'] = array(
     "id"			=> "cookie_consent_button", //needs to match array key
-    "name"			=> "Cookie Consent Dismiss Button",
-    "group" 		=> __("Misc",'avia_framework'),
-    "description"	=> __("Change the styling for your cookie consent button",'avia_framework'),
-    "selector"		=> array(".avia-cookie-consent .avia-cookie-consent-button.avia-cookie-close-bar"=> ""),
+    "name"			=> "Cookie Consent Accept Settings Button",
+    "group" 		=> __("Cookie Consent Bar",'avia_framework'),
+    "description"	=> __("Change the styling for your cookie consent accept settings and dismiss notification button",'avia_framework'),
+    "selector"		=> array("div.avia-cookie-consent .avia-cookie-consent-button.avia-cookie-close-bar"=> ""),
+    "sections"		=> false,
+    "hover"			=> false,
+    "edit"			=> array(
+        'background_color' 	=> array('type' => 'colorpicker', 'name'=> __("Button Background Color",'avia_framework')),
+        'color' 			=> array('type' => 'colorpicker', 'name'=> __("Button Font Color",'avia_framework')),
+        'border-color' 		=> array('type' => 'colorpicker', 'name'=> __("Border Color",'avia_framework')),
+        'font_size' 		=> array('type' => 'size', 'range' => '8-80', 'name'=> __("Font Size",'avia_framework')),
+        'font_weight' 		=> array('type' => 'select', 'name'=> __("Font Weight",'avia_framework'), 'options' => $weight),
+        'text_transform' 	=> array('type' => 'select', 'name'=> __("Text Transform",'avia_framework'), 'options' => $transform )
+    )
+);
+
+$advanced['cookie_consent_all_button'] = array(
+    "id"			=> "cookie_consent_all_button", //needs to match array key
+    "name"			=> "Cookie Consent Accept All Cookies Button",
+    "group" 		=> __("Cookie Consent Bar",'avia_framework'),
+    "description"	=> __("Change the styling for your cookie consent accept all cookies and settings and dismiss notification button",'avia_framework'),
+    "selector"		=> array("div.avia-cookie-consent .avia-cookie-consent-button.avia-cookie-close-bar.avia-cookie-select-all"=> ""),
+    "sections"		=> false,
+    "hover"			=> false,
+    "edit"			=> array(
+        'background_color' 	=> array('type' => 'colorpicker', 'name'=> __("Button Background Color",'avia_framework')),
+        'color' 			=> array('type' => 'colorpicker', 'name'=> __("Button Font Color",'avia_framework')),
+        'border-color' 		=> array('type' => 'colorpicker', 'name'=> __("Border Color",'avia_framework')),
+        'font_size' 		=> array('type' => 'size', 'range' => '8-80', 'name'=> __("Font Size",'avia_framework')),
+        'font_weight' 		=> array('type' => 'select', 'name'=> __("Font Weight",'avia_framework'), 'options' => $weight),
+        'text_transform' 	=> array('type' => 'select', 'name'=> __("Text Transform",'avia_framework'), 'options' => $transform )
+    )
+);
+
+$advanced['cookie_consent_no_coolies_button'] = array(
+    "id"			=> "cookie_consent_no_coolies_button", //needs to match array key
+    "name"			=> "Cookie Consent Do Not Accept Cookies Button",
+    "group" 		=> __("Cookie Consent Bar",'avia_framework'),
+    "description"	=> __("Change the styling for your cookie consent do not accept and hide notification button",'avia_framework'),
+    "selector"		=> array("div.avia-cookie-consent .avia-cookie-consent-button.av-extra-cookie-btn.avia-cookie-hide-notification"=> ""),
+    "sections"		=> false,
+    "hover"			=> false,
+    "edit"			=> array(
+        'background_color' 	=> array('type' => 'colorpicker', 'name'=> __("Button Background Color",'avia_framework')),
+        'color' 			=> array('type' => 'colorpicker', 'name'=> __("Button Font Color",'avia_framework')),
+        'border-color' 		=> array('type' => 'colorpicker', 'name'=> __("Border Color",'avia_framework')),
+        'font_size' 		=> array('type' => 'size', 'range' => '8-80', 'name'=> __("Font Size",'avia_framework')),
+        'font_weight' 		=> array('type' => 'select', 'name'=> __("Font Weight",'avia_framework'), 'options' => $weight),
+        'text_transform' 	=> array('type' => 'select', 'name'=> __("Text Transform",'avia_framework'), 'options' => $transform )
+    )
+);
+
+$advanced['cookie_consent_modal_window_button'] = array(
+    "id"			=> "cookie_consent_modal_window_button", //needs to match array key
+    "name"			=> "Cookie Consent Open Modal Window Button",
+    "group" 		=> __("Cookie Consent Bar",'avia_framework'),
+    "description"	=> __("Change the styling for your cookie consent open info modal on privacy and cookies button",'avia_framework'),
+    "selector"		=> array("div.avia-cookie-consent .avia-cookie-consent-button.av-extra-cookie-btn.avia-cookie-info-btn"=> ""),
+    "sections"		=> false,
+    "hover"			=> false,
+    "edit"			=> array(
+        'background_color' 	=> array('type' => 'colorpicker', 'name'=> __("Button Background Color",'avia_framework')),
+        'color' 			=> array('type' => 'colorpicker', 'name'=> __("Button Font Color",'avia_framework')),
+        'border-color' 		=> array('type' => 'colorpicker', 'name'=> __("Border Color",'avia_framework')),
+        'font_size' 		=> array('type' => 'size', 'range' => '8-80', 'name'=> __("Font Size",'avia_framework')),
+        'font_weight' 		=> array('type' => 'select', 'name'=> __("Font Weight",'avia_framework'), 'options' => $weight),
+        'text_transform' 	=> array('type' => 'select', 'name'=> __("Text Transform",'avia_framework'), 'options' => $transform )
+    )
+);
+
+$advanced['cookie_consent_link_button'] = array(
+    "id"			=> "cookie_consent_link_button", //needs to match array key
+    "name"			=> "Cookie Consent Link Button",
+    "group" 		=> __("Cookie Consent Bar",'avia_framework'),
+    "description"	=> __("Change the styling for your cookie consent Link to another page button",'avia_framework'),
+    "selector"		=> array("div.avia-cookie-consent .avia-cookie-consent-button.av-extra-cookie-btn.avia-cookie-link-btn"=> ""),
     "sections"		=> false,
     "hover"			=> false,
     "edit"			=> array(
@@ -807,10 +881,10 @@ $advanced['cookie_consent_button'] = array(
 
 $advanced['cookie_consent_extra_button'] = array(
     "id"			=> "cookie_consent_extra_button", //needs to match array key
-    "name"			=> "Cookie Consent Link and Info Button ",
-    "group" 		=> __("Misc",'avia_framework'),
-    "description"	=> __("Change the styling for your cookie consent extra buttons",'avia_framework'),
-    "selector"		=> array(".avia-cookie-consent .avia-cookie-consent-button.av-extra-cookie-btn"=> ""),
+    "name"			=> "Cookie Consent Extra Button ",
+    "group" 		=> __("Cookie Consent Bar",'avia_framework'),
+    "description"	=> __("Change the styling for all your cookie consent extra buttons (not accept buttons) ",'avia_framework'),
+    "selector"		=> array("div.avia-cookie-consent .avia-cookie-consent-button.av-extra-cookie-btn"=> ""),
     "sections"		=> false,
     "hover"			=> false,
     "edit"			=> array(

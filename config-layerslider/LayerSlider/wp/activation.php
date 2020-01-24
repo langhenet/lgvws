@@ -116,6 +116,7 @@ function layerslider_create_db_table() {
 	// Table for Sliders
 	dbDelta("CREATE TABLE {$wpdb->prefix}layerslider (
 			  id int(10) NOT NULL AUTO_INCREMENT,
+			  group_id int(10),
 			  author int(10) NOT NULL DEFAULT 0,
 			  name varchar(100) DEFAULT '',
 			  slug varchar(100) DEFAULT '',
@@ -127,6 +128,7 @@ function layerslider_create_db_table() {
 			  flag_hidden tinyint(1) NOT NULL DEFAULT 0,
 			  flag_deleted tinyint(1) NOT NULL DEFAULT 0,
 			  flag_popup tinyint(1) NOT NULL DEFAULT 0,
+			  flag_group tinyint(1) NOT NULL DEFAULT 0,
 			  PRIMARY KEY  (id)
 			) $charset_collate;");
 
@@ -167,7 +169,7 @@ function layerslider_verify_db_tables() {
 
 
 	// Step 3: Some hand picked things to look for
-	$popup = $wpdb->get_var("SHOW COLUMNS FROM `{$wpdb->prefix}layerslider` LIKE 'flag_popup'");
+	$popup = $wpdb->get_var("SHOW COLUMNS FROM `{$wpdb->prefix}layerslider` LIKE 'flag_group'");
 
 	if( empty( $popup ) ) {
 		return false;

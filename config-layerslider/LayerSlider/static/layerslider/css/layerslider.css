@@ -2,25 +2,10 @@
 /*
 	* Style settings of LayerSlider
 	*
-	* (c) 2011-2019 George Krupa, John Gera & Kreatura Media
+	* (c) 2011-2020 George Krupa, John Gera & Kreatura Media
 	*
-	* Plugin web:			https://layerslider.kreaturamedia.com/
-	* Licenses: 			http://codecanyon.net/licenses/
-*/
-
-
-
-/* Slider structure z-index cheat sheet
-
-	_____									YourLogo				z.index: 50;
-	_____ _____ _____						Most GUI elements		z-index: 40;
-	______________________					.ls-inner wrapper		z-index: 30;
-	______________________					.ls-hidden wrapper		z-index: 20;
-	___________________________				.ls-shadow				z-index: 10;
-	________________________________		slider element			z-index: default;
-
-	-------------------------------------	Document
-
+	* LayerSlider home:		https://layerslider.kreaturamedia.com/
+	* Licensing:			https://layerslider.kreaturamedia.com/licensing/
 */
 
 
@@ -206,6 +191,7 @@
 
 	.ls-gui-element {
 		z-index: 40;
+		text-decoration: none !important;
 	}
 
 	.ls-loading-container {
@@ -1112,6 +1098,7 @@
 	body .ls-container video,
 	#ls-global .ls-container video {
 		max-width: none !important;
+		object-fit: cover !important;
 	}
 
 	/* direction: ltr */
@@ -1152,7 +1139,7 @@
 
 /* Notification */
 
-	.ls-notification {
+	.ls-slider-notification {
 		position: relative;
 		margin: 10px auto;
 		padding: 10px 10px 15px 88px;
@@ -1163,12 +1150,12 @@
 		font-family: 'Open Sans', arial, sans-serif !important;
 	}
 
-	.ls-notification a {
+	.ls-slider-notification a {
 		color: white !important;
 		text-decoration: underline !important;
 	}
 
-	.ls-notification-logo {
+	.ls-slider-notification-logo {
 		position: absolute;
 		top: 16px;
 		left: 17px;
@@ -1184,7 +1171,7 @@
 		text-align: center;
 	}
 
-	.ls-notification strong {
+	.ls-slider-notification strong {
 		color: white !important;
 		display: block;
 		font-size: 20px;
@@ -1192,7 +1179,7 @@
 		font-weight: normal !important;
 	}
 
-	.ls-notification span {
+	.ls-slider-notification span {
 		display: block;
 		font-size: 13px;
 		line-height: 16px;

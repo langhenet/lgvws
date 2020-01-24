@@ -59,12 +59,16 @@
 	
 		return this.each(function()
 		{
-			var number_container = $(this), elements = number_container.find('.__av-single-number'), countTimer = number_container.data('timer') || 3000;
+			var number_container = $(this), 
+				elements = number_container.find('.__av-single-number'), 
+				countTimer = number_container.data('timer') || 3000;
 			
 			//prepare elements
 			elements.each(function(i)
 			{
-				var element = $(this), text = element.text();
+				var element = $(this), 
+					text = element.text();
+					
 				if(window.addEventListener) element.text( text.replace(/./g, "0")); /*https://github.com/AviaThemes/wp-themes/issues/812*/
 			});
 			
@@ -83,14 +87,22 @@
 						zeroOnly = /^0+$/.test(countTo), 
 						increment = 0,
 						number_format = element.data('number_format');
+						
+					if( 'undefined' != typeof element.data('start_from') )
+					{
+						current = element.data('start_from');
+					}
 					
 					//fallback for decimals like 00 or 000
-					if(zeroOnly && countTo !== 0) fakeCountTo = countTo.replace(/0/g, '9');
+					if( zeroOnly && countTo !== 0 ) 
+					{ 
+						fakeCountTo = countTo.replace( /0/g, '9' ); 
+					}
 					
 					increment = Math.round( fakeCountTo * 32 / countTimer);
 					if(increment == 0 || increment % 10 == 0) increment += 1;
 					
-					setTimeout(function(){ start_count(element, countTo, increment, current, fakeCountTo, number_format);}, start_timer);
+					setTimeout( function(){ start_count(element, countTo, increment, current, fakeCountTo, number_format);}, start_timer);
 				});
 			});
 			
@@ -103,3 +115,4 @@
 		});
 	};
 })(jQuery);
+

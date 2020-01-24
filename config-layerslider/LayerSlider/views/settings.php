@@ -100,7 +100,7 @@ $notifications = array(
 					<p><?php echo sprintf(__('You can specify a custom capability if none of the pre-defined roles match your needs. You can find all the available capabilities on %sthis%s page.', 'LayerSlider'), '<a href="http://codex.wordpress.org/Roles_and_Capabilities#Capability_vs._Role_Table" target="_blank">', '</a>') ?></a>.</p>
 				</div>
 				<div class="footer">
-					<button class="button"><?php _e('Update', 'LayerSlider') ?></button>
+					<button class="button button-primary"><?php _e('Update', 'LayerSlider') ?></button>
 				</div>
 			</form>
 		</div>
@@ -126,7 +126,7 @@ $notifications = array(
 				</table>
 
 				<div class="footer">
-					<button type="submit" class="button"><?php _e('Save changes', 'LayerSlider') ?></button>
+					<button type="submit" class="button button-primary"><?php _e('Save changes', 'LayerSlider') ?></button>
 				</div>
 			</form>
 		</div>
@@ -185,7 +185,7 @@ $notifications = array(
 
 				<!-- Google Fonts search bar -->
 				<div class="inner footer">
-					<button type="submit" class="button"><?php _e('Save changes', 'LayerSlider') ?></button>
+					<button type="submit" class="button button-primary"><?php _e('Save changes', 'LayerSlider') ?></button>
 					<?php
 						$scripts = array(
 							'arabic' => __('Arabic', 'LayerSlider'),
@@ -260,7 +260,7 @@ $notifications = array(
 		<div class="ls-global-settings">
 			<figure>
 				<?php _e('These options can help to increase performance and avoid 3rd party issues.', 'LayerSlider') ?>
-				<span class="warning"><?php _e('Be careful with these options as incorrect settings might break your site.', 'LayerSlider') ?></span>
+				<span class="warning"><?php _e('Be careful with these options as incorrect settings might cause unexpected issues.', 'LayerSlider') ?></span>
 			</figure>
 			<form method="post" class="ls-box km-tabs-inner">
 				<?php wp_nonce_field('save-advanced-settings'); ?>
@@ -307,6 +307,9 @@ $notifications = array(
 						<td class="desc"><?php _e('Eliminates render-blocking JavaScript files, but might also delay a bit displaying sliders above the fold.', 'LayerSlider') ?></td>
 					</tr>
 				</table>
+
+
+
 				<figure>
 					<?php _e('Troubleshooting &amp; Advanced Settings', 'LayerSlider') ?>
 				</figure>
@@ -316,7 +319,7 @@ $notifications = array(
 						<td>
 							<?php echo lsGetOptionField('checkbox', 'rocketscript_ignore', false) ?>
 						</td>
-						<td class="desc"><?php _e('Enable this option to ignore LayerSlider files by CloudFront’s Rocket Loader, which can help overcoming potential issues.', 'LayerSlider') ?></td>
+						<td class="desc"><?php _e('Enable this option to ignore LayerSlider files by CloudFlare’s Rocket Loader, which can help overcoming potential issues.', 'LayerSlider') ?></td>
 
 					</tr>
 					<tr>
@@ -348,8 +351,38 @@ $notifications = array(
 						<td class="desc"><?php _e('Used to specify the order in which scripts are loaded. Lower numbers correspond with earlier execution.', 'LayerSlider') ?></td>
 					</tr>
 				</table>
+
+
+
+				<figure>
+					<?php _e('Miscellaneous', 'LayerSlider') ?>
+				</figure>
+				<table>
+					<tr>
+						<td><?php _e('Suppress debug info', 'LayerSlider') ?></td>
+						<td>
+							<?php echo lsGetOptionField('checkbox', 'suppress_debug_info', false) ?>
+						</td>
+						<td class="desc"><?php _e('Hides useful information such as the version number in the browser’s debug console and in the site HTML markup. We recommend leaving this option disabled as it can be a significant help for debugging and supporting LayerSlider.', 'LayerSlider') ?></td>
+					</tr>
+					<tr>
+						<td><?php _e('Enable TinyMCE helper', 'LayerSlider') ?></td>
+						<td>
+							<?php echo lsGetOptionField('checkbox', 'tinymce_helper', true ) ?>
+						</td>
+						<td class="desc"><?php _e('Allows the LayerSlider helper utility for the classic WordPress page editor, which makes it easy to insert sliders into your pages. Disable only if you’re experiencing issues with the editor.', 'LayerSlider') ?></td>
+					</tr>
+					<tr>
+						<td><?php _e('Enable Gutenberg block', 'LayerSlider') ?></td>
+						<td>
+							<?php echo lsGetOptionField('checkbox', 'gutenberg_block', true ) ?>
+						</td>
+						<td class="desc"><?php _e('Allows the LayerSlider block for  WordPress’s new Gutenberg page editor, which makes it easy to insert sliders into your pages. Disable only if you’re experiencing issues with the editor.', 'LayerSlider') ?></td>
+					</tr>
+				</table>
+
 				<div class="footer">
-					<button type="submit" class="button"><?php _e('Save changes', 'LayerSlider') ?></button>
+					<button type="submit" class="button button-primary"><?php _e('Save changes', 'LayerSlider') ?></button>
 				</div>
 			</form>
 		</div>

@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {  exit;  }    // Exit if accessed directly
 
 if( ! class_exists( 'woocommerce' ) )
 {
-	add_shortcode('av_product_upsells', 'avia_please_install_woo');
+	add_shortcode( 'av_product_upsells', 'avia_please_install_woo' );
 	return;
 }
 
@@ -22,11 +22,12 @@ if ( ! class_exists( 'avia_sc_product_upsells' ) )
 		 */
 		function shortcode_insert_button()
 		{
-			$this->config['self_closing']	=	'yes';
+			$this->config['version']		= '1.0';
+			$this->config['self_closing']	= 'yes';
 			
 			$this->config['name']		= __( 'Related Products', 'avia_framework' );
 			$this->config['tab']		= __( 'Plugin Additions', 'avia_framework' );
-			$this->config['icon']		= AviaBuilder::$path['imagesURL']."sc-tabs.png";
+			$this->config['icon']		= AviaBuilder::$path['imagesURL'] . 'sc-tabs.png';
 			$this->config['order']		= 15;
 			$this->config['target']		= 'avia-target-insert';
 			$this->config['shortcode'] 	= 'av_product_upsells';
@@ -36,75 +37,105 @@ if ( ! class_exists( 'avia_sc_product_upsells' ) )
 			$this->config['posttype'] 	= array( 'product', __( 'This element can only be used on single product pages', 'avia_framework' ) );
 			$this->config['id_name']	= 'id';
 			$this->config['id_show']	= 'yes';
+			$this->config['alb_desc_id']	= 'alb_description';
 		}
-			/**
-			 * Popup Elements
-			 *
-			 * If this function is defined in a child class the element automatically gets an edit button, that, when pressed
-			 * opens a modal window that allows to edit the element properties
-			 *
-			 * @return void
-			 */
-			function popup_elements()
-			{
-				$this->elements = array(
-				
-					array(
-							'type'			=> 'tab_container', 
-							'nodescription' => true
-						),
-					
-					array(
-							'type'			=> 'tab',
-							'name'			=> __( 'Content' , 'avia_framework' ),
-							'nodescription' => true
-						),
-					
-					array(	
-							"name" 	=> __("Display options", 'avia_framework' ),
-							"desc" 	=> __("Choose which products you want to display", 'avia_framework' ),
-							"id" 	=> "display",
-							"type" 	=> "select",
-							"std" 	=> "upsells related",
-							"subtype" => array(
-								__('Display up-sells and related products',  'avia_framework' ) =>'upsells related',
-								__('Display up-sells only',  'avia_framework' ) =>'upsells',	
-								__('Display related products only',  'avia_framework' ) =>'related')),	
-								
-					array(	
-							"name" 	=> __("Number of items", 'avia_framework' ),
-							"desc" 	=> __("Choose the maximum number of products to display", 'avia_framework' ),
-							"id" 	=> "count",
-							"type" 	=> "select",
-							"std" 	=> "4",
-							"subtype" => array(
-								'1' =>'1','2' =>'2','3' =>'3','4' =>'4','5' =>'5')),
-								
-					array(
-						"name" 	=> __("WooCommerce Product visibility?", 'avia_framework' ),
-						"desc" 	=> __("Select the visibility of WooCommerce products. Default setting can be set at Woocommerce -&gt Settings -&gt Products -&gt Inventory -&gt Out of stock visibility. Currently it is only possible to hide products out of stock.", 'avia_framework' ),
-						"id" 	=> "wc_prod_visible",
-						"type" 	=> "select",
-						"std" 	=> "",
-						"subtype" => array(
-							__('Use default WooCommerce Setting (Settings -&gt; Products -&gt; Out of stock visibility)',  'avia_framework' ) => '',
-							__('Hide products out of stock',  'avia_framework' ) => 'hide',
-//							__('Show products out of stock',  'avia_framework' )  => 'show'
-								)
+		
+		/**
+		 * Popup Elements
+		 *
+		 * If this function is defined in a child class the element automatically gets an edit button, that, when pressed
+		 * opens a modal window that allows to edit the element properties
+		 *
+		 * @return void
+		 */
+		function popup_elements()
+		{
+			
+			$this->elements = array(
+
+				array(
+						'type' 	=> 'tab_container', 
+						'nodescription' => true
 					),
-					
-					array(
-							'type'			=> 'close_div',
-							'nodescription' => true
+						
+				array(
+						'type' 	=> 'tab',
+						'name'  => __( 'Content', 'avia_framework' ),
+						'nodescription' => true
+					),
+						
+					array(	
+							'type'			=> 'template',
+							'template_id'	=> $this->popup_key( 'content_upsells' )
 						),
-					
-					array(
-							'type'			=> 'close_div',
-							'nodescription' => true
-						)
-					
+				
+				array(
+						'type' 	=> 'tab_close',
+						'nodescription' => true
+					),
+				
+				array(
+						'type' 	=> 'tab_container_close',
+						'nodescription' => true
+					)
+
+			);
+		}
+		
+		/**
+		 * Create and register templates for easier maintainance
+		 * 
+		 * @since 4.6.4
+		 */
+		protected function register_dynamic_templates()
+		{
+			
+			/**
+			 * Content Tab
+			 * ===========
+			 */
+			
+			$c = array(
+						array(	
+							'name' 	=> __( 'Display options', 'avia_framework' ),
+							'desc' 	=> __( 'Choose which products you want to display', 'avia_framework' ),
+							'id' 	=> 'display',
+							'type' 	=> 'select',
+							'std' 	=> 'upsells related',
+							'subtype'	=> array(
+												__( 'Display up-sells and related products', 'avia_framework' )	=> 'upsells related',
+												__( 'Display up-sells only', 'avia_framework' )					=> 'upsells',	
+												__( 'Display related products only', 'avia_framework' )			=> 'related'
+											)
+						),	
+								
+						array(	
+							'name' 	=> __( 'Number of items', 'avia_framework' ),
+							'desc' 	=> __( 'Choose the maximum number of products to display', 'avia_framework' ),
+							'id' 	=> 'count',
+							'type' 	=> 'select',
+							'std' 	=> '4',
+							'subtype'	=> array( '1' =>'1', '2' =>'2', '3' =>'3', '4' =>'4', '5' =>'5' )
+						),
+								
+						array(
+							'name' 	=> __( 'WooCommerce Product visibility?', 'avia_framework' ),
+							'desc' 	=> __( 'Select the visibility of WooCommerce products. Default setting can be set at Woocommerce -&gt Settings -&gt Products -&gt Inventory -&gt Out of stock visibility. Currently it is only possible to hide products out of stock.', 'avia_framework' ),
+							'id' 	=> 'wc_prod_visible',
+							'type' 	=> 'select',
+							'std' 	=> '',
+							'subtype'	=> array(
+												__( 'Use default WooCommerce Setting (Settings -&gt; Products -&gt; Out of stock visibility)', 'avia_framework' ) => '',
+												__( 'Hide products out of stock', 'avia_framework' )	=> 'hide',
+//												__( 'Show products out of stock', 'avia_framework' )	=> 'show'
+								)
+						),
+				
 				);
-			}
+			
+			AviaPopupTemplates()->register_dynamic_template( $this->popup_key( 'content_upsells' ), $c );
+			
+		}
 
 
 		/**
@@ -116,11 +147,9 @@ if ( ! class_exists( 'avia_sc_product_upsells' ) )
 		 * @param array $params this array holds the default values for $content and $args.
 		 * @return $params the return array usually holds an innerHtml key that holds item specific markup.
 		 */
-		function editor_element($params)
+		function editor_element( $params )
 		{
-			$params['innerHtml'] = "<img src='".$this->config['icon']."' title='".$this->config['name']."' />";
-			$params['innerHtml'].= "<div class='avia-element-label'>".$this->config['name']."</div>";
-
+			$params = parent::editor_element( $params );
 			return $params;
 		}
 
@@ -138,11 +167,12 @@ if ( ! class_exists( 'avia_sc_product_upsells' ) )
 		{
 			global $avia_config;
 			
-			extract(shortcode_atts( array(
-										'display'			=>	'upsells related', 
-										'count'				=>	4,
-										'wc_prod_visible'	=>	''	
-									), $atts));
+			extract( shortcode_atts( array(
+								'display'			=> 'upsells related', 
+								'count'				=> 4,
+								'wc_prod_visible'	=> ''	
+							), $atts, $this->config['shortcode'] ) );
+			
 			
 			$output = '';
 			if( ! isset( $meta['el_class'] ) )
@@ -183,7 +213,7 @@ if ( ! class_exists( 'avia_sc_product_upsells' ) )
 				$output .= avia_woocommerce_output_related_products( $count, $count );
 			}
 			
-			$output .= "</div>";
+			$output .= '</div>';
 			
 				//	reset
 			$avia_config['woocommerce']['catalog_product_visibility'] = 'use_default';

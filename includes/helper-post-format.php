@@ -181,31 +181,37 @@ if(!function_exists('avia_image_slideshow_filter'))
 	function avia_image_slideshow_filter($current_post)
 	{
 
-		$prepend_image = get_the_post_thumbnail(get_the_ID(), 'large');
-		$image = "";
+		$prepend_image = get_the_post_thumbnail( get_the_ID(), 'large' );
+		$image = '';
 
-		if(!$prepend_image)
+		if( ! $prepend_image )
 		{
-			$image		= avia_regex($current_post['content'],'image');
-			if(is_array($image))
+			$image = avia_regex( $current_post['content'], 'image' );
+			if( is_array( $image ) )
 			{
 				$image = $image[0];
-				$prepend_image = '<div class="avia-post-format-image"><img src="'.$image.'" alt="" title ="" /></div>';
+				$prepend_image = '<div class="avia-post-format-image"><img src="' . $image . '" alt="" title ="" /></div>';
 			}
 			else
 			{
-				$image		= avia_regex($current_post['content'],'<img />',"");
-				if(is_array($image))
+				$image = avia_regex( $current_post['content'],'<img />', '' );
+				if( is_array( $image ) )
 				{
-					$prepend_image = '<div class="avia-post-format-image">'.$image[0]."</div>";
+					$prepend_image = '<div class="avia-post-format-image">' . $image[0] . '</div>';
 				}
 			}
 		}
 		else
 		{
-			
-			$large_image = wp_get_attachment_image_src( get_post_thumbnail_id(get_the_ID()), 'extra_large' );
-			$prepend_image = '<div class="avia-post-format-image"><a href="'.$large_image[0].'">'.$prepend_image."</a></div>";
+			$large_image = wp_get_attachment_image_src( get_post_thumbnail_id( get_the_ID() ), 'extra_large' );
+			if( is_array( $large_image ) )
+			{
+				$prepend_image = '<div class="avia-post-format-image"><a href="' . $large_image[0] . '">' . $prepend_image . '</a></div>';
+			}
+			else
+			{
+				$prepend_image = '<div class="avia-post-format-image">' . $prepend_image . '</div>';
+			}
 		}
 
 

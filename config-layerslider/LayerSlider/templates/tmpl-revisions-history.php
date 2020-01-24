@@ -21,17 +21,13 @@
 	$revisionsCount = count($revisions);
 
 	foreach( $revisions as $key => $revision ) {
-		$revisions[$key]->avatar 	= get_avatar_url( $revisions[$key]->author );
+
+		$revisions[$key]->avatar 	= function_exists( 'get_avatar_url' ) ? get_avatar_url( $revisions[$key]->author ) : '';
 		$revisions[$key]->nickname 	= get_userdata( $revisions[$key]->author )->user_nicename;
 		$revisions[$key]->time_diff =  sprintf(__(' %s ago', 'LayerSlider'), human_time_diff( $revision->date_c ) );
 		$revisions[$key]->created 	= date('M j @ H:i', $revision->date_c);
 
 		$slider = json_decode( $revision->data , true);
-
-		// Fixes
-		if(!isset($slider['layers'][0]['properties'])) {
-			$slider['layers'][0]['properties'] = array();
-		}
 
 
 		// Get yourLogo
@@ -69,6 +65,11 @@
 		}
 
 		foreach($slider['layers'] as $slideKey => $slideVal) {
+
+			// Make sure to each slide has a 'properties' object
+			if( ! isset( $slideVal['properties'] ) ) {
+				$slideVal['properties'] = array();
+			}
 
 			// Get slide background
 			if( ! empty($slideVal['properties']['backgroundId']) ) {
@@ -108,6 +109,11 @@
 						$layerVal['posterThumb'] = apply_filters('ls_get_thumbnail', $layerVal['posterId'], $layerVal['poster']);
 					}
 
+					if( ! empty($layerVal['layerBackgroundId']) ) {
+						$layerVal['layerBackground'] = apply_filters('ls_get_image', $layerVal['layerBackgroundId'], $layerVal['layerBackground']);
+						$layerVal['layerBackgroundThumb'] = apply_filters('ls_get_thumbnail', $layerVal['layerBackgroundId'], $layerVal['layerBackground']);
+					}
+
 					// Ensure that magic quotes will not mess with JSON data
 					if(function_exists('get_magic_quotes_gpc') && get_magic_quotes_gpc()) {
 						$layerVal['styles'] = stripslashes($layerVal['styles']);
@@ -131,8 +137,8 @@
 		}
 
 		if( ! empty( $slider['callbacks'] ) ) {
-			foreach( $slider['callbacks'] as $key => $callback ) {
-				$slider['callbacks'][$key] = stripslashes($callback);
+			foreach( $slider['callbacks'] as $CBkey => $callback ) {
+				$slider['callbacks'][$CBkey] = stripslashes($callback);
 			}
 		}
 

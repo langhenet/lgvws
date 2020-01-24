@@ -1,11 +1,11 @@
 
 /*
-	* LayerSlider Plugin: Origami Slide Transition
+	* LayerSlider Add-On: Origami Slide Transition
 	*
-	* (c) 2017-2019 Kreatura Media
+	* (c) 2011-2020 George Krupa, John Gera & Kreatura Media
 	*
-	* LayerSlider web:		https://layerslider.kreaturamedia.com/
-	* licenses:				http://codecanyon.net/licenses/standard
+	* LayerSlider home:		https://layerslider.kreaturamedia.com/
+	* Licensing:			https://layerslider.kreaturamedia.com/licensing/
 */
 
 

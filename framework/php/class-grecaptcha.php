@@ -75,10 +75,20 @@ if( ! class_exists( 'av_google_recaptcha' ) )
 		protected $theme;
 		
 		/**
-		 *
-		 * @var type 
+		 * Contains the option value
+		 * 
+		 * @since 4.5.7.2
+		 * @var string 
 		 */
 		protected $display_badge;
+		
+		/**
+		 * Contains the HTML for replacement text
+		 * 
+		 * @since 4.6.2
+		 * @var string 
+		 */
+		protected $display_badge_html;
 
 		/**
 		 * 
@@ -117,8 +127,9 @@ if( ! class_exists( 'av_google_recaptcha' ) )
 			$this->secret_keys = array();
 			$this->verified_keys = array();
 			$this->score = 0.5;
-			$this->theme = '';
+			$this->theme = 'light';
 			$this->display_badge = '';
+			$this->display_badge_html = '';
 			
 				
 			//	needed because not all framework functions are loaded at this point
@@ -167,24 +178,25 @@ if( ! class_exists( 'av_google_recaptcha' ) )
 			$this->score = avia_get_option( 'avia_recaptcha_score', 5 );
 			$this->score = is_numeric( $this->score ) ? $this->score / 10.0 : 0.5;
 			
-			$this->theme = avia_get_option( 'avia_recaptcha_v2_theme', '' );
-			
 			$this->display_badge = avia_get_option( 'avia_recaptcha_badge', '' );
-			if( ! empty( $this->display_badge ) )
+			if( ! current_theme_supports( 'avia_recaptcha_show_legal_information' ) )
 			{
-				/**
-				 * see https://developers.google.com/recaptcha/docs/faq#id-like-to-hide-the-recaptcha-badge-what-is-allowed
-				 * 
-				 * @since 4.5.7.2
-				 * @param string
-				 * @return string
-				 */
-				$badge =	'<div class="av-google-badge-message hidden">';
-				$badge .=		__( 'This site is protected by reCAPTCHA and the Google <a href="https://policies.google.com/privacy">Privacy Policy</a> and <a href="https://policies.google.com/terms">Terms of Service</a> apply.', 'avia_framework' );
-				$badge .=	'</div>';
-				
-				$this->display_badge = apply_filters( 'avf_google_recaptcha_badge_content', $badge );
+				$this->display_badge = 'contact_only_message';
 			}
+			
+			/**
+			 * see https://developers.google.com/recaptcha/docs/faq#id-like-to-hide-the-recaptcha-badge-what-is-allowed
+			 * 
+			 * @since 4.5.7.2
+			 * @param string
+			 * @return string
+			 */
+			$badge =	'<div class="av-google-badge-message hidden">';
+			$badge .=		__( 'This site is protected by reCAPTCHA and the Google <a href="https://policies.google.com/privacy">Privacy Policy</a> and <a href="https://policies.google.com/terms">Terms of Service</a> apply.', 'avia_framework' );
+			$badge .=	'</div>';
+
+			$this->display_badge_html = apply_filters( 'avf_google_recaptcha_badge_content', $badge );
+
 		}
 
 		/**
@@ -301,6 +313,11 @@ if( ! class_exists( 'av_google_recaptcha' ) )
 				$classes[] = 'av-recaptcha-extended-errors';
 			}
 			
+			if( in_array( $this->display_badge, array( 'contact_only_message', 'hide' ) ) )
+			{
+				$classes[] = 'av-google-badge-hide';
+			}
+			
 			return $classes;
 		}
 		
@@ -387,7 +404,12 @@ if( ! class_exists( 'av_google_recaptcha' ) )
 		 */
 		public function get_display_badge_html()
 		{
-			return $this->display_badge;
+			if( ! in_array( $this->display_badge, array( 'message', 'contact_only_message' ) ) )
+			{
+				return '';
+			}
+			
+			return $this->display_badge_html;
 		}
 
 				/**

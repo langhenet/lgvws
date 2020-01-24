@@ -74,7 +74,7 @@ if( ! class_exists( 'avia_htmlhelper' ) )
 			//check which option pages were already saved yet and need replacement of the default values
 			foreach($avia_superobject->option_pages as $page)
 			{
-				if(isset($options[$page['parent']]) && $options[$page['parent']] != "")
+				if(isset($options[$page['parent']]) && $options[$page['parent']] != '')
 				{
 					$this->replace_default[$page['slug']] = true;
 				}
@@ -109,9 +109,9 @@ if( ! class_exists( 'avia_htmlhelper' ) )
 		######################################################################
 
 		
-		function create_container_based_on_slug($option_page, $firstClass = '')
+		function create_container_based_on_slug( $option_page, $firstClass = '' )
 		{
-			$output = "";
+			$output = '';
 		
 			//get all elements of the current page and save them to the page elements array
 			$page_elements = $this->get_page_elements($option_page['slug']);
@@ -152,12 +152,12 @@ if( ! class_exists( 'avia_htmlhelper' ) )
 			if( method_exists( $this, $element['type'] ) || (isset($element['use_function']) && function_exists($element['type'])))
 			{
 				//init indices that are not set yet to prevent php notice
-				if( !isset( $element['id'] ) ) 	  { $element['id'] = ""; 	}
-				if( !isset( $element['desc']  ) ) { $element['desc']  = ""; }
-				if( !isset( $element['name']  ) ) { $element['name']  = ""; }
-				if( !isset( $element['label'] ) ) { $element['label'] = ""; }
-				if( !isset( $element['std'] ) )   { $element['std'] = ""; }
-				if( !isset( $element['class'] ) ) { $element['class'] = ""; } 
+				if( !isset( $element['id'] ) ) 	  { $element['id'] = ''; 	}
+				if( !isset( $element['desc']  ) ) { $element['desc']  = ''; }
+				if( !isset( $element['name']  ) ) { $element['name']  = ''; }
+				if( !isset( $element['label'] ) ) { $element['label'] = ''; }
+				if( !isset( $element['std'] ) )   { $element['std'] = ''; }
+				if( !isset( $element['class'] ) ) { $element['class'] = ''; } 
 				if( !isset( $element['dynamic'] ) ) { $element['dynamic'] = false; } 
 				
 				
@@ -172,11 +172,11 @@ if( ! class_exists( 'avia_htmlhelper' ) )
 				}
 							
 				//start rendering
-				$output = "";
+				$output = '';
 					
 				
 				//check if its a dynamic (sortable) element	
-				$dynamic_end = "";
+				$dynamic_end = '';
 				
 				if($element['dynamic'])
 				{
@@ -192,7 +192,7 @@ if( ! class_exists( 'avia_htmlhelper' ) )
 					
 					
 				//check if we should only render the element itself or description as well
-				if($element['type'] == 'group' || (isset($element['nodescription']) && $element['nodescription'] != ""))
+				if($element['type'] == 'group' || (isset($element['nodescription']) && $element['nodescription'] != ''))
 				{
 					if(isset($element['use_function']))
 					{
@@ -241,7 +241,7 @@ if( ! class_exists( 'avia_htmlhelper' ) )
 
 			
 			$iterations = 1;
-			$output = "";
+			$output = '';
 			$real_id = $element['id'];
 			
 			if((isset($element['std']) && is_array($element['std'])) && !isset($element['ajax_request']))
@@ -286,7 +286,7 @@ if( ! class_exists( 'avia_htmlhelper' ) )
          */
 		function get_subelements($element, $i = 1)
 		{
-			$output = "";
+			$output = '';
 					
 			foreach($element['subelements'] as $key => $subelement)
 			{
@@ -314,21 +314,28 @@ if( ! class_exists( 'avia_htmlhelper' ) )
 
 		
 		/**
-         * 
-         * The text method renders the title and the page containing wrapper necessary for javascript sidebar tabs 
-         * @param array $element the array holds data like type, value, id, class, description which are necessary to render the whole option-section
-         * @return string $output the string returned contains the html code generated within the method
+         * Renders the title and the page containing wrapper necessary for javascript sidebar tabs 
+		 * 
+         * @param array $pageinfo		the array holds data like slug, parent, icon, class
+		 * @param string $firstClass
+         * @return string				$output the string returned contains the html code generated within the method
          */
 		function render_page_container( $pageinfo , $firstClass )
 		{	
-			if(!isset($pageinfo['sortable'])) $pageinfo['sortable'] = "";
+			if( ! isset( $pageinfo['sortable'] ) ) 
+			{
+				$pageinfo['sortable'] = '';
+			}
+			
+			$class = ! empty( $pageinfo['class'] ) ? " {$pageinfo['class']}" : '';
 			
 			$output  = '<div class="avia_subpage_container '.$firstClass.' '.$pageinfo['sortable'].'" id="avia_'.avia_backend_safe_string($pageinfo['slug']).'">';	
-			$output .= '	<div class="avia_section_header">';	
-			$output .= '		<strong class="avia_page_title" style="background-Image:url('.AVIA_IMG_URL."icons/".$pageinfo['icon'].');">'; 
-			$output .= 			$pageinfo['title'];
-			$output .= '		</strong>'; 
-			$output .= '	</div>'; 
+			$output .=		'<div class="avia_section_header' . $class . '">';	
+			$output .=			'<strong class="avia_page_title" style="background-Image:url(' . AVIA_IMG_URL . 'icons/' . $pageinfo['icon'] . ');">'; 
+			$output .=				$pageinfo['title'];
+			$output .=			'</strong>'; 
+			$output .=		'</div>'; 
+			
 			return $output;
 		}
 		
@@ -354,7 +361,7 @@ if( ! class_exists( 'avia_htmlhelper' ) )
 		public function verification_field( $element )
 		{
 			$callback 			= $element['ajax'];
-			$js_callback 		= isset($element['js_callback']) ? $element['js_callback'] : "";
+			$js_callback 		= isset($element['js_callback']) ? $element['js_callback'] : '';
 			$element['simple'] 	= true;
 			$output  			= '';
 			$ajax				= false;
@@ -392,11 +399,11 @@ if( ! class_exists( 'avia_htmlhelper' ) )
 			$output .=		'<a href="#" ' . $ids_data . ' data-av-verification-callback="' . $callback . '" data-av-verification-callback-javascript="' . $js_callback . '" class="avia_button avia_verify_button" id="avia_check' . $element['id'] . '">' . $element['button-label'] . '</a>';
 			$output .=	'</span>';
 			
-			$output .= isset($element['help']) ? "<small>{$element['help']}</small>" : "";
+			$output .= isset($element['help']) ? "<small>{$element['help']}</small>" : '';
 			
 			$output .=	"<div class='av-verification-result'>";
 			
-			if( ( $element['std'] != "" ) || ( ! empty( $element['force_callback'] ) ) )
+			if( ( $element['std'] != '' ) || ( ! empty( $element['force_callback'] ) ) )
 			{
 				$output .= str_replace( 'avia_trigger_save', '', $callback( $element['std'] , $ajax, null, $element ) );
 			}
@@ -418,7 +425,7 @@ if( ! class_exists( 'avia_htmlhelper' ) )
          */
 		function text( $element )
 		{	
-			$extraClass = "";
+			$extraClass = '';
 			if(isset($element['class_on_value']) && !empty($element['std'])) $extraClass = " ".$element['class_on_value'];
 			
 			$attr = ! empty( $element['readonly'] ) ? 'readonly="readonly"' : '';
@@ -444,19 +451,36 @@ if( ! class_exists( 'avia_htmlhelper' ) )
 		
 		
 		/**
-         * 
          * The checkbox method renders a single input type:checkbox element
-         * @param array $element the array holds data like type, value, id, class, description which are necessary to render the whole option-section
-         * @return string $output the string returned contains the html code generated within the method
+		 * 
+		 * @since 4.6.3 extended with toggle
+         * @param array $element	the array holds data like type, value, id, class, description which are necessary to render the whole option-section
+         * @return string $output	the string returned contains the html code generated within the method
          * @todo: fix: checkboxes at metaboxes currently dont work
          */
   		function checkbox( $element )
 		{	
-			$checked = "";
-			if( $element['std'] != "" && $element['std'] != "disabled" ) { $checked = 'checked = "checked"'; }
+			$output = '';
+			
+			$checked = '';
+			if( $element['std'] != '' && $element['std'] != 'disabled' ) 
+			{ 
+				$checked = 'checked = "checked"';
+			}
+			
+			$input = '<input ' . $checked . ' type="checkbox" class="' . $element['class'] . '" value="' . $element['id'] . '" id="' . $element['id'] . '" name="' . $element['id'] . '" />';
 				
-			$output   = '<input '.$checked.' type="checkbox" class="'.$element['class'].'" ';
-			$output  .= 'value="'.$element['id'].'" id="'.$element['id'].'" name="'.$element['id'].'"/>';
+			if( ! current_theme_supports( 'avia_option_pages_toggles' ) )
+			{
+				return $input;
+			}
+			
+			$output .=	'<div class="av-switch-' . $element['id'] . ' av-toggle-switch active ' . $element['class'] . '">';
+			$output .=		'<label>';
+			$output .=			$input;
+			$output .=			'<span class="toggle-track"></span>';
+			$output .=		'</label>';
+			$output .=	'</div>';
 			
 			return $output;
 		}
@@ -471,11 +495,11 @@ if( ! class_exists( 'avia_htmlhelper' ) )
 		function radio( $element )
 		{
 
-			$output = "";
+			$output = '';
 			$counter = 1;
 			foreach($element['buttons'] as $radiobutton)
 			{
-				$checked = "";
+				$checked = '';
 				if( $element['std'] == $counter ) { $checked = 'checked = "checked"'; }
 
 				$output  .= '<span class="avia_radio_wrap">';
@@ -500,13 +524,13 @@ if( ! class_exists( 'avia_htmlhelper' ) )
          */
         function imgselect( $element )
         {
-            $output = "";
+            $output = '';
             $counter = 1;
             foreach($element['buttons'] as $key => $radiobutton)
             {
-                $checked = "";
-                $image = "";
-                $extra_class = "";
+                $checked = '';
+                $image = '';
+                $extra_class = '';
 
                 if( $element['std'] == $key ) {
                     $checked = 'checked = "checked"';
@@ -559,7 +583,7 @@ if( ! class_exists( 'avia_htmlhelper' ) )
          */
 		function link_controller( $element )
 		{
-			$output  = "";
+			$output  = '';
 			$output .= '<div class="'.$element['class'].'">';
 			
 			if(!empty($element['subtype']))
@@ -569,7 +593,7 @@ if( ! class_exists( 'avia_htmlhelper' ) )
 				foreach($element['subtype'] as $key=>$array)
 				{
 					$counter ++;
-					$active = $style = $class = $data = "";
+					$active = $style = $class = $data = '';
 					if(isset($array[$element['id']]) && $array[$element['id']] == $element['std'] ) $active = " avia_link_controller_active";
 					if(isset($array['style'])) { $style = " style='".$array['style']."' "; unset($array['style']); }
 					if(isset($array['class'])) { $class = " ".$array['class']; unset($array['class']); }
@@ -604,7 +628,7 @@ if( ! class_exists( 'avia_htmlhelper' ) )
 		function upload( $element )
 		{	
 			global $post_ID;
-			$output  = "";
+			$output  = '';
 			$gallery_mode = false;
 			$id_generated = false;
 			$image_url = $element['std'];
@@ -625,14 +649,14 @@ if( ! class_exists( 'avia_htmlhelper' ) )
 			else
 			{
 				$postId = avia_media::get_custom_post($element['name']);
-				if(is_numeric($element['std']))
+				if( is_numeric( $element['std'] ) )
 				{
 					$image_url = wp_get_attachment_image_src($element['std'], 'full');
-					$image_url = $image_url[0];
+					$image_url = is_array( $image_url ) ? $image_url[0] : '';
 				}
 			}
 			//switch between normal url upload and advanced image id upload
-			$mode = $prevImg = "";
+			$mode = $prevImg = '';
 			
 			//video or image, advanced or default upload?
 			
@@ -652,7 +676,7 @@ if( ! class_exists( 'avia_htmlhelper' ) )
 				}
 				else
 				{
-					if(!preg_match('!\.jpg$|\.jpeg$|\.ico$|\.png$|\.gif$!', $image_url) && $image_url != "" )
+					if(!preg_match('!\.jpg$|\.jpeg$|\.ico$|\.png$|\.gif$!', $image_url) && $image_url != '' )
 					{
 						$prevImg = '<a href="#" class="avia_remove_image">×</a><img src="'.AVIA_IMG_URL.'icons/video.png" alt="" />';
 					}
@@ -693,7 +717,7 @@ if( ! class_exists( 'avia_htmlhelper' ) )
 				
 			}
 			
-			$data = "";
+			$data = '';
 			$upload_class = "avia_uploader"; 
 			global $wp_version;
 			
@@ -701,13 +725,16 @@ if( ! class_exists( 'avia_htmlhelper' ) )
 			{
 				$upload_class = "avia_uploader_35"; 
 			
-				if(empty($element['data']))
+				if( empty( $element['data'] ) )
 				{
+					//	Layout changed, we need to adjust CSS for hidden elements
+					$wp53 = version_compare( $wp_version, '5.3', '>=' ) ? ' avia-wp-53' : '';
+					
 					$element['data'] =  array(	'target' => $element['id'], 
 												'title'  => $element['name'], 
 												'type'   => 'image', 
 												'button' => $element['label'],
-												'class'  => 'media-frame av-media-frame-image-only' ,
+												'class'  => 'media-frame av-media-frame-image-only' . $wp53,
 												'frame'  => 'select',
 												'state'	 => 'av_select_single_image',
 												'fetch'  => 'url',
@@ -740,8 +767,9 @@ if( ! class_exists( 'avia_htmlhelper' ) )
 		}
 		
 		/**
-         * 
          * The upload gallery method renders a single upload element so users can add their own pictures and/or videos
+		 * 
+		 * This element is no longer in use in Enfold 4.6.4 (or prior versions ?)
          *
          * @param array $element the array holds data like type, value, id, class, description which are necessary to render the whole option-section
          * @return string $output the string returned contains the html code generated within the method
@@ -749,7 +777,7 @@ if( ! class_exists( 'avia_htmlhelper' ) )
 		function upload_gallery( $element )
 		{
 			//first gernerate the sub_item_output
-			$sub_output = "";
+			$sub_output = '';
 			$iterations = 0;
 			$real_id = $element['id'];
 			
@@ -788,7 +816,7 @@ if( ! class_exists( 'avia_htmlhelper' ) )
 			//if we want to retrieve the whole element and this is not an ajax call do the following as well:
 			if(empty($element['button-label'])) $element['button-label'] = "Add Image to slideshow";
 			$postId = $post_ID; //avia_media::get_custom_post($element['name']);
-			$output = "";
+			$output = '';
 			
 			$output .= '<div class="avia_gallery_upload_container avia_gallery_upload_container'.$postId.' avia_delay_required">';
 			$output .= '<div class="avia_sortable_gallery_container">';
@@ -843,7 +871,7 @@ if( ! class_exists( 'avia_htmlhelper' ) )
 		//the gallery image is a helper to the upload_gallery method that displays a single image and enables you to change that image
 		function gallery_image($element)
 		{
-			$prevImg = $extraClass = "";
+			$prevImg = $extraClass = '';
 			$real_id = explode('-__-', $element['id']);
 			$real_id = $real_id[0];
 			
@@ -862,7 +890,7 @@ if( ! class_exists( 'avia_htmlhelper' ) )
 			}
 			
 		
-			$output ="";
+			$output ='';
 			$output .=' <div class="avia_gallery_image'.$extraClass.'">';
 			
 				//generate the upload link
@@ -890,7 +918,7 @@ if( ! class_exists( 'avia_htmlhelper' ) )
          */
 		function colorpicker( $element )
 		{	
-			$autodetect = $autodetectClass = "";
+			$autodetect = $autodetectClass = '';
 			if(isset($element['autodetect']) && function_exists('gd_info'))
 			{
 				$autodetect = '<a id="avia_autodetect_'.$element['id'].'" class="avia_button avia_autodetect" href="#'.$element['autodetect'].'">Auto detection</a><span class="avia_loading"></span>';
@@ -912,13 +940,13 @@ if( ! class_exists( 'avia_htmlhelper' ) )
          * @return string $output the string returned contains the html code generated within the method
          */
 		
-		function file_upload($element)
+		function file_upload( $element )
 		{
 			# deny if user is no super admin
-			$output = "";
-			$cap = apply_filters('avf_file_upload_capability', 'update_plugins', $element);
+			$output = '';
+			$cap = apply_filters( 'avf_file_upload_capability', 'update_plugins', $element );
 			
-			if(!current_user_can($cap)) 
+			if( ! current_user_can( $cap ) ) 
 			{
 				return "<div class='av-error'><p>Using this feature is reserved for Super Admins</p><p>You unfortunately don't have the necessary permissions.</p></div>";
 			}
@@ -939,7 +967,7 @@ if( ! class_exists( 'avia_htmlhelper' ) )
 
 			
 			# is user is alowed to extract files create the upload/insert button
-			if(empty($element['data']))
+			if( empty( $element['data'] ) )
 			{
 				$element['data'] =  array(	'target' => $element['id'], 
 											'title'  => $element['title'], 
@@ -948,11 +976,20 @@ if( ! class_exists( 'avia_htmlhelper' ) )
 											'trigger' => $element['trigger'],
 											'class'  => 'media-frame '
 									);
+				
+				$filter_keys = array( 'filter_tabs', 'filter_values', 'skip_tabs', 'skip_values' );
+				foreach( $filter_keys as $key ) 
+				{
+					if( ! empty( $element[ $key ] ) )
+					{
+						$element['data'][ $key ] = $element[ $key ];
+					}
+				}
 			}
 			
-			$data = "";
+			$data = '';
 			
-			foreach($element['data'] as $key=>$value)
+			foreach( $element['data'] as $key => $value )
 			{
 				if(is_array($value)) $value = implode(", ",$value);
 				$data .= " data-$key='$value' ";
@@ -987,8 +1024,8 @@ if( ! class_exists( 'avia_htmlhelper' ) )
          */
 		public function select( $element )
 		{	
-			$base_url	 = "";
-			$folder_data = "";
+			$base_url	 = '';
+			$folder_data = '';
 		
 			if( $element['subtype'] == 'page' )
 			{
@@ -1072,7 +1109,7 @@ if( ! class_exists( 'avia_htmlhelper' ) )
 			}
 			else if( $element['subtype'] == 'cat' )
 			{
-				$add_taxonomy = "";
+				$add_taxonomy = '';
 				$sel_tax = 'category';		//	default taxonomy
 				
 				if( ! empty( $element['taxonomy'] ) ) 
@@ -1166,6 +1203,18 @@ if( ! class_exists( 'avia_htmlhelper' ) )
 					$entries[ $label ] = $post_type->name;
 				}
 			}
+			else if( $element['subtype'] == 'option_page_tabs' )
+			{
+				global $avia;
+				
+				$entries = array();
+				$avia_pages = is_array( $avia->option_pages ) ? $avia->option_pages : array();
+			
+				foreach( $avia_pages as $avia_page ) 
+				{
+					$entries[ $avia_page['title'] ] = $avia_page['parent'] . ':' . $avia_page['slug'];
+				}
+			}
 			else
 			{	
 				$select = __( 'Select...', 'avia_framework' );
@@ -1213,7 +1262,7 @@ if( ! class_exists( 'avia_htmlhelper' ) )
 			
 			
 			//check for onchange function
-			$onchange = "";
+			$onchange = '';
 			if(isset($element['onchange'])) 
 			{
 				$onchange = " data-avia-onchange='".$element['onchange']."' ";
@@ -1227,7 +1276,7 @@ if( ! class_exists( 'avia_htmlhelper' ) )
 				$entries = array_merge( $all, $entries );
 			}
 			
-			$multi = $multi_class = "";
+			$multi = $multi_class = '';
 			if(isset($element['multiple'])) 
 			{
 				$multi_class = " avia_multiple_select";
@@ -1296,7 +1345,7 @@ if( ! class_exists( 'avia_htmlhelper' ) )
 				if(!empty($title) || (isset($title) && $title === 0))
 				{
 					if(!isset($fake_val)) $fake_val = $title;
-					$selected = "";
+					$selected = '';
 					if ($element['std'] == $id || (is_array($element['std']) && in_array($id, $element['std']))) { $selected = "selected='selected'"; $fake_val = $title;}
 					if($base_url &&  str_replace($base_url, '{{AVIA_BASE_URL}}', $element['std']) == $id) {$selected = "selected='selected'"; $fake_val = $title;}
 					
@@ -1397,7 +1446,7 @@ if( ! class_exists( 'avia_htmlhelper' ) )
 			/**
 			 * check for onchange function
 			 */
-			$onchange = "";
+			$onchange = '';
 			if(isset($element['onchange'])) 
 			{
 				$onchange = " data-avia-onchange='".$element['onchange']."' ";
@@ -1541,7 +1590,7 @@ if( ! class_exists( 'avia_htmlhelper' ) )
 			/**
 			 * check for onchange function
 			 */
-			$onchange = "";
+			$onchange = '';
 			if(isset($element['onchange'])) 
 			{
 				$onchange = " data-avia-onchange='".$element['onchange']."' ";
@@ -1723,14 +1772,14 @@ if( ! class_exists( 'avia_htmlhelper' ) )
          */
 		function visual_group_start( $element )
 		{	
-			$required = $extraclass = $data= "";
+			$required = $extraclass = $data= '';
 			
 			if(isset($element['required'])) 
 			{ 
 				$required = '<input type="hidden" value="'.$element['required'][0].'::'.$element['required'][1].'" class="avia_required" />';  
 				$extraclass = ' avia_hidden avia_required_container';
 			} 
-			$data = "";
+			$data = '';
 			if(isset($element['name'])) 		$data .= " data-group-name='".$element['name']."'";
 			if(isset($element['global_class'])) $data .= " data-av_set_global_tab_active='".$element['global_class']."'";
 			if(isset($element['inactive'])) { $data .= " data-group-inactive='".htmlspecialchars($element['inactive'], ENT_QUOTES)."'"; $extraclass .= " inactive_visible";}
@@ -1762,7 +1811,7 @@ if( ! class_exists( 'avia_htmlhelper' ) )
          */
 		function hr( $element )
 		{	
-			$class = "";
+			$class = '';
 			if(isset($element['class'])) $class = $element['class'];	
 			
 			$output  = '<div class="avia_hr '.$class.'"><div class="avia_inner_hr"></div></div>';
@@ -1777,10 +1826,10 @@ if( ! class_exists( 'avia_htmlhelper' ) )
          */
   		function import( $element )
 		{	
-			$data 	= "";
-			$extra 	= "";
-			$activeClass = "";
-			$button_class= "";
+			$data 	= '';
+			$extra 	= '';
+			$activeClass = '';
+			$button_class= '';
 			$click_to_import = __("Click to import",'avia_framework');
 			
 			if(isset($element['files'])) $data = "data-files='".$element['files']."'";
@@ -1819,15 +1868,15 @@ if( ! class_exists( 'avia_htmlhelper' ) )
 		}
 		
 		/**
-     *
-     * The parent_setting_import method adds the option to import settings from your parent theme
-     * @param array $element the array holds data like type, value, id, class, description which are necessary to render the whole option-section
-     * @return string $output the string returned contains the html code generated within the method
-     */
+	     *
+	     * The parent_setting_import method adds the option to import settings from your parent theme
+	     * @param array $element the array holds data like type, value, id, class, description which are necessary to render the whole option-section
+	     * @return string $output the string returned contains the html code generated within the method
+	     */
         function parent_setting_import($element)
         {
 
-            $output = "";
+            $output = '';
             $nonce	 = 	wp_create_nonce ('avia_nonce_import_parent_settings');
             $output .= '<input type="hidden" name="avia-nonce-import-parent" value="'.$nonce.'" />';
             $output .= '<span class="avia_style_wrap"><a href="#" class="avia_button avia_import_parent_button">Import Parent Theme Settings</a></span>';
@@ -1839,19 +1888,80 @@ if( ! class_exists( 'avia_htmlhelper' ) )
 
 
 
-        /**
-         *
-         * The theme_settings_export method adds the option to export the theme settings
-         * @param array $element the array holds data like type, value, id, class, description which are necessary to render the whole option-section
-         * @return string $output the string returned contains the html code generated within the method
-         */
-        function theme_settings_export($element)
-        {
-            $url = admin_url("admin.php?page=avia&avia_export=1&avia_generate_config_file=1");
-            $output = "";
-            $output .= '<span class="avia_style_wrap"><a href="'.$url.'" class="avia_button avia_theme_settings_export_button">'.__('Export Theme Settings File','avia_framework').'</a></span>';
-            return $output;
-        }
+		/**
+		 * The theme_settings_export method adds the option to export the theme settings
+		 * 
+		 * @param array $element the array holds data like type, value, id, class, description which are necessary to render the whole option-section
+		 * @return string $output the string returned contains the html code generated within the method
+		 */
+		function theme_settings_export( $element )
+		{
+			$url = admin_url( 'admin.php?page=avia&avia_export=1&avia_generate_config_file=1' );
+
+			$output = '';
+			$output .= '<span class="avia_style_wrap"><a href="' . $url . '" class="avia_button avia_theme_settings_export_button">' . __( 'Export Theme Settings File', 'avia_framework' ) . '</a></span>';
+			
+			return $output;
+		}
+		
+		/**
+		 * The alb_templates_export method adds the option to export saved ALB templates
+		 * 
+		 * @since 4.6.4
+		 * @param array $element
+		 * @return string
+		 */
+		protected function alb_templates_export( array $element )
+		{
+			$names = Avia_Builder()->get_AviaSaveBuilderTemplate()->template_names();
+			
+			$text  = __( 'Export Layout Builder Templates File', 'avia_framework' );
+			$text .= '<br />';
+			$text .= sprintf( __( '( %d templates found )', 'avia_framework' ), count( $names ) );
+			
+			$url = admin_url( 'admin.php?page=avia&avia_export=1&avia_generate_alb_templates_file=1' );
+
+			$output = '';
+			$output .= '<span class="avia_style_wrap"><a href="' . $url . '" class="avia_button avia_alb_templates_export_button">' . $text . '</a></span>';
+			
+			return $output;
+		}
+		
+		/**
+		 * Adds a button to allow customized reset of theme settings
+		 * 
+		 * @since 4.6.4
+		 * @param array $element
+		 * @return string
+		 */
+		protected function reset_selected_button( $element ) 
+		{
+			$data = array();
+			
+			$filter_keys = array( 'filter_tabs', 'filter_values', 'skip_tabs', 'skip_values' );
+			foreach( $filter_keys as $key ) 
+			{
+				if( ! empty( $element[ $key ] ) )
+				{
+					$data[ $key ] = $element[ $key ];
+				}
+			}
+			
+			$data_string = '';
+			
+			foreach( $data as $key => $value )
+			{
+				$data_string .= " data-$key='$value' ";
+			}
+			
+			$id = isset( $element['id'] ) ? ' id="' . $element['id'] . '" ' : '';
+			
+			$output  = '';
+			$output .= '<span class="avia_style_wrap"><a href="#" class="avia_button avia_button_grey avia_reset_selected" ' . $data_string . $id . '>' . __( 'Reset Selected Options', 'avia_framework' ) . '</a></span>';
+			$output .= '<span class="avia_loading avia_upload_loading"></span>';
+			
+			return $output;
+		}
 
 
 		/**
@@ -1862,7 +1972,7 @@ if( ! class_exists( 'avia_htmlhelper' ) )
          */
 		function heading( $element )
 		{	
-			$extraclass = $required = "";	
+			$extraclass = $required = '';	
 			if(isset($element['required'])) 
 			{ 
 				$required = '<input type="hidden" value="'.$element['required'][0].'::'.$element['required'][1].'" class="avia_required" />';  
@@ -1873,7 +1983,7 @@ if( ! class_exists( 'avia_htmlhelper' ) )
 		
 			$output  = '<div class="avia_section avia_'.$element['type'].' '.$extraclass.'"  id="avia_'.$element['id'].'">';
 			$output .= $required;
-			if($element['name'] != "") $output .= '<h4>'.$element['name'].'</h4>';
+			if($element['name'] != '') $output .= '<h4>'.$element['name'].'</h4>';
 			$output .= $element['desc'];
 			$output .= '</div>';
 			return $output;
@@ -1924,7 +2034,7 @@ if( ! class_exists( 'avia_htmlhelper' ) )
 		        }
 			}
 			
-			$extraclass = $required = "";	
+			$extraclass = $required = '';	
 			if(isset($element['required'])) 
 			{ 
 				$required = '<input type="hidden" value="'.$element['required'][0].'::'.$element['required'][1].'" class="avia_required" />';  
@@ -1935,7 +2045,7 @@ if( ! class_exists( 'avia_htmlhelper' ) )
 		
 			$output  = '<div class="avia_section avia_'.$element['type'].' '.$extraclass.'"  id="avia_'.$element['id'].'">';
 			$output .= $required;
-			if($element['name'] != "") $output .= '<h4>'.$element['name'].'</h4>';
+			if($element['name'] != '') $output .= '<h4>'.$element['name'].'</h4>';
 			$output .= $element['desc'];
 
 			//no plugin active. lets recommend something
@@ -2005,8 +2115,8 @@ if( ! class_exists( 'avia_htmlhelper' ) )
 					
 									
 						$output .= "<div class='av-plugin-check-wrap-button'>";
-						$output .= '<a class="avia_button avia_button_small" target="_blank" href="' . esc_url( $url ) . '" >'.$label.'</a>';
-						$output .= '<a class="avia_button avia_button_small" target="_blank" href="https://wordpress.org/plugins/'.$plugin['download'].'/" >'.__('Plugin Details', 'avia_framework').'</a>';
+						$output .= avia_targeted_link_rel( '<a class="avia_button avia_button_small" target="_blank" href="' . esc_url( $url ) . '">' . $label . '</a>' );
+						$output .= '<a class="avia_button avia_button_small" target="_blank" href="https://wordpress.org/plugins/'.$plugin['download'].'/" rel="noopener noreferrer">'.__('Plugin Details', 'avia_framework').'</a>';
 						$output .= "</div>";
 						}
 						
@@ -2068,7 +2178,7 @@ if( ! class_exists( 'avia_htmlhelper' ) )
          */
 		function template_builder_element_loader( $element )
 		{
-			$extraclass = $required = "";	
+			$extraclass = $required = '';	
 			if(isset($element['required'])) 
 			{ 
 				$required = '<input type="hidden" value="'.$element['required'][0].'::'.$element['required'][1].'" class="avia_required" />';  
@@ -2076,7 +2186,7 @@ if( ! class_exists( 'avia_htmlhelper' ) )
 			} 
 			
 			$iteration = 1;
-			$checkboxes = "";
+			$checkboxes = '';
 			
 			foreach(Avia_Builder()->shortcode_class as $shortcode)
 			{
@@ -2089,7 +2199,7 @@ if( ! class_exists( 'avia_htmlhelper' ) )
 						"desc" 	=> __("Check to disable the Element", 'avia_framework'),
 						"id" 	=> "av_alb_disable_" . $shortcode->config['shortcode'],
 						"type" 	=> "checkbox",
-						"std"	=> "",
+						"std"	=> '',
 						"slug" => $element['slug'] /*needs to inherit the original slug*/
 						);
 					}
@@ -2133,9 +2243,9 @@ if( ! class_exists( 'avia_htmlhelper' ) )
          */
 		function section_start( $element )
 		{
-			$required = $extraclass = $target = "";
+			$required = $extraclass = $target = '';
 			
-			if(isset($element['required'])) 
+			if( isset( $element['required'] ) && ! empty( $element['required'] ) ) 
 			{ 
 				$required = '<input type="hidden" value="'.$element['required'][0].'::'.$element['required'][1].'" class="avia_required" />';  
 				$extraclass = ' avia_hidden avia_required_container';
@@ -2158,7 +2268,7 @@ if( ! class_exists( 'avia_htmlhelper' ) )
 			$output  = '<div class="avia_section avia_'.$element['type'].$extraclass.'" id="avia_'.$element['id'].'">';
 			$output .= $required;
 			$output .= $target;
-			if($element['name'] != "")
+			if($element['name'] != '')
 			{
 				$output .= '<h4>'.$element['name'].'</h4>';
 			}
@@ -2214,18 +2324,19 @@ if( ! class_exists( 'avia_htmlhelper' ) )
 		function page_header()
 		{
 			$the_title = apply_filters( 'avia_filter_backend_page_title', $this->avia_superobject->base_data['Title'] );
+			$class = current_theme_supports( 'avia_option_pages_toggles' ) ? 'av-use-toggles' : 'av-use-checkbox';
 			
-			$output  = '<form id="avia_options_page" action="#" method="post">';
+			$output  = '<form id="avia_options_page" action="#" method="post" class="' . $class . '">';
 			$output .= '	<div class="avia_options_page_inner avia_sidebar_active">';
 			$output .= '	<div class="avia_options_page_sidebar"><div class="avia_header">';
-			$output .=      apply_filters('avia_options_page_header', "");
+			$output .=      apply_filters('avia_options_page_header', '');
 			$output .= '	</div><div class="avia_sidebar_content"></div></div>';
 			$output .= '		<div class="avia_options_page_content">';
 			$output .= '			<div class="avia_header">';
 			$output .= '			<h2 class="avia_logo">'.$the_title.' '.$this->avia_superobject->currentpage.'</h2>';
 			$output .= '				<ul class="avia_help_links">';
 			$output .= '					<li><a class="thickbox" onclick="return false;" href="http://docs.kriesi.at/'.avia_backend_safe_string($this->avia_superobject->base_data['prefix']).'/changelog/index.php?TB_iframe=1">Changelog</a> |</li>';
-			$output .= '					<li><a target="_blank" href="http://docs.kriesi.at/'.avia_backend_safe_string($this->avia_superobject->base_data['prefix']).'/documentation/">Docs</a></li>';
+			$output .= '					<li><a target="_blank" href="http://docs.kriesi.at/'.avia_backend_safe_string($this->avia_superobject->base_data['prefix']).'/documentation/" rel="noopener noreferrer">Docs</a></li>';
 			$output .= '				</ul>';
 			$output .= '				<a class="avia_shop_option_link" href="#">Show all Options [+]</a>';
 			$output .= '				<span class="avia_loading"></span>';
@@ -2271,7 +2382,7 @@ if( ! class_exists( 'avia_htmlhelper' ) )
          */
 		function save_button()
 		{
-			$output = '<span class="avia_style_wrap"><a href="#" class="avia_button avia_button_inactive avia_submit">Save all changes</a></span>';
+			$output = '<span class="avia_style_wrap"><a href="#" class="avia_button avia_button_inactive avia_submit">' . __( 'Save all changes', 'avia_framework' ) . '</a></span>';
 			return $output;
 		}
 
@@ -2284,9 +2395,12 @@ if( ! class_exists( 'avia_htmlhelper' ) )
          */
 		function reset_button()
 		{
-			if(current_theme_supports('avia_disable_reset_options')) return "";
+			if( current_theme_supports( 'avia_disable_reset_options' ) ) 
+			{
+				return '';
+			}
 		
-			$output = '<span class="avia_style_wrap"><a href="#" class="avia_button avia_button_grey avia_reset">Reset all options</a></span>';
+			$output = '<span class="avia_style_wrap"><a href="#" class="avia_button avia_button_grey avia_reset">' . __( 'Reset all options', 'avia_framework' ) . '</a></span>';
 			return $output;
 		}
 		
@@ -2336,189 +2450,189 @@ if( ! class_exists( 'avia_htmlhelper' ) )
 		
 		
 		
-	######################################################################
-	# Dynamic Template Creation:
-	######################################################################
-	
-	/**
-     * 
-     * The create_options_page method renders an input field and button that lets you create options pages dynamically by entering the new of the new option page
-     * @param array $element the array holds data like type, value, id, class, description which are necessary to render the whole option-section
-     * @return string $output the string returned contains the html code generated within the method
-     */
+		######################################################################
+		# Dynamic Template Creation:
+		######################################################################
 
-	function create_options_page($element)
-	{
-		$output = "";
-		
-		$output .= '<div class="avia_create_options_container">';
-		$output .= '	<span class="avia_style_wrap avia_create_options_style_wrap">';
-		$output .= '	<input type="text" class="avia_create_options_page_new_name avia_dont_activate_save_buttons'.$element['class'].'" value="" name="'.$element['id'].'" id="'.$element['id'].'" />';
-		$output .= '	<a href="#" class="avia_button avia_create_options avia_button_inactive" title="'.$element['name'].'" id="avia_'.$element['id'].'">'.$element['label'].'</a>';
-		$output .= '	<span class="avia_loading avia_beside_button_loading"></span>';
-		$output .= '	</span>';
-		$output .= '	<input class="avia_create_options_page_temlate_sortable" type="hidden" value="'.$element['template_sortable'].'" />';
-		$output .= '	<input class="avia_create_options_page_temlate_parent" type="hidden" value="'.$element['temlate_parent'].'" />';
-		$output .= '	<input class="avia_create_options_page_temlate_icon" type="hidden" value="'.$element['temlate_icon'].'" />';
-		$output .= '	<input class="avia_create_options_page_temlate_remove_label" type="hidden" value="'.$element['remove_label'].'" />';
-		if(isset($element['temlate_default_elements']))
-		{
-			$elString = base64_encode(serialize($element['temlate_default_elements']));
-			$output .= '	<input class="avia_create_options_page_subelements_of" type="hidden" value="'.$elString.'" />';
-		}
-		$output .= '</div>';
-		return $output;
-	}
-	
-		
-	/**
-     * 
-     * The dynamical_add_elements method adds a dropdown list of elements and a submit button that allows you add the selcted element to the dom
-     * @param array $element the array holds data like type, value, id, class, description which are necessary to render the whole option-section
-     * @return string $output the string returned contains the html code generated within the method
-     */
-	function dynamical_add_elements($element)
-	{
-		$output = "";
-		
-		$output .= '<div class="avia_dynamical_add_elements_container">';
-		$output .= '	<span class="avia_style_wrap avia_dynamical_add_elements_style_wrap">';
-		$output .= '<span class="avia_select_unify"><select class="'.$element['class'].' avia_dynamical_add_elements_select">';
-		$output .= '<option value="">Select Element</option>  ';
-	
+		/**
+		 * 
+		 * The create_options_page method renders an input field and button that lets you create options pages dynamically by entering the new of the new option page
+		 * @param array $element the array holds data like type, value, id, class, description which are necessary to render the whole option-section
+		 * @return string $output the string returned contains the html code generated within the method
+		 */
 
-		$link = false;
-		
-		switch($element['options_file'])
+		function create_options_page($element)
 		{
-			case "dynamic" :
-			case AVIA_BASE."includes/admin/register-admin-dynamic-options.php" :
-			case "includes/admin/register-admin-dynamic-options.php" : $link = AVIA_BASE."includes/admin/register-admin-dynamic-options.php"; break;
-			case "one_page": 
-			case "includes/admin/register-admin-dynamic-one-page-portfolio.php": $link = AVIA_BASE."includes/admin/register-admin-dynamic-one-page-portfolio.php"; break;
+			$output = '';
 
-		}
-		
-		if($link) @include($link);
-		
-
-		foreach ($elements as $dynamic_element)
-		{
-			if(empty($dynamic_element['name'])) $dynamic_element['name'] = $dynamic_element['id'];
-			$output .= "<option value='". $dynamic_element['id']."'>". $dynamic_element['name']."</option>";
-		}
-		
-		$output .= '</select>';
-		$output .= '<span class="avia_select_fake_val">Select Element</span></span>';
-		$output .= '	<a href="#" class="avia_button avia_dynamical_add_elements" title="'.$element['name'].'" id="avia_'.$element['id'].'">Add Element</a>';
-		$output .= '	<span class="avia_loading avia_beside_button_loading"></span>';
-		$output .= '	</span>';
-		$output .= '	<input class="avia_dynamical_add_elements_parent" type="hidden" value="'.$element['slug'].'" />';
-		$output .= '	<input class="avia_dynamical_add_elements_config_file" type="hidden" value="'.$element['options_file'].'" />';
-	
-		$output .= '</div>';
-		return $output;
-	}
-	
-	
-	
-	
-	
-######################################################################
-# STYLING WIZARD + HELPER FUNCTIONS
-######################################################################
-	function styling_wizard($element)
-	{
-		$output 	= "";
-		$select  	= "<select class='add_wizard_el'>";
-		$fake_val	= __("Select an element to customize",'avia_framework');
-		$iteration  = 0;
-		
-		$output  = '<span class="avia_style_wrap avia_select_style_wrap"><span class="avia_select_unify">';
-		$select .= "<option value=''>{$fake_val}</option>";
-		
-		//dropdown menu with elements
-		foreach($element['order'] as $order)
-		{
-			$select .= "<optgroup label='{$order}'>";
-			
-			foreach($element['elements'] as $sub)
+			$output .= '<div class="avia_create_options_container">';
+			$output .= '	<span class="avia_style_wrap avia_create_options_style_wrap">';
+			$output .= '	<input type="text" class="avia_create_options_page_new_name avia_dont_activate_save_buttons'.$element['class'].'" value="" name="'.$element['id'].'" id="'.$element['id'].'" />';
+			$output .= '	<a href="#" class="avia_button avia_create_options avia_button_inactive" title="'.$element['name'].'" id="avia_'.$element['id'].'">'.$element['label'].'</a>';
+			$output .= '	<span class="avia_loading avia_beside_button_loading"></span>';
+			$output .= '	</span>';
+			$output .= '	<input class="avia_create_options_page_temlate_sortable" type="hidden" value="'.$element['template_sortable'].'" />';
+			$output .= '	<input class="avia_create_options_page_temlate_parent" type="hidden" value="'.$element['temlate_parent'].'" />';
+			$output .= '	<input class="avia_create_options_page_temlate_icon" type="hidden" value="'.$element['temlate_icon'].'" />';
+			$output .= '	<input class="avia_create_options_page_temlate_remove_label" type="hidden" value="'.$element['remove_label'].'" />';
+			if(isset($element['temlate_default_elements']))
 			{
-				if($sub['group'] == $order)
+				$elString = base64_encode(serialize($element['temlate_default_elements']));
+				$output .= '	<input class="avia_create_options_page_subelements_of" type="hidden" value="'.$elString.'" />';
+			}
+			$output .= '</div>';
+			return $output;
+		}
+	
+		
+		/**
+		 * 
+		 * The dynamical_add_elements method adds a dropdown list of elements and a submit button that allows you add the selcted element to the dom
+		 * @param array $element the array holds data like type, value, id, class, description which are necessary to render the whole option-section
+		 * @return string $output the string returned contains the html code generated within the method
+		 */
+		function dynamical_add_elements($element)
+		{
+			$output = '';
+
+			$output .= '<div class="avia_dynamical_add_elements_container">';
+			$output .= '	<span class="avia_style_wrap avia_dynamical_add_elements_style_wrap">';
+			$output .= '<span class="avia_select_unify"><select class="'.$element['class'].' avia_dynamical_add_elements_select">';
+			$output .= '<option value="">Select Element</option>  ';
+
+
+			$link = false;
+		
+			switch($element['options_file'])
+			{
+				case "dynamic" :
+				case AVIA_BASE."includes/admin/register-admin-dynamic-options.php" :
+				case "includes/admin/register-admin-dynamic-options.php" : $link = AVIA_BASE."includes/admin/register-admin-dynamic-options.php"; break;
+				case "one_page": 
+				case "includes/admin/register-admin-dynamic-one-page-portfolio.php": $link = AVIA_BASE."includes/admin/register-admin-dynamic-one-page-portfolio.php"; break;
+
+			}
+
+			if($link) @include($link);
+
+
+			foreach ($elements as $dynamic_element)
+			{
+				if(empty($dynamic_element['name'])) $dynamic_element['name'] = $dynamic_element['id'];
+				$output .= "<option value='". $dynamic_element['id']."'>". $dynamic_element['name']."</option>";
+			}
+		
+			$output .= '</select>';
+			$output .= '<span class="avia_select_fake_val">Select Element</span></span>';
+			$output .= '	<a href="#" class="avia_button avia_dynamical_add_elements" title="'.$element['name'].'" id="avia_'.$element['id'].'">Add Element</a>';
+			$output .= '	<span class="avia_loading avia_beside_button_loading"></span>';
+			$output .= '	</span>';
+			$output .= '	<input class="avia_dynamical_add_elements_parent" type="hidden" value="'.$element['slug'].'" />';
+			$output .= '	<input class="avia_dynamical_add_elements_config_file" type="hidden" value="'.$element['options_file'].'" />';
+
+			$output .= '</div>';
+			return $output;
+		}
+	
+	
+	
+	
+	
+		######################################################################
+		# STYLING WIZARD + HELPER FUNCTIONS
+		######################################################################
+		function styling_wizard($element)
+		{
+			$output 	= '';
+			$select  	= "<select class='add_wizard_el'>";
+			$fake_val	= __("Select an element to customize",'avia_framework');
+			$iteration  = 0;
+
+			$output  = '<span class="avia_style_wrap avia_select_style_wrap"><span class="avia_select_unify">';
+			$select .= "<option value=''>{$fake_val}</option>";
+
+			//dropdown menu with elements
+			foreach($element['order'] as $order)
+			{
+				$select .= "<optgroup label='{$order}'>";
+
+				foreach($element['elements'] as $sub)
 				{
-					$select .= "<option value='".$sub['id']."'>".$sub['name']."</option>";
+					if($sub['group'] == $order)
+					{
+						$select .= "<option value='".$sub['id']."'>".$sub['name']."</option>";
+					}
+				}
+
+				$select .= "</optgroup>";
+			}
+
+			$select .= "</select>";
+			$select .= '<span class="avia_select_fake_val">'.$fake_val.'</span>';
+			$select .= '</span><a href="#" class="avia_button add_wizard_el_button" >'.__("Edit Element",'avia_framework').'</a></span>';
+
+
+			$output .= $select;
+			$output .= "<div class='av-wizard-element-container'>";
+		
+		
+			//show active items
+			if(is_array($element['std']))
+			{
+				foreach ($element['std'] as $key => $value)
+				{
+					if(empty($element['elements'][$value['id']])) continue;
+
+					$sub 				= $element['elements'][$value['id']];
+					$sub['std_a'] 		= $value;
+					$sub['iteration'] 	= $key;
+					$sub['master_id'] 	= $element['id'];
+					$output 		   .= $this->styling_wizard_el($sub);
+					$iteration ++;
 				}
 			}
-			
-			$select .= "</optgroup>";
-		}
-		
-		$select .= "</select>";
-		$select .= '<span class="avia_select_fake_val">'.$fake_val.'</span>';
-		$select .= '</span><a href="#" class="avia_button add_wizard_el_button" >'.__("Edit Element",'avia_framework').'</a></span>';
 		
 		
-		$output .= $select;
-		$output .= "<div class='av-wizard-element-container'>";
-		
-		
-		//show active items
-		if(is_array($element['std']))
-		{
-			foreach ($element['std'] as $key => $value)
+			//generate the templates for new items
+			$template = '';
+			foreach($element['elements'] as $sub)
 			{
-				if(empty($element['elements'][$value['id']])) continue;
-			
-				$sub 				= $element['elements'][$value['id']];
-				$sub['std_a'] 		= $value;
-				$sub['iteration'] 	= $key;
+				$sub['iteration'] 	= "{counter}";
 				$sub['master_id'] 	= $element['id'];
-				$output 		   .= $this->styling_wizard_el($sub);
-				$iteration ++;
+
+				$template .= "\n<script type='text/html' id='avia-tmpl-wizard-{$sub['id']}'>\n";
+				$template .= $this->styling_wizard_el($sub);
+				$template .= "\n</script>\n\n";
+
 			}
+			$output .= $template;
+
+
+			$output .= "</div>";
+
+			return $output;
 		}
-		
-		
-		//generate the templates for new items
-		$template = "";
-		foreach($element['elements'] as $sub)
+
+
+		function styling_wizard_el($element)
 		{
-			$sub['iteration'] 	= "{counter}";
-			$sub['master_id'] 	= $element['id'];
-			
-			$template .= "\n<script type='text/html' id='avia-tmpl-wizard-{$sub['id']}'>\n";
-			$template .= $this->styling_wizard_el($sub);
-			$template .= "\n</script>\n\n";
-			
-		}
-		$output .= $template;
+			extract($element);
+
+			$extraClass		=  ($sections || $hover) ? "av-wizard-with-extra" : '';
+			$name_string  	=  $master_id."-__-".$iteration."-__-";
+			$blank_string 	=  $master_id."-__-{counter}-__-";
+
+			$output  = '';
+			$output .= "<div class='av-wizard-element  {$extraClass}'>";
+			$output .= 		"<strong>{$name}</strong>";
+
+			if($description)
+			{
+				$output .= 		"<span class='av-wizard-description'> - {$description}</span>";
+			}
 		
-		
-		$output .= "</div>";
-		
-		return $output;
-	}
-	
-	
-	function styling_wizard_el($element)
-	{
-		extract($element);
-		
-		$extraClass		=  ($sections || $hover) ? "av-wizard-with-extra" : "";
-		$name_string  	=  $master_id."-__-".$iteration."-__-";
-		$blank_string 	=  $master_id."-__-{counter}-__-";
-		
-		$output  = "";
-		$output .= "<div class='av-wizard-element  {$extraClass}'>";
-		$output .= 		"<strong>{$name}</strong>";
-		
-		if($description)
-		{
-			$output .= 		"<span class='av-wizard-description'> - {$description}</span>";
-		}
-		
-		$output .= 		"<div class='av-wizard-form-elements'>";
-		$output .= 		"<input name='".$name_string."id' value='".$element['id']."' type='hidden' data-recalc='".$blank_string."id' />";
+			$output .= 		"<div class='av-wizard-form-elements'>";
+			$output .= 		"<input name='".$name_string."id' value='".$element['id']."' type='hidden' data-recalc='".$blank_string."id' />";
 		
 			foreach($edit as $key => $form)
 			{
@@ -2529,7 +2643,7 @@ if( ! class_exists( 'avia_htmlhelper' ) )
 					$element['html_name']  = $name_string.$key;
 					$element['data_tmpl']  = $blank_string.$key;
 					$element['sub_values'] = $form;
-					$element['std'] = isset($element['std_a'][$key]) ? $element['std_a'][$key] : "";
+					$element['std'] = isset($element['std_a'][$key]) ? $element['std_a'][$key] : '';
 					
 					$output .= "<div class='av-wizard-subcontainer av-wizard-subcontainer-".$element['sub_values']['type']."'>";
 					$output .= $this->$method($element);
@@ -2538,176 +2652,168 @@ if( ! class_exists( 'avia_htmlhelper' ) )
 			}
 			
 			
-		if($extraClass) $output .= "<span class='av-wizard-delimiter'></span>";
-		
-			
-		if($sections)
-		{
-			global $avia_config;
-	
-			$output .= "<div class='av-wizard-subcontainer av-wizard-subcontainer-checkbox av-wizard-subcontainer-bottom-box'>";
-			$output .= "<span class='av-wizard-checkbox-label-section'>".__('Apply to Section: ','avia_framework')."</span>";
-			
-			foreach($avia_config['color_sets'] as $key => $name)
+			if($extraClass) $output .= "<span class='av-wizard-delimiter'></span>";
+
+
+			if($sections)
 			{
-				$element['name']  		= $name;
+				global $avia_config;
+
+				$output .= "<div class='av-wizard-subcontainer av-wizard-subcontainer-checkbox av-wizard-subcontainer-bottom-box'>";
+				$output .= "<span class='av-wizard-checkbox-label-section'>".__('Apply to Section: ','avia_framework')."</span>";
+
+				foreach($avia_config['color_sets'] as $key => $name)
+				{
+					$element['name']  		= $name;
+					$element['html_name']  	= $name_string.$key;
+					$element['data_tmpl']  	= $blank_string.$key;
+					$element['std'] 		= isset($element['std_a'][$key]) ? $element['std_a'][$key] : "true";
+					$output .= $this->styling_wizard_checkbox($element);
+				}
+
+				$output .= "</div>";
+			}
+
+			if($hover)
+			{
+				$key 					= 'hover_active';
+				$element['name']  		= __('Apply only to mouse hover state','avia_framework');
 				$element['html_name']  	= $name_string.$key;
 				$element['data_tmpl']  	= $blank_string.$key;
-				$element['std'] 		= isset($element['std_a'][$key]) ? $element['std_a'][$key] : "true";
+				$element['std'] 		= isset($element['std_a'][$key]) ? $element['std_a'][$key] : '';
+				$output .= "<div class='av-wizard-subcontainer av-wizard-subcontainer-checkbox av-wizard-subcontainer-bottom-box'>";
 				$output .= $this->styling_wizard_checkbox($element);
+				$output .= "</div>";
 			}
-			
-			$output .= "</div>";
-		}
-		
-		if($hover)
-		{
-			$key 					= 'hover_active';
-			$element['name']  		= __('Apply only to mouse hover state','avia_framework');
-			$element['html_name']  	= $name_string.$key;
-			$element['data_tmpl']  	= $blank_string.$key;
-			$element['std'] 		= isset($element['std_a'][$key]) ? $element['std_a'][$key] : "";
-			$output .= "<div class='av-wizard-subcontainer av-wizard-subcontainer-checkbox av-wizard-subcontainer-bottom-box'>";
-			$output .= $this->styling_wizard_checkbox($element);
-			$output .= "</div>";
-		}
-		
-		if(isset($active) && $active)
-		{
-			$key 					= 'item_active';
-			$element['name']  		= __('Apply only to active state','avia_framework');
-			$element['html_name']  	= $name_string.$key;
-			$element['data_tmpl']  	= $blank_string.$key;
-			$element['std'] 		= isset($element['std_a'][$key]) ? $element['std_a'][$key] : "";
-			$output .= "<div class='av-wizard-subcontainer av-wizard-subcontainer-checkbox av-wizard-subcontainer-bottom-box'>";
-			$output .= $this->styling_wizard_checkbox($element);
-			$output .= "</div>";
-		}
-		
-			
-			
-		$output .= 		'<a class="avia_remove_wizard_set" href="#">×</a>';
-		$output .= 		"</div>";
-		$output .= "</div>";
-		
-		return $output;
-	}
-	
-	
-	function styling_wizard_hr($element)
-	{
-		$output  = "";
-		$output .= "<div class='av-wizard-hr'></div>";
-		
-		return $output;
 
-	}
-	
-	
-	function styling_wizard_checkbox($element)
-	{
-		extract($element);
-		
-		$checked = ($std != "" && $std != 'disabled') ? "checked='checked'" : "";
-		
-		$output  = "";
-		$output .= "<label><input type='checkbox' class='avia_color_picker' value='true' {$checked} name='{$html_name}' data-recalc='{$data_tmpl}' /> <span class='av-wizard-checkbox-label'>{$name}</span></label>";
-		
-		return $output;
-	}
-	
-	
-	
-	
-	function styling_wizard_colorpicker($element)
-	{
-		extract($element);
-		
-		$output  = "";
-		$output .= "<span class='avia_style_wrap avia_colorpicker avia_colorpicker_style_wrap'>";
-		$output .= "<input type='text' class='avia_color_picker' value='{$std}' name='{$html_name}' data-recalc='{$data_tmpl}' />";
-		$output .= "<span class='avia_color_picker_div'></span></span>";
-		$output .= "<div class='subname'>".$sub_values['name']."</div>";
-		
+			if(isset($active) && $active)
+			{
+				$key 					= 'item_active';
+				$element['name']  		= __('Apply only to active state','avia_framework');
+				$element['html_name']  	= $name_string.$key;
+				$element['data_tmpl']  	= $blank_string.$key;
+				$element['std'] 		= isset($element['std_a'][$key]) ? $element['std_a'][$key] : '';
+				$output .= "<div class='av-wizard-subcontainer av-wizard-subcontainer-checkbox av-wizard-subcontainer-bottom-box'>";
+				$output .= $this->styling_wizard_checkbox($element);
+				$output .= "</div>";
+			}
 
-		return $output;
-	}
-	
-	
-	
-	function styling_wizard_size($element)
-	{
-		$range 		= is_array($element['sub_values']['range']) ? $element['sub_values']['range'] : explode("-", $element['sub_values']['range']);
-		$unit 		= !isset($element['sub_values']['unit']) ? "px" : $element['sub_values']['unit'];
-		$increment 	= !isset($element['sub_values']['increment']) ? 1 : $element['sub_values']['increment'];
-		
-		$element['sub_values']['options'] = array();
-		$element['sub_values']['options']['Default'] = "";
-		
-		for ($i = $range[0]; $i <= $range[1]; $i += $increment)
-		{
-			$element['sub_values']['options'][$i . $unit] = $i . $unit;
+
+
+			$output .= 		'<a class="avia_remove_wizard_set" href="#">×</a>';
+			$output .= 		"</div>";
+			$output .= "</div>";
+
+			return $output;
 		}
-		
-		return $this->styling_wizard_select($element);
-	}
 	
 	
-	
-	function styling_wizard_font($element)
-	{
-		return $this->styling_wizard_select($element);
-	}
-	
-	
-	/**
-	 * Displays a selectbox and supports optgroup tag
-	 * 
-	 * @param array $element
-	 * @return string
-	 */
-	function styling_wizard_select($element)
-	{
-		extract($element);
-		$output  = "";
-		$output .= "<span class='avia_style_wrap avia_select_style_wrap'><span class='avia_select_unify'><select name='{$html_name}' data-recalc='{$data_tmpl}'>";
-		
-		foreach( $sub_values['options'] as $key => $option )
+		function styling_wizard_hr($element)
 		{
-			$is_optgroup = is_array( $option );
-			$optgroup_sub = $is_optgroup ? $option : array( $key => $option );
-			
-			if( $is_optgroup )
-			{
-				$output .= '<optgroup label="' . $key . '">';
-			}
-			
-			foreach( $optgroup_sub as $show => $value ) 
-			{
-				$selected = $value == $std ? "selected='selected'" : "";
-				$output .= "<option {$selected} value='{$value}'>{$show}</option>";
-			}
-			
-			if( $is_optgroup )
-			{
-				$output .= '</optgroup>';
-			}
-			
+			$output  = '';
+			$output .= "<div class='av-wizard-hr'></div>";
+
+			return $output;
+
 		}
-		
-		$output .= "</select><span class='avia_select_fake_val'>Default</span></span></span>";
-		$output .= "<div class='subname'>".$sub_values['name']."</div>";
-		return $output;
-	}
+
+
+		function styling_wizard_checkbox($element)
+		{
+			extract($element);
+
+			$checked = ($std != '' && $std != 'disabled') ? "checked='checked'" : '';
+
+			$output  = '';
+			$output .= "<label><input type='checkbox' class='avia_color_picker' value='true' {$checked} name='{$html_name}' data-recalc='{$data_tmpl}' /> <span class='av-wizard-checkbox-label'>{$name}</span></label>";
+
+			return $output;
+		}
+
+
+
+
+		function styling_wizard_colorpicker($element)
+		{
+			extract($element);
+
+			$output  = '';
+			$output .= "<span class='avia_style_wrap avia_colorpicker avia_colorpicker_style_wrap'>";
+			$output .= "<input type='text' class='avia_color_picker' value='{$std}' name='{$html_name}' data-recalc='{$data_tmpl}' />";
+			$output .= "<span class='avia_color_picker_div'></span></span>";
+			$output .= "<div class='subname'>".$sub_values['name']."</div>";
+
+
+			return $output;
+		}
+
+
+
+		function styling_wizard_size($element)
+		{
+			$range 		= is_array($element['sub_values']['range']) ? $element['sub_values']['range'] : explode("-", $element['sub_values']['range']);
+			$unit 		= !isset($element['sub_values']['unit']) ? "px" : $element['sub_values']['unit'];
+			$increment 	= !isset($element['sub_values']['increment']) ? 1 : $element['sub_values']['increment'];
+
+			$element['sub_values']['options'] = array();
+			$element['sub_values']['options']['Default'] = '';
+
+			for ($i = $range[0]; $i <= $range[1]; $i += $increment)
+			{
+				$element['sub_values']['options'][$i . $unit] = $i . $unit;
+			}
+
+			return $this->styling_wizard_select($element);
+		}
+
+
+
+		function styling_wizard_font($element)
+		{
+			return $this->styling_wizard_select($element);
+		}
+	
+	
+		/**
+		 * Displays a selectbox and supports optgroup tag
+		 * 
+		 * @param array $element
+		 * @return string
+		 */
+		function styling_wizard_select($element)
+		{
+			extract($element);
+			$output  = '';
+			$output .= "<span class='avia_style_wrap avia_select_style_wrap'><span class='avia_select_unify'><select name='{$html_name}' data-recalc='{$data_tmpl}'>";
+
+			foreach( $sub_values['options'] as $key => $option )
+			{
+				$is_optgroup = is_array( $option );
+				$optgroup_sub = $is_optgroup ? $option : array( $key => $option );
+
+				if( $is_optgroup )
+				{
+					$output .= '<optgroup label="' . $key . '">';
+				}
+
+				foreach( $optgroup_sub as $show => $value ) 
+				{
+					$selected = $value == $std ? "selected='selected'" : '';
+					$output .= "<option {$selected} value='{$value}'>{$show}</option>";
+				}
+
+				if( $is_optgroup )
+				{
+					$output .= '</optgroup>';
+				}
+
+			}
+
+			$output .= "</select><span class='avia_select_fake_val'>Default</span></span></span>";
+			$output .= "<div class='subname'>".$sub_values['name']."</div>";
+			return $output;
+		}
 		
 	}
 }
-
-
-
-
-
-
-
-
 

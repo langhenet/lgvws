@@ -445,12 +445,17 @@ if( ! class_exists( 'Avia_Custom_Pages' ) )
 		public function handler_get_special_pages_ids( $post_ids = array(), $context = '' )
 		{
 			/**
+			 * Inactive pages can be visited in frontend by default - remove from id array on page load
+			 */
+			$show_inactive = 'page_load' != $context;
+			
+			/**
 			 * Return anything except true to hide inactive special pages
 			 * 
 			 * @since 4.5.5
 			 * @return boolean
 			 */
-			$show_inactive = apply_filters( 'avf_show_inactive_special_pages', true, $post_ids, $context ) === true ? true : false;
+			$show_inactive = apply_filters( 'avf_show_inactive_special_pages', $show_inactive, $post_ids, $context ) === true ? true : false;
 			
 					// Maintenance Page
 			$active = in_array( avia_get_option( 'maintenance_mode' ), array( 'maintenance_mode', 'maintenance_mode_redirect' ) );
@@ -620,6 +625,7 @@ if( ! class_exists( 'Avia_Custom_Pages' ) )
 			$link = admin_url( '?page=avia#goto_' );
 			$label = __( 'Change', 'avia_framework' );
 			$change = " <a target='_blank' href='{$link}avia'><small>({$label})</small></a>";
+			$visibiity = __( 'Therefore it cannot be accessed directly by the general public in your frontend. (Logged in users who are able to edit this page can still see it)', 'avia_framework' );
 			
 			if( $maintenance_page == $id )
 			{
@@ -630,6 +636,7 @@ if( ! class_exists( 'Avia_Custom_Pages' ) )
 				else
 				{
 					$note .= __( 'This page is selected to be displayed as maintenance mode page but is not active at the moment. (Set in Enfold &raquo; Theme Options).', 'avia_framework' );
+					$add_visibility = false;
 				}
 				
 				$note .= $change;
@@ -643,10 +650,11 @@ if( ! class_exists( 'Avia_Custom_Pages' ) )
 				else
 				{
 					$note .= __( 'This page is selected to be displayed as custom 404 page but is not active at the moment. (Set in Enfold &raquo; Theme Options).', 'avia_framework' );
+					$add_visibility = false;
 				}
 				
 				$note .= $change;
-				$add_visibility = false;
+				
 			}
 			else if( $footer_page == $id )
 			{
@@ -657,9 +665,10 @@ if( ! class_exists( 'Avia_Custom_Pages' ) )
 				else
 				{
 					$note .= __( 'This page is selected to be displayed as footer but is not active at the moment. (Set in Enfold &raquo; Footer).', 'avia_framework' );
+					$add_visibility = false;
 				}
 				
-				$note .= " <a target='_blank' href='{$link}avia'><small>({$label})</small></a>";
+				$note .= " <a target='_blank' href='{$link}footer'><small>({$label})</small></a>";
 			}
 			else
 			{
@@ -668,7 +677,7 @@ if( ! class_exists( 'Avia_Custom_Pages' ) )
 
 			if( $add_visibility )
 			{
-				$note .= ' ' . __( 'Therefore it cannot be accessed directly by the general public in your frontend. (Logged in users who are able to edit this page can still see it)', 'avia_framework' );
+				$note .= ' ' . $visibiity;
 			}
 			
 			if( ! empty( $params['note'] ) )

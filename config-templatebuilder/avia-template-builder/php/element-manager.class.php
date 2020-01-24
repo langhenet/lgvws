@@ -545,6 +545,65 @@ if( ! class_exists( 'aviaElementManager' ) )
 			
 			return $this->merge_widget_elements_state( $states );
 		}
+		
+		
+		/**
+		 * Returns an array with all registered ALB elements as key and count info.
+		 * For sake of efficiency this function is not intended to be called from frontend
+		 * but only to provide a help for sorting shortcode buttons in backend editor. 
+		 * 
+		 * 
+		 * @since 4.3
+		 * @param string $source			'post' | 'blog'
+		 * @param int $post_id				defaults to the value of get_the_ID();
+		 * @return array|false
+		 */
+		public function get_elements_count( $source = 'post', $post_id = 0 )
+		{
+			if( ( 'post' == $source ) && ( 0 == $post_id ) )
+			{
+				$post_id = get_the_ID();
+				if( false === $post_id )
+				{
+					return false;
+				}
+			}
+			
+			$elements = $this->registered_elements();
+			
+			$states = array();
+
+			foreach ( $elements as $element )
+			{
+				$key = aviaElementManager::USAGE_PREFIX . $element;
+				$entry = get_option( $key, array() );
+				
+				if( 'post' == $source )
+				{
+					if( ! isset( $entry[ $post_id ] ) )
+					{
+						$states[ $element ] = 0;
+					}
+					else 
+					{
+						$states[ $element ] = $entry[ $post_id ]['count'];
+					}
+					continue;
+				}
+				
+				$states[ $element ] = 0;
+				
+				if( ! empty( $entry ) )
+				{
+					foreach ( $entry as $key => $value ) 
+					{
+						$states[ $element ] += $value['count'];
+					}
+				}
+			}
+			
+			return $states;
+		}
 
 		/**
 		 * 

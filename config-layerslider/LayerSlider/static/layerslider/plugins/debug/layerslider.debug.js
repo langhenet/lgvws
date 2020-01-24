@@ -1,11 +1,11 @@
 
 /*
-	* LayerSlider Plugin: Debug
+	* LayerSlider Add-On: Debug
 	*
-	* (c) 2011-2019 George Krupa, John Gera & Kreatura Media
+	* (c) 2011-2020 George Krupa, John Gera & Kreatura Media
 	*
-	* LayerSlider web:		https://layerslider.kreaturamedia.com/
-	* licenses:				http://codecanyon.net/licenses/standard
+	* LayerSlider home:		https://layerslider.kreaturamedia.com/
+	* Licensing:			https://layerslider.kreaturamedia.com/licensing/
 */
 
 

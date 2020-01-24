@@ -1359,6 +1359,13 @@ $lsDefaults = array(
 			'props' => array( 'meta' => true )
 		),
 
+		'popupRolesCustomer' => array(
+			'value' => true,
+			'name' => __('Customers', 'LayerSlider'),
+			'keys' => 'popup_roles_customer',
+			'props' => array( 'meta' => true )
+		),
+
 		'popupRolesVisitor' => array(
 			'value' => true,
 			'name' => __('Visitors', 'LayerSlider'),
@@ -1428,17 +1435,14 @@ $lsDefaults = array(
 			'value' => true,
 			'name' => __('Use srcset attribute', 'LayerSlider'),
 			'keys' => 'useSrcset',
-			'desc' => __('The srcset attribute allows loading dynamically scaled images based on screen resolution. It can save bandwidth and allow using retina-ready images on high resolution devices. In some rare edge cases, this option might cause blurry images.', 'LayerSlider'),
-			'props' => array(
-				'meta' => true
-			)
+			'desc' => __('The srcset attribute allows loading dynamically scaled images based on screen resolution. It can save bandwidth and allow using retina-ready images on high resolution devices. In some rare edge cases, this option might cause blurry images.', 'LayerSlider')
 		),
 
 		'enhancedLazyLoad' => array(
 			'value' => false,
 			'name' => 'Enhanced lazy load',
 			'keys' => 'enhancedLazyLoad',
-			'desc' => __('The default lazy loading behavior makes a compromise to ensure maximum compatibility while offering a solution that works ideally in almost all cases. However, by leaving the image ’src’ attribute untouched, there is a slight chance that the browser might start downloading some assets for a split second before LayerSlider cancels them. Enabling this option will eliminate any chance of generating even a minuscule amount of unwanted traffic, but it can also cause issues for search engine indexing and other WP themes/plugins.', 'LayerSlider'),
+			'desc' => __('The default lazy loading behavior makes a compromise to ensure maximum compatibility while offering a solution that works ideally in almost all cases. However, by leaving the image ’src’ and ’srcset’ attributes untouched, there is a slight chance that the browser might start downloading some assets for a split second before LayerSlider cancels them. Enabling this option will eliminate any chance of generating even a minuscule amount of unwanted traffic, but it can also cause issues for search engine indexing and other WP themes/plugins.', 'LayerSlider'),
 			'advanced' => true,
 			'props' => array(
 				'meta' => true
@@ -1909,7 +1913,7 @@ $lsDefaults = array(
 			'value' => '',
 			'name' => __('Deeplink', 'LayerSlider'),
 			'keys' => 'deeplink',
-			'tooltip' => __('You can specify a slide alias name which you can use in your URLs with a hash mark, so LayerSlider will start with the correspondig slide.', 'LayerSlider')
+			'tooltip' => __('A slide alias name, which you can use in your URLs with a hash tag so LayerSlider will start with the corresponding slide when visitors arrive to the page. Example: domain.com/page/#welcome<br><br>Use only lowercase alphanumeric values. You can also use this feature to implement slide navigation with links.', 'LayerSlider')
 		),
 
 		'globalHover' => array(
@@ -4643,13 +4647,59 @@ $lsDefaults = array(
 			)
 		),
 
-		'background' => array(
+		'background' => array (
 			'value' => '',
-			'name' => __('Background', 'LayerSlider'),
-			'keys' => 'background',
+			'keys' => 'layerBackground',
+			'tooltip' => __('The background image of this layer. Click on the image to open the WordPress Media Library to choose or upload an image.', 'LayerSlider'),
+			'props' => array( 'meta' => true )
+		),
+
+		'backgroundId' => array (
+			'value' => '',
+			'keys' => 'layerBackgroundId',
+			'props' => array( 'meta' => true )
+		),
+
+		'backgroundColor' => array(
+			'value' => '',
+			'name' => __('Color', 'LayerSlider'),
+			'keys' => 'background-color',
 			'tooltip' => __('The background color of your layer. You can use color names, hexadecimal, RGB or RGBA values as well as the “transparent” keyword. Example: #FFF', 'LayerSlider'),
 			'props' => array(
 				'meta' => true
+			)
+		),
+
+		'backgroundSize' => array(
+			'value' => 'inherit',
+			'name' => __('Size', 'LayerSlider'),
+			'keys' => 'background-size',
+			'tooltip' => __('The size of the slide background image. Leave this option on inherit if you want to set it globally from Slider Settings.', 'LayerSlider'),
+			'options' => array(
+				'inherit' => __('Inherit from theme', 'LayerSlider'),
+				'auto' => __('Auto', 'LayerSlider'),
+				'cover' => __('Cover', 'LayerSlider'),
+				'contain' => __('Contain', 'LayerSlider'),
+				'100% 100%' => __('Stretch', 'LayerSlider')
+			)
+		),
+
+		'backgroundPosition' => array(
+			'value' => 'inherit',
+			'name' => __('Position', 'LayerSlider'),
+			'keys' => 'background-position',
+			'tooltip' => __('The position of the slide background image. Leave this option on inherit if you want to set it globally from Slider Settings.', 'LayerSlider'),
+			'options' => array(
+				'inherit' => __('Inherit from theme', 'LayerSlider'),
+				'0% 0%' => __('left top', 'LayerSlider'),
+				'0% 50%' => __('left center', 'LayerSlider'),
+				'0% 100%' => __('left bottom', 'LayerSlider'),
+				'50% 0%' => __('center top', 'LayerSlider'),
+				'50% 50%' => __('center center', 'LayerSlider'),
+				'50% 100%' => __('center bottom', 'LayerSlider'),
+				'100% 0%' => __('right top', 'LayerSlider'),
+				'100% 50%' => __('right center', 'LayerSlider'),
+				'100% 100%' => __('right bottom', 'LayerSlider')
 			)
 		),
 
@@ -4657,7 +4707,7 @@ $lsDefaults = array(
 			'value' => '',
 			'name' => __('Rounded corners', 'LayerSlider'),
 			'keys' => 'border-radius',
-			'tooltip' => __('If you want rounded corners, you can set its radius here. Example: 5px', 'LayerSlider'),
+			'tooltip' => __('If you want rounded corners, you can set its radius here. You can use both pixel and percentage values. Example: 5px', 'LayerSlider'),
 			'props' => array(
 				'meta' => true
 			)
@@ -4769,6 +4819,15 @@ $lsDefaults = array(
 				'placeholder' => 'auto'
 			)
 		),
+
+
+		'pointerEvents' => array(
+			'value' => false,
+			'name' => __('Prevent mouse events', 'LayerSlider'),
+			'keys' => 'pointerEvents',
+			'tooltip' => __('Disables hover and click events, and makes it possible to click through the layer. Can be useful if you have overlapping layers or you want to prevent hover triggered effects like showing controls and overlays in a video player.', 'LayerSlider')
+		),
+
 
 		'blendMode' => array(
 			'value' => 'unset',

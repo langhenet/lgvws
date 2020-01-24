@@ -27,7 +27,7 @@ avia_backend_add_thumbnail_size($avia_config);
 
 include('admin-options.php');
 include('admin-import.php');
-include( 'woocommerce-mod-css-dynamic.php');
+include( 'woocommerce-mod-css-dynamic.php' );
 
 add_theme_support( 'woocommerce' );
 
@@ -75,9 +75,12 @@ function avia_woocommerce_version_check( $version  )
 
 
 //register my own styles, remove wootheme stylesheet
-if(!is_admin()){
-	add_action('init', 'avia_woocommerce_register_assets');
+if( ! is_admin() )
+{
+	add_action( 'init', 'avia_woocommerce_register_assets' );
 }
+
+
 
 /**
  * Wrapper function as WC deprecated function get_woocommerce_term_meta with 3.6
@@ -185,7 +188,7 @@ if( ! function_exists( 'avia_woocommerce_product_gallery_support_setup' ) )
 		$options = avia_get_option();
 		
 		//	Fallback, if options have not been saved
-		if( empty( $options['product_gallery'] ) )
+		if( ! array_key_exists( 'product_gallery', $options ) || ( 'wc_30_gallery' != $options['product_gallery'] ) )
 		{
 			$options['product_gallery'] = '';
 		}
@@ -1054,22 +1057,26 @@ function avia_woocommerce_shop_banner()
 }
 
 
-function avia_woocommerce_parallax_banner($bg, $overlay, $opacity, $description, $font)
+function avia_woocommerce_parallax_banner( $bg, $overlay, $opacity, $description, $font )
 {
 	
-	if(is_numeric($bg)) 
+	if( is_numeric( $bg ) ) 
 	{
 		$bg = wp_get_attachment_image_src($bg, 'extra_large');
-		if(is_array($bg) && $bg[0] != "") $bg = $bg[0];
+		$bg = ( is_array( $bg ) && $bg[0] != '' ) ? $bg[0] : '';
 	}
 	
-	if($font) $font = "style='color:{$font};'";
-	if($bg) $bg = "background-image: url(".$bg.");";
+	if( $font ) 
+	{
+		$font = "style='color:{$font};'";
+	}
 	
+	if( $bg ) 
+	{
+		$bg = "background-image: url(".$bg.");";
+	}
 	
-	
-	
-	$output = "";
+	$output = '';
 					
 	$output .='<div id="av_product_description" class="avia-section main_color avia-section-large avia-no-border-styling avia-full-stretch av-parallax-section av-section-color-overlay-active avia-bg-style-parallax container_wrap fullsize" data-section-bg-repeat="stretch" '.$font.'>';
 	$output .='<div class="av-parallax avia-full-stretch" data-avia-parallax-ratio="0.3">';
@@ -1602,7 +1609,7 @@ if( ! function_exists( 'avia_woocommerce_overwrite_catalog_ordering' ) )
 		
 		foreach( $check as $key )
 		{
-			if( isset( $_GET[$key] ) )
+			if( isset( $_GET[ $key ] ) )
 			{
 				$_SESSION['avia_woocommerce'][ $key ] = esc_attr( $_GET[ $key ] );
 			}
@@ -1918,7 +1925,7 @@ if(!function_exists('avia_woocommerce_disable_editor'))
     			$params['default_label'] 	= $params['default_label'] . " ".$disabled;
     			$params['button_class'] 	= "av-builer-button-disabled";
     			$params['disabled'] 		= true;
-    			$params['note'] 			= __('This page is set as the default WooCommerce Shop Overview and therefore does not support the Enfold advanced layout editor', 'avia_framework')." <br/><a href='https://kriesi.at/documentation/enfold/custom-woocommerce-shop-overview/' target='_blank'>(".__('Learn more').")</a>";
+    			$params['note'] 			= __('This page is set as the default WooCommerce Shop Overview and therefore does not support the Enfold advanced layout editor', 'avia_framework')." <br/><a href='https://kriesi.at/documentation/enfold/custom-woocommerce-shop-overview/' target='_blank' rel='noopener noreferrer'>(".__('Learn more').")</a>";
     			
     		}
     	}

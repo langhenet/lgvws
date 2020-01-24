@@ -21,17 +21,21 @@ $l10n_ls = array(
 	// Notify OSD
 	'notifySliderSaved' 	=> __('Slider saved successfully', 'LayerSlider'),
 	'notifyCaptureSlide' 	=> __('Capturing slide. This might take a moment ...', 'LayerSlider'),
+	'notifyPixieSave'		=> __('Saving image. This might take a moment ...'),
 
 	// Activation
+	'activationErrorTitle' 	=> __('Something went wrong ...', 'LayerSlider'),
 	'activationTemplate' 	=> __('Product activation is required to access premium templates.', 'LayerSlider'),
 	'activationFeature' 	=> __('Product activation is required to access this feature.', 'LayerSlider'),
 	'activationUpdate' 		=> __('Product activation is required to receive automatic updates.', 'LayerSlider'),
+
+	'purchaseWWPopups' 		=> __('Purchase This Popup Template Pack ', 'LayerSlider'),
 
 	// Sliders list
 	'SLRemoveSlider' 			=> __('Are you sure you want to remove this slider?', 'LayerSlider'),
 	'SLExportSliderHTML' 		=> __("You’re about to export this slider as HTML. This option is for the jQuery version of LayerSlider and you will *NOT* be able to use the downloaded package on WordPress sites. For that, you need to choose the regular export option. Are you sure you want to continue?\n\nThis message will be suppressed after a couple of attempts. Please mind the difference in the future between the various export methods to avoid potential harm and data loss.", 'LayerSlider'),
 	'SLUploadSlider' 			=> __('Uploading, please wait ...', 'LayerSlider'),
-	'SLEnterCode' 				=> __('Please enter a valid Item Purchase Code. For more information, please click on the “Where’s my purchase code?” button.', 'LayerSlider'),
+	'SLEnterCode' 				=> __('Please enter a valid license key. For more information, please click on the “Where’s my license key?” button.', 'LayerSlider'),
 	'SLDeactivate' 				=> __('Are you sure you want to deactivate this site?', 'LayerSlider'),
 	'SLPermissions' 			=> __('WARNING: This option controls who can access to this plugin, you can easily lock out yourself by accident. Please, make sure that you have entered a valid capability without whitespaces or other invalid characters. Do you want to proceed?', 'LayerSlider'),
 	'SLJQueryConfirm' 			=> __('Do not enable this option unless you’re  experiencing issues with jQuery on your site. This option can easily cause unexpected issues when used incorrectly. Do you want to proceed?', 'LayerSlider'),
@@ -42,6 +46,9 @@ $l10n_ls = array(
 	'SLImportError' 	=> __('It seems there is a server issue that prevented LayerSlider from importing your selected slider. Please check LayerSlider -> Options -> System Status for potential errors, try to temporarily disable themes/plugins to rule out incompatibility issues or contact your hosting provider to resolve server configuration problems. Retrying the import might also help.', 'LayerSlider'),
 	'SLImportHTTPError' => __("It seems there is a server issue that prevented LayerSlider from importing your selected slider. Please check LayerSlider -> Options -> System Status for potential errors, try to temporarily disable themes/plugins to rule out incompatibility issues or contact your hosting provider to resolve server configuration problems. Retrying the import might also help. Your HTTP server thrown the following error: \n\n %s", 'LayerSlider'),
 	'SLActivationError' => __("It seems there is a server issue that prevented LayerSlider from performing product activation. Please check LayerSlider -> Options -> System Status for potential errors, try to temporarily disable themes/plugins to rule out incompatibility issues or contact your hosting provider to resolve server configuration problems. Your HTTP server thrown the following error: \n\n %s", 'LayerSlider'),
+	'SLRemoveGroupButton' => __('Clear & Remove Group', 'LayerSlider'),
+	'SLRemoveGroupTooltip' => __('Moves all sliders out of this group, then deletes it. All of your sliders will remain available on the main grid.', 'LayerSlider'),
+	'SLRemoveGroupConfirm' => __("You’re about to remove this group. All your sliders will be moved and remain available on the main grid. \n\nContinue?", 'LayerSlider'),
 
 	// Template Store
 	'TSVersionWarningTitle' 	=> __('Plugin update required', 'LayerSlider'),
@@ -72,6 +79,8 @@ $l10n_ls = array(
 	'SBUndoPasteSettings' 		=> __('Paste layer settings', 'LayerSlider'),
 	'SBUndoSlideImage' 			=> __('Slide image', 'LayerSlider'),
 	'SBUndoLayerImage' 			=> __('Layer image', 'LayerSlider'),
+	'SBUndoRemoveLayerBG' 		=> __('Remove layer background', 'LayerSlider'),
+	'SBUndoLayerBackground' 	=> __('Layer background', 'LayerSlider'),
 	'SBUndoSortLayers' 			=> __('Sort layers', 'LayerSlider'),
 	'SBUndoLayerType' 			=> __('Layer type', 'LayerSlider'),
 	'SBUndoLayerMedia' 			=> __('Layer media', 'LayerSlider'),
@@ -124,7 +133,6 @@ $l10n_ls = array(
 	'SBLayerTypeHTML' 			=> __('HTML', 'LayerSlider'),
 	'SBLayerTypePost' 			=> __('Dynamic', 'LayerSlider'),
 
-	'SBImageEditorDisabled' 	=> __('Image Editor is disabled as per your privacy settings. If you would like to re-enabled it, please navigate to LayerSlider -> Options -> Privacy from your WordPress admin sidebar and enable the appropriate option there.', 'LayerSlider'),
 
 
 	// Transition Builder

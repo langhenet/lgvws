@@ -28,6 +28,24 @@ if ( ! class_exists( 'aviaShortcodeTemplate' ) )
 		 * @var array 
 		 */
 		public $elements;
+		
+		/**
+		 * Prefix for dynamic popup templates id's
+		 * 
+		 * @since 4.6.4
+		 * @var string 
+		 */
+		protected $popup_prefix;
+		
+		
+		/**
+		 * Stores popup editor element templates for better readability in shortcode element.
+		 * Can be used in addition to AviaPopupTemplates()->register_dynamic_template.
+		 * 
+		 * @since 4.6.4
+		 * @var array 
+		 */
+		protected $popup_templates;
 
 		/**
 		 * 
@@ -37,6 +55,7 @@ if ( ! class_exists( 'aviaShortcodeTemplate' ) )
 		{
 			$this->builder = $builder;
 			$this->elements = array();
+			$this->popup_templates = array();
 			
 			/**
 			 * Needed to check and repair shortcode structure
@@ -52,8 +71,9 @@ if ( ! class_exists( 'aviaShortcodeTemplate' ) )
 			 * id_show				'never' | 'yes' | 'always'
 			 * custom_css_show		'never' | 'yes' | 'always'
 			 * aria_label			'yes' | 'no'		allow user to add a named label for accessibility tree and screen readers
+			 * alb_desc_id			name of text field for backend where user can add a description to identify the element
 			 */
-			$this->config = array(
+			$this->config = array(			
 							'type'					=>	'content',		//		'layout' | 'content'   needed in syntax error correction
 							'self_closing'			=>	'',				//		'yes' | 'no'	if empty base class scans for id="content" in first level of $elements (a fallback for third party elements)
 							'contains_text'			=>	'yes',			//		'yes' | 'no'	is plain text allowed in content area of shortcode
@@ -67,12 +87,17 @@ if ( ! class_exists( 'aviaShortcodeTemplate' ) )
 							'id_name'				=> 'el_id',
 							'id_show'				=> 'never',
 							'custom_css_show'		=> 'yes',
-							'aria_label'			=> 'no'
+							'aria_label'			=> 'no',
+							'alb_desc_id'			=> '',
+							'linkpickers'			=> array()			//		id's containing links to translate
 						);
 			
 			
 			$this->shortcode_insert_button();
+			$this->popup_prefix = $this->config['shortcode'] . '_';
 			$this->extra_config();
+			
+			
 			
 			/**
 			 * Add the unique ID field
@@ -82,7 +107,7 @@ if ( ! class_exists( 'aviaShortcodeTemplate' ) )
 							"desc" 	=> __("stores the unique ID for the element",'avia_framework' ),
 							"id" 	=> aviaElementManager::ELEMENT_UID,
 							"type" 	=> "hidden",
-							"std" 	=> ""
+							"std" 	=> ''
 						);
 		
 		}
@@ -95,6 +120,7 @@ if ( ! class_exists( 'aviaShortcodeTemplate' ) )
 			unset( $this->builder );
 			unset( $this->config );
 			unset( $this->elements );
+			unset( $this->popup_templates );
 		}
 
 		//init function is executed in AviaBuilder::createShortcode if the shortcode is allowed
@@ -113,7 +139,19 @@ if ( ! class_exists( 'aviaShortcodeTemplate' ) )
 			//set up loading of assets. wait until post id is known
 			add_action('wp', array(&$this, 'extra_asset_check') , 10 );
 		}
-
+		
+		/**
+		 * Returns the version number of the shortcode element implementation
+		 * With 4.6.4 visual appearance was changed - allows backward comp for older elements
+		 * 
+		 * @since 4.6.4
+		 * @return string
+		 */
+		public function get_version()
+		{
+			return ! empty( $this->config['version'] ) ? $this->config['version'] : '0.0';
+		}
+		
 
 		/**
 		*   shortcode_insert_button: creates the shortcode button for the backend canvas
@@ -165,7 +203,7 @@ if ( ! class_exists( 'aviaShortcodeTemplate' ) )
 		/**
 		* holds the function that generates the html code for the frontend
 		*/
-		abstract function shortcode_handler($atts, $content = "", $shortcodename = "", $meta = "");
+		abstract function shortcode_handler($atts, $content = '', $shortcodename = '', $meta = '');
 
 
 
@@ -245,24 +283,211 @@ if ( ! class_exists( 'aviaShortcodeTemplate' ) )
 		 * @param array $params this array holds the default values for $content and $args.
 		 * @return $params the return array usually holds an innerHtml key that holds item specific markup.
 		 */
-		public function editor_element($params)
+		public function editor_element( $params )
 		{
-		    $params['innerHtml'] = "";
+		    $params['innerHtml'] = '';
 		    if(isset($this->config['icon']))
 		    {
-                $params['innerHtml'] .= "<img src='".$this->config['icon']."' title='".$this->config['name']."' alt='' />";
+                $params['innerHtml'] .= "<img src='{$this->config['icon']}' title='{$this->config['name']}' alt='' />";
 			}
-			$params['innerHtml'].= "<div class='avia-element-label'>".$this->config['name']."</div>";
+			
+			
+			$inner = '';
+			
+			if( empty( $this->config['alb_desc_id'] ) )
+			{
+				$inner .=	"<div class='avia-element-label'>{$this->config['name']}</div>";
+			}
+			else
+			{
+				$desc = ! empty( $params['args'][ $this->config['alb_desc_id'] ] ) ? $params['args'][ $this->config['alb_desc_id'] ] : '';
+				
+				$inner .=	"<div class='avia-element-label'>{$this->config['name']} ";
+				$inner .=		"<span class='avia-element-label-description' data-update_with='{$this->config['alb_desc_id']}'>";
+				$inner .=			html_entity_decode( $desc );
+				$inner .=		'</span>';
+				$inner .=	'</div>';
+			}
+				
+			$params['innerHtml'] .= $inner;
 			return $params;
 		}
 
 
 		/**
-		* function that creates the sets the elements for the popup editor. Not defined by this class but executed if the child class got it
+		 * function that creates the sets the elements for the popup editor. Not defined by this class but executed if the child class got it
+		 * 
+		 * Starting with 4.6.4 redesign of layout structure:
+		 * 
+		 * Main Tabs:
+		 *		- Content
+		 *		- Layout
+		 *		- Styling
+		 *		- Advanced (including developer tab)
+		 * 
+		 * New elements:
+		 *		- toggle_container, toggle
+		 *		- icon_switcher_container, icon_switcher
+		 */
+		
+		/*example:
+			
+			function popup_elements()
+			{
+				$this->elements = array(
+
+					array(
+							"type" 	=> "tab_container", 'nodescription' => true
+						),
+						
+					array(
+							"type" 	=> "tab",
+							"name"	=> __("Content",'avia_framework' ),
+							'nodescription' => true
+						),
+						
+						######################################################################
+						# Content Tab Content
+						######################################################################
+						
+						
+						
+						
+					array(
+							"type" 	=> "tab_close", //close Content tab
+							'nodescription' => true
+						),
+						
+						
+					
+					array(
+							"type" 	=> "tab",
+							"name"	=> __("Styling",'avia_framework' ),
+							'nodescription' => true
+						),
+							
+						######################################################################
+						# Styling Tab Content
+						######################################################################
+						
+							array(
+								"type" 	=> "toggle_container",
+								'nodescription' => true
+							),
+					
+									array(
+											"type" 	=> "toggle",
+											"name"  => __("Background Colors" , 'avia_framework'),
+											'nodescription' => true
+										),
+									
+									array(
+											"type" 	=> "toggle",
+											"name"  => __("Background Image" , 'avia_framework'),
+											'nodescription' => true
+										),
+										
+									array(
+											"type" 	=> "toggle",
+											"name"  => __("Background Video" , 'avia_framework'),
+											'nodescription' => true
+										),	
+										
+									array(
+											"type" 	=> "toggle",
+											"name"  => __("Background Overlay" , 'avia_framework'),
+											'nodescription' => true
+										),	
+										
+									array(
+											"type" 	=> "close_div", //close last toggle
+											'nodescription' => true
+										),
+						
+							array(
+									"type" 	=> "close_div", //close toggle container
+									'nodescription' => true
+								),
+								
+					array(
+							"type" 	=> "close_div", //close tab
+							'nodescription' => true
+						),
+										
+					
+					array(
+							"type" 	=> "tab",
+							"name"	=> __("Advanced",'avia_framework' ),
+							'nodescription' => true
+						),
+							
+						######################################################################
+						# Advanced Tab Content
+						######################################################################
+						
+						
+						array(
+								"type" 	=> "toggle_container",
+								'nodescription' => true
+							),
+					
+									array(
+											"type" 	=> "toggle",
+											"name"  => __("Responsive" , 'avia_framework'),
+											'nodescription' => true
+										),
+									
+									array(
+											"type" 	=> "toggle",
+											"name"  => __("Developer" , 'avia_framework'),
+											'nodescription' => true
+										),
+										
+									array(
+											"type" 	=> "close_div", //close last toggle
+											'nodescription' => true
+										),
+						
+							array(
+									"type" 	=> "close_div", //close toggle container
+									'nodescription' => true
+								),
+					
+					
+					array(
+							"type" 	=> "close_div", //close last tab
+							'nodescription' => true
+						),
+						
+					array(
+							"type" 	=> "close_div", //close last tab container
+							'nodescription' => true
+						),
+						
+						
+						
+					array(	"id" 	=> "av_element_hidden_in_editor",
+				            "type" 	=> "hidden",
+				            "std" => "0"
+						),
+                );
+			}
+
+			
+			
 		*/
 
-		# function popup_elements(){}
-
+		/**
+		 * Returns a key with the shortcode prefix
+		 * 
+		 * @since 4.6.4
+		 * @param string $key
+		 * @return string
+		 */
+		protected function popup_key( $key )
+		{
+			return $this->popup_prefix . $key;
+		}
 
 		/**
 		* function that creates the popup editor. only used in classes that have a config array defined by the set_elements class
@@ -270,7 +495,6 @@ if ( ! class_exists( 'aviaShortcodeTemplate' ) )
 		*/
 		public function popup_editor( $var )
 		{
-
 			if( empty( $this->elements ) )	{ die(); }
 			
 			if( ( 1 == count( $this->elements ) ) && isset( $this->elements[0]['id'] ) && ( aviaElementManager::ELEMENT_UID == $this->elements[0]['id'] ) )
@@ -284,7 +508,10 @@ if ( ! class_exists( 'aviaShortcodeTemplate' ) )
 			 * 
 			 * @since 4.5.6.1
 			 */
-			$this->elements = $this->add_developer_elements( $this->elements );
+			if( version_compare( $this->get_version(), '1.0', '<' ) )
+			{
+				$this->get_developer_elements( $this->elements );
+			}
 			
 			if( ! empty( $this->config['preview'] ) )
 			{
@@ -309,7 +536,6 @@ if ( ! class_exists( 'aviaShortcodeTemplate' ) )
 
 			$elements = $this->set_default_values($elements);
 			echo AviaHtmlHelper::render_multiple_elements($elements, $this);
-			
 			
 			die();
 		}
@@ -368,7 +594,7 @@ if ( ! class_exists( 'aviaShortcodeTemplate' ) )
 					
 					if( ( 'always' == $id_show ) || in_array( $setting, array( 'developer_id_attribute', 'hide' ) ) )
 					{
-						$meta['custom_id_val'] = AviaHelper::save_string( $atts[ $id_name ], '-' );
+						$meta['custom_id_val'] = AviaHelper::save_string( $atts[ $id_name ], '-', '', 'id' );
 						$meta['custom_el_id'] = ' id="' . $meta['custom_id_val'] . '" ';
 					}
 				}
@@ -423,6 +649,37 @@ if ( ! class_exists( 'aviaShortcodeTemplate' ) )
 			if( true !== $args[0] )
 			{
 				return '';
+			}
+			
+			if( ! empty( $this->config['linkpickers'] ) )
+			{
+				if( ! is_array( $this->config['linkpickers'] ) )
+				{
+					$this->config['linkpickers'] = explode( ',', $this->config['linkpickers'] );
+				}
+				
+				foreach( $this->config['linkpickers'] as $linkpicker_id ) 
+				{
+					$linkpicker_id = trim( $linkpicker_id );
+					if( empty( $atts[ $linkpicker_id ] ) )
+					{
+						continue;
+					}
+					
+					/**
+					 * 
+					 * @used_by			config-wpml\config.php		avia_translate_alb_linkpicker		10
+					 * 
+					 * @since 4.6
+					 * @added_by Günter
+					 * @param string $linkpicker_id
+					 * @param array $atts
+					 * @param string $shortcode
+					 * @param aviaShortcodeTemplate $shortcode_class
+					 * @return string
+					 */
+					$atts[ $linkpicker_id ] = apply_filters( 'avf_alb_linkpicker_value', $atts[ $linkpicker_id ], $linkpicker_id, $atts, $shortcodename, $this );
+				}
 			}
 			
 			/**
@@ -488,7 +745,7 @@ if ( ! class_exists( 'aviaShortcodeTemplate' ) )
 					
 					if( 'preprocess_shortcodes_in_header' == $preprocess )
 					{
-						$out .= $this->shortcode_handler( $atts, $content, $shortcodename, $meta );
+						$out .= avia_targeted_link_rel( $this->shortcode_handler( $atts, $content, $shortcodename, $meta ) );
 					}
 					
 					/**
@@ -630,7 +887,7 @@ if ( ! class_exists( 'aviaShortcodeTemplate' ) )
 						else
 						{
 							$meta = $this->default_shortcode_meta( $atts );
-							$out = $this->shortcode_handler( $atts, $content, $shortcodename, $meta );
+							$out = avia_targeted_link_rel( $this->shortcode_handler( $atts, $content, $shortcodename, $meta ) );
 						}
 						
 						$return = true; 
@@ -701,12 +958,12 @@ if ( ! class_exists( 'aviaShortcodeTemplate' ) )
 
 				if( ! empty( $meta['this']['tag'] ) && ! in_array( $meta['this']['tag'] , $fullwidth ) )
 				{
-					if(!empty( $meta['siblings']['next']['tag']) && in_array( $meta['siblings']['next']['tag'] , $fullwidth) )
+					if( ! empty( $meta['siblings']['next']['tag'] ) && in_array( $meta['siblings']['next']['tag'] , $fullwidth ) )
 					{
 						$meta['siblings']['next'] = false;
 					}
 
-					if(!empty( $meta['siblings']['prev']['tag']) &&  in_array( $meta['siblings']['prev']['tag'] , $fullwidth) )
+					if( ! empty( $meta['siblings']['prev']['tag'] ) &&  in_array( $meta['siblings']['prev']['tag'] , $fullwidth ) )
 					{
 						$meta['siblings']['prev'] = false;
 					}
@@ -715,15 +972,15 @@ if ( ! class_exists( 'aviaShortcodeTemplate' ) )
 
 				//single element without siblings
 
-				if(empty($meta['siblings']['next']) && empty($meta['siblings']['prev']))
+				if( empty( $meta['siblings']['next'] ) && empty( $meta['siblings']['prev'] ) )
 				{
 					 $meta['el_class'] .= " avia-builder-el-no-sibling ";
 				}
-				else if(empty($meta['siblings']['next'])) //last element within section, column or page
+				else if( empty( $meta['siblings']['next'] ) ) //last element within section, column or page
 				{
 					$meta['el_class'] .= " avia-builder-el-last ";
 				}
-				else if(empty($meta['siblings']['prev'])) //first element within section, column or page
+				else if( empty( $meta['siblings']['prev'] ) ) //first element within section, column or page
 				{
 					$meta['el_class'] .= " avia-builder-el-first ";
 				}
@@ -781,7 +1038,7 @@ if ( ! class_exists( 'aviaShortcodeTemplate' ) )
 			 */
 			if( empty( $this->builder->disabled_assets[ $this->config['shortcode'] ] ) || empty( $this->config['disabling_allowed'] ) )
 			{
-				$out = $this->shortcode_handler( $atts, $content, $shortcodename, $meta );
+				$out = avia_targeted_link_rel( $this->shortcode_handler( $atts, $content, $shortcodename, $meta ) );
 			}
 			else if( current_user_can( 'edit_posts' ) )
 			{
@@ -826,6 +1083,19 @@ if ( ! class_exists( 'aviaShortcodeTemplate' ) )
 			//if we got elements for the popup editor activate it
 			if( method_exists( $this, 'popup_elements' ) && is_admin() )
 			{
+				if( method_exists( $this, 'register_dynamic_templates' ) )
+				{
+					$this->register_dynamic_templates();
+					
+					/**
+					 * Allows to override registered dynamic templates or add new ones for the shortcode
+					 * 
+					 * @since 4.6.4
+					 * @param aviaShortcodeTemplate $this			is rendered by reference
+					 */
+					do_action( 'ava_after_register_dynamic_templates_sc', $this );
+				}
+				
 				$this->popup_elements();
 				$this->elements = AviaPopupTemplates()->replace_templates( $this->elements );
 				
@@ -833,7 +1103,7 @@ if ( ! class_exists( 'aviaShortcodeTemplate' ) )
 				 * Allows to extend option fields for shortcode
 				 * 
 				 * @since 4.5.6.1
-				 * @param aviaShortcodeTemplate $this
+				 * @param aviaShortcodeTemplate $this			is rendered by reference
 				 */
 				do_action( 'ava_popup_elements_loaded', $this );
 
@@ -886,18 +1156,22 @@ if ( ! class_exists( 'aviaShortcodeTemplate' ) )
 
 
 		/**
-		* helper function to iterate recursively over element and subelement trees.
-		*/
-		protected function extra_config_element_iterator($elements)
+		 * helper function to iterate recursively over element and subelement trees.
+		 * 
+		 * @param array $elements
+		 */
+		protected function extra_config_element_iterator( $elements )
 		{
 			//check for js functions that need to be executed on popup window load
-			foreach($elements as $element)
+			foreach ($elements as $element )
 			{
 				switch($element['type'])
 				{
 					case "mailchimp_list":  $this->config['modal_on_load'][] = 'modal_load_mailchimp'; break;
 					case "multi_input": 	$this->config['modal_on_load'][] = 'modal_load_multi_input'; break;
 					case "tab_container": 	$this->config['modal_on_load'][] = 'modal_load_tabs'; break;
+					case "toggle_container":$this->config['modal_on_load'][] = 'modal_load_toggles'; break;
+					case "icon_switcher_container":$this->config['modal_on_load'][] = 'modal_load_iconswitcher'; break;
 					case "tiny_mce": 		$this->config['modal_on_load'][] = 'modal_load_tiny_mce'; break;
 					case "colorpicker": 	$this->config['modal_on_load'][] = 'modal_load_colorpicker'; break;
 					case "datepicker": 		$this->config['modal_on_load'][] = 'modal_load_datepicker'; break;
@@ -907,7 +1181,7 @@ if ( ! class_exists( 'aviaShortcodeTemplate' ) )
 											$this->config['modal_on_load'][] = 'modal_tab_functions';
 											$this->config['modal_on_load'][] = 'modal_hotspot_helper';
 											$this->extra_config_element_iterator($element['subelements']);
-					break;
+											break;
 				}
 				
 				if(!empty($element['modal_on_load'])) //manually load a script
@@ -924,12 +1198,12 @@ if ( ! class_exists( 'aviaShortcodeTemplate' ) )
 		*/
 		protected function actions_and_filters()
 		{
-			add_filter('avia_show_shortcode_button', array($this,'add_backend_button'));
+			add_filter( 'avia_show_shortcode_button', array( $this, 'add_backend_button' ), 10, 1 );
 
 			//ajax action for elements with modal window editor
-			if(!empty($this->config['popup_editor']))
+			if( ! empty( $this->config['popup_editor'] ) )
 			{
-				add_action('wp_ajax_avia_ajax_'.$this->config['shortcode'], array($this,'popup_editor'));
+				add_action( 'wp_ajax_avia_ajax_' . $this->config['shortcode'], array( $this, 'popup_editor' ) );
 
 				if(!empty($this->config['shortcode_nested']))
 				{
@@ -1000,7 +1274,7 @@ if ( ! class_exists( 'aviaShortcodeTemplate' ) )
 			 * Fetch the parameter array from the child classes editor_element function which should describe the html code.
 			 * Some elements can return a string value
 			 */
-			$params =  $this->editor_element($params);
+			$params =  $this->editor_element( $params );
 
 			/**
 			 * Since 4.2.1 we have $this->config['self_closing'] = 'yes'|'no'
@@ -1040,25 +1314,70 @@ if ( ! class_exists( 'aviaShortcodeTemplate' ) )
 		 */
 		public function avia_custom_class_for_element( array $elements )
 		{
-			_deprecated_function( 'aviaShortcodeTemplate::avia_custom_class_for_element()', '4.5.7.2', 'aviaShortcodeTemplate::add_developer_elements()' );
-			return $this->add_developer_elements( $elements );
+			_deprecated_function( 'aviaShortcodeTemplate::avia_custom_class_for_element()', '4.5.7.2', 'aviaShortcodeTemplate::get_developer_elements()' );
+			
+			$this->get_developer_elements( $elements );
+			return $elements;
 		}
 		
 		/**
 		 * Add developer elements to each element 
+		 *		- Short description for backend
 		 *		- custom id attribute input field
 		 *		- custom css class input field
+		 *		- Aria Label Text
 		 * 
 		 * @since 4.5.7.2
 		 * @param array $elements
-		 * @return array
+		 * @param string $nested_sc
+		 * @return string			'' | 'avia-hidden'
 		 */
-		public function add_developer_elements( array $elements )
+		public function get_developer_elements( array &$elements, $nested_sc = '' )
 		{
 			$developer = array();
 			$visible = 0;
-			$id_name = ! empty( $this->config['id_name'] ) ? $this->config['id_name'] : 'el_id';
-			$id_show = ! empty( $this->config['id_show'] ) ? $this->config['id_show'] : 'never';
+			
+			$config = $this->config;
+			
+			if( ! empty( $nested_sc ) && method_exists( $this, 'get_nested_developer_elements' ) )
+			{
+				$config = $this->get_nested_developer_elements( $nested_sc );
+			}
+			
+			$desc_id_show = ! empty( $config['alb_desc_id'] ) ? 'yes' : 'no';
+			$setting = Avia_Builder()->get_developer_settings( 'alb_desc_id' );
+			
+			switch( $desc_id_show )
+			{
+				case 'no':
+					$class = 'avia-hidden';
+					break;
+				default:
+					$class = in_array( $setting, array( 'deactivate', 'hide' ) ) ? 'avia-hidden' : '';
+					break;
+			}
+			
+			if( $class == '' )
+			{
+				$visible++;
+			}
+			
+			if( 'yes' == $desc_id_show )
+			{
+				$desc  = __( 'Add a short content description to identify the element in backend when editing ALB content', 'avia_framework' );
+				
+				$developer[] = array(	
+									'name'				=> __( 'Short description for backend', 'avia_framework' ),
+									'desc'				=> $desc,
+									'id'				=> $config['alb_desc_id'],
+									'container_class'	=> $class,
+									'type'				=> 'input',
+									'std'				=> ''
+								);
+			}
+			
+			$id_name = ! empty( $config['id_name'] ) ? $config['id_name'] : 'el_id';
+			$id_show = ! empty( $config['id_show'] ) ? $config['id_show'] : 'never';
 			$setting_id = Avia_Builder()->get_developer_settings( 'custom_id' );
 			
 			switch( $id_show )
@@ -1094,7 +1413,7 @@ if ( ! class_exists( 'aviaShortcodeTemplate' ) )
 								);
 			}
 			
-			$css_show = ! empty( $this->config['custom_css_show'] ) ? $this->config['custom_css_show'] : 'yes';
+			$css_show = ! empty( $config['custom_css_show'] ) ? $config['custom_css_show'] : 'yes';
 			$setting = Avia_Builder()->get_developer_settings( 'custom_css' );
 			
 			switch( $css_show )
@@ -1128,7 +1447,23 @@ if ( ! class_exists( 'aviaShortcodeTemplate' ) )
 			}
 			
 			
-			$aria_label_show = ! empty( $this->config['aria_label'] ) ? $this->config['aria_label'] : 'no';
+			$aria_label_show = ! empty( $config['aria_label'] ) ? $config['aria_label'] : 'no';
+			$setting = Avia_Builder()->get_developer_settings( 'aria_label' );
+			
+			switch( $aria_label_show )
+			{
+				case 'no':
+					$class = 'avia-hidden';
+					break;
+				default:
+					$class = in_array( $setting, array( 'deactivate', 'hide' ) ) ? 'avia-hidden' : '';
+					break;
+			}
+			
+			if( $class == '' )
+			{
+				$visible++;
+			}
 			
 			if( 'yes' == $aria_label_show )
 			{
@@ -1136,7 +1471,7 @@ if ( ! class_exists( 'aviaShortcodeTemplate' ) )
 									'name'				=> __( 'Aria Label Text', 'avia_framework' ),
 									'desc'				=> __( 'Add a custom text for the element here. This text will be added to the aria-label attribute and can be used by accessibility tree and screen readers. Leave empty if not needed.', 'avia_framework' ),
 									'id'				=> 'aria_label',
-									'container_class'	=> '',
+									'container_class'	=> $class,
 									'type'				=> 'input',
 									'std'				=> ''
 								);
@@ -1145,11 +1480,17 @@ if ( ! class_exists( 'aviaShortcodeTemplate' ) )
 			
 			if( 0 == count( $developer ) )
 			{
-				return $elements;
+				return 'avia-hidden';
 			}
 			
 			$class = ( $visible > 0 ) ? '' : 'avia-hidden';
-				
+			
+			if( version_compare( $this->get_version(), '1.0', '>=' ) )
+			{
+				$elements = array_merge( $elements, $developer );
+				return $class;
+			}
+			
 			$tab_open = array( array(
 								'type'				=> 'tab',
 								'container_class'	=> $class,
@@ -1185,7 +1526,7 @@ if ( ! class_exists( 'aviaShortcodeTemplate' ) )
 				$elements = array_merge( $elements, $developer );
 			}
 			
-			return $elements;
+			return $class;
 		}
 		
 		/**
@@ -1239,7 +1580,7 @@ if ( ! class_exists( 'aviaShortcodeTemplate' ) )
 		/**
 		* default code to create a sortable item for your editor
 		*/
-		public function create_sortable_editor_element($params)
+		public function create_sortable_editor_element( $params )
 		{
 
 			$extraClass = '';
@@ -1307,7 +1648,7 @@ if ( ! class_exists( 'aviaShortcodeTemplate' ) )
 		 */
 		public function set_default_values($elements)
 		{
-			$shortcode = !empty($_POST['params']['shortcode']) ? $_POST['params']['shortcode'] : "";
+			$shortcode = !empty($_POST['params']['shortcode']) ? $_POST['params']['shortcode'] : '';
 			
 
 			if($shortcode)
@@ -1356,7 +1697,7 @@ if ( ! class_exists( 'aviaShortcodeTemplate' ) )
 						}
 						else
 						{
-							if($element['type'] == "checkbox") $element['std'] = "";
+							if($element['type'] == "checkbox") $element['std'] = '';
 						}
 					}
 				}
@@ -1404,7 +1745,7 @@ if ( ! class_exists( 'aviaShortcodeTemplate' ) )
 		 * @param array $content
 		 * @return array $args
 		 */
-		public function get_default_content($content = "")
+		public function get_default_content($content = '')
 		{
 			if(!empty($this->elements))
 			{
@@ -1434,7 +1775,7 @@ if ( ! class_exists( 'aviaShortcodeTemplate' ) )
 			//if the content is an array we got a nested shortcode
 			if(is_array($content))
 			{
-				$string_content = "";
+				$string_content = '';
 
 				foreach($content as $c)
 				{
@@ -1512,11 +1853,11 @@ if ( ! class_exists( 'aviaShortcodeTemplate' ) )
 		 */
 		public function class_by_arguments($classNames, $args, $classNamesOnly = false)
 		{
-			$classNames = str_replace(" ","",$classNames);
+			$classNames = str_replace(" ",'',$classNames);
 			$dataString = "data-update_class_with='$classNames' ";
 			$classNames = explode(',',$classNames);
 			$classString = "class='";
-			$classes = "";
+			$classes = '';
 
 			foreach($classNames as $class)
 			{

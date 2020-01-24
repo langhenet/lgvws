@@ -220,6 +220,7 @@ function ls_register_form_actions() {
 		add_action('wp_ajax_ls_import_online', 'ls_import_online');
 		add_action('wp_ajax_ls_parse_date', 'ls_parse_date');
 		add_action('wp_ajax_ls_save_screen_options', 'ls_save_screen_options');
+		add_action('wp_ajax_ls_slider_library_contents', 'ls_slider_library_contents');
 		add_action('wp_ajax_ls_get_mce_sliders', 'ls_get_mce_sliders');
 		add_action('wp_ajax_ls_get_mce_slides', 'ls_get_mce_slides');
 		add_action('wp_ajax_ls_get_post_details', 'ls_get_post_details');
@@ -228,8 +229,61 @@ function ls_register_form_actions() {
 		add_action('wp_ajax_ls_upload_from_url', 'ls_upload_from_url');
 		add_action('wp_ajax_ls_store_opened', 'ls_store_opened');
 		add_action('wp_ajax_ls_save_gdpr_settings', 'ls_gdpr_settings');
-
+		add_action('wp_ajax_ls_create_slider_group', 'ls_create_slider_group');
+		add_action('wp_ajax_ls_add_slider_to_group', 'ls_add_slider_to_group');
+		add_action('wp_ajax_ls_rename_slider_group', 'ls_rename_slider_group');
+		add_action('wp_ajax_ls_remove_slider_from_group', 'ls_remove_slider_from_group');
+		add_action('wp_ajax_ls_delete_slider_group', 'ls_delete_slider_group');
 	}
+}
+
+
+function ls_create_slider_group() {
+
+	$groupId = LS_Sliders::addGroup( __('Unnamed Group', 'LayerSlider') );
+
+	foreach( $_GET['items'] as $sliderId ) {
+
+		LS_Sliders::addSliderToGroup(
+			(int) $sliderId,
+			(int) $groupId
+		);
+	}
+
+	die( json_encode( array( 'groupId' => $groupId ) ) );
+}
+
+
+function ls_add_slider_to_group() {
+
+	LS_Sliders::addSliderToGroup(
+		(int) $_GET['sliderId'],
+		(int) $_GET['groupId']
+	);
+}
+
+
+function ls_rename_slider_group() {
+
+	LS_Sliders::renameGroup(
+		(int) $_GET['groupId'],
+		$_GET['name']
+	);
+}
+
+
+function ls_remove_slider_from_group() {
+
+	LS_Sliders::removeSliderFromGroup(
+		(int) $_GET['sliderId'],
+		(int) $_GET['groupId']
+	);
+}
+
+
+function ls_delete_slider_group() {
+
+	LS_Sliders::removeGroup( (int) $_GET['groupId'] );
 }
 
 
@@ -327,6 +381,27 @@ function ls_sliders_bulk_action() {
 		}
 
 
+	// Group
+	} elseif($_POST['action'] === 'group') {
+
+		// Error check
+		if(!isset($_POST['sliders'][1]) || !is_array($_POST['sliders'])) {
+			header('Location: admin.php?page=layerslider&error=1&message=groupSelectError');
+			die();
+		}
+
+		if( $sliders = LS_Sliders::find($_POST['sliders']) ) {
+			$groupId = LS_Sliders::addGroup(
+				__('Unnamed Group', 'LayerSlider')
+			);
+
+			foreach( $sliders as $slider ) {
+				LS_Sliders::addSliderToGroup( $slider['id'], $groupId );
+			}
+		}
+
+		header('Location: admin.php?page=layerslider&message=groupSuccess');
+		die();
 
 	// Merge
 	} elseif($_POST['action'] === 'merge') {
@@ -397,7 +472,10 @@ function ls_save_advanced_settings() {
 		'use_custom_jquery',
 		'gsap_sandboxing',
 		'defer_scripts',
-		'rocketscript_ignore'
+		'rocketscript_ignore',
+		'suppress_debug_info',
+		'tinymce_helper',
+		'gutenberg_block',
 	);
 
 	foreach($options as $item) {
@@ -420,6 +498,22 @@ function ls_save_screen_options() {
 
 	$_POST['options'] = !empty($_POST['options']) ? $_POST['options'] : array();
 	update_option('ls-screen-options', $_POST['options']);
+	die();
+}
+
+function ls_slider_library_contents() {
+
+	$sliders = LS_Sliders::find( array(
+		'orderby' => 'date_c',
+		'order' => 'DESC',
+		'limit' => 200,
+		'groups' => true
+	) );
+
+	$excludeActionSheet = true;
+
+	include LS_ROOT_PATH.'/templates/tmpl-slider-library.php';
+
 	die();
 }
 
@@ -518,6 +612,11 @@ function ls_get_mce_slides() {
 			if( ! empty( $layer['posterId'] ) ) {
 				$slides[ $slideKey ]['sublayers'][ $layerKey ][ 'poster' ] = apply_filters('ls_get_image', $layer['posterId'], $layer['poster']);
 				$slides[ $slideKey ]['sublayers'][ $layerKey ][ 'posterThumb' ] = apply_filters('ls_get_image', $layer['posterId'], $layer['poster']);
+			}
+
+			if( ! empty( $layer['layerBackgroundId'] ) ) {
+				$slides[ $slideKey ]['sublayers'][ $layerKey ][ 'layerBackground' ] = apply_filters('ls_get_image', $layer['layerBackgroundId'], $layer['layerBackground']);
+				$slides[ $slideKey ]['sublayers'][ $layerKey ][ 'layerBackgroundThumb' ] = apply_filters('ls_get_image', $layer['layerBackgroundId'], $layer['layerBackground']);
 			}
 
 			$slides[ $slideKey ]['sublayers'][ $layerKey ]['subtitle'] = ! empty( $layer['subtitle'] ) ? substr( stripslashes( $layer['subtitle'] ), 0, 32) : 'Layer #'.($layerKey+1);
@@ -623,6 +722,7 @@ function ls_save_slider() {
 				'author' 		=> ! empty($props['popup_roles_author']),
 				'contributor' 	=> ! empty($props['popup_roles_contributor']),
 				'subscriber' 	=> ! empty($props['popup_roles_subscriber']),
+				'customer' 		=> ! empty($props['popup_roles_customer']),
 				'visitor' 		=> ! empty($props['popup_roles_visitor'])
 			),
 
@@ -815,22 +915,26 @@ function ls_import_online() {
 		return false;
 	}
 
-	$slider 		= urlencode($_GET['slider']);
-	$remoteURL 		= LS_REPO_BASE_URL.'sliders/download.php?slider='.$slider;
+	$name 			= $_GET['name'];
+	$slider 		= urlencode( $_GET['slider'] );
+	$collection 	= urlencode( $_GET['collection'] );
+	$remoteURL 		= LS_REPO_BASE_URL.'sliders/download.php?slider='.$slider.'&collection='.$collection;
 
 	$uploads 		= wp_upload_dir();
 	$downloadPath 	= $uploads['basedir'].'/lsimport.zip';
 
 	// Download package
-	$zip = $GLOBALS['LS_AutoUpdate']->sendApiRequest( $remoteURL );
+	$zip 			= $GLOBALS['LS_AutoUpdate']->sendApiRequest( $remoteURL );
+	$defErrorCode 	= 'ERR_UNAUTHORIZED_ACCESS';
+	$defErrorTitle 	= __('Import Error', 'LayerSlider');
+	$defErrorMsg 	= __('LayerSlider couldn’t download your selected slider. Please check LayerSlider -> Options -> System Status for potential issues. The WP Remote functions may be unavailable or your web hosting provider has to allow external connections to our domain.', 'LayerSlider');
 
 
-	// Check whether we received back
-	// a valid response from the server
+	// Invalid response
 	if( ! $zip ) {
 		die(json_encode(array(
 			'success' => false,
-			'message' => __('LayerSlider couldn’t download your selected slider. Please check LayerSlider -> Options -> System Status for potential issues. The WP Remote functions may be unavailable or your web hosting provider has to allow external connections to our domain.', 'LayerSlider')
+			'message' => $defErrorMsg
 		)));
 	}
 
@@ -841,27 +945,27 @@ function ls_import_online() {
 	// activation state on client side in case
 	// of receiving a "Not Activated" flag
 	if( $zip && $zip[0] === '{' && $zip[1] === '"' )  {
-		if( $data = json_decode($zip) ) {
+		if( $json = json_decode( $zip, true ) ) {
 
-			if( ! empty( $data->_not_activated ) ) {
+			// Check activation state
+			if( ! empty( $json['_not_activated'] ) ) {
 				$GLOBALS['LS_AutoUpdate']->check_activation_state();
-			}
-
-			if( ! empty($data->message ) ) {
-				die(json_encode(array(
-					'success' 	=> false,
-					'reload' 	=> true,
-					'message' 	=> __('LayerSlider couldn’t download your selected slider. The server responded with the following error message: ', 'LayerSlider') . $data->message
+				die( json_encode( array(
+					'success' => false,
+					'reload' => true
 				)));
 			}
+
+			die( json_encode( array(
+				'success' => false,
+				//'reload' => true, // ????
+				'errCode' => ! empty( $json['errCode'] ) ? $json['errCode'] : $defErrorCode,
+				'title' 	=> ! empty( $json['title'] ) ? $json['title'] : $defErrorTitle,
+				'message' => ! empty( $json['message'] ) ? $json['message'] : $defErrorMsg
+			)));
 		}
 	}
 
-	// Check activation state on client side in
-	// case of receiving a "Not Activated" flag
-	if( $zip && $data = json_decode($zip) ) {
-		$this->check_activation_state();
-	}
 
 	// Save package
 	if( ! file_put_contents($downloadPath, $zip) ) {
@@ -873,7 +977,7 @@ function ls_import_online() {
 
 	// Load importUtil & import the slider
 	include LS_ROOT_PATH.'/classes/class.ls.importutil.php';
-	$import = new LS_ImportUtil( $downloadPath);
+	$import = new LS_ImportUtil( $downloadPath, null, $name );
 	$id = $import->lastImportId;
 	$sliderCount = (int)$import->sliderCount;
 
@@ -927,7 +1031,12 @@ function ls_import_sliders() {
 	}
 
 	include LS_ROOT_PATH.'/classes/class.ls.importutil.php';
-	$import = new LS_ImportUtil($_FILES['import_file']['tmp_name'], $_FILES['import_file']['name']);
+
+	$import = new LS_ImportUtil(
+		$_FILES['import_file']['tmp_name'],
+		$_FILES['import_file']['name'],
+		__('Imported Group', 'LayerSlider')
+	);
 
 
 	// One slider, redirect to editor
@@ -1001,8 +1110,18 @@ function ls_export_sliders( $sliderId = 0 ) {
 		}
 	}
 
-	if(class_exists('ZipArchive')) {
-		$zip->download();
+	if( class_exists('ZipArchive') ) {
+
+		$date = date('Y-m-d').' at '.date('H.i.s');
+
+		if( count( $sliders ) > 1 ) {
+			$fileName = 'LayerSlider – '.count( $sliders ).' sliders – '.$date.'.zip';
+		} else {
+			$fileName = 'LayerSlider – '.$name.' – '.$date.'.zip';
+		}
+
+		$zip->download( $fileName );
+
 	} else {
 		$name = 'LayerSlider Export '.date('Y-m-d').' at '.date('H.i.s').'.json';
 		header('Content-type: application/force-download');
@@ -1014,17 +1133,18 @@ function ls_export_sliders( $sliderId = 0 ) {
 
 
 
-// TRANSITION BUILDER
+// CSS EDITOR
 //-------------------------------------------------------
 function ls_save_user_css() {
 
 	// Get target file and content
 	$upload_dir = wp_upload_dir();
 	$file = $upload_dir['basedir'].'/layerslider.custom.css';
+	$content = sanitize_textarea_field( stripslashes( $_POST['contents'] ) );
 
 	// Attempt to save changes
 	if( is_writable( $upload_dir['basedir'] ) ) {
-		file_put_contents( $file, stripslashes( $_POST['contents'] ) );
+		file_put_contents( $file, $content );
 		wp_redirect( admin_url( 'admin.php?page=layerslider-options&section=css-editor&edited=1' ) );
 		die();
 
@@ -1050,10 +1170,11 @@ function ls_save_user_skin() {
 	// Get skin file and contents
 	$skin = LS_Sources::getSkin( $_POST['skin'] );
 	$file = $skin['file'];
+	$content = sanitize_textarea_field( stripslashes( $_POST['contents'] ) );
 
 	// Attempt to write the file
 	if( is_writable( $file ) ) {
-		file_put_contents( $file, stripslashes( $_POST['contents'] ) );
+		file_put_contents( $file, $content );
 		wp_redirect( admin_url( 'admin.php?page=layerslider-options&section=skin-editor&edited=1&skin='.$skin['handle'] ) );
 		die();
 	} else {
@@ -1070,7 +1191,8 @@ function ls_save_user_transitions() {
 
 	$upload_dir = wp_upload_dir();
 	$custom_trs = $upload_dir['basedir'] . '/layerslider.custom.transitions.js';
-	$data = 'var layerSliderCustomTransitions = '.stripslashes($_POST['ls-transitions']).';';
+	$content = sanitize_textarea_field( stripslashes($_POST['ls-transitions']) );
+	$data = 'var layerSliderCustomTransitions = '.$content.';';
 	file_put_contents($custom_trs, $data);
 	die('SUCCESS');
 }
@@ -1250,8 +1372,16 @@ function ls_do_erase_plugin_data() {
 		'ls_include_at_footer',
 		'ls_conditional_script_loading',
 		'ls_concatenate_output',
+		'ls_load_all_js_files',
+		'ls_gsap_sandboxing',
+		'ls_defer_scripts',
 		'ls_use_custom_jquery',
+		'ls_rocketscript_ignore',
+		'ls_suppress_debug_info',
+		'ls_tinymce_helper',
+		'ls_gutenberg_block',
 		'ls_put_js_to_body',
+		'ls_ls_scripts_priority',
 
 		// Updates & Services
 		'ls-share-displayed',

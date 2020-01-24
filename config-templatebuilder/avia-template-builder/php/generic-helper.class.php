@@ -73,39 +73,52 @@ if ( ! class_exists( 'AviaHelper' ) )
 		
 		/**
     	 * get_url - Returns a url based on a string that holds either post type and id or taxonomy and id
+		 * 
+		 * @param string $link
+		 * @param int|false $post_id
+		 * @return string
     	 */
-    	static function get_url($link, $post_id = false) 
+    	static function get_url( $link, $post_id = false ) 
     	{
-    		$link = explode(',', $link, 2);
+    		$link = explode( ',', $link, 2 );
     		
-    		if($link[0] == 'lightbox')        
+    		if( $link[0] == 'lightbox' )        
     		{
-    			$link = wp_get_attachment_image_src($post_id, apply_filters('avf_avia_builder_helper_lightbox_size','large'));
+    			$link = wp_get_attachment_image_src( $post_id, apply_filters( 'avf_avia_builder_helper_lightbox_size','large' ) );
+    			return is_array( $link ) ? $link[0] : '';
+    		}
+    		
+    		if( empty( $link[1] ) )
+    		{
     			return $link[0];
     		}
     		
-    		if(empty($link[1]))
+    		if( $link[0] == 'manually' )
     		{
-    			return $link[0];
-    		}
-    		
-    		if($link[0] == 'manually')
-    		{
-    			if(strpos($link[1], "@") !== false && strpos($link[1], "://") === false){ $link[1] = "mailto:".$link[1]; }
+    			if( strpos( $link[1], '@' ) !== false && strpos( $link[1], '://' ) === false )
+				{ 
+					$link[1] = 'mailto:' . $link[1]; 
+				}
     			return $link[1];
     		}
     		
-            if(post_type_exists( $link[0] ))
+            if( post_type_exists( $link[0] ) )
             {
-            	return get_permalink($link[1]);
+            	return get_permalink( $link[1] );
             }
             
-            if(taxonomy_exists( $link[0]  ))  
+            if( taxonomy_exists( $link[0] ) )  
             {
-            	$return = get_term_link(get_term($link[1], $link[0]));
-            	if(is_object($return)) $return = ""; //if an object is returned it is a WP_Error object and something was not found
+            	$return = get_term_link( get_term( $link[1], $link[0] ) );
+            	if( is_object( $return ) ) 
+				{
+					$return = ''; //if an object is returned it is a WP_Error object and something was not found
+				}
+				
             	return $return;
-            } 
+            }
+			
+			return '';
     	}
 		
 		/**
@@ -503,7 +516,7 @@ if ( ! class_exists( 'AviaHelper' ) )
 			
 			foreach( $parts as $key => $value ) 
 			{
-				$parts[ $key ] = AviaHelper::save_string( $value, $replace, $fallback );
+				$parts[ $key ] = AviaHelper::save_string( $value, $replace, $fallback, 'class' );
 			}
 			
 			$new_string = implode( ' ', $parts );
@@ -521,15 +534,16 @@ if ( ! class_exists( 'AviaHelper' ) )
 		 * Returns a fallback if empty is rendered or resulting string would be empty.
     	 * 
 		 * @since 4.5.7.2 extended
-    	 * @param string|mixed $string			string to convert
+		 * @since 4.6.3 added $context to allow case sensitive
+    	 * @param string|mixed $string_to_convert
 		 * @param string $replace
 		 * @param string $fallback
+		 * @param string $context				'' | 'id' | 'class'		
     	 * @return string the converted string
     	 */
-    	static public function save_string( $string, $replace = '_', $fallback = '' )
+    	static public function save_string( $string_to_convert, $replace = '_', $fallback = '', $context = '' )
     	{
-			$string = ! empty( $string ) ? (string) $string : '';
-			
+			$string = ! empty( $string_to_convert ) ? (string) $string_to_convert : '';
 			$string = trim( $string );
 			
 			if( empty( $string ) )
@@ -537,9 +551,11 @@ if ( ! class_exists( 'AviaHelper' ) )
 				return $fallback;
 			}
 			
-    		$string = strtolower( $string );
+			if( ! in_array( $context, array( 'id', 'class' ) ) )
+			{
+				$string = strtolower( $string );
     	
-    		$trans = array(
+				$trans = array(
     					'&\#\d+?;'				=> '',
     					'&\S+?;'				=> '',
     					'\s+'					=> $replace,
@@ -555,9 +571,42 @@ if ( ! class_exists( 'AviaHelper' ) )
     					$replace.'$'			=> $replace,
     					'^'.$replace			=> $replace,
     					'\.+$'					=> ''
-    				  );
+					);
+			}
+			else
+			{
+				/**
+				 * Restrictions to CSS selectors https://www.w3.org/TR/CSS21/syndata.html#characters
+				 */
+				$trans = array(
+//						'&\#\d+?;'				=> '',
+//    					'&\S+?;'				=> '',
+    					'\s+'					=> $replace,
+    					'ä'						=> 'ae',
+    					'ö'						=> 'oe',
+    					'ü'						=> 'ue',
+    					'Ä'						=> 'Ae',
+    					'Ö'						=> 'Oe',
+    					'Ü'						=> 'Ue',
+    					'ß'						=> 'ss',
+    					'[^a-zA-Z0-9\-_]'		=> '',
+    					//$replace.'+'			=> $replace, //allow doubles like -- or __
+//    					$replace.'$'			=> $replace,
+//    					'^'.$replace			=> $replace,
+//    					'\.+$'					=> '', 
+						'^[0-9\-]*'				=> ''		//	do not start with hyphen or numbers
+					);
+			}
     				  
-    		$trans = apply_filters( 'avf_save_string_translations', $trans, $string, $replace );
+			/**
+			 * @since < 4.0
+			 * @param array $trans
+			 * @param string $string
+			 * @param string $replace
+			 * @param string $context		added 4.6.3 
+			 * @return array
+			 */
+    		$trans = apply_filters( 'avf_save_string_translations', $trans, $string, $replace, $context );
     
     		$string = strip_tags( $string );
     
@@ -572,6 +621,17 @@ if ( ! class_exists( 'AviaHelper' ) )
 			{
 				$string = $fallback;
 			}
+			
+			/**
+			 * @since 4.6.3
+			 * @param string $string
+			 * @param string $string_to_convert
+			 * @param string $replace
+			 * @param string $fallback
+			 * @param string $context
+			 * @return string
+			 */
+			$string = apply_filters( 'avf_save_string_translated', $string, $string_to_convert, $replace, $fallback, $context );
 			
     		return $string;
     	}
@@ -843,7 +903,8 @@ if ( ! class_exists( 'AviaHelper' ) )
 		}
 	
 		/**
-		 * Returns an array of ALB font size classes
+		 * Returns an array of ALB font size classes for responsive design.
+		 * Font Styles are compressed to necessary sizes and prepared for output in footer.
 		 * 
 		 * @since < 4.0
 		 * @param array $atts
@@ -851,48 +912,77 @@ if ( ! class_exists( 'AviaHelper' ) )
 		 */
 		static public function av_mobile_sizes( $atts = array() )
 		{
-			$result		= array('av_font_classes'=>'', 'av_title_font_classes'=>'', 'av_display_classes' => '', 'av_column_classes' => '');
-			$fonts 		= array('av-medium-font-size', 'av-small-font-size', 'av-mini-font-size'); 
-			$title_fonts= array('av-medium-font-size-title', 'av-small-font-size-title', 'av-mini-font-size-title'); 
-			$displays	= array('av-desktop-hide', 'av-medium-hide', 'av-small-hide', 'av-mini-hide');
-			$columns	= array('av-medium-columns', 'av-small-columns', 'av-mini-columns');
+			$result = array(
+						'av_font_classes'		=> '', 
+						'av_title_font_classes'	=> '', 
+						'av_font_classes_1'		=> '',
+						'av_font_classes_2'		=> '',
+						'av_display_classes'	=> '', 
+						'av_column_classes'		=> ''
+					);
+			
+			$fonts 		= array( 'av-medium-font-size', 'av-small-font-size', 'av-mini-font-size' ); 
+			$title_fonts= array( 'av-medium-font-size-title', 'av-small-font-size-title', 'av-mini-font-size-title' ); 
+			$fonts_1 	= array( 'av-medium-font-size-1', 'av-small-font-size-1', 'av-mini-font-size-1' );
+			$fonts_2	= array( 'av-medium-font-size-2', 'av-small-font-size-2', 'av-mini-font-size-2' );
+			$displays	= array( 'av-desktop-hide', 'av-medium-hide', 'av-small-hide', 'av-mini-hide' );
+			$columns	= array( 'av-medium-columns', 'av-small-columns', 'av-mini-columns' );
 
-
-			if(empty($atts)) $atts = array();
-
-			foreach($atts as $key => $attribute)
+			if( empty( $atts ) ) 
 			{
-				if(in_array($key, $fonts) && $attribute != "")
+				$atts = array();
+			}
+
+			foreach( $atts as $key => $attribute )
+			{
+				if( in_array( $key, $fonts ) && $attribute != '' )
 				{
-					$result['av_font_classes'] .= " ".$key."-overwrite";
-					$result['av_font_classes'] .= " ".$key."-".$attribute;
+					$result['av_font_classes'] .= " {$key}-overwrite";
+					$result['av_font_classes'] .= " {$key}-{$attribute}";
 
-					if($attribute != "hidden") self::$mobile_styles['av_font_classes'][$key][$attribute] = $attribute;
-				}
-
-				if(in_array($key, $title_fonts) && $attribute != "")
-				{
-					$newkey = str_ireplace('-title', "", $key);
-
-					$result['av_title_font_classes'] .= " ".$newkey."-overwrite";
-					$result['av_title_font_classes'] .= " ".$newkey."-".$attribute;
-
-
-					if($attribute != "hidden") 
-					{ 
-						self::$mobile_styles['av_font_classes'][$newkey][$attribute] = $attribute;
+					if( $attribute != 'hidden' ) 
+					{
+						self::$mobile_styles['av_font_classes'][ $key ][ $attribute ] = $attribute;
 					}
 				}
 
-				if(in_array($key, $displays) && $attribute != "")
+				if( in_array( $key, $title_fonts ) && $attribute != '' )
 				{
-					$result['av_display_classes'] .= " ".$key;
+					$newkey = str_ireplace( '-title', '', $key );
+
+					$result['av_title_font_classes'] .= " {$newkey}-overwrite";
+					$result['av_title_font_classes'] .= " {$newkey}-{$attribute}";
+
+					if( $attribute != 'hidden' ) 
+					{ 
+						self::$mobile_styles['av_font_classes'][ $newkey ][ $attribute ] = $attribute;
+					}
+				}
+				
+				if( ( in_array( $key, $fonts_1 ) || in_array( $key, $fonts_2 ) ) && $attribute != '' )
+				{
+					$ext = in_array( $key, $fonts_1 ) ? '1' : '2';
+					
+					$newkey = str_ireplace( "-$ext", '', $key );
+					
+					$result[ 'av_font_classes_' . $ext ] .= " {$newkey}-overwrite";
+					$result[ 'av_font_classes_' . $ext ] .= " {$newkey}-{$attribute}";
+					
+					if( $attribute != 'hidden' ) 
+					{ 
+						self::$mobile_styles['av_font_classes'][ $newkey ][ $attribute ] = $attribute;
+					}
 				}
 
-				if(in_array($key, $columns) && $attribute != "")
+				if( in_array( $key, $displays ) && $attribute != '' )
 				{
-					$result['av_column_classes'] .= " ".$key."-overwrite";
-					$result['av_column_classes'] .= " ".$key."-".$attribute;
+					$result['av_display_classes'] .= " {$key}";
+				}
+
+				if( in_array( $key, $columns ) && $attribute != '' )
+				{
+					$result['av_column_classes'] .= " {$key}-overwrite";
+					$result['av_column_classes'] .= " {$key}-{$attribute}";
 				}
 			}
 
@@ -900,48 +990,44 @@ if ( ! class_exists( 'AviaHelper' ) )
 		}
 	
 		/**
-		 * Return CSS for media queries
+		 * Return CSS for media queries in footer area.
 		 * 
 		 * @since < 4.0
 		 * @return string
 		 */
 		static public function av_print_mobile_sizes()
 		{
-			$print 			= "";
+			$print 			= '';
 
 			//rules are created dynamically, otherwise we would need to predefine more than 500 csss rules of which probably only 2-3 would be used per page
-			$media_queries 	= apply_filters('avf_mobile_font_size_queries' , array(
+			$media_queries 	= apply_filters( 'avf_mobile_font_size_queries', array(
 
-				"av-medium-font-size" 	=> "only screen and (min-width: 768px) and (max-width: 989px)",
-				"av-small-font-size" 	=> "only screen and (min-width: 480px) and (max-width: 767px)",
-				"av-mini-font-size" 	=> "only screen and (max-width: 479px)",  
+							'av-medium-font-size' 	=> 'only screen and (min-width: 768px) and (max-width: 989px)',
+							'av-small-font-size' 	=> 'only screen and (min-width: 480px) and (max-width: 767px)',
+							'av-mini-font-size' 	=> 'only screen and (max-width: 479px)'
+						));
 
-			));
 
-
-			if(isset(self::$mobile_styles['av_font_classes']) && is_array(self::$mobile_styles['av_font_classes']))
+			if( isset( self::$mobile_styles['av_font_classes'] ) && is_array( self::$mobile_styles['av_font_classes'] ) )
 			{
 				$print .= "<style type='text/css'>\n";
 
-				foreach($media_queries as $key => $query)
+				foreach( $media_queries as $key => $query )
 				{
-					if( isset(self::$mobile_styles['av_font_classes'][$key]) )
+					if( isset( self::$mobile_styles['av_font_classes'][ $key ] ) )
 					{
-						$print .="@media {$query} { \n";
+						$print .= "@media {$query} { \n";
 
-						if( isset(self::$mobile_styles['av_font_classes'][$key]))
+						foreach( self::$mobile_styles['av_font_classes'][ $key ] as $size )
 						{
-							foreach(self::$mobile_styles['av_font_classes'][$key] as $size)
-							{
-								$print .= ".responsive #top #wrap_all .{$key}-{$size}{font-size:{$size}px !important;} \n";
-							}
+							$print .= ".responsive #top #wrap_all .{$key}-{$size}{font-size:{$size}px !important;} \n";
 						}
 
 						$print .= "} \n";
 					}
 				}
 
-				$print .="</style>";
+				$print .= "</style>\n";
 			}
 
 			return $print; 

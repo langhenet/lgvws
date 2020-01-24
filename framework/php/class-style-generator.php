@@ -728,10 +728,11 @@ if( ! class_exists( 'avia_style_generator' ) )
 					var html = document.getElementsByTagName('html')[0];
 					var cookie_check = html.className.indexOf('av-cookies-needs-opt-in') >= 0 || html.className.indexOf('av-cookies-can-opt-out') >= 0;
 					var allow_continue = true;
+					var silent_accept_cookie = html.className.indexOf('av-cookies-user-silent-accept') >= 0;
 
-					if( cookie_check )
+					if( cookie_check && ! silent_accept_cookie )
 					{
-						if( ! document.cookie.match(/aviaCookieConsent/) || sessionStorage.getItem( 'aviaCookieRefused' ) )
+						if( ! document.cookie.match(/aviaCookieConsent/) || html.className.indexOf('av-cookies-session-refused') >= 0 )
 						{
 							allow_continue = false;
 						}

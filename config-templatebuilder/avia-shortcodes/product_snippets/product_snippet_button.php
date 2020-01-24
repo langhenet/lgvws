@@ -22,17 +22,17 @@ if ( ! class_exists( 'avia_sc_produc_button' ) )
 		 */
 		function shortcode_insert_button()
 		{
-			$this->config['self_closing']	=	'yes';
+			$this->config['self_closing']	= 'yes';
 			
 			$this->config['name']		= __( 'Product Purchase Button', 'avia_framework' );
 			$this->config['tab']		= __( 'Plugin Additions', 'avia_framework' );
-			$this->config['icon']		= AviaBuilder::$path['imagesURL']."sc-button.png";
+			$this->config['icon']		= AviaBuilder::$path['imagesURL'] . 'sc-button.png';
 			$this->config['order']		= 20;
 			$this->config['target']		= 'avia-target-insert';
 			$this->config['shortcode'] 	= 'av_product_button';
 			$this->config['tooltip'] 	= __( 'Display the "Add to cart" button for the current product', 'avia_framework' );
 			$this->config['drag-level'] = 3;
-			$this->config['tinyMCE'] 	= array('disable' => "true");
+			$this->config['tinyMCE'] 	= array( 'disable' => 'true' );
 			$this->config['posttype'] 	= array( 'product', __( 'This element can only be used on single product pages', 'avia_framework' ) );
 		}
 
@@ -46,14 +46,13 @@ if ( ! class_exists( 'avia_sc_produc_button' ) )
 		 * @param array $params this array holds the default values for $content and $args.
 		 * @return $params the return array usually holds an innerHtml key that holds item specific markup.
 		 */
-		function editor_element($params)
+		function editor_element( $params )
 		{
-			$params['innerHtml'] = "<img src='".$this->config['icon']."' title='".$this->config['name']."' />";
-			$params['innerHtml'].= "<div class='avia-element-label'>".$this->config['name']."</div>";
+			$params = parent::editor_element( $params );
 			
-			$params['innerHtml'].= "<div class='avia-flex-element'>"; 
-			$params['innerHtml'].= 		__( 'Display the &quot;Add to cart&quot; button including prices and variations but no product description.', 'avia_framework' );
-			$params['innerHtml'].= "</div>";
+			$params['innerHtml'] .= "<div class='avia-flex-element'>"; 
+			$params['innerHtml'] .= 		__( 'Display the &quot;Add to cart&quot; button including prices and variations but no product description.', 'avia_framework' );
+			$params['innerHtml'] .= '</div>';
 			
 			return $params;
 		}
@@ -68,9 +67,9 @@ if ( ! class_exists( 'avia_sc_produc_button' ) )
 		 * @param string $shortcodename the shortcode found, when == callback name
 		 * @return string $output returns the modified html string
 		 */
-		function shortcode_handler( $atts, $content = "", $shortcodename = "", $meta = "" )
+		function shortcode_handler( $atts, $content = '', $shortcodename = '', $meta = '' )
 		{
-			$output = "";
+			$output = '';
 			if( ! isset( $meta['el_class'] ) )
 			{
 				$meta['el_class'] = '';
@@ -105,7 +104,7 @@ if ( ! class_exists( 'avia_sc_produc_button' ) )
 			}
 			
 			// $product = wc_get_product();
-			$output .= "<div class='av-woo-purchase-button ".$meta['el_class']."'>";
+			$output .= "<div class='av-woo-purchase-button {$meta['el_class']}'>";
 			
 			/**
 			 * Fix for plugins (not a clean solution but easier to maintain). Could also be placed in shortcode.css.
@@ -146,7 +145,7 @@ if ( ! class_exists( 'avia_sc_produc_button' ) )
 			
 			$output .= ob_get_clean();
 			
-			$output .= "</div>";
+			$output .= '</div>';
 			
 			add_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_title', 5 );
 			add_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_rating', 10 );
@@ -154,6 +153,7 @@ if ( ! class_exists( 'avia_sc_produc_button' ) )
 			add_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_excerpt', 20 );
 			add_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_meta', 40 );
 			add_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_sharing', 50 );
+			
 			if( ! is_null( $wc_structured_data ) )
 			{
 				add_action( 'woocommerce_single_product_summary', array( $wc_structured_data, 'generate_product_data' ), 60 );

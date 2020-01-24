@@ -15,8 +15,16 @@
 	$sliderItem = LS_Sliders::find($id);
 	$slider = $sliderItem['data'];
 
+	// Redirect back to the slider list if the slider cannot be found
+	// or it is malformed or a group item.
+	//
+	// Using <script> tag since headers are already sent out at this point.
+	if( empty( $slider ) || ! empty( $sliderItem['flag_group'] ) ){
+		die('<script>window.location.href = "'.admin_url('admin.php?page=layerslider').'";</script>');
+	}
+
 	// Product activation
-	$lsActivated = get_option( 'layerslider-authorized-site', false );
+	$lsActivated = LS_Config::isActivatedSite();
 
 	// Get screen options
 	$lsScreenOptions = get_option('ls-screen-options', '0');
@@ -71,10 +79,6 @@
 	$settingsTabClass = isset($_GET['showsettings']) ? 'active' : '';
 	$slidesTabClass = !isset($_GET['showsettings']) ? 'active' : '';
 
-	// Fixes
-	if(!isset($slider['layers'][0]['properties'])) {
-		$slider['layers'][0]['properties'] = array();
-	}
 
 	// Get google fonts
 	$googleFonts = get_option('ls-google-fonts', array() );
@@ -118,7 +122,6 @@
 <!-- Load templates -->
 <?php
 
-include LS_ROOT_PATH . '/templates/tmpl-share-sheet.php';
 include LS_ROOT_PATH . '/templates/tmpl-layer-item.php';
 include LS_ROOT_PATH . '/templates/tmpl-static-layer-item.php';
 include LS_ROOT_PATH . '/templates/tmpl-layer.php';
@@ -173,15 +176,6 @@ include LS_ROOT_PATH . '/templates/tmpl-activation.php';
 		$slider['properties']['yourlogoThumb'] = apply_filters('ls_get_thumbnail', $slider['properties']['yourlogoId'], $slider['properties']['yourlogo']);
 	}
 
-
-	$slider['properties']['cbinit'] = !empty($slider['properties']['cbinit']) ? stripslashes($slider['properties']['cbinit']) : $lsDefaults['slider']['cbInit']['value'];
-	$slider['properties']['cbstart'] = !empty($slider['properties']['cbstart']) ? stripslashes($slider['properties']['cbstart']) : $lsDefaults['slider']['cbStart']['value'];
-	$slider['properties']['cbstop'] = !empty($slider['properties']['cbstop']) ? stripslashes($slider['properties']['cbstop']) : $lsDefaults['slider']['cbStop']['value'];
-	$slider['properties']['cbpause'] = !empty($slider['properties']['cbpause']) ? stripslashes($slider['properties']['cbpause']) : $lsDefaults['slider']['cbPause']['value'];
-	$slider['properties']['cbanimstart'] = !empty($slider['properties']['cbanimstart']) ? stripslashes($slider['properties']['cbanimstart']) : $lsDefaults['slider']['cbAnimStart']['value'];
-	$slider['properties']['cbanimstop'] = !empty($slider['properties']['cbanimstop']) ? stripslashes($slider['properties']['cbanimstop']) : $lsDefaults['slider']['cbAnimStop']['value'];
-	$slider['properties']['cbprev'] = !empty($slider['properties']['cbprev']) ? stripslashes($slider['properties']['cbprev']) : $lsDefaults['slider']['cbPrev']['value'];
-	$slider['properties']['cbnext'] = !empty($slider['properties']['cbnext']) ? stripslashes($slider['properties']['cbnext']) : $lsDefaults['slider']['cbNext']['value'];
 
 
 	if( empty($slider['properties']['new']) && empty($slider['properties']['type']) ) {
@@ -246,6 +240,12 @@ include LS_ROOT_PATH . '/templates/tmpl-activation.php';
 
 	foreach($slider['layers'] as $slideKey => $slideVal) {
 
+		// Make sure to each slide has a 'properties' object
+		if( ! isset( $slideVal['properties'] ) ) {
+			$slideVal['properties'] = array();
+		}
+
+
 		// Get slide background
 		if( ! empty($slideVal['properties']['backgroundId']) ) {
 			$slideVal['properties']['background'] = apply_filters('ls_get_image', $slideVal['properties']['backgroundId'], $slideVal['properties']['background']);
@@ -284,6 +284,11 @@ include LS_ROOT_PATH . '/templates/tmpl-activation.php';
 					$layerVal['posterThumb'] = apply_filters('ls_get_thumbnail', $layerVal['posterId'], $layerVal['poster']);
 				}
 
+				if( ! empty($layerVal['layerBackgroundId']) ) {
+					$layerVal['layerBackground'] = apply_filters('ls_get_image', $layerVal['layerBackgroundId'], $layerVal['layerBackground']);
+					$layerVal['layerBackgroundThumb'] = apply_filters('ls_get_thumbnail', $layerVal['layerBackgroundId'], $layerVal['layerBackground']);
+				}
+
 				// Ensure that magic quotes will not mess with JSON data
 				if(function_exists('get_magic_quotes_gpc') && get_magic_quotes_gpc()) {
 					$layerVal['styles'] = stripslashes($layerVal['styles']);
@@ -299,6 +304,14 @@ include LS_ROOT_PATH . '/templates/tmpl-activation.php';
 				if(isset($layerVal['top'])) { $layerVal['styles']->top = $layerVal['top']; unset($layerVal['top']); }
 				if(isset($layerVal['left'])) { $layerVal['styles']->left = $layerVal['left']; unset($layerVal['left']); }
 				if(isset($layerVal['wordwrap'])) { $layerVal['styles']->wordwrap = $layerVal['wordwrap']; unset($layerVal['wordwrap']); }
+
+				// v6.8.5: Introduced individual background properties for layers such as size, position, etc.
+				// Thus we need to specify each property with its own unique key instead of the combined 'background'
+				// to avoid potentially overriding previous settings.
+				if( ! empty( $layerVal['styles']->background ) ) {
+					$layerVal['styles']->{'background-color'} = $layerVal['styles']->background;
+					unset( $layerVal['styles']->background );
+				}
 
 				if( ! empty( $layerVal['transition']->showuntil ) ) {
 
@@ -362,6 +375,10 @@ include LS_ROOT_PATH . '/templates/tmpl-activation.php';
 
 	// Screen options
 	var lsScreenOptions = <?php echo json_encode($lsScreenOptions) ?>;
+
+	var pixieJSFile = '<?php echo LS_ROOT_URL.'/static/pixie/scripts.min.js?ver='.LS_PLUGIN_VERSION ?>';
+	var pixieCSSFile = '<?php echo LS_ROOT_URL.'/static/pixie/styles.min.css?ver='.LS_PLUGIN_VERSION ?>';
+
 </script>
 
 
@@ -404,7 +421,7 @@ include LS_ROOT_PATH . '/templates/tmpl-activation.php';
 				<i class="dashicons dashicons-redo"></i>
 				<?php _e('Event Callbacks', 'LayerSlider') ?>
 			</a>
-			<a href="https://kreatura.ticksy.com/" target="_blank" class="faq right unselectable">
+			<a href="https://layerslider.kreaturamedia.com/help/" target="_blank" class="faq right unselectable">
 				<i class="dashicons dashicons-sos"></i>
 				<?php _e('FAQ', 'LayerSlider') ?>
 			</a>

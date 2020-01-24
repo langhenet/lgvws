@@ -5,8 +5,19 @@
 */
 	.wp-block {
 	}
-
-	.editor-post-title textarea{ font-size: 34px; line-height: 1.1em; margin-bottom: 14px; font-weight: 600; }
+	
+	.editor-block-list__block,
+	.editor-post-title textarea,
+	.editor-block-list__block .wp-block-heading{
+		font-family: "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
+	}
+	
+	.editor-post-title textarea{ 
+		font-size: 34px; 
+		line-height: 1.1em; 
+		margin-bottom: 14px; 
+		font-weight: 600; 
+	}
 
 	p + h1, p + h2, p + h3, p + h4, p + h5, p + h6{
 	margin-top:1.5em;
@@ -185,6 +196,7 @@ font-size: smaller;
 .wp-block-heading h1,
 .wp-block-heading h2{
 	letter-spacing: 1px;
+	text-transform: uppercase;
 }
 
 body.post-type-post h1,

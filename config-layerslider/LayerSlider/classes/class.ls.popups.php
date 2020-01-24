@@ -27,7 +27,7 @@ class LS_Popups {
 
 		// Popup is an exclusive feature, don't try to initialize it
 		// in case of unactivated sites.
-		if( ! get_option('layerslider-authorized-site', false) ) {
+		if( ! LS_Config::isActivatedSite() ) {
 			return false;
 		}
 
@@ -169,7 +169,7 @@ class LS_Popups {
 		if( ! empty( $pages ) ) {
 			$pages = explode(',', $pages);
 			foreach( $pages as $page ) {
-				if( is_page( trim( $page ) ) || is_single( trim( $page ) ) ) {
+				if( is_category( trim( $page ) ) || is_page( trim( $page ) ) || is_single( trim( $page ) ) ) {
 					return true;
 				}
 			}

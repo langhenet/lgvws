@@ -933,8 +933,15 @@ background-color:$bg2;
 
 }
 
-//filter to plug in, in case a plugin/extension/config file wants to make use of it
-$output = apply_filters('avia_dynamic_css_output', $output, $color_set);
+
+/**
+ * filter to plug in, in case a plugin/extension/config file wants to make use of it
+ * 
+ * @used_by		enfold\config-events-calendar\event-mod-css-dynamic.php			10
+ * @used_by		enfold\config-woocommerce\woocommerce-mod-css-dynamic.php		10
+ * 
+ */
+$output = apply_filters( 'avia_dynamic_css_output', $output, $color_set );
 
 
 

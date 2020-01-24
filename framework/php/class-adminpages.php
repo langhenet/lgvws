@@ -151,6 +151,12 @@ if( ! class_exists( 'avia_adminpages' ) )
 				if($key === 0)
 				{	
 					$the_title  = apply_filters( 'avia_filter_backend_page_title', $this->avia_superobject->base_data['Title'] );
+					
+					/**
+					 * @used_by			avia_auto_updates			10
+					 * @param string
+					 * @return string
+					 */
 					$menu_title = apply_filters( 'avia_filter_backend_menu_title', $the_title );
 					
 					$top_level = $data_set['slug'];
@@ -172,7 +178,8 @@ if( ! class_exists( 'avia_adminpages' ) )
 													$data_set['title'], 					// menu title
 													'manage_options', 						// capability
 													$data_set['slug'], 						// menu slug (and later also database options key)
-													array(&$this, 'render_page'));			// executing function
+													array( $this, 'render_page' )			// executing function
+												);
 				}
 				
 				if(!empty($avia_page))
@@ -195,8 +202,6 @@ if( ! class_exists( 'avia_adminpages' ) )
 		function render_page()
 		{
 			
-
-		
 			$current_slug = $_GET['page'];
 			$firstClass = 'avia_active_container';
 			
@@ -216,12 +221,12 @@ if( ! class_exists( 'avia_adminpages' ) )
 			
 			echo $html->page_header();
 			
-			foreach($this->avia_superobject->option_pages as $option_page)
+			foreach( $this->avia_superobject->option_pages as $option_page )
 			{
-				if($current_slug == $option_page['parent'])
+				if( $current_slug == $option_page['parent'] )
 				{
-					echo $html->create_container_based_on_slug($option_page, $firstClass);
-					$firstClass = "";
+					echo $html->create_container_based_on_slug( $option_page, $firstClass );
+					$firstClass = '';
 				}
 			}
 			

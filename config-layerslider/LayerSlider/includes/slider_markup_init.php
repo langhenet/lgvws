@@ -26,6 +26,10 @@ if( ! empty( $lsPlugins ) ) {
 	$init[] = 'plugins: ' . json_encode( $lsPlugins );
 }
 
+if( get_option('ls_suppress_debug_info', false ) ) {
+	$init[] = 'hideWelcomeMessage: true';
+}
+
 $separator = apply_filters( 'layerslider_init_props_separator', ', ');
 $init = implode( $separator, $init );
 

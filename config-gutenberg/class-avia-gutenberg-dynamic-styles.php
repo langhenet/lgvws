@@ -265,7 +265,7 @@ if( ! class_exists( 'Gutenberg_Dynamic_Styles' ) )
 			$this->rules = array_merge( $this->rules, $avia_config['style'] );
 			
 			/**
-			 * @used_by		currently unused
+			 * @used_by				Avia_WC_Block_Editor				10
 			 * @since 4.5.5
 			 * @return array
 			 */
@@ -363,6 +363,12 @@ if( ! class_exists( 'Gutenberg_Dynamic_Styles' ) )
 				return;
 			}
 			
+			/**
+			 * Set up array of selectors (key = theme option):
+			 * 
+			 *		google_webfont = Selectors for "Heading Font" option
+			 *		default_font = Selectors for "Font for your body text" option 
+			 */
 			$selectors = array( 
 							'default_font'		=> array( 
 														'.editor-block-list__block'
@@ -373,6 +379,18 @@ if( ! class_exists( 'Gutenberg_Dynamic_Styles' ) )
 													)
 						);
 			
+			/**
+			 * @used_by			Avia_WC_Block_Editor				10
+			 * 
+			 * @since 4.6.4
+			 * @param array $selectors
+			 * @param array $rule
+			 * @param array $this->rules
+			 * @param int $index
+			 * @retur array
+			 */
+			$selectors = apply_filters( 'avf_gutenberg_fonts_selectors', $selectors, $rule, $this->rules, $index );
+			
 			
 			$sel = $selectors[ $rule['font_source'] ];
 			$styles = array();
@@ -380,7 +398,7 @@ if( ! class_exists( 'Gutenberg_Dynamic_Styles' ) )
 			if( 'google_webfont' == $rule['font_source'] )
 			{
 				$bodycls = ! empty( $rule['font_info']['font_css'] ) ? '.' . $rule['font_info']['font_css'] : '';
-				foreach ( $sel as $key => $s) 
+				foreach ( $sel as $key => $s ) 
 				{
 					$sel[ $key ] = str_replace( '{{AVIA_BODY_CLASS}}', $bodycls, $s );
 				}
@@ -409,14 +427,14 @@ if( ! class_exists( 'Gutenberg_Dynamic_Styles' ) )
 		 */
 		protected function add_style_arrays( array $selectors, array $styles = array() )
 		{
+			$sel = implode( ",{$this->nl}", $selectors );
+			
 			if( empty( $styles ) )
 			{
-				$this->dynamic_css .= $selectors . $this->nl;
+				$this->dynamic_css .= $sel . $this->nl;
 			}
 			else
 			{
-				$sel = implode( ",{$this->nl}", $selectors );
-				
 				/**
 				 * Gutenberg might override settings
 				 */

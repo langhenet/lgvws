@@ -583,10 +583,12 @@ jQuery(function($) {
 
 	lsUIDependencies.init();
 
-	// Screen options
-	$('#ls-screen-options, #ls-guides').children(':first-child').appendTo('#screen-meta');
-	$('#ls-screen-options, #ls-guides').children(':last-child').appendTo('#screen-meta-links');
 	lsScreenOptionsActions.init();
+
+	// Screen options
+	$('#ls-guides, #ls-screen-options').children(':first-child').prependTo('#screen-meta');
+	$('#ls-guides, #ls-screen-options').children(':last-child').prependTo('#screen-meta-links');
+
 
 
 	// CodeMirror
@@ -633,58 +635,43 @@ jQuery(function($) {
 		$(document).trigger( $.Event('click', { target : el } ) );
 	});
 
-
-	// Share sheet
-	$('#ls-share-template .inner a').click(function(e) {
-		e.preventDefault();
-
-		var newWindow = window.open('', '_blank', 'width=700,height=400');
-			newWindow.location.href = $(this).attr('href');
-			newWindow.focus();
-	});
-
-
-	$('#ls-share-template h3 a').click(function(e) {
-		e.preventDefault();
-		$('#ls-share-template, .ls-overlay').remove();
-	});
 });
 
 
 var lsDisplayActivationWindow = function( windowProperties ) {
 
-	var handleWindow = function() {
-
-		var deafultProperties = {
-			into: 'body',
-			title: LS_l10n.activationFeature,
-			content: $('#tmpl-activation').text()
-		};
-
-
-		windowProperties = $.extend( true, deafultProperties, windowProperties );
-
-
-		kmUI.modal.open({
-			into: windowProperties.into,
-			title: windowProperties.title,
-			content: windowProperties.content,
-			width: 800,
-			height: 700,
-			clip: false,
-			overlayAnimate: 'fade'
-		});
+	var deafultProperties = {
+		into: 'body',
+		title: LS_l10n.activationFeature,
+		content: jQuery('#tmpl-activation').text(),
+		minHeight: 740,
+		maxHeight: 740
 	};
 
-	if( kmUI.modal.state === 'opened' ) {
+	windowProperties = jQuery.extend( true, deafultProperties, windowProperties );
 
-		kmUI.overlay.close();
-		kmUI.modal.close( function() {
-			handleWindow();
-		});
+	kmw.modal.open({
+		uid: 'activation-window',
+		into: windowProperties.into,
+		title: windowProperties.title,
+		content: windowProperties.content,
+		minWidth: 880,
+		maxWidth: 880,
+		minHeight: windowProperties.minHeight,
+		maxHeight: windowProperties.maxHeight,
+		zIndex: 9999999,
 
-	} else {
+		modalClasses: 'activation-modal-window',
 
-		handleWindow();
-	}
+		overlaySettings: {
+			animationIn: 'fade',
+			zIndex: 9999999,
+		},
+
+		onOpen: function( modal ) {
+
+			jQuery( modal.element ).addClass('kmw-modal-visible');
+		}
+	});
+
 }

@@ -364,6 +364,11 @@
 				is_hidden	= current.parents('.avia-form-element-container:eq(0)').is('.avia-hidden'),
 				parent_val  = '';
 				
+				if( '' == id )
+				{
+					return;
+				}
+				
 				if(current.is('input[type=checkbox]') && !current.prop('checked')) value1 = "";
 				if(current.is('input[type=radio]'))
 				{

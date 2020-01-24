@@ -32,51 +32,68 @@ if( ! class_exists( 'avia_superobject' ) )
 		 * Holds the instance of this class
 		 * 
 		 * @since 4.3
-		 * @var avia_superobject 
+		 * @var avia_superobject
 		 */
 		static protected $_instance = null;
 		
 		/**
+		 * This is a fallback for WP CLI - wp cache flush
+		 * due to some reason global object $avia is removed.
+		 * With this we are able to restore it later when needed
+		 * 
+		 * @since 4.6.4
+		 * @var array|null
+		 */
+		static public $base_data_init = null;
+		
+		/**
 		 * This object holds basic information like theme or plugin name, version, description etc
-		 * @var obj
+		 * 
+		 * @var array
 		 */
 		var $base_data;
 		
 		
 		/**
 		 * This object holds the information which parent admin page holds which slugs
-		 * @var obj
+		 * 
+		 * @var array
 		 */
-		var $subpages = array();
+		var $subpages;
 	
 	
 		/**
 		 * After calling the constructor this variable holds the framework data stored in the database & config files to render the frontend
-		 * @var array
+		 * 
+		 * @var array|null
 		 */
 		var $options;
 		
 		/**
 		 * prefix for database savings, makes sure that multiple plugins and themes can be installed without overwriting each others options
+		 * 
 		 * @var string
 		 */
 		var $option_prefix;
 		
 		/**
 		 * option pages retrieved from the config files in theme_option_pages, used to create the avia admin options panel.
+		 * 
 		 * @var array
 		 */
-		var $option_pages = array();
+		var $option_pages;
 		
 		/**
 		 * option page data retrieved from the config files in theme_option_pages, used to create the items at the avia admin options panel.
+		 * 
 		 * @var array
 		 */
-		var $option_page_data = array();
+		var $option_page_data;
 		
 		/**
 		 * This object holds the avia style informations for php generated styles in the backend
-		 * @var obj
+		 * 
+		 * @var avia_style_generator
 		 */
 		var $style;
 
@@ -99,9 +116,15 @@ if( ! class_exists( 'avia_superobject' ) )
 		{
 			if( is_null( avia_superobject::$_instance ) )
 			{
-				avia_superobject::$_instance = new avia_superobject( $base_data );
+				if( ! is_null( $base_data ) )
+				{
+					avia_superobject::$base_data_init = $base_data;
+				}
+				
+				avia_superobject::$_instance = new avia_superobject( avia_superobject::$base_data_init );
+				avia_superobject::$_instance->init();
 			}
-			
+ 
 			return avia_superobject::$_instance;
 		}
 		
@@ -113,8 +136,11 @@ if( ! class_exists( 'avia_superobject' ) )
 		protected function __construct( $base_data )
 		{	
 			$this->base_data = $base_data;
-			$this->option_prefix = 'avia_options_'.avia_backend_safe_string( $this->base_data['prefix'] );
-			
+			$this->option_prefix = 'avia_options_' . avia_backend_safe_string( $this->base_data['prefix'] );
+			$this->subpages = array();
+			$this->option_pages = array();
+			$this->option_page_data = array();
+			$this->options = null;
 			$this->style = null;
 			$this->type_fonts = null;
 		}
@@ -195,9 +221,27 @@ if( ! class_exists( 'avia_superobject' ) )
 		protected function _create_option_arrays()
 		{
 			//in case we got an option file as well include it and set the options for the theme
-			include(AVIA_BASE.'/includes/admin/register-admin-options.php');
-			if(isset($avia_pages)) $this->option_pages = apply_filters( 'avf_option_page_init', $avia_pages);
-			if(isset($avia_elements)) $this->option_page_data = apply_filters( 'avf_option_page_data_init', $avia_elements);
+			include( AVIA_BASE . '/includes/admin/register-admin-options.php' );
+			
+			if( isset( $avia_pages ) ) 
+			{
+				/**
+				 * @used_by		avia_auto_updates				1
+				 * @param array
+				 * @return array
+				 */
+				$this->option_pages = apply_filters( 'avf_option_page_init', $avia_pages );
+			}
+			
+			if( isset( $avia_elements ) ) 
+			{
+				/**
+				 * @used_by		avia_auto_updates				10
+				 * @param array
+				 * @return array		
+				 */
+				$this->option_page_data = apply_filters( 'avf_option_page_data_init', $avia_elements );
+			}
 			
 			//retrieve option pages that were built dynamically as well as those elements
 			$dynamic_pages 	  = get_option($this->option_prefix.'_dynamic_pages');

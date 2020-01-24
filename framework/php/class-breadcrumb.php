@@ -171,10 +171,10 @@ if(!class_exists('avia_breadcrumb'))
 
 
 function avia_breadcrumbs( $args = array() ) {
-	//ouptutta yoast!
-  $langhe_breadcrumb = yoast_breadcrumb('<p class="breadcrumb"><span class="breadcrumb_info">','</span></p>',false);
-
-  return $langhe_breadcrumb;
+		//ouptutta yoast!
+    $langhe_breadcrumb = yoast_breadcrumb('<p class="breadcrumb"><span class="breadcrumb_info">','</span></p>',false);
+   
+     return $langhe_breadcrumb;
 
 } // End avia_breadcrumbs()
 
@@ -265,17 +265,17 @@ function avia_breadcrumbs_get_parents( $post_id = '', $path = '' ) {
 	}
 
 	$parents = array();
-
+	
 	/* While there's a post ID, add the post link to the $parents array. */
 	while ( $post_id ) {
 
 		/* Get the post by ID. */
 		$page = get_post( $post_id );
-
+		
 		/**
 		 * Allow to translate breadcrumb trail - fixes a problem with parent page for portfolio
 		 * https://kriesi.at/support/topic/parent-page-link-works-correct-but-translation-doesnt/
-		 *
+		 * 
 		 * @used_by				config-wpml\config.php						10
 		 * @since 4.5.1
 		 * @param int $post_id
@@ -356,7 +356,7 @@ function avia_breadcrumbs_get_term_parents( $parent_id = '', $taxonomy = '' ) {
 /**
  * Filters the trail and removes the first entries that have the same href's and link text
  * Trail must be an array
- *
+ * 
  * @since 4.3.2
  * @param mixed|array $trail
  * @return mixed|array
@@ -367,35 +367,35 @@ function avia_make_unique_breadcrumbs( $trail )
 	{
 		return $trail;
 	}
-
+	
 	$splitted = array();
-
-	foreach( $trail as $key => $link )
+	
+	foreach( $trail as $key => $link ) 
 	{
 		$url = array();
 		$text = array();
 		preg_match( '/href=["\']?([^"\'>]+)["\']?/', $link, $url );
 		preg_match( '/<\s*a[^>]*>([^<]*)<\s*\/\s*a\s*>/', $link, $text );
-
-		$splitted[] = array(
+		
+		$splitted[] = array( 
 						'url'	=> isset( $url[1] ) ? $url[1] : '',
 						'text'	=> isset( $text[1] ) ? $text[1] : $link
 				);
 	}
-
+	
 	$last_index = count( $trail );
-	foreach( $splitted as $key => $current )
+	foreach( $splitted as $key => $current ) 
 	{
 		for( $i = $key + 1; $i < $last_index; $i++ )
 		{
 			$check = $splitted[ $i ];
-
+			
 			//	entry without url we do not remove - normally the last entry
 			if( empty( $check['url'] ) )
 			{
 				continue;
 			}
-
+			
 			if( ( strcasecmp( $current['url'], $check['url'] ) == 0 ) && ( strcasecmp( $current['text'], $check['text'] ) == 0 ) )
 			{
 				$splitted[ $key ]['delete'] = true;
@@ -403,7 +403,7 @@ function avia_make_unique_breadcrumbs( $trail )
 			}
 		}
 	}
-
+	
 	$deleted = false;
 	foreach( $splitted as $key => $current )
 	{
@@ -413,11 +413,11 @@ function avia_make_unique_breadcrumbs( $trail )
 			$deleted = true;
 		}
 	}
-
+	
 	if( $deleted )
 	{
 		$trail = array_merge( $trail );
 	}
-
+	
 	return $trail;
 }

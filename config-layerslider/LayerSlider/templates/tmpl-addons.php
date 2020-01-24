@@ -5,9 +5,12 @@ if( ! defined( 'LS_ROOT_FILE' ) ) {
 	exit;
 }
 
-$isActivated = get_option('layerslider-authorized-site', false);
+$isActivated = LS_Config::isActivatedSite();
 
 ?>
+
+<?php include LS_ROOT_PATH . '/templates/tmpl-revisions-preferences.php'; ?>
+
 
 <div class="wrap ls-addons-page">
 
@@ -33,10 +36,8 @@ $isActivated = get_option('layerslider-authorized-site', false);
 					);
 			} else {
 				echo sprintf(
-					__('Product activation is required in order to use Add-Ons. Add-Ons can enhance your content &amp; workflow, but they are optional and not required to build sliders. Product activation requires you to have a purchase code, which is payable if you have received LayerSlider with a theme. For more information, please read our %sactivation guide%s or Envato’s %sBundled Plugins%s help article.', 'LayerSlider'),
+					__('Product activation is required in order to use Add-Ons. Add-Ons can enhance your content &amp; workflow, but they are optional and not required to build sliders. Product activation requires you to have a license key, which is payable if you have received LayerSlider with a theme. For more information, please read our %sactivation guide%s.', 'LayerSlider'),
 					'<a href="https://layerslider.kreaturamedia.com/documentation/#activation" target="_blank">',
-					'</a>',
-					'<a href="https://help.market.envato.com/hc/en-us/articles/213762463" target="_blank">',
 					'</a>'
 				);
 			}
@@ -142,10 +143,11 @@ $isActivated = get_option('layerslider-authorized-site', false);
 
 		<!-- Blend Mode -->
 		<div id="ls-addon-blend-mode" class="ls-addon-item">
-			<div class="ls-addon-bg"></div>
-			<div class="ls-addon-extras">
-				<div class="ls-addon-e1"></div>
-				<div class="ls-addon-e2"></div>
+			<div class="ls-addon-bg">
+				<div class="ls-addon-extras">
+					<div class="ls-addon-e1"></div>
+					<div class="ls-addon-e2"></div>
+				</div>
 			</div>
 			<h3 class="ls-addon-title"><?php _e('Blend Mode', 'LayerSlider') ?></h3>
 			<div class="ls-addon-body">
@@ -165,38 +167,3 @@ $isActivated = get_option('layerslider-authorized-site', false);
 
 	</div>
 </div>
-
-
-
-<script type="text/html" id="tmpl-revisions-options">
-	<div id="ls-revisions-modal-window">
-		<header>
-			<h1><?php _e('Revisions Preferences', 'LayerSlider') ?></h1>
-			<b class="dashicons dashicons-no"></b>
-		</header>
-		<form method="post" class="km-ui-modal-scrollable">
-			<?php wp_nonce_field('ls-save-revisions-options'); ?>
-			<input type="hidden" name="ls-revisions-options" value="1">
-			<table>
-				<tr>
-					<td><input type="checkbox" name="ls-revisions-enabled" class="hero" data-warning="<?php _e('Disabling Slider Revisions will also remove all revisions saved so far. Are you sure you want to continue?', 'LayerSlider') ?>" <?php echo LS_Revisions::$enabled ? 'checked' : '' ?>></td>
-					<td><?php _e('Enable Revisions', 'LayerSlider') ?></td>
-				</tr>
-			</table>
-
-
-			<div>
-				<h2 class="ls-revisions-h2"><?php _e('Update Frequency', 'LayerSlider') ?></h2>
-				<?php echo sprintf(__('Limit the total number of revisions per slider to %s.', 'LayerSlider'), '<input type="number" name="ls-revisions-limit" min="2" max="500" value="'.LS_Revisions::$limit.'">' ) ?> <br>
-				<?php echo sprintf(__('Wait at least %s minutes between edits before adding a new revision.', 'LayerSlider'), '<input type="number" name="ls-revisions-interval" min="0" max="500" value="'.LS_Revisions::$interval.'">') ?>
-			</div>
-
-			<div class="ls-notification-info">
-				<i class="dashicons dashicons-info"></i>
-				<?php _e('Slider Revisions also stores the undo/redo controls. There is no reason using very frequent saves since you will be able to undo the changes in-between.', 'LayerSlider') ?>
-			</div>
-
-			<button class="button button-primary button-hero"><?php _e('Update Revisions Preferences', 'LayerSlider') ?></button>
-		</form>
-	</div>
-</script>

@@ -230,15 +230,31 @@
 		set_alb_title: function( value, focus )
 		{
 			var title = this.body_container.find('.avia_meta_box_visual_editor #titlewrap input').first();
+			var label = this.body_container.find('.avia_meta_box_visual_editor #titlewrap #title-prompt-text');
 			var value = 'string' == typeof value ? value.trim() : '';
 			title.val( value );
 			
 			//	remove placeholder
-			if( ( value != '' ) && ( 'undefined' != typeof focus ) && ( focus == 'focus' ) )
+			if( label.length > 0 )
 			{
-				setTimeout(function(){
-						title.focus();
-					}, 300 );
+				if( value.trim() == '' )
+				{
+					label.removeClass( 'screen-reader-text' );
+				}
+				else
+				{
+					label.addClass( 'screen-reader-text' );
+				}
+			}
+			else
+			{
+				//	this is a fallback to the beginning of block editor - no idea when label was added
+				if( ( value != '' ) && ( 'undefined' != typeof focus ) && ( focus == 'focus' ) )
+				{
+					setTimeout(function(){
+							title.focus();
+						}, 300 );
+				}
 			}
 		},
 		

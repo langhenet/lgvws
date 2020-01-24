@@ -37,6 +37,8 @@ ICONGRID
 .avia-icongrid li .avia-icongrid-wrapper{
     position: relative;
     display: block;
+	-webkit-backface-visibility: hidden;   /* new for mobile even to parent container  */
+    backface-visibility: hidden;    /* new for mobile even to parent container  */
 }
 
 .avia-icongrid-borders-all li .avia-icongrid-wrapper:before,
@@ -175,6 +177,10 @@ ICONGRID
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
     -moz-backface-visibility: hidden;
+	-webkit-perspective: 1000px;
+	perspective: 1000px;
+	-webkit-transition: -webkit-transform 10.6s;
+    transition: transform 10.6s;
 }
 
 .avia-icongrid-flipbox li .avia-icongrid-front,
@@ -188,6 +194,7 @@ ICONGRID
     -webkit-transform-style: preserve-3d;
     transform-style: preserve-3d;
     height: 100%;
+    /*width: 100%;*/
 }
 
 .avia-msie-9 .avia-icongrid-flipbox li .avia-icongrid-flipback {
@@ -230,6 +237,7 @@ ICONGRID
 }
 
 .avia-icongrid-flipbox li:hover .avia-icongrid-front,
+.avia-icongrid-flipbox li.avia-hover .avia-icongrid-front,
 .avia-icongrid-flipbox li.av-flip .avia-icongrid-front{
     -webkit-transform: rotateY(180deg);
     transform: rotateY(180deg);
@@ -237,18 +245,21 @@ ICONGRID
 
 
 .avia-icongrid-flipbox li:hover .avia-icongrid-flipback,
+.avia-icongrid-flipbox li.avia-hover .avia-icongrid-flipback,
 .avia-icongrid-flipbox li.av-flip .avia-icongrid-flipback{
     -webkit-transform: rotateY(0deg);
     transform: rotateY(0deg);
 }
 
 .avia-msie-9 .avia-icongrid-flipbox li:hover .avia-icongrid-front,
+.avia-msie-9 .avia-icongrid-flipbox li.avia-hover .avia-icongrid-front,
 .avia-msie-9 .avia-icongrid-flipbox li.av-flip .avia-icongrid-front{
     opacity: 0;
     visibility: hidden;
 }
 
 .avia-msie-9 .avia-icongrid-flipbox li:hover .avia-icongrid-flipback,
+.avia-msie-9 .avia-icongrid-flipbox li.avia-hover .avia-icongrid-flipback,
 .avia-msie-9 .avia-icongrid-flipbox li.av-flip .avia-icongrid-flipback {
     opacity: 1;
     visibility: visible;
@@ -342,6 +353,51 @@ ICONGRID
     transform: translateY(0);
 }
 
+
+
+/*** Flip Grid x-axis ***/
+
+
+.avia-flip-x .avia-icongrid-flipbox li .avia-icongrid-front {
+    z-index: 2;
+    -webkit-transform: rotateX(0deg);
+	-ms-transform: rotateX(0deg);
+    transform: rotateX(0deg);
+}
+
+.avia-flip-x .avia-icongrid-flipbox li .avia-icongrid-flipback {
+    -webkit-transform: rotateX(-180deg);
+	-ms-transform: rotateX(-180deg);
+    transform: rotateX(-180deg);
+}
+
+
+
+/*** now hover style ***/
+
+.avia-flip-x .avia-icongrid-flipbox li:hover .avia-icongrid-front,
+.avia-flip-x .avia-icongrid-flipbox li.avia-hover .avia-icongrid-front,
+.avia-flip-x .avia-icongrid-flipbox li.av-flip .avia-icongrid-front {
+    -webkit-transform: rotateX(180deg);
+	-ms-transform: rotateX(180deg);
+    transform: rotateX(180deg);
+}
+
+.avia-flip-x .avia-icongrid-flipbox li:hover .avia-icongrid-flipback,
+.avia-flip-x .avia-icongrid-flipbox li.avia-hover .avia-icongrid-flipback, 
+.avia-flip-x .avia-icongrid-flipbox li.av-flip .avia-icongrid-flipback {
+    -webkit-transform: rotateX(0deg);
+	-ms-transform: rotateX(0deg);
+    transform: rotateX(0deg);
+}
+
+/****  End Flipbox x-axis  ****/
+
+
+
+
+/****  responsive cases  ****/
+
 @media only screen and (max-width: 989px){
 
     .avia-icongrid-numrow-3 li,
@@ -386,7 +442,11 @@ ICONGRID
         -webkit-box-shadow: 1px 0 0 0; /* right */
         box-shadow: 1px 0 0 0;
     }
-
+    
+    .avia-icongrid-flipbox li .avia-icongrid-front .avia-icongrid-inner,
+    .avia-icongrid-tooltip li article{
+        padding: 1em;
+    }
 }
 
 @media only screen and (max-width: 767px) {
@@ -411,7 +471,11 @@ ICONGRID
         border-right-style: hidden !important;
     }
 
-    .avia-icongrid-flipbox li:hover .avia-icongrid-front,
+/*
+
+Removed - replaced by touchend event in js to toogle class avia-hover
+
+	.avia-icongrid-flipbox li:hover .avia-icongrid-front,
     .avia-icongrid-flipbox li.av-flip .avia-icongrid-front,
     .avia-icongrid-flipbox li:hover .avia-icongrid-flipback,
     .avia-icongrid-flipbox li.av-flip .avia-icongrid-flipback{
@@ -485,6 +549,8 @@ ICONGRID
         visibility: visible;
         opacity: 1;
     }
+	
+	*/
 
     .avia-icongrid-tooltip li .avia-icongrid-content:after{
         bottom: auto;

@@ -15,9 +15,13 @@ if(!function_exists('avia_preload_screen'))
 		$class = avia_get_option('preloader_transitions') != "disabled" ? 'av-transition-enabled' : "";
 		$label = __('Loading','avia_framework');
 		$logo  = avia_get_option('preloader_logo');
-		if(is_numeric($logo)){ $logo = wp_get_attachment_image_src($logo, 'full'); $logo = $logo[0]; }
+		if( is_numeric( $logo ) )
+		{ 
+			$logo = wp_get_attachment_image_src( $logo, 'full' ); 
+			$logo = is_array( $logo ) ? $logo[0] : ''; 
+		}
 		
-		if($logo) 
+		if( $logo ) 
 		{
 			$class .= " av-transition-with-logo";
 			$logo = "<img class='av-preloading-logo' src='{$logo}' alt='{$label}' title='{$label}' />";
@@ -329,7 +333,7 @@ if(!function_exists('avia_ajax_search'))
                 {
                     $image = get_the_post_thumbnail($post->ID, 'thumbnail');
                     $extra_class = $image ? "with_image" : "";
-                    $post_type = $image ? "" : get_post_format($post->ID) != "" ? get_post_format($post->ID) : "standard";
+                    $post_type = $image ? "" : ( get_post_format($post->ID) != "" ? get_post_format($post->ID) : "standard" );
                     $iconfont = $image ? "" : av_icon_string($post_type);
 
                 }
@@ -874,12 +878,12 @@ if( ! function_exists( 'avia_get_tracking_code' ) )
 			return;
 		}
 
-		if( strpos( $avia_config['analytics_code'],'UA-' ) === 0 ) // if we only get passed the UA-id create the script for the user (universal tracking code)
+		if( strpos( $avia_config['analytics_code'], 'UA-' ) === 0 ) // if we only get passed the UA-id create the script for the user (universal tracking code)
 		{
 			$avia_config['analytics_code'] = "
 <!-- Global site tag (gtag.js) - Google Analytics -->
-<script async src='https://www.googletagmanager.com/gtag/js?id=" . $avia_config['analytics_code'] . "'></script>
-<script type='text/javascript'>
+<script id='google_analytics_script' class='google_analytics_scripts' async src='https://www.googletagmanager.com/gtag/js?id=" . $avia_config['analytics_code'] . "'></script>
+<script class='google_analytics_scripts' type='text/javascript'>
 window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
@@ -888,7 +892,7 @@ gtag('config', '" . $avia_config['analytics_code'] . "', { 'anonymize_ip': true 
 ";
 		}
 		
-		add_action( 'wp_footer', 'avia_print_tracking_code', 100 );
+		add_action( 'wp_footer', 'avia_print_tracking_code', 10000 );
 	}
 
 	function avia_print_tracking_code()
@@ -908,22 +912,31 @@ gtag('config', '" . $avia_config['analytics_code'] . "', { 'anonymize_ip': true 
 				$UAID = $match[0];
 			}
 			
+			$code = json_encode( $avia_config['analytics_code'] );
+			
 			//if we got a valid uaid, add the js cookie check 
 			if( $UAID )
 			{
 				$extra_code = "
-				<script type='text/javascript'>
+<script type='text/javascript'>
 			
-				(function() {
+	(function($) {
 					
-					/*	check if google analytics tracking is disabled by user setting via cookie - or user must opt in.	*/
-					var html = document.getElementsByTagName('html')[0];
+			/*	check if google analytics tracking is disabled by user setting via cookie - or user must opt in.	*/
+					
+			var analytics_code = {$code}.replace(/\\\"/g, '\"' );
+			var html = document.getElementsByTagName('html')[0];
+
+			$('html').on( 'avia-cookie-settings-changed', function(e) 
+			{
 					var cookie_check = html.className.indexOf('av-cookies-needs-opt-in') >= 0 || html.className.indexOf('av-cookies-can-opt-out') >= 0;
 					var allow_continue = true;
+					var silent_accept_cookie = html.className.indexOf('av-cookies-user-silent-accept') >= 0;
+					var script_loaded = $( 'script.google_analytics_scripts' );
 
-					if( cookie_check )
+					if( cookie_check && ! silent_accept_cookie )
 					{
-						if( ! document.cookie.match(/aviaCookieConsent/) || sessionStorage.getItem( 'aviaCookieRefused' ) )
+						if( ! document.cookie.match(/aviaCookieConsent/) || html.className.indexOf('av-cookies-session-refused') >= 0 )
 						{
 							allow_continue = false;
 						}
@@ -946,13 +959,31 @@ gtag('config', '" . $avia_config['analytics_code'] . "', { 'anonymize_ip': true 
 
 					if( ! allow_continue )
 					{ 
-						window['ga-disable-{$UAID}'] = true;
+//						window['ga-disable-{$UAID}'] = true;
+						if( script_loaded.length > 0 )
+						{
+							script_loaded.remove();
+						}
 					}
-				})();
-			</script>";
+					else
+					{
+						if( script_loaded.length == 0 )
+						{
+							$('head').append( analytics_code );
+						}
+					}
+			});
+			
+			$('html').trigger( 'avia-cookie-settings-changed' );
+						
+	})( jQuery );
+				
+</script>";
 			}
 			
-			echo $extra_code . $avia_config['analytics_code'];
+//			echo $extra_code . $avia_config['analytics_code'];
+			
+			echo $extra_code;
 		}
 	}
 }
@@ -1152,8 +1183,14 @@ if(!function_exists('avia_header_setting'))
 			$header['header_class'] .= " av_header_border_disabled"; 
 		}
 		
-		
-		$header = apply_filters('avf_header_setting_filter', $header);
+		/**
+		 * Modify the header settings
+		 * 
+		 * @param array $header
+		 * @param string $context
+		 * @return array
+		 */
+		$header = apply_filters('avf_header_setting_filter', $header, 'setting_header' );
 
 		//make settings available globaly
 		$avia_config['header_settings'] = $header;
@@ -1204,7 +1241,14 @@ if(!function_exists('avia_header_setting_sidebar'))
 		
 		$header['header_class'] = " av_".str_replace(' ',' av_',$header['header_position']." ".$header['sidebarmenu_sticky']);
 		
-		$header = apply_filters('avf_header_setting_filter', $header);
+		/**
+		 * Modify the header settings
+		 * 
+		 * @param array $header
+		 * @param string $context
+		 * @return array
+		 */
+		$header = apply_filters('avf_header_setting_filter', $header, 'setting_sidebar' );
 		
 		//make settings available globaly
 		$avia_config['header_settings'] = $header;
@@ -1701,20 +1745,19 @@ if(!function_exists('avia_generate_grid_dimension'))
 function that disables the alb drag and drop for non admins
 */
 
-if(!function_exists('avia_disable_alb_drag_drop'))
+if( ! function_exists( 'avia_disable_alb_drag_drop' ) )
 {
 	function avia_disable_alb_drag_drop( $disable )
 	{
-		
-		if(!current_user_can('switch_themes') || avia_get_option('lock_alb_for_admins', 'disabled') != "disabled")
+		if( ! current_user_can( 'switch_themes' ) || avia_get_option( 'lock_alb_for_admins', 'disabled' ) != 'disabled' )
 		{
-			$disable = avia_get_option('lock_alb', 'disabled') != "disabled" ? true : false;
+			$disable = avia_get_option( 'lock_alb', 'disabled' ) != 'disabled' ? true : false;
 		}		
 		
 		return $disable;
 	}
 	
-	add_filter('avf_allow_drag_drop', 'avia_disable_alb_drag_drop', 30, 1);
+	add_filter( 'avf_allow_drag_drop', 'avia_disable_alb_drag_drop', 30, 1 );
 }
 
 

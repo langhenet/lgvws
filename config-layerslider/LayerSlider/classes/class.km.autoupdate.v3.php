@@ -10,7 +10,6 @@
  * @since 4.6.3
  * @author John Gera
  * @copyright Copyright (c) 2013  John Gera, George Krupa, and Kreatura Media Kft.
- * @license http://codecanyon.net/licenses/faq Envato marketplace licenses
  */
 
 
@@ -164,7 +163,7 @@ class KM_UpdatesV3 {
 			( isset( $skin->plugin_info ) && $skin->plugin_info['Name'] === $this->config['name'] ) ) {
 
 				// Check validity
-				if( LS_Config::get('autoupdate') && ! get_option( $this->config['authKey'], false ) ) {
+				if( LS_Config::get('autoupdate') && ! LS_Config::isActivatedSite() ) {
 					return new WP_Error('ls_update_error', sprintf(
 						__('License activation is required to receive updates. Please read our %sonline documentation%s to learn more.', 'LayerSlider'),
 						'<a href="https://layerslider.kreaturamedia.com/documentation/#activation" target="_blank">',
@@ -188,7 +187,7 @@ class KM_UpdatesV3 {
 	public function update_message() {
 
 		// Provide license activation warning on non-activated sites
-		if( ! get_option( $this->config['authKey'], false ) ) {
+		if( ! LS_Config::isActivatedSite() ) {
 			printf(__('License activation is required in order to receive updates for LayerSlider. %sPurchase a license%s or %sread the documentation%s to learn more. %sGot LayerSlider in a theme?%s', 'installer'),
 							'<a href="'.LS_Config::get('purchase_url').'" target="_blank">', '</a>', '<a href="https://layerslider.kreaturamedia.com/documentation/#activation" target="_blank">', '</a>', '<a href="https://layerslider.kreaturamedia.com/documentation/#activation-bundles" target="_blank">', '</a>');
 		}
@@ -202,16 +201,16 @@ class KM_UpdatesV3 {
 	 *	potential issues if their site is still in an activated state.
 	 *
 	 *	This usually happens due to remote deactivation via our online tools,
-	 *	or because users ask us to reset their purchase code on their behalf.
+	 *	or because users ask us to reset their license key on their behalf.
 	 *	Alternatively, the purhcase code might no longer be valid due to a
-	 *	refund, sale reversal, or any other undisclosed reason by Envato.
+	 *	refund, sale reversal, or any other reason.
 	 *
 	 * @since 6.1.5
 	 * @access public
 	 */
 	public function check_activation_state() {
 
-		if( get_option( $this->config['authKey'], false ) ) {
+		if( LS_Config::isActivatedSite() ) {
 
 			delete_option( $this->config['codeKey'] );
 			delete_option( $this->config['authKey'] );
@@ -348,7 +347,7 @@ class KM_UpdatesV3 {
 		if( empty( $json ) ) {
 
 			die( json_encode( array(
-				'message' => 'An unexpected error occurred. Please try again later. If this error persist, it\'s most likely a web server configuration issue. Please contact your web host and ask them to allow external connection to the following domain: repository.kreaturamedia.com. If you need further assistance in resolving this issue, please email us from our CodeCanyon profile page.',
+				'message' => 'An unexpected error occurred. Please try again later. If this error persist, it’s most likely a web server configuration issue. Please contact your web host and ask them to allow external connection to the following domain: repository.kreaturamedia.com. If you need further assistance in resolving this issue, please visit layerslider.kreaturamedia.com/help/',
 				'errCode' => 'ERR_UNEXPECTED_ERROR')
 			) );
 		}
@@ -370,7 +369,7 @@ class KM_UpdatesV3 {
 		// Required informations
 		if( empty( $_POST['purchase_code'] ) || empty( $_POST['channel'] ) ) {
 			die( json_encode( array(
-				'status' => 'Please enter your purchase code.',
+				'status' => 'Please enter your license key.',
 				'errCode' => 'ERR_INVALID_DATA_RECEIVED')
 			) );
 		}
@@ -384,7 +383,7 @@ class KM_UpdatesV3 {
 		update_option($this->config['channelKey'], $_POST['channel']);
 
 		// Only update release channel?
-		if(get_option($this->config['authKey'], false)) {
+		if( LS_Config::isActivatedSite() ) {
 			if( strpos($_POST['purchase_code'], '●') === 0 || $this->config['license'] == $_POST['purchase_code']) {
 				die(json_encode(array('message' => __('Your settings were successfully saved.', 'LayerSlider'))));
 			}

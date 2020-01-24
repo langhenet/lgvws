@@ -235,7 +235,7 @@ if( !class_exists( 'avia_media_gallery' ) )
 		public static function media_avia_create_video_insert()
 		{
 			
-			$video_description = '<p class="help">Enter the URL to the Video. <br/> A list of all supported Video Services can be found <a href="http://codex.wordpress.org/Embeds#Okay.2C_So_What_Sites_Can_I_Embed_From.3F" target="_blank">here</a>. Youtube videos will display additional info like title, share link, related videos, ...
+			$video_description = '<p class="help">Enter the URL to the Video. <br/> A list of all supported Video Services can be found <a href="http://codex.wordpress.org/Embeds#Okay.2C_So_What_Sites_Can_I_Embed_From.3F" target="_blank" rel="noopener noreferrer">here</a>. Youtube videos will display additional info like title, share link, related videos, ...
 								<br/> <br/> 
 								Working examples:<br/>
 								<strong>https://vimeo.com/1084537</strong><br/> 

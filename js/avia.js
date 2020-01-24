@@ -882,7 +882,8 @@
 			logo_container	= $('.av-logo-container .inner-container'),
 			menu_in_logo_container = logo_container.find('.main_menu'),
 			cloneFirst		= htmlEL.is('.html_av-submenu-display-click.html_av-submenu-clone, .html_av-submenu-display-hover.html_av-submenu-clone'),
-			menu_generated 	= false;
+			menu_generated 	= false,
+			cloned_menu_cnt = 0;
 	
 		/**
 		 * Check for alternate mobile menu
@@ -1231,15 +1232,22 @@
 			}
 		};
 		
-		
+		 
 		(function normalize_layout()
 		{
 			//if we got the menu outside of the main menu container we need to add it to the container as well
 			if(menu_in_logo_container.length) return;
-		
-			var menu2 = $('#header .main_menu').clone(true);
-				menu2.find('.menu-item:not(.menu-item-avia-special)').remove();
-				menu2.insertAfter(logo_container.find('.logo').first());
+
+			var menu2 = $('#header .main_menu').clone(true),
+				ul = menu2.find('ul.av-main-nav'),
+				id = ul.attr('id');
+				
+			if( 'string' == typeof id && '' != id.trim() )
+			{
+				ul.attr('id', id + '-' + cloned_menu_cnt++ );
+			}
+			menu2.find('.menu-item:not(.menu-item-avia-special)').remove();
+			menu2.insertAfter(logo_container.find('.logo').first());
 				
 			//check if we got social icons and append it to the secondary menu	
 			var social = $('#header .social_bookmarks').clone(true);

@@ -213,7 +213,7 @@ class AviaTypeFonts extends aviaFontManagementBase
 		
 		if( 0 == count( $this->not_uploaded_files ) )
 		{
-			$this->response['redirect'] = __( 'All fonts could be installed sucessfully.<br /><br />To show them in the option fields we will save your option settings and reload the page.', 'avia_framework' );
+			$this->response['redirect'] = __( 'All fonts could be installed successfully.<br /><br />To show them in the option fields we will save your option settings and reload the page.', 'avia_framework' );
 		}
 	}
 	
@@ -742,7 +742,7 @@ class AviaTypeFonts extends aviaFontManagementBase
 	
 						'Quattrocento'		=> 'Quattrocento',
 						'Questrial'			=> 'Questrial',
-						'Quicksand'			=> 'Quicksand',
+						'Quicksand'			=> 'Quicksand:400,600',
 	
 						'Raleway'			=> 'Raleway',
 						'Righteous'			=> 'Righteous',

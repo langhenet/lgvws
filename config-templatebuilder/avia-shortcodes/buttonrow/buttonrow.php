@@ -75,11 +75,12 @@ if ( ! class_exists( 'avia_sc_buttonrow' ) )
          */
         public function shortcode_insert_button()
         {
-            $this->config['self_closing']	=	'no';
+			$this->config['version']		= '1.0';
+            $this->config['self_closing']	= 'no';
 
             $this->config['name']			= __( 'Button Row', 'avia_framework' );
             $this->config['tab']			= __( 'Content Elements', 'avia_framework' );
-            $this->config['icon']			= AviaBuilder::$path['imagesURL'] . "sc-buttonrow.png";
+            $this->config['icon']			= AviaBuilder::$path['imagesURL'] . 'sc-buttonrow.png';
             $this->config['order']			= 84;
             $this->config['target']			= 'avia-target-insert';
             $this->config['shortcode']		= 'av_buttonrow';
@@ -89,13 +90,14 @@ if ( ! class_exists( 'avia_sc_buttonrow' ) )
 			$this->config['disabling_allowed'] = true;
 			$this->config['id_name']		= 'id';
 			$this->config['id_show']		= 'yes';
+			$this->config['alb_desc_id']	= 'alb_description';
         }
 
         public function extra_assets()
         {
             //load css
-			wp_enqueue_style( 'avia-module-button' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/buttons/buttons.css' , array('avia-layout'), false );
-            wp_enqueue_style( 'avia-module-buttonrow' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/buttonrow/buttonrow.css' , array('avia-layout'), false );
+			wp_enqueue_style( 'avia-module-button', AviaBuilder::$path['pluginUrlRoot'] . 'avia-shortcodes/buttons/buttons.css', array( 'avia-layout' ), false );
+            wp_enqueue_style( 'avia-module-buttonrow', AviaBuilder::$path['pluginUrlRoot'] . 'avia-shortcodes/buttonrow/buttonrow.css', array( 'avia-layout' ), false );
         }
 
         /**
@@ -110,274 +112,423 @@ if ( ! class_exists( 'avia_sc_buttonrow' ) )
         {
 
             $this->elements = array(
-                array(
-                    "type" => "tab_container", 'nodescription' => true
-                ),
-
-                    array(
-                        "type" => "tab",
-                        "name" => __("Content", 'avia_framework'),
-                        'nodescription' => true
-                    ),
-
-                    array(
-                        "name" => __("Add/Edit Buttons", 'avia_framework'),
-                        "desc" => __("Here you can add, remove and edit buttons.", 'avia_framework'),
-                        "type" => "modal_group",
-                        "id" => "content",
-                        "modal_title" => __("Edit Button", 'avia_framework'),
-                        "std" =>
-                            array(
-                                array('label' => __('Click me', 'avia_framework'), 'icon' => '4'),
-                                array('label' => __('Call to Action', 'avia_framework'), 'icon' => '5'),
-                                array('label' => __('Click me', 'avia_framework'), 'icon' => '6'),
-                            ),
-
-                        'subelements' => array(
-
-                            array(
-                                "type" => "tab_container", 'nodescription' => true
-                            ),
-
-                                array(
-                                    "type" => "tab",
-                                    "name" => __("Content", 'avia_framework'),
-                                    'nodescription' => true
-                                ),
-
-                                array(
-                                    "name" => __("Button Label", 'avia_framework'),
-                                    "desc" => __("This is the text that appears on your button.", 'avia_framework'),
-                                    "id" => "label",
-                                    "type" => "input",
-                                    "std" => __("Click me", 'avia_framework')
-                                ),
-
-                                array(
-                                    "name" => __("Button Link?", 'avia_framework'),
-                                    "desc" => __("Where should your button link to?", 'avia_framework'),
-                                    "id" => "link",
-                                    "type" => "linkpicker",
-                                    "fetchTMPL" => true,
-                                    "subtype" => array(
-                                        __('Set Manually', 'avia_framework') => 'manually',
-                                        __('Single Entry', 'avia_framework') => 'single',
-                                        __('Taxonomy Overview Page', 'avia_framework') => 'taxonomy',
-                                    ),
-                                    "std" => ""
-                                ),
-
-                                array(
-                                    "name" => __("Open Link in new Window?", 'avia_framework'),
-                                    "desc" => __("Select here if you want to open the linked page in a new window", 'avia_framework'),
-                                    "id" => "link_target",
-                                    "type" => "select",
-                                    "std" => "",
-                                    "subtype" => AviaHtmlHelper::linking_options()
-                                ),
-
-                                array(
-                                    "name" => __("Button Size", 'avia_framework'),
-                                    "desc" => __("Choose the size of your button here", 'avia_framework'),
-                                    "id" => "size",
-                                    "type" => "select",
-                                    "std" => "small",
-                                    "subtype" => array(
-                                        __('Small', 'avia_framework') => 'small',
-                                        __('Medium', 'avia_framework') => 'medium',
-                                        __('Large', 'avia_framework') => 'large',
-                                        __('X Large', 'avia_framework') => 'x-large',
-                                    )
-                                ),
-                                
-								array(	
-									"name" 	=> __("Button Label display", 'avia_framework' ),
-									"desc" 	=> __("Select how to display the label", 'avia_framework' ),
-									"id" 	=> "label_display",
-									"type" 	=> "select",
-									"std" 	=> "",
-									"subtype" => array(
-										__( 'Always display', 'avia_framework' )	=> '' ,	
-										__( 'Display on hover', 'avia_framework' )	=>'av-button-label-on-hover',
-										)
-									),
-							
-								array(	
-										'name'		=> __( 'Button Title Attribute', 'avia_framework' ),
-										'desc'		=> __( 'Add a title attribute for this button.', 'avia_framework' ),
-										'id'		=> 'title_attr',
-										'type'		=> 'input',
-										'required'	=> array( 'label_display', 'equals', '' ),
-										'std'		=> ''
-									),
-								
-                                array(
-                                    "name" => __("Button Icon", 'avia_framework'),
-                                    "desc" => __("Should an icon be displayed at the left side of the button", 'avia_framework'),
-                                    "id" => "icon_select",
-                                    "type" => "select",
-                                    "std" => "yes",
-                                    "subtype" => array(
-                                        __('No Icon', 'avia_framework') => 'no',
-                                        __('Yes, display Icon to the left', 'avia_framework') => 'yes',
-                                        __('Yes, display Icon to the right', 'avia_framework') => 'yes-right-icon',
-                                    )
-                                ),
-
-                                array(
-                                    "name" => __("Icon Visibility", 'avia_framework'),
-                                    "desc" => __("Check to only display icon on hover", 'avia_framework'),
-                                    "id" => "icon_hover",
-                                    "type" => "checkbox",
-                                    "std" => "",
-                                    "required" => array('icon_select', 'not_empty_and', 'no')
-                                ),
-
-                                array(
-                                    "name" => __("Button Icon", 'avia_framework'),
-                                    "desc" => __("Select an icon for your Button below", 'avia_framework'),
-                                    "id" => "icon",
-                                    "type" => "iconfont",
-                                    "std" => "",
-                                    "required" => array('icon_select', 'not_empty_and', 'no')
-                                ),
-
-                                // close tab content
-                                array(
-                                    "type" => "close_div",
-                                    'nodescription' => true
-                                ),
-
-                                array(
-                                    "type" => "tab",
-                                    "name" => __("Colors", 'avia_framework'),
-                                    'nodescription' => true
-                                ),
-
-                                array(
-                                    "name" => __("Button Color", 'avia_framework'),
-                                    "desc" => __("Choose a color for your button here", 'avia_framework'),
-                                    "id" => "color",
-                                    "type" => "select",
-                                    "std" => "theme-color",
-                                    "subtype" => array(
-                                        __('Translucent Buttons', 'avia_framework') => array(
-                                            __('Light Transparent', 'avia_framework') => 'light',
-                                            __('Dark Transparent', 'avia_framework') => 'dark',
-                                        ),
-                                        __('Colored Buttons', 'avia_framework') => array(
-                                            __('Theme Color', 'avia_framework') => 'theme-color',
-                                            __('Theme Color Highlight', 'avia_framework') => 'theme-color-highlight',
-                                            __('Theme Color Subtle', 'avia_framework') => 'theme-color-subtle',
-                                            __('Blue', 'avia_framework') => 'blue',
-                                            __('Red', 'avia_framework') => 'red',
-                                            __('Green', 'avia_framework') => 'green',
-                                            __('Orange', 'avia_framework') => 'orange',
-                                            __('Aqua', 'avia_framework') => 'aqua',
-                                            __('Teal', 'avia_framework') => 'teal',
-                                            __('Purple', 'avia_framework') => 'purple',
-                                            __('Pink', 'avia_framework') => 'pink',
-                                            __('Silver', 'avia_framework') => 'silver',
-                                            __('Grey', 'avia_framework') => 'grey',
-                                            __('Black', 'avia_framework') => 'black',
-                                            __('Custom Color', 'avia_framework') => 'custom',
-                                        )
-                                    ),
-                                ),
-
-                                array(
-                                    "name" => __("Custom Background Color", 'avia_framework'),
-                                    "desc" => __("Select a custom background color for your Button here", 'avia_framework'),
-                                    "id" => "custom_bg",
-                                    "type" => "colorpicker",
-                                    "std" => "#444444",
-                                    "required" => array('color', 'equals', 'custom')
-                                ),
-
-                                array(
-                                    "name" => __("Custom Font Color", 'avia_framework'),
-                                    "desc" => __("Select a custom font color for your Button here", 'avia_framework'),
-                                    "id" => "custom_font",
-                                    "type" => "colorpicker",
-                                    "std" => "#ffffff",
-                                    "required" => array('color', 'equals', 'custom')
-                                ),
-
-                                // close tab colors
-                                array(
-                                    "type" => "close_div",
-                                    'nodescription' => true
-                                ),
-
-                            // close tab-container
-                            array(
-                                "type" => "close_div",
-                                'nodescription' => true
-                            ),
-                        ),
-                    ), /*modal group */
-
-                    array(
-                        "name" => __("Align Buttons", 'avia_framework'),
-                        "desc" => __("Choose the alignment of your buttons here", 'avia_framework'),
-                        "id" => "alignment",
-                        "type" => "select",
-                        "std" => "center",
-                        "subtype" =>
-                            array(
-                                __('Align Left', 'avia_framework') => 'left',
-                                __('Align Center', 'avia_framework') => 'center',
-                                __('Align Right', 'avia_framework') => 'right',
-                            )
-                    ),
-
-                    array(
-                        "name" => __("Space between buttons", 'avia_framework'),
-                        "desc" => __("Define the space between the buttons", 'avia_framework'),
-                        "id" => "button_spacing",
-                        "container_class" => 'av_half',
-                        "type" => "input",
-                        "std" => "5"
-                   ),
-
-                    array(
-                        "name" => __("Unit", 'avia_framework'),
-                        "desc" => __("Unit for the spacing", 'avia_framework'),
-                        "id" => "button_spacing_unit",
-                        "container_class" => 'av_half',
-                        "type" => "select",
-                        "std" => "px",
-                        "subtype" =>
-                        array(
-                            __('px', 'avia_framework') => 'px',
-                            __('%', 'avia_framework') => '%',
-                            __('em', 'avia_framework') => 'em',
-                            __('rem', 'avia_framework') => 'rem',
-                        )
-                    ),
-
-
-                    // close tab content
-                    array(
-                        "type" => "close_div",
-                        'nodescription' => true
-                    ),
 				
+				array(
+						'type' 	=> 'tab_container', 
+						'nodescription' => true
+					),
+						
+				array(
+						'type' 	=> 'tab',
+						'name'  => __( 'Content', 'avia_framework' ),
+						'nodescription' => true
+					),
+						array(	
+								'type'			=> 'template',
+								'template_id'	=> $this->popup_key( 'content_buttonrow' )
+							),
 				
-				array(	
-						'type'			=> 'template',
-						'template_id'	=> 'screen_options_tab'
+				array(
+						'type' 	=> 'tab_close',
+						'nodescription' => true
+					),
+
+				array(
+						'type' 	=> 'tab',
+						'name'  => __( 'Styling', 'avia_framework' ),
+						'nodescription' => true
 					),
 				
+					array(	
+								'type'			=> 'template',
+								'template_id'	=> $this->popup_key( 'styling_appearance' )
+							),
+				
+				array(
+						'type' 	=> 'tab_close',
+						'nodescription' => true
+					),
+				
+				array(
+						'type' 	=> 'tab',
+						'name'  => __( 'Advanced', 'avia_framework' ),
+						'nodescription' => true
+					),
+				
+					array(
+							'type' 	=> 'toggle_container',
+							'nodescription' => true
+						),
+				
+						array(	
+								'type'			=> 'template',
+								'template_id'	=> $this->popup_key( 'advanced_link' )
+							),
+				
+						array(	
+								'type'			=> 'template',
+								'template_id'	=> 'screen_options_toggle'
+							),
+				
+						array(	
+								'type'			=> 'template',
+								'template_id'	=> 'developer_options_toggle',
+								'args'			=> array( 'sc' => $this )
+							),
+				
+					array(
+							'type' 	=> 'toggle_container_close',
+							'nodescription' => true
+						),
+				
+				array(
+						'type' 	=> 'tab_close',
+						'nodescription' => true
+					),
 
-                // close tab-container
-                array(
-                    "type" => "close_div",
-                    'nodescription' => true
-                ),
+				array(
+						'type' 	=> 'tab_container_close',
+						'nodescription' => true
+					)
+					
+                
 
             );
         }
+		
+		/**
+		 * Create and register templates for easier maintainance
+		 * 
+		 * @since 4.6.4
+		 */
+		protected function register_dynamic_templates()
+		{
+			
+			$this->register_modal_group_templates();
+			
+			/**
+			 * Content Tab
+			 * ===========
+			 */
+			
+			$c = array(
+						array(
+							'name'	=> __( 'Add/Edit Buttons', 'avia_framework' ),
+							'desc'	=> __( 'Here you can add, remove and edit buttons.', 'avia_framework' ),
+							'type'	=> 'modal_group',
+							'id'	=> 'content',
+							'modal_title'	=> __( 'Edit Button', 'avia_framework' ),
+							'std'	=> array(
+											array( 'label' => __( 'Click me', 'avia_framework' ), 'icon' => '4' ),
+											array( 'label' => __( 'Call to Action', 'avia_framework' ), 'icon' => '5' ),
+											array( 'label' => __( 'Click me', 'avia_framework' ), 'icon' => '6' ),
+										),
+							'subelements' => $this->create_modal()
+						),
+				
+				);
+			
+			AviaPopupTemplates()->register_dynamic_template( $this->popup_key( 'content_buttonrow' ), $c );
+			
+			
+			/**
+			 * Styling Tab
+			 * ===========
+			 */
+			
+			$c = array(
+						array(	
+							'name' 	=> __( 'Align Buttons', 'avia_framework' ),
+							'desc' 	=> __( 'Choose the alignment of your buttons here', 'avia_framework' ),
+							'id' 	=> 'alignment',
+							'type' 	=> 'select',
+							'std' 	=> 'center',
+							'subtype'	=> array(
+												__( 'Align Left', 'avia_framework' )	=> 'left',
+												__( 'Align Center', 'avia_framework' )	=> 'center',
+												__( 'Align Right', 'avia_framework' )	=> 'right',
+											)
+						),
+				
+						array(
+							'name'	=> __( 'Space between buttons', 'avia_framework' ),
+							'desc'	=> __( 'Define the space between the buttons. Leave blank for default space. Make sure you enter a valid positive number.', 'avia_framework' ),
+							'id'	=> 'button_spacing',
+							'container_class' => 'av_half',
+							'type'	=> 'input',
+							'std'	=> '5'
+						),
+
+						array(
+							'name'	=> __( 'Unit', 'avia_framework' ),
+							'desc'	=> __( 'Unit for the spacing', 'avia_framework' ),
+							'id'	=> 'button_spacing_unit',
+							'container_class' => 'av_half',
+							'type'	=> 'select',
+							'std'	=> 'px',
+							'subtype'	=> array(
+												__( 'px', 'avia_framework' )	=> 'px',
+												__( '%', 'avia_framework' )		=> '%',
+												__( 'em', 'avia_framework' )	=> 'em',
+												__( 'rem', 'avia_framework' )	=> 'rem',
+											)
+						)
+				
+				);
+			
+			AviaPopupTemplates()->register_dynamic_template( $this->popup_key( 'styling_appearance' ), $c );
+			
+		}
+		
+		/**
+		 * Creates the modal popup for a single entry
+		 * 
+		 * @since 4.6.4
+		 * @return array
+		 */
+		protected function create_modal()
+		{
+			$elements = array(
+				
+				array(
+						'type' 	=> 'tab_container', 
+						'nodescription' => true
+					),
+						
+				array(
+						'type' 	=> 'tab',
+						'name'  => __( 'Content', 'avia_framework' ),
+						'nodescription' => true
+					),
+				
+					array(	
+							'type'			=> 'template',
+							'template_id'	=> $this->popup_key( 'modal_content_button' )
+						),
+				
+				array(
+						'type' 	=> 'tab_close',
+						'nodescription' => true
+					),
+				
+				array(
+						'type' 	=> 'tab',
+						'name'  => __( 'Styling', 'avia_framework' ),
+						'nodescription' => true
+					),
+				
+					array(
+							'type'			=> 'template',
+							'template_id'	=> 'toggle_container',
+							'templates_include'	=> array(
+													$this->popup_key( 'modal_styling_appearance' ),
+													$this->popup_key( 'modal_styling_colors' )
+												),
+							'nodescription' => true
+						),
+				
+				array(
+						'type' 	=> 'tab_close',
+						'nodescription' => true
+					),
+				
+				array(
+						'type' 	=> 'tab',
+						'name'  => __( 'Advanced', 'avia_framework' ),
+						'nodescription' => true
+					),
+				
+					array(	
+							'type'			=> 'template',
+							'template_id'	=> $this->popup_key( 'modal_advanced_link' )
+						),
+				
+				array(
+						'type' 	=> 'tab_close',
+						'nodescription' => true
+					),
+				
+				array(
+						'type' 	=> 'tab_container_close',
+						'nodescription' => true
+					)
+				
+				
+				);
+			
+			return $elements;
+		}
+		
+		/**
+		 * Register all templates for the modal group popup
+		 * 
+		 * @since 4.6.4
+		 */
+		protected function register_modal_group_templates()
+		{
+			
+			/**
+			 * Content Tab
+			 * ===========
+			 */
+			
+			$c = array(
+						array(	
+							'name' 	=> __( 'Button Label', 'avia_framework' ),
+							'desc' 	=> __( 'This is the text that appears on your button.', 'avia_framework' ),
+							'id' 	=> 'label',
+							'type' 	=> 'input',
+							'std' => __( 'Click me', 'avia_framework' )
+						),
+				
+						array(	
+							'name' 	=> __( 'Button Icon', 'avia_framework' ),
+							'desc' 	=> __( 'Should an icon be displayed at the left side of the button', 'avia_framework' ),
+							'id' 	=> 'icon_select',
+							'type' 	=> 'select',
+							'std' 	=> 'yes',
+							'subtype'	=> array(
+												__( 'No Icon', 'avia_framework' )							=> 'no',
+												__( 'Yes, display Icon to the left', 'avia_framework' )		=> 'yes' ,	
+												__( 'Yes, display Icon to the right', 'avia_framework' )	=> 'yes-right-icon',
+											)
+						),
+				
+						array(	
+							'name' 	=> __( 'Button Icon', 'avia_framework' ),
+							'desc' 	=> __( 'Select an icon for your Button below', 'avia_framework' ),
+							'id' 	=> 'icon',
+							'type' 	=> 'iconfont',
+							'std' 	=> '',
+							'required'	=> array( 'icon_select', 'not_empty_and', 'no' )
+							),
+				
+						array(	
+							'name' 	=> __( 'Icon Visibility', 'avia_framework' ),
+							'desc' 	=> __( 'Check to only display icon on hover', 'avia_framework' ),
+							'id' 	=> 'icon_hover',
+							'type' 	=> 'checkbox',
+							'std' 	=> '',
+							'required'	=> array( 'icon_select', 'not_empty_and', 'no' )
+						),
+				
+				);
+			
+			AviaPopupTemplates()->register_dynamic_template( $this->popup_key( 'modal_content_button' ), $c );
+			
+			/**
+			 * Styling Tab
+			 * ===========
+			 */
+			
+			$c = array(
+						array(	
+							'name' 	=> __( 'Button Size', 'avia_framework' ),
+							'desc' 	=> __( 'Choose the size of your button here', 'avia_framework' ),
+							'id' 	=> 'size',
+							'type' 	=> 'select',
+							'std' 	=> 'small',
+							'subtype'	=> array(
+												__( 'Small', 'avia_framework' )		=> 'small',
+												__( 'Medium', 'avia_framework' )	=> 'medium',
+												__( 'Large', 'avia_framework' )		=> 'large',
+												__( 'X Large', 'avia_framework' )	=> 'x-large',
+											)
+						),
+							
+						array(	
+							'name' 	=> __( 'Button Label display', 'avia_framework' ),
+							'desc' 	=> __( 'Select how to display the label', 'avia_framework' ),
+							'id' 	=> 'label_display',
+							'type' 	=> 'select',
+							'std' 	=> '',
+							'subtype'	=> array(
+												__( 'Always display', 'avia_framework' )	=> '',	
+												__( 'Display on hover', 'avia_framework' )	=> 'av-button-label-on-hover',
+											)
+						),
+					
+						array(	
+							'name'		=> __( 'Button Title Attribute', 'avia_framework' ),
+							'desc'		=> __( 'Add a title attribute for this button.', 'avia_framework' ),
+							'id'		=> 'title_attr',
+							'type'		=> 'input',
+							'required'	=> array( 'label_display', 'equals', '' ),
+							'std'		=> ''
+						)
+				);
+			
+			$template = array(
+							array(	
+								'type'			=> 'template',
+								'template_id'	=> 'toggle',
+								'title'			=> __( 'Appearance', 'avia_framework' ),
+								'content'		=> $c 
+							),
+					);
+			
+			AviaPopupTemplates()->register_dynamic_template( $this->popup_key( 'modal_styling_appearance' ), $template );
+			
+			$c = array(
+						array(	
+							'type'			=> 'template',
+							'template_id'	=> 'named_colors',
+							'custom'		=> true
+						),
+				
+						array(	
+							'name' 	=> __( 'Custom Background Color', 'avia_framework' ),
+							'desc' 	=> __( 'Select a custom background color for your Button here', 'avia_framework' ),
+							'id' 	=> 'custom_bg',
+							'type' 	=> 'colorpicker',
+							'std' 	=> '#444444',
+							'required'	=> array( 'color', 'equals', 'custom' )
+						),	
+						
+						array(	
+							'name' 	=> __( 'Custom Font Color', 'avia_framework' ),
+							'desc' 	=> __( 'Select a custom font color for your Button here', 'avia_framework' ),
+							'id' 	=> 'custom_font',
+							'type' 	=> 'colorpicker',
+							'std' 	=> '#ffffff',
+							'required'	=> array( 'color', 'equals', 'custom' )
+						),	
+				
+				);
+			
+			$template = array(
+							array(	
+								'type'			=> 'template',
+								'template_id'	=> 'toggle',
+								'title'			=> __( 'Colors', 'avia_framework' ),
+								'content'		=> $c 
+							),
+					);
+			
+			AviaPopupTemplates()->register_dynamic_template( $this->popup_key( 'modal_styling_colors' ), $template );
+			
+			/**
+			 * Advanced Tab
+			 * ===========
+			 */
+			
+			$c = array(
+						array(	
+							'type'			=> 'template',
+							'template_id'	=> 'linkpicker_toggle',
+							'name'			=> __( 'Button Link?', 'avia_framework' ),
+							'desc'			=> __( 'Where should your button link to?', 'avia_framework' ),
+							'subtypes'		=> array( 'manually', 'single', 'taxonomy' ),
+							'target_id'		=> 'link_target',
+							'no_toggle'		=> true
+						),
+				
+				);
+			
+			AviaPopupTemplates()->register_dynamic_template( $this->popup_key( 'modal_advanced_link' ), $c );
+			
+		}
+				
 
         /**
          * Editor Sub Element - this function defines the visual appearance of an element that is displayed within a modal window and on click opens its own modal window
@@ -385,18 +536,26 @@ if ( ! class_exists( 'avia_sc_buttonrow' ) )
          * @param array $params this array holds the default values for $content and $args.
          * @return $params the return array usually holds an innerHtml key that holds item specific markup.
          */
-        public function editor_sub_element($params)
+        public function editor_sub_element( $params )
         {
-            $template = $this->update_template("label", __("Button", 'avia_framework') . ": {{label}}");
+			/**
+			 * Fix a bug in 4.7 and 4.7.1 renaming option id (no longer backwards comp.) - can be removed in a future version again
+			 */
+			if( isset( $params['args']['linktarget'] ) )
+			{
+				$params['args']['link_target'] = $params['args']['linktarget'];
+			}
+			
+            $template = $this->update_template( 'label', __( 'Button', 'avia_framework' ) . ': {{label}}' );
 
-            extract(av_backend_icon($params)); // creates $font and $display_char if the icon was passed as param "icon" and the font as "font"
+            extract( av_backend_icon( $params ) ); // creates $font and $display_char if the icon was passed as param 'icon' and the font as 'font'
 
-            $params['innerHtml'] = "";
+            $params['innerHtml'] = '';
             $params['innerHtml'] .= "<div class='avia_title_container'>";
-            $params['innerHtml'] .= "<span " . $this->class_by_arguments('font', $font) . ">";
-            $params['innerHtml'] .= "<span data-update_with='icon_fakeArg' class='avia_tab_icon'>" . $display_char . "</span>";
-            $params['innerHtml'] .= "</span>";
-            $params['innerHtml'] .= "<span {$template} >" . __("Button", 'avia_framework') . ": " . $params['args']['label'] . "</span></div>";
+            $params['innerHtml'] .=		'<span ' . $this->class_by_arguments( 'font', $font ) . '>';
+            $params['innerHtml'] .=			"<span data-update_with='icon_fakeArg' class='avia_tab_icon'>{$display_char}</span>";
+            $params['innerHtml'] .=		'</span>';
+            $params['innerHtml'] .= "<span {$template} >" . __( 'Button', 'avia_framework' ) . ": {$params['args']['label']}</span></div>";
 
             return $params;
 
@@ -426,7 +585,7 @@ if ( ! class_exists( 'avia_sc_buttonrow' ) )
          * @param string $shortcodename the shortcode found, when == callback name
          * @return string $output returns the modified html string
          */
-        public function shortcode_handler( $atts, $content = "", $shortcodename = "", $meta = "" )
+        public function shortcode_handler( $atts, $content = '', $shortcodename = '', $meta = '' )
         {
 	        
             $this->screen_options = AviaHelper::av_mobile_sizes( $atts );
@@ -435,7 +594,7 @@ if ( ! class_exists( 'avia_sc_buttonrow' ) )
             $this->spacing = '';
             $this->spacing_unit = '';
 
-            extract($this->screen_options); //return $av_font_classes, $av_title_font_classes and $av_display_classes
+            extract( $this->screen_options );	//return $av_font_classes, $av_title_font_classes and $av_display_classes
 
             extract( shortcode_atts( array(
 							'alignment'			=> 'center',
@@ -444,7 +603,7 @@ if ( ! class_exists( 'avia_sc_buttonrow' ) )
 						), $atts, $this->config['shortcode'] ) );
 
             $this->alignment = $alignment;
-            $this->spacing = $button_spacing;
+            $this->spacing = is_numeric( $button_spacing ) && $button_spacing > 0 ? $button_spacing : '';
             $this->spacing_unit = $button_spacing_unit;
 
             $output = '';
@@ -455,7 +614,15 @@ if ( ! class_exists( 'avia_sc_buttonrow' ) )
             return $output;
         }
 
-        function av_buttonrow_item( $atts, $content = "", $shortcodename = "" )
+		/**
+		 * Shortcode handler
+		 * 
+		 * @param array $atts
+		 * @param string $content
+		 * @param string $shortcodename
+		 * @return string
+		 */
+        function av_buttonrow_item( $atts, $content = '', $shortcodename = '' )
         {
 			/**
 			 * Fixes a problem when 3-rd party plugins call nested shortcodes without executing main shortcode  (like YOAST in wpseo-filter-shortcodes)
@@ -465,8 +632,16 @@ if ( ! class_exists( 'avia_sc_buttonrow' ) )
 				return '';
 			}
 			
-            extract($this->screen_options); //return $av_font_classes, $av_title_font_classes and $av_display_classes
-
+			/**
+			 * Fix a bug in 4.7 and 4.7.1 renaming option id (no longer backwards comp.) - can be removed in a future version again
+			 */
+			if( isset( $atts['linktarget'] ) )
+			{
+				$atts['link_target'] = $atts['linktarget'];
+			}
+			
+            extract( $this->screen_options ); //return $av_font_classes, $av_title_font_classes and $av_display_classes
+			
             $atts = shortcode_atts( array(
 										'label'			=> 'Click me',
 										'link'			=> '',
@@ -484,70 +659,88 @@ if ( ! class_exists( 'avia_sc_buttonrow' ) )
 										'title_attr'	=> ''
 									), $atts, 'av_buttonrow_item' );
 
-            $display_char = av_icon($atts['icon'], $atts['font']);
-            $extraClass = $atts['icon_hover'] ? "av-icon-on-hover" : "";
+            $display_char = av_icon( $atts['icon'], $atts['font'] );
+            $extraClass = $atts['icon_hover'] ? 'av-icon-on-hover' : '';
             $spacing = $this->spacing;
             $spacing_unit = $this->spacing_unit;
 
-            if ($atts['icon_select'] == "yes") $atts['icon_select'] = "yes-left-icon";
+            if( $atts['icon_select'] == 'yes' ) 
+			{
+				$atts['icon_select'] = 'yes-left-icon';
+			}
 
-            $style = "";
-            if ($atts['color'] == "custom") {
-                $style .= AviaHelper::style_string($atts, 'custom_bg', 'background-color');
-                $style .= AviaHelper::style_string($atts, 'custom_bg', 'border-color');
-                $style .= AviaHelper::style_string($atts, 'custom_font', 'color');
+            $style = '';
+            if( $atts['color'] == 'custom' ) 
+			{
+                $style .= AviaHelper::style_string( $atts, 'custom_bg', 'background-color' );
+                $style .= AviaHelper::style_string( $atts, 'custom_bg', 'border-color' );
+                $style .= AviaHelper::style_string( $atts, 'custom_font', 'color' );
             }
 
-            if ($spacing) {
-
+            if( ! empty( $spacing ) )
+			{
                 $atts['margin-bottom'] = $spacing . $spacing_unit;
                 $atts['margin-left'] = $spacing . $spacing_unit;
                 $atts['margin-right'] = $spacing . $spacing_unit;
 
-                $style .= AviaHelper::style_string($atts, 'margin-bottom');
+                $style .= AviaHelper::style_string( $atts, 'margin-bottom' );
 
-                if ($this->alignment == "left") {
-                    $style .= AviaHelper::style_string($atts, 'margin-right','margin-right',"");
+                if( $this->alignment == 'left' ) 
+				{
+                    $style .= AviaHelper::style_string( $atts, 'margin-right', 'margin-right', '' );
                 }
 
-                if ($this->alignment == "right") {
-                    $style .= AviaHelper::style_string($atts, 'margin-left');
+                if( $this->alignment == 'right' ) 
+				{
+                    $style .= AviaHelper::style_string( $atts, 'margin-left' );
                 }
 
-                if ($this->alignment == "center") {
-                    $spacingval = round($spacing / 2);
+                if( $this->alignment == 'center' ) 
+				{
+                    $spacingval = round( $spacing / 2 );
                     $atts['margin-left'] = $spacingval;
                     $atts['margin-right'] = $spacingval;
-                    $style .= AviaHelper::style_string($atts, 'margin-left', 'margin-left',$spacing_unit);
-                    $style .= AviaHelper::style_string($atts, 'margin-right', 'margin-right', $spacing_unit);
+                    $style .= AviaHelper::style_string( $atts, 'margin-left', 'margin-left',$spacing_unit );
+                    $style .= AviaHelper::style_string( $atts, 'margin-right', 'margin-right', $spacing_unit );
 
                 }
             }
 
-            $style  = AviaHelper::style_string($style);
+            $style  = AviaHelper::style_string( $style );
 
-            $blank = strpos($atts['link_target'], '_blank') !== false ? ' target="_blank" ' : "";
-            $blank .= strpos($atts['link_target'], 'nofollow') !== false ? ' rel="nofollow" ' : "";
+            $blank = strpos( $atts['link_target'], '_blank' ) !== false ? ' target="_blank" ' : '';
+            $blank .= strpos( $atts['link_target'], 'nofollow' ) !== false ? ' rel="nofollow" ' : '';
 
-            $link = AviaHelper::get_url($atts['link']);
-            $link = (($link == "http://") || ($link == "manually")) ? "" : $link;
+            $link = trim( AviaHelper::get_url( $atts['link'] ) );
+            $link = ( in_array( $link, array( 'http://', 'https://', 'manually' ) ) ) ? '' : $link;
 			
 			$title_attr = ! empty( $atts['title_attr'] ) && empty( $atts['label_display'] ) ? 'title="' . esc_attr( $atts['title_attr'] ) . '"' : '';
 			
-			$data = "";
-			if(!empty($atts['label_display']) && $atts['label_display'] == "av-button-label-on-hover") 
+			$data = '';
+			if( ! empty( $atts['label_display'] ) && $atts['label_display'] == 'av-button-label-on-hover' ) 
 			{
-				$extraClass .= " av-button-label-on-hover ";
-				$data = "data-avia-tooltip='".htmlspecialchars($atts['label'])."'";
-				$atts['label'] = "";
+				$extraClass .= ' av-button-label-on-hover ';
+				$data = 'data-avia-tooltip="' . htmlspecialchars( $atts['label'] ) . '"';
+				$atts['label'] = '';
 			}
 			
-			if(empty($atts['label'])) $extraClass .= " av-button-notext ";	
+			if( empty( $atts['label'] ) ) 
+			{
+				$extraClass .= ' av-button-notext ';	
+			}
 					
             $content_html = '';
-            if ('yes-left-icon' == $atts['icon_select']) $content_html .= "<span class='avia_button_icon avia_button_icon_left ' {$display_char}></span>";
+            if( 'yes-left-icon' == $atts['icon_select'] ) 
+			{
+				$content_html .= "<span class='avia_button_icon avia_button_icon_left ' {$display_char}></span>";
+			}
+			
             $content_html .= "<span class='avia_iconbox_title' >" . $atts['label'] . "</span>";
-            if ('yes-right-icon' == $atts['icon_select']) $content_html .= "<span class='avia_button_icon avia_button_icon_right' {$display_char}></span>";
+			
+            if( 'yes-right-icon' == $atts['icon_select'] ) 
+			{
+				$content_html .= "<span class='avia_button_icon avia_button_icon_right' {$display_char}></span>";
+			}
 
             $output = '';
             $output .=	"<a href='{$link}' {$data} class='avia-button {$extraClass} " . $this->class_by_arguments('icon_select, color, size', $atts, true) . "' {$blank} {$style} {$title_attr}>";

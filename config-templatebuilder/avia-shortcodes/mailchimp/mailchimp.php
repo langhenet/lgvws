@@ -11,356 +11,625 @@ if ( ! class_exists( 'avia_sc_mailchimp' ) )
 {
 	class avia_sc_mailchimp extends aviaShortcodeTemplate
 	{
-			
-			//mailchimp api key
-			var $api_key = '';
-			
-			// form fields
-			var $fields;
-			
-			/**
-			 * Create the config array for the shortcode button
-			 */
-			function shortcode_insert_button()
-			{
-				$this->api_key = avia_get_option( 'mailchimp_api' );
-				
-				$this->config['self_closing']	=	'no';
-				
-				$this->config['name']		= __( 'Mailchimp Signup', 'avia_framework' );
-				$this->config['tab']		= __( 'Content Elements', 'avia_framework' );
-				$this->config['icon']		= AviaBuilder::$path['imagesURL']."sc-contact.png";
-				$this->config['order']		= 10;
-				$this->config['target']		= 'avia-target-insert';
-				$this->config['shortcode'] 	= 'av_mailchimp';
-				$this->config['shortcode_nested'] = array('av_mailchimp_field');
-				$this->config['tooltip'] 	= __( 'Creates a mailschimp signup form', 'avia_framework' );
-				$this->config['preview'] 	= false;
-				$this->config['disabling_allowed'] = true;
-				$this->config['id_name']	= 'id';
-				$this->config['id_show']	= 'yes';
-			}
-			
-			function extra_assets()
-			{
-				//load css
-				wp_enqueue_style( 'avia-module-contact' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/contact/contact.css' , array('avia-layout'), false );
-				
-					//load js
-				wp_enqueue_script( 'avia-module-contact' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/contact/contact.js' , array('avia-shortcodes'), false, true );
-			
-			}
+		
+		/**
+		 * Mailchimp api key
+		 * 
+		 * @var string 
+		 */
+		protected $api_key = '';
 
-			/**
-			 * Popup Elements
-			 *
-			 * If this function is defined in a child class the element automatically gets an edit button, that, when pressed
-			 * opens a modal window that allows to edit the element properties
-			 *
-			 * @return void
-			 */
-			function popup_elements()
-			{
-				$api = false;
-				$owner = "";
-				$lists = array();
+		
+		/**
+		 * Form fields
+		 * 
+		 * @var array 
+		 */
+		protected $fields;
+		
+		/**
+		 *
+		 * @since 4.6.4
+		 * @var av_mailchimp_api|false
+		 */
+		protected $api;
+		
+		/**
+		 *
+		 * @since 4.6.4
+		 * @var array 
+		 */
+		protected $lists;
+		
+		/**
+		 *
+		 * @since 4.6.4
+		 * @var string 
+		 */
+		protected $owner;
+
+
+		/**
+		 * 
+		 * @since 4.6.4
+		 * @param AviaBuilder $builder
+		 */
+		public function __construct( $builder ) 
+		{
+			$this->fields = array();
+			$this->lists = array();
+			$this->api = false;
+			$this->owner = '';
 				
-				//load the api only when the popup gets opened
-				if(!empty($_POST) && !empty($_POST['action']) && $_POST['action'] == "avia_ajax_av_mailchimp")
+			parent::__construct( $builder );
+		}
+		
+		/**
+		 * @since 4.6.4
+		 */
+		public function __destruct() 
+		{
+			parent::__destruct();
+			
+			unset( $this->fields );
+			unset( $this->lists );
+			unset( $this->api );
+		}
+
+		/**
+		 * Create the config array for the shortcode button
+		 */
+		function shortcode_insert_button()
+		{
+			$this->api_key = avia_get_option( 'mailchimp_api' );
+
+			$this->config['version']		= '1.0';
+			$this->config['self_closing']	= 'no';
+
+			$this->config['name']		= __( 'Mailchimp Signup', 'avia_framework' );
+			$this->config['tab']		= __( 'Content Elements', 'avia_framework' );
+			$this->config['icon']		= AviaBuilder::$path['imagesURL'] . 'sc-contact.png';
+			$this->config['order']		= 10;
+			$this->config['target']		= 'avia-target-insert';
+			$this->config['shortcode'] 	= 'av_mailchimp';
+			$this->config['shortcode_nested'] = array('av_mailchimp_field');
+			$this->config['tooltip'] 	= __( 'Creates a mailschimp signup form', 'avia_framework' );
+			$this->config['preview'] 	= false;
+			$this->config['disabling_allowed'] = true;
+			$this->config['id_name']	= 'id';
+			$this->config['id_show']	= 'yes';
+			$this->config['alb_desc_id']	= 'alb_description';
+		}
+
+		function extra_assets()
+		{
+			//load css
+			wp_enqueue_style( 'avia-module-contact', AviaBuilder::$path['pluginUrlRoot'] . 'avia-shortcodes/contact/contact.css', array( 'avia-layout' ), false );
+
+				//load js
+			wp_enqueue_script( 'avia-module-contact', AviaBuilder::$path['pluginUrlRoot'] . 'avia-shortcodes/contact/contact.js', array( 'avia-shortcodes' ), false, true );
+
+		}
+
+		/**
+		 * Popup Elements
+		 *
+		 * If this function is defined in a child class the element automatically gets an edit button, that, when pressed
+		 * opens a modal window that allows to edit the element properties
+		 *
+		 * @return void
+		 */
+		function popup_elements()
+		{
+			
+			// Check the api only when the popup gets opened
+			if( ! empty( $_POST ) && ! empty( $_POST['action'] ) && $_POST['action'] == 'avia_ajax_av_mailchimp' )
+			{
+				
+				if( empty( $this->api_key ) || empty( $this->owner ) )
 				{
+					$desc  = __( 'Please enter a valid Mailchimp API key, otherwise we will not be able to retrieve the lists that your visitors may subscribe to.', 'avia_framework' );
+					$desc .= '<br/><br/>';
+					$desc .= '<a target="_blank" href="' . admin_url( 'admin.php?page=avia#goto_newsletter' ) . '">' . __( 'You can enter your API key here', 'avia_framework' ) . '</a>';
+
+					$name = empty( $this->owner ) ? __( 'Mailchimp API key not valid', 'avia_framework' ) : __( 'No Mailchimp API key found', 'avia_framework' );
 					
-					$api   = new av_mailchimp_api( $this->api_key );
-					$owner = $api->api_owner();
-					
-					if(empty( $this->api_key ) || !$owner)
-					{
-						$this->elements = array(
-							array(
-								"name" 	=> __("No Mailchimp API key found",'avia_framework' ),
-								"desc" 	=> __("Please enter a valid Mailchimp API key, otherwise we will not be able to retrieve the lists that your visitors may subscribe to.", 'avia_framework' ).
-								'<br/><br/><a target="_blank" href="'.admin_url('admin.php?page=avia#goto_newsletter').'">'.__("You can enter your API key here",'avia_framework' )."</a>",
-								"type" 	=> "heading",
-								"description_class" => "av-builder-note av-error",
+					$this->elements = array(
+						
+								array(
+									'name' 	=> $name,
+									'desc' 	=> $desc,					
+									'type' 	=> 'heading',
+									'description_class'	=> 'av-builder-note av-error',
 								)
-							);
-							
-						return;
-					}
-					
-					$api->store_lists();
-					$lists = $api->get_list_ids();
-					
-					if(!empty( $this->api_key ) && ( empty( $lists ) || !is_array($lists) ))
-					{
-						$this->elements = array(
-							array(
-								"name" 	=> __("No Mailchimp Lists found",'avia_framework' ),
-								"desc" 	=> __("We could not find any lists that your customers can subscribe to. Please check if the API key you have entered in your Enfold Theme Panel is valid and also check if you have at least one list created on mailchimp", 'avia_framework' ).
-								'<br/><br/><a target="_blank" href="'.admin_url('admin.php?page=avia#goto_newsletter').'">'.__("Check API key here",'avia_framework' ).'</a> | <a target="_blank" href="https://login.mailchimp.com/">'.__("Go to Mailchimp",'avia_framework' )."</a>",
-								"type" 	=> "heading",
-								"description_class" => "av-builder-note av-error",
-								)
-							);
-							
-						return;
-					}
-				
-					$newlist = array();
-					foreach($lists as $key => $list_item)
-					{
-						$newlist[$list_item['name']] = $key;
-					}
-	
-					$lists = $newlist;
-					$first = array(__("Select a mailchimp list...","avia_framework") => '' );
-					
-					$lists = array_merge($first, $lists);
-				
+						);
+
+					return;
 				}
-				
-				
-				
-				//default elements that gets loaded if 
-				$this->elements = apply_filters( 'avf_sc_mailchimp_popup_elements',  array(
-						
-						array(
-								"type" 	=> "tab_container", 'nodescription' => true
-							),
+
+				if( ! empty( $this->api_key ) && ( empty( $this->lists ) || ! is_array( $this->lists ) ) )
+				{
+					$desc  = __( 'We could not find any lists that your customers can subscribe to. Please check if the API key you have entered in your Enfold Theme Panel is valid and also check if you have at least one list created on mailchimp', 'avia_framework' );
+					$desc .= '<br/><br/>';
+					$desc .= '<a target="_blank" href="' . admin_url( 'admin.php?page=avia#goto_newsletter' ) . '">' . __( 'Check API key here', 'avia_framework' ) . '</a> | ';
+					$desc .= '<a target="_blank" href="https://login.mailchimp.com/">' . __( 'Go to Mailchimp', 'avia_framework' ) . '</a>';
+
 							
-						array(
-								"type" 	=> "tab",
-								"name"  => __("Form" , 'avia_framework'),
-								'nodescription' => true
-							),
 							
-						array(
-							"name" 	=> __("Mailchimp active",'avia_framework' ),
-							"desc" 	=> __("This installation is connected to the Mailchimp account: ", 'avia_framework' )."'".$owner."'<br/><br/>".
-									   "<strong>".__("Please note:", 'avia_framework' )."</strong> ".
-									   __("This element currently only supports basic list subscription with basic form fields (text and dropdowns). Please let us know if you would like to see more advanced features.", 'avia_framework' ),
-							"type" 	=> "heading",
-							"description_class" => "av-builder-note av-notice",
-							),
+					$this->elements = array(
 						
+								array(
+									'name' 	=> __( 'No Mailchimp Lists found', 'avia_framework' ),
+									'desc' 	=> $desc,					
+									'type' 	=> 'heading',
+									'description_class'	=> 'av-builder-note av-error',
+								)
+						);
+
+					return;
+				}
+
+			}
+				
+			
+			// default elements that gets loaded if 
+			$this->elements = apply_filters( 'avf_sc_mailchimp_popup_elements',  array(
 						
-						array(
-	                    "name" 	=> __("Lists", 'avia_framework' ),
-	                    "desc" 	=> __("Select the list that the user should be added to. The form will be build automatically based on the list that you have set up in mailchimp.", 'avia_framework' ),
-	                    "id" 	=> "list",
-	                    "type" 	=> "mailchimp_list",
-	                    "std"	=> "",
-	                    "subtype" 	=> $lists,
-	                    "api" 		=> $api,
-	                    "std" 	=> ""),
-	                    
-	                    array(
-							"name" => __("Edit Contact Form Elements", 'avia_framework' ),
-						"desc" => __("Once you have selected a list above the available form fields will be displayed here", 'avia_framework' )."<br/>".
-								  "<br/><strong>".__("Please note:", 'avia_framework' )."</strong>".
-								  "<ul>".
-								  "<li>".__("You can only hide form fields that are not required", 'avia_framework' )."</li>".
-								  "<li>".__("Currently only text and dropdown elements are supported properly", 'avia_framework' )."</li>".
-								  "</ul>",
-								  
-
-							"type" 			=> "modal_group",
-							"id" 			=> "content",
-							"modal_title" 	=> __("Edit Form Element", 'avia_framework' ),
-							"disable_manual"=> true,
-							"class"			=> "av-automated-inserts",
-							"std"			=> array(),
-
-							'subelements' 	=> array(
-									
-									array( 
-				                    "id"    => 'id',
-				                    "std"   => '',
-				                    "type"  => "hidden"),
-									
-									array( 
-				                    "id"    => 'type',
-				                    "std"   => '',
-				                    "type"  => "hidden"),
-									
-									array( 
-				                    "id"    => 'check',
-				                    "std"   => '',
-				                    "type"  => "hidden"),
-				                    
-				                    array( 
-				                    "id"    => 'options',
-				                    "std"   => '',
-				                    "type"  => "hidden"),
-									
-									array(
-			                        "name" 	=> __("Form Element hidden", 'avia_framework' ),
-			                        "desc" 	=> __("Check if you want to hide this form element", 'avia_framework' ),
-			                        "id" 	=> "disabled",
-			                        "type" 	=> "checkbox",
-			                        "std"	=> "",
-									"required" => array('check','equals',''),
-				                     ),
-				                     
-									array(
-									"name" 	=> __("Form Element Label", 'avia_framework' ),
-									"desc" 	=> "",
-									"id" 	=> "label",
-									"std" 	=> "",
-									"type" 	=> "input"),									
-
-									 array(
-									"name" 	=> __("Form Element Width", 'avia_framework' ),
-									"desc" 	=> __("Change the width of your elements and let them appear beside each other instead of underneath", 'avia_framework' ) ,
-									"id" 	=> "width",
-									"type" 	=> "select",
-									"std" 	=> "",
-									"no_first"=>true,
-									"subtype" => array(	"Fullwidth" =>'', "1/2" =>'element_half', "1/3" =>'element_third' , "2/3" =>'element_two_third', "1/4" => 'element_fourth', "3/4" => 'element_three_fourth')),
-
-						)
+				array(
+						'type' 	=> 'tab_container', 
+						'nodescription' => true
 					),
-	                    
 						
-						array(	
-							"name" 	=> __("Double opt-in?", 'avia_framework' ),
-							"desc" 	=> __("Check if you want people to confirm their email address before being subscribed (highly recommended)", 'avia_framework' ) ,
-							"id" 	=> "double_opt_in",
-							"std" 	=> "true",
-							"type" 	=> "checkbox"),
-							
-							
-						array(
-						"name" 	=> __("What should happen once the form gets sent?", 'avia_framework' ),
-						"desc" 	=> "",
-						"id" 	=> "on_send",
-						"type" 	=> "select",
-						"std" 	=> "text",
-						"no_first"=>true,
-						"subtype" => array(	__('Display a short message on the same page', 'avia_framework' ) =>'',
-											__('Redirect the user to another page', 'avia_framework' ) =>'redirect',
-											)),
-						
-
-						array(
-						"name" 	=> __("Message Sent label", 'avia_framework' ),
-						"desc" 	=> __("What should be displayed once the message is sent?", 'avia_framework' ),
-						"id" 	=> "sent",
-						"required" => array('on_send','not','redirect'),
-						"std" 	=> __("Thank you for subscribing to our newsletter!", 'avia_framework' ),
-						"type" 	=> "input"),
-						
-						
-						array(
-	                    "name" 	=> __("Redirect", 'avia_framework' ),
-	                    "desc" 	=> __("To which page do you want the user send to?", 'avia_framework' ),
-	                    "id" 	=> "link",
-	                    "type" 	=> "linkpicker",
-	                    "fetchTMPL"	=> true,
-	                    "std"	=> "",
-						"required" => array('on_send','equals','redirect'),
-	                    "subtype" => array(
-	                        __('Set Manually', 'avia_framework' ) =>'manually',
-	                        __('Single Entry', 'avia_framework' ) =>'single'
-	                    ),
-	                    "std" 	=> ""),
-	                    
-	                    
-	                    
-						
-						array(
-							"type" 	=> "close_div",
-							'nodescription' => true
-						),
-					
-					array(
-							"type" 	=> "tab",
-							"name"	=> __("Form Styling",'avia_framework' ),
-							'nodescription' => true
-						),
-					
-					
-					array(
-							"name" 	=> __("Form Color Scheme", 'avia_framework' ),
-							"desc" 	=> __("Select a form color scheme here", 'avia_framework' ),
-							"id" 	=> "color",
-							"type" 	=> "select",
-							"std" 	=> "",
-							"subtype" => array( __('Default', 'avia_framework' )=>'',
-												__('Light transparent', 'avia_framework' )=>'av-custom-form-color av-light-form',
-												__('Dark transparent', 'avia_framework' ) =>'av-custom-form-color av-dark-form'),
+				array(
+						'type' 	=> 'tab',
+						'name'  => __( 'Content', 'avia_framework' ),
+						'nodescription' => true
 					),
-					
-					array(	
-							"name" 	=> __("Hide Form Labels", 'avia_framework' ),
-							"desc" 	=> __("Check if you want to hide form labels above the form elements. The form will instead try to use an inline label (not supported on old browsers)", 'avia_framework' ) ,
-							"id" 	=> "hide_labels",
-							"std" 	=> "",
-							"type" 	=> "checkbox"),
-					
-							
+				
 					array(
-							"type" 	=> "close_div",
-							'nodescription' => true
-						),
-					
-					array(	
 							'type'			=> 'template',
-							'template_id'	=> 'screen_options_tab'
-						),
-					
-					array(
-							"type" 	=> "close_div",
+							'template_id'	=> $this->popup_key( 'content_general' ),
 							'nodescription' => true
 						),
+				
+				array(
+						'type' 	=> 'tab_close',
+						'nodescription' => true
+					),
+				
+				array(
+						'type' 	=> 'tab',
+						'name'  => __( 'Styling', 'avia_framework' ),
+						'nodescription' => true
+					),
+				
+					array(
+							'type'			=> 'template',
+							'template_id'	=> $this->popup_key( 'styling_general' ),
+							'nodescription' => true
+						),
+				
+				array(
+						'type' 	=> 'tab_close',
+						'nodescription' => true
+					),
+				
+				array(
+						'type' 	=> 'tab',
+						'name'  => __( 'Advanced', 'avia_framework' ),
+						'nodescription' => true
+					),
+				
+					array(
+							'type' 	=> 'toggle_container',
+							'nodescription' => true
+						),
+				
+						array(	
+								'type'			=> 'template',
+								'template_id'	=> 'screen_options_toggle'
+							),
 
+						array(	
+								'type'			=> 'template',
+								'template_id'	=> 'developer_options_toggle',
+								'args'			=> array( 'sc' => $this )
+							),
+				
+					array(
+							'type' 	=> 'toggle_container_close',
+							'nodescription' => true
+						),
+				
+				array(
+						'type' 	=> 'tab_close',
+						'nodescription' => true
+					),
+
+				array(
+						'type' 	=> 'tab_container_close',
+						'nodescription' => true
+					)
+									
 
 				));
 				
-			}
+		}
+		
+		/**
+		 * Create and register templates for easier maintainance
+		 * 
+		 * @since 4.6.4
+		 */
+		protected function register_dynamic_templates()
+		{
+			$api = false;
+			$owner = '';
+			$lists = array();
 
-			/**
-			 * Editor Sub Element - this function defines the visual appearance of an element that is displayed within a modal window and on click opens its own modal window
-			 * Works in the same way as Editor Element
-			 * @param array $params this array holds the default values for $content and $args.
-			 * @return $params the return array usually holds an innerHtml key that holds item specific markup.
-			 */
-			function editor_sub_element($params)
+			//load the api only when the popup gets opened
+			if( ! empty( $_POST ) && ! empty( $_POST['action'] ) && $_POST['action'] == 'avia_ajax_av_mailchimp' )
 			{
-				$template = $this->update_template("label", "<span class='av-mailchimp-el-label'>".__("Element", 'avia_framework' ). "</span><span class='av-mailchimp-btn-label'>".__("Button", 'avia_framework' ). "</span>: {{label}}");
+				if( ! empty( $this->api_key ) )
+				{
+					$api   = new av_mailchimp_api( $this->api_key );
+					$owner = $api->api_owner();
+					
+					if( ! empty( $owner ) )
+					{
+						$api->store_lists();
+						$lists = $api->get_list_ids();
+						
+						if( empty( $lists ) || ! is_array( $lists ) )
+						{
+							$lists = array();
+						}
+						
+						$newlist = array();
+						foreach( $lists as $key => $list_item )
+						{
+							$newlist[ $list_item['name'] ] = $key;
+						}
+						
+						if( ! empty( $lists ) )
+						{
+							$first = array( __( 'Select a mailchimp list...', 'avia_framework' ) => '' );
 
-				$params['innerHtml']  = "";
-				$params['innerHtml'] .= "<div class='avia_title_container'>";
-				$params['innerHtml'] .=	"<div ".$this->class_by_arguments('check' ,$params['args']).">";
-				$params['innerHtml'] .=	"<div ".$this->class_by_arguments('id' ,$params['args']).">";
-				$params['innerHtml'] .=	"<div ".$this->class_by_arguments('disabled' ,$params['args']).">";
-				$params['innerHtml'] .= "<span {$template} ><span class='av-mailchimp-el-label'>".__("Element", 'avia_framework' ). "</span><span class='av-mailchimp-btn-label'>".__("Button", 'avia_framework' ). "</span>: ".$params['args']['label']."</span>";
-				$params['innerHtml'] .= "<span class='av-required-indicator'> *</span>";
-				$params['innerHtml'] .= "</div>";
-				$params['innerHtml'] .= "</div>";
-				$params['innerHtml'] .= "</div>";
-				$params['innerHtml'] .= "</div>";
-
-				return $params;
+							$lists = array_merge( $first, $newlist );
+						}
+					}
+				}
+				
 			}
-
-
-
+				
+			$this->lists = $lists;
+			$this->api = $api;
+			$this->owner = $owner;
+			
+			
+			$this->register_modal_group_templates();
+			
 			/**
-			 * Frontend Shortcode Handler
-			 *
-			 * @param array $atts array of attributes
-			 * @param string $content text within enclosing form of shortcode element
-			 * @param string $shortcodename the shortcode found, when == callback name
-			 * @return string $output returns the modified html string
+			 * Content Tab
+			 * ===========
 			 */
-			function shortcode_handler( $atts, $content = "", $shortcodename = "", $meta = "" )
-			{
+			
+			
+			$desc  = __( 'This installation is connected to the Mailchimp account: ', 'avia_framework' ) . '&quot;' . $this->owner . '&quot;<br/><br/>';
+			$desc .= '<strong>' . __( 'Please note:', 'avia_framework' ) . '</strong> ';
+			$desc .= __( 'This element currently only supports basic list subscription with basic form fields (text and dropdowns). Please let us know if you would like to see more advanced features.', 'avia_framework' );
+
+			$desc1  = __('Once you have selected a list above the available form fields will be displayed here', 'avia_framework' ) . '<br/><br/>';
+			$desc1 .= '<strong>' . __( 'Please note:', 'avia_framework' ) . '</strong>';
+			$desc1 .= '<ul>';
+			$desc1 .=	'<li>' . __( 'You can only hide form fields that are not required', 'avia_framework' ) . '</li>';
+			$desc1 .=	'<li>' . __( 'Currently only text and dropdown elements are supported properly', 'avia_framework' ) . '</li>';
+			$desc1 .= '</ul>';
+			
+			$c = array(
+						array(
+							'name' 	=> __( 'Mailchimp active', 'avia_framework' ),
+							'desc' 	=> $desc,						
+							'type' 	=> 'heading',
+							'description_class' => 'av-builder-note av-notice',
+						),
+						
+						array(
+							'name' 	=> __( 'Lists', 'avia_framework' ),
+							'desc' 	=> __( 'Select the list that the user should be added to. The form will be build automatically based on the list that you have set up in mailchimp.', 'avia_framework' ),
+							'id' 	=> 'list',
+							'type' 	=> 'mailchimp_list',
+							'std'	=> '',
+							'api'	=> $this->api,
+							'subtype'	=> $this->lists,
+						),
+				
+						array(
+							'name'			=> __( 'Edit Contact Form Elements', 'avia_framework' ),
+							'desc'			=> $desc1,
+							'type'			=> 'modal_group',
+							'id'			=> 'content',
+							'modal_title'	=> __( 'Edit Form Element', 'avia_framework' ),
+							'disable_manual' => true,
+							'class'			=> 'av-automated-inserts',
+							'std'			=> array(),
+							'subelements'	=> $this->create_modal()
+						),
+				
+						array(	
+							'name' 	=> __( 'Double opt-in?', 'avia_framework' ),
+							'desc' 	=> __( 'Check if you want people to confirm their email address before being subscribed (highly recommended)', 'avia_framework' ),
+							'id' 	=> 'double_opt_in',
+							'std' 	=> 'true',
+							'type' 	=> 'checkbox'
+						),
+
+						array(
+							'name' 	=> __( 'What should happen once the form gets sent?', 'avia_framework' ),
+							'desc' 	=> '',
+							'id' 	=> 'on_send',
+							'type' 	=> 'select',
+							'std' 	=> 'text',
+							'no_first'	=> true,
+							'subtype'	=> array(	
+												__( 'Display a short message on the same page', 'avia_framework' )	=> '',
+												__( 'Redirect the user to another page', 'avia_framework' )			=> 'redirect',
+											)
+						),
+
+						array(
+							'name' 	=> __( 'Message Sent label', 'avia_framework' ),
+							'desc' 	=> __( 'What should be displayed once the message is sent?', 'avia_framework' ),
+							'id' 	=> 'sent',
+							'std' 	=> __( 'Thank you for subscribing to our newsletter!', 'avia_framework' ),
+							'type' 	=> 'input',
+							'required'	=> array( 'on_send', 'not', 'redirect' ),
+						),
+
+						array(
+							'name' 	=> __( 'Redirect', 'avia_framework' ),
+							'desc' 	=> __( 'To which page do you want the user send to?', 'avia_framework' ),
+							'id' 	=> 'link',
+							'type' 	=> 'linkpicker',
+							'std'	=> '',
+							'fetchTMPL'	=> true,
+							'required'	=> array( 'on_send', 'equals','redirect' ),
+							'subtype'	=> array(
+												__( 'Set Manually', 'avia_framework' )	=> 'manually',
+												__( 'Single Entry', 'avia_framework' )	=> 'single'
+											),
+						)
+				);
+				
+			AviaPopupTemplates()->register_dynamic_template( $this->popup_key( 'content_general' ), $c );
+			
+			
+			/**
+			 * Styling Tab
+			 * ===========
+			 */
+			
+			$c = array(
+						array(
+							'name' 	=> __( 'Form Color Scheme', 'avia_framework' ),
+							'desc' 	=> __( 'Select a form color scheme here', 'avia_framework' ),
+							'id' 	=> 'color',
+							'type' 	=> 'select',
+							'std' 	=> '',
+							'subtype'	=> array( 
+												__( 'Default', 'avia_framework' )			=> '',
+												__( 'Light transparent', 'avia_framework' )	=> 'av-custom-form-color av-light-form',
+												__( 'Dark transparent', 'avia_framework' )	=> 'av-custom-form-color av-dark-form'
+											),
+						),
+					
+						array(	
+							'name' 	=> __('Hide Form Labels', 'avia_framework' ),
+							'desc' 	=> __('Check if you want to hide form labels above the form elements. The form will instead try to use an inline label (not supported on old browsers)', 'avia_framework' ) ,
+							'id' 	=> 'hide_labels',
+							'std' 	=> '',
+							'type' 	=> 'checkbox'
+						),
+					
+				
+				);
+				
+
+			AviaPopupTemplates()->register_dynamic_template( $this->popup_key( 'styling_general' ), $c );
+			
+		}
+		
+		/**
+		 * Creates the modal popup for a single entry
+		 * 
+		 * @since 4.6.4
+		 * @return array
+		 */
+		protected function create_modal()
+		{
+			$elements = array(
+				
+				array(
+						'type' 	=> 'tab_container', 
+						'nodescription' => true
+					),
+						
+				array(
+						'type' 	=> 'tab',
+						'name'  => __( 'Content', 'avia_framework' ),
+						'nodescription' => true
+					),
+				
+					array(	
+							'type'			=> 'template',
+							'template_id'	=> $this->popup_key( 'modal_content_general' )
+						),
+				
+				array(
+						'type' 	=> 'tab_close',
+						'nodescription' => true
+					),
+				
+				array(
+						'type' 	=> 'tab',
+						'name'  => __( 'Styling', 'avia_framework' ),
+						'nodescription' => true
+					),
+				
+					array(	
+							'type'			=> 'template',
+							'template_id'	=> $this->popup_key( 'modal_styling_general' )
+						),
+				
+				array(
+						'type' 	=> 'tab_close',
+						'nodescription' => true
+					),
+				
+				array(
+						'type' 	=> 'tab_container_close',
+						'nodescription' => true
+					)
+				
+				
+				);
+			
+			return $elements;
+		}
+		
+		/**
+		 * Register all templates for the modal group popup
+		 * 
+		 * @since 4.6.4
+		 */
+		protected function register_modal_group_templates()
+		{
+			
+			/**
+			 * Content Tab
+			 * ===========
+			 */
+			
+			$c = array(
+						array( 
+							'id'    => 'id',
+							'std'   => '',
+							'type'  => 'hidden'
+						),
+									
+						array( 
+							'id'    => 'type',
+							'std'   => '',
+							'type'  => 'hidden'
+						),
+									
+						array( 
+							'id'    => 'check',
+							'std'   => '',
+							'type'  => 'hidden'
+						),
+				                    
+						array( 
+							'id'    => 'options',
+							'std'   => '',
+							'type'  => 'hidden'
+						),
+									
+						array(
+							'name' 	=> __( 'Form Element hidden', 'avia_framework' ),
+							'desc' 	=> __( 'Check if you want to hide this form element', 'avia_framework' ),
+							'id' 	=> 'disabled',
+							'type' 	=> 'checkbox',
+							'std'	=> '',
+							'required'	=> array( 'check', 'equals', '' ),
+						 ),
+				                     
+						array(
+							'name' 	=> __( 'Form Element Label', 'avia_framework' ),
+							'desc' 	=> '',
+							'id' 	=> 'label',
+							'std' 	=> '',
+							'type' 	=> 'input'
+						),					
+				
+				);
+			
+			AviaPopupTemplates()->register_dynamic_template( $this->popup_key( 'modal_content_general' ), $c );
+			
+			/**
+			 * Styling Tab
+			 * ===========
+			 */
+			
+			$c = array(
+						array(
+							'name' 	=> __( 'Form Element Width', 'avia_framework' ),
+							'desc' 	=> __( 'Change the width of your elements and let them appear beside each other instead of underneath', 'avia_framework' ),
+							'id' 	=> 'width',
+							'type' 	=> 'select',
+							'std' 	=> '',
+							'no_first'	=> true,
+							'subtype'	=> array(	
+												__( 'Fullwidth', 'avia_framework' )	=> '', 
+												'1/2'								=> 'element_half', 
+												'1/3'								=> 'element_third' , 
+												'2/3'								=> 'element_two_third', 
+												'1/4'								=> 'element_fourth', 
+												'3/4'								=> 'element_three_fourth'
+											)
+						),
+
+				
+				);
+			
+			AviaPopupTemplates()->register_dynamic_template( $this->popup_key( 'modal_styling_general' ), $c );
+			
+		}
+		
+
+		/**
+		 * Editor Sub Element - this function defines the visual appearance of an element that is displayed within a modal window and on click opens its own modal window
+		 * Works in the same way as Editor Element
+		 * @param array $params this array holds the default values for $content and $args.
+		 * @return $params the return array usually holds an innerHtml key that holds item specific markup.
+		 */
+		function editor_sub_element( $params )
+		{
+			$template = $this->update_template( 'label', "<span class='av-mailchimp-el-label'>" . __( 'Element', 'avia_framework' ) . "</span><span class='av-mailchimp-btn-label'>" . __( 'Button', 'avia_framework' ) . '</span>: {{label}}' );
+
+			$params['innerHtml']  = '';
+			$params['innerHtml'] .=	"<div class='avia_title_container'>";
+			$params['innerHtml'] .=		'<div '. $this->class_by_arguments( 'check' ,$params['args'] ) . '>';
+			$params['innerHtml'] .=			'<div ' . $this->class_by_arguments( 'id' ,$params['args'] ) . '>';
+			$params['innerHtml'] .=				'<div ' . $this->class_by_arguments( 'disabled', $params['args'] ) . '>';
+			$params['innerHtml'] .=					"<span {$template} ><span class='av-mailchimp-el-label'>" . __( 'Element', 'avia_framework' ) . "</span><span class='av-mailchimp-btn-label'>" . __( 'Button', 'avia_framework' ). '</span>: ' . $params['args']['label'] . '</span>';
+			$params['innerHtml'] .=					"<span class='av-required-indicator'> *</span>";
+			$params['innerHtml'] .=				'</div>';
+			$params['innerHtml'] .=			'</div>';
+			$params['innerHtml'] .=		'</div>';
+			$params['innerHtml'] .= '</div>';
+
+			return $params;
+		}
+
+
+
+		/**
+		 * Frontend Shortcode Handler
+		 *
+		 * @param array $atts array of attributes
+		 * @param string $content text within enclosing form of shortcode element
+		 * @param string $shortcodename the shortcode found, when == callback name
+		 * @return string $output returns the modified html string
+		 */
+		function shortcode_handler( $atts, $content = '', $shortcodename = '', $meta = '' )
+		{
 				if( empty( $this->api_key ) ) 
 				{
 					return '';
 				}
 				
-				$lists 		= get_option('av_chimplist');
+				$lists 		= get_option( 'av_chimplist' );
 				$newlist 	= array();
 			
 				if(empty($lists))
@@ -378,19 +647,19 @@ if ( ! class_exists( 'avia_sc_mailchimp' ) )
 				extract( AviaHelper::av_mobile_sizes( $atts ) ); //return $av_font_classes, $av_title_font_classes and $av_display_classes 
 				
 				$atts = shortcode_atts( apply_filters( 'avf_sc_mailchimp_atts', array(
-								'list'			=> "",
+								'list'			=> '',
 								'email' 		=> get_option( 'admin_email' ),
-								'button' 		=> __( "Submit", 'avia_framework' ),
+								'button' 		=> __( 'Submit', 'avia_framework' ),
 								'captcha' 		=> '',
 								'subject'		=> '',
 								'on_send'		=> '',
 								'link'			=> '',
-								'sent'			=> __( "Thank you for subscribing to our newsletter!", 'avia_framework' ),
-								'color'			=> "",
-								'hide_labels'	=> "",
-								'form_align'	=> "",
+								'sent'			=> __( 'Thank you for subscribing to our newsletter!', 'avia_framework' ),
+								'color'			=> '',
+								'hide_labels'	=> '',
+								'form_align'	=> '',
 								'listonly'		=> false, //if we should only use the list items or sub shortcodes
-								'double_opt_in'	=> ""
+								'double_opt_in'	=> ''
 
 							) ), $atts, $this->config['shortcode'] );
 				
@@ -419,7 +688,7 @@ if ( ! class_exists( 'avia_sc_mailchimp' ) )
 				extract( $atts );
 
 				$post_id  = function_exists('avia_get_the_id') ? avia_get_the_id() : get_the_ID();
-				$redirect = !empty($on_send) ? AviaHelper::get_url($link) : "";
+				$redirect = !empty($on_send) ? AviaHelper::get_url($link) : '';
 				
 				$default_heading = 'h3';
 				$args = array(
@@ -438,25 +707,25 @@ if ( ! class_exists( 'avia_sc_mailchimp' ) )
 				$heading = ! empty( $args['heading'] ) ? $args['heading'] : $default_heading;
 				$css = ! empty( $args['extra_class'] ) ? $args['extra_class'] : '';
 				
-				if(!empty($form_align)) $meta['el_class'] .= " av-centered-form ";
+				if(!empty($form_align)) $meta['el_class'] .= ' av-centered-form ';
 				
 				$form_args = array(
-								"heading" 				=> "",
-								"success" 				=> "<{$heading} class='avia-form-success avia-mailchimp-success {$css}'>{$sent}</{$heading}>",
-								"submit"  				=> $button,
-								"myemail" 				=> $email,
-								"action"  				=> get_permalink($post_id),
-								"myblogname" 			=> get_option('blogname'),
-								"subject"				=> $subject,
-								"form_class" 			=> $meta['el_class']." ".$color." avia-mailchimp-form"." ".$av_display_classes,
-								"form_data" 			=> array('av-custom-send'=>'mailchimp_send'),
-								"multiform"  			=> true, //allows creation of multiple forms without id collision
-								"label_first"  			=> true,
-								"redirect"				=> $redirect,
-								"placeholder"			=> $hide_labels,
-								"mailchimp"				=> $atts['list'],
-								"custom_send"			=> array($this, 'send'),
-								"double_opt_in"			=> $atts['double_opt_in'],
+								'heading' 				=> '',
+								'success' 				=> "<{$heading} class='avia-form-success avia-mailchimp-success {$css}'>{$sent}</{$heading}>",
+								'submit'  				=> $button,
+								'myemail' 				=> $email,
+								'action'  				=> get_permalink( $post_id ),
+								'myblogname' 			=> get_option( 'blogname' ),
+								'subject'				=> $subject,
+								'form_class' 			=> $meta['el_class'].' '.$color.' avia-mailchimp-form'.' '.$av_display_classes,
+								'form_data' 			=> array( 'av-custom-send' => 'mailchimp_send' ),
+								'multiform'  			=> true, //allows creation of multiple forms without id collision
+								'label_first'  			=> true,
+								'redirect'				=> $redirect,
+								'placeholder'			=> $hide_labels,
+								'mailchimp'				=> $atts['list'],
+								'custom_send'			=> array( $this, 'send' ),
+								'double_opt_in'			=> $atts['double_opt_in'],
 								'el-id'					=> $meta['custom_el_id']
 							);
 				
@@ -486,10 +755,10 @@ if ( ! class_exists( 'avia_sc_mailchimp' ) )
 				
 				return $output;
 				
-			}
-			
-			public function send( &$instance )
-			{
+		}
+
+		public function send( &$instance )
+		{
 				$params = $instance->form_params;
 				
 				if( isset( $_POST['avia_generated_form' . $params['avia_formID']] ) )
@@ -498,8 +767,8 @@ if ( ! class_exists( 'avia_sc_mailchimp' ) )
 					$suffix_length	= (strlen($form_suffix) * -1);
 					$merge_fields 	= array();
 					$post_data 		= array();
-					$mail			= "";
-					$status			= !empty( $params['double_opt_in'] ) ? "pending" : "subscribed"; // subscribed // pending
+					$mail			= '';
+					$status			= !empty( $params['double_opt_in'] ) ? 'pending' : 'subscribed'; // subscribed // pending
 					
 					foreach($_POST as $key => $value)
 					{
@@ -567,9 +836,9 @@ if ( ! class_exists( 'avia_sc_mailchimp' ) )
 					}
 					
 					//if we got no id the user was not added which means we got an error. 
-					$error_key = "general";
+					$error_key = 'general';
 					
-					if($this->add_user->title == "Invalid Resource")
+					if($this->add_user->title == 'Invalid Resource')
 					{
 						$error_key = 'all';
 						
@@ -584,124 +853,124 @@ if ( ! class_exists( 'avia_sc_mailchimp' ) )
 						}
 					}
 					
-					if($this->add_user->title == "Member Exists")
+					if($this->add_user->title == 'Member Exists')
 					{
 						$error_key = 'already';
 					}
 					
-					$instance->error_msg = "<div class='avia-mailchimp-ajax-error av-form-error-container'>". $api->message($error_key) ."</div>";
+					$instance->error_msg = "<div class='avia-mailchimp-ajax-error av-form-error-container'>" . $api->message($error_key) . '</div>';
 					
 					
-					add_action('wp_footer', array($this, 'print_js_error'), 2, 100000);
+					add_action('wp_footer', array( $this, 'print_js_error' ), 2, 100000 );
 				}
 				
 				
 				
 				return false;
-			}
-			
-			public function print_js_error()
-			{
-				echo "<script type='text/javascript'>";
-				echo "var av_mailchimp_errors = ".json_encode( $this->add_user ).";";
-				echo "if(console) console.log( 'Mailchimp Error:' , av_mailchimp_errors );";
-				echo "</script>";
-			}
-			
-			
-			public function sort_elements($a, $b)
-			{
-				return $a['order'] - $b['order'];
-			}
+		}
+
+		public function print_js_error()
+		{
+			echo "<script type='text/javascript'>";
+			echo "var av_mailchimp_errors = ".json_encode( $this->add_user ).";";
+			echo "if(console) console.log( 'Mailchimp Error:' , av_mailchimp_errors );";
+			echo "</script>";
+		}
 
 
-			/*helper function that converts the shortcode sub array into the format necessary for the contact form*/
-			private function convert_fields_from_list( $key )
+		public function sort_elements( $a, $b )
+		{
+			return $a['order'] - $b['order'];
+		}
+
+
+		/*helper function that converts the shortcode sub array into the format necessary for the contact form*/
+		private function convert_fields_from_list( $key )
+		{
+			$all_fields 	= get_option('av_chimplist_field');
+			$this->fields 	= $all_fields[$key];
+
+			$converted 	= array();
+
+			if(!empty($this->fields))
 			{
-				$all_fields 	= get_option('av_chimplist_field');
-				$this->fields 	= $all_fields[$key];
-				
-				$converted 	= array();
-				
-				if(!empty($this->fields))
+				foreach ($this->fields as $field)
 				{
-					foreach ($this->fields as $field)
+					if($field->public == 1)
 					{
-						if($field->public == 1)
+						$required 	= $field->required;
+						$options 	= isset( $field->options->choices ) ? $field->options->choices : '';
+						$type	 	= 'text';
+						$check		= '';
+
+						switch( $field->type )
 						{
-							$required 	= $field->required;
-							$options 	= isset( $field->options->choices ) ? $field->options->choices : "";
-							$type	 	= "text";
-							$check		= "";
-							
-							switch( $field->type )
-							{
-								case "dropdown": 	$type = "select"; break;
-								case "date": 		$type = "datepicker"; break;
-								case "radio": 		$type = "select"; break;
-								case "number": 		if(!empty($required)){ $check = "is_number"; } break;
-								case "email": 		$type = "text"; if(!empty($required)){ $check = "is_email";  } break;
-								default: 			$type = 'text';
-							}
-							
-							if( empty($check) )
-							{
-								$check = !empty($required) ? "is_empty" : "";
-							}
-							
-							$converted[ $field->merge_id ] = array(
-								
-								'id' 		=> $field->merge_id,
-								'label' 	=> $field->name,
-								'type'  	=> $type,
-								'check' 	=> $check,
-								'options' 	=> $options,
-								'order'		=> $field->display_order,
-								'value'		=> $field->default_value
-							);
+							case 'dropdown': 	$type = 'select'; break;
+							case 'date': 		$type = 'datepicker'; break;
+							case 'radio': 		$type = 'select'; break;
+							case 'number': 		if(!empty($required)){ $check = 'is_number'; } break;
+							case 'email': 		$type = 'text'; if(!empty($required)){ $check = 'is_email';  } break;
+							default: 			$type = 'text';
 						}
-					}
-				
-					usort($converted, array( $this , 'sort_elements') );
-				}
-				
-				return $converted;
-			}
-			
-			/*helper function that converts the shortcode sub array into the format necessary for the contact form*/
-			function helper_array2form_fields($base)
-			{
-				$form_fields = array();
-                $labels = array();
 
-				if(is_array($base))
-				{
-					foreach($base as $key => $field)
-					{
-						if(!empty($field['attr']['disabled']) && empty( $field['attr']['check'] ) && $field['attr']['type'] != "button" ) continue;
-						
-						switch( $field['attr']['type'] )
+						if( empty($check) )
 						{
-							case "dropdown": 	$field['attr']['type'] = "select"; break;
-							case "date": 		$field['attr']['type'] = "datepicker"; break;
-							case "radio": 		$field['attr']['type'] = "select"; break;
-							case "button": 		$field['attr']['type'] = "button"; break;
-							case "number": 		$field['attr']['type'] = "number"; break;
-							default: 			$field['attr']['type'] = 'text';
+							$check = !empty($required) ? 'is_empty' : '';
 						}
-					
-            			$sanizited_id = $field['attr']['id'];
 
-            			$labels[$sanizited_id] = empty($labels[$sanizited_id]) ? 1 : $labels[$sanizited_id] + 1;
-            			if($labels[$sanizited_id] > 1) $sanizited_id = $sanizited_id . '_' . $labels[$sanizited_id];
+						$converted[ $field->merge_id ] = array(
 
-						$form_fields[$sanizited_id] = $field['attr'];
-						if(!empty($field['content'])) $form_fields[$sanizited_id]['content'] = ShortcodeHelper::avia_apply_autop($field['content']);
+							'id' 		=> $field->merge_id,
+							'label' 	=> $field->name,
+							'type'  	=> $type,
+							'check' 	=> $check,
+							'options' 	=> $options,
+							'order'		=> $field->display_order,
+							'value'		=> $field->default_value
+						);
 					}
 				}
 
-				return $form_fields;
+				usort($converted, array( $this , 'sort_elements') );
 			}
+
+			return $converted;
+		}
+
+		/*helper function that converts the shortcode sub array into the format necessary for the contact form*/
+		function helper_array2form_fields($base)
+		{
+			$form_fields = array();
+			$labels = array();
+
+			if(is_array($base))
+			{
+				foreach($base as $key => $field)
+				{
+					if(!empty($field['attr']['disabled']) && empty( $field['attr']['check'] ) && $field['attr']['type'] != 'button' ) continue;
+
+					switch( $field['attr']['type'] )
+					{
+						case 'dropdown': 	$field['attr']['type'] = 'select'; break;
+						case 'date': 		$field['attr']['type'] = 'datepicker'; break;
+						case 'radio': 		$field['attr']['type'] = 'select'; break;
+						case 'button': 		$field['attr']['type'] = 'button'; break;
+						case 'number': 		$field['attr']['type'] = 'number'; break;
+						default: 			$field['attr']['type'] = 'text';
+					}
+
+					$sanizited_id = $field['attr']['id'];
+
+					$labels[$sanizited_id] = empty($labels[$sanizited_id]) ? 1 : $labels[$sanizited_id] + 1;
+					if($labels[$sanizited_id] > 1) $sanizited_id = $sanizited_id . '_' . $labels[$sanizited_id];
+
+					$form_fields[$sanizited_id] = $field['attr'];
+					if(!empty($field['content'])) $form_fields[$sanizited_id]['content'] = ShortcodeHelper::avia_apply_autop($field['content']);
+				}
+			}
+
+			return $form_fields;
+		}
 
 	}
 }

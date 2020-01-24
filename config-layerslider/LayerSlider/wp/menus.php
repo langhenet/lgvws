@@ -19,7 +19,7 @@ function layerslider_settings_menu() {
 	global $layerslider_hook;
 
 	$capability = get_option('layerslider_custom_capability', 'manage_options');
-	$icon = version_compare(get_bloginfo('version'), '3.8', '>=') ? 'dashicons-images-alt2' : LS_ROOT_URL.'/static/admin/img/icon_16x16.png';
+	$icon = 'data:image/svg+xml;base64,' . base64_encode('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path fill="rgba(240, 245, 250, 0.6)" d="M.485 5.782l9.099 4.128c.266.121 .566.121 .832 0l9.099-4.128c.646-.293.646-1.27 0-1.564L10.416.09a1 1 0 0 0-.832 0L.485 4.218c-.646.293-.646 1.271 0 1.564zm19.03 3.448-2.269-1.029-6.314 2.862c-.295.134-.609.202-.932.202s-.636-.068-.932-.202L2.754 8.202l-2.27 1.029c-.646.293-.646 1.27 0 1.563l9.099 4.125c.266.12 .566.12 .832 0L19.515 10.793c.646-.293.646-1.27 0-1.562zm0 4.992-2.261-1.025-6.323 2.866c-.295.134-.609.202-.932.202s-.636-.068-.932-.202L2.746 13.198.485 14.223c-.646.293-.646 1.27 0 1.563l9.099 4.125c.266.12 .566.12 .832 0L19.515 15.785c.646-.293.646-1.27 0-1.562z"/></svg>');
 
 	// Add main page
 	$layerslider_hook = add_menu_page(
@@ -57,7 +57,7 @@ function layerslider_help($contextual_help, $screen_id, $screen) {
 		$screen->add_help_tab(array(
 			'id' => 'help',
 			'title' => __('Getting Help', 'LayerSlider'),
-			'content' => '<p>'. sprintf(__('Please read our  %sOnline Documentation%s carefully, it will likely answer all of your questions.<br><br>You can also check the %sFAQs%s for additional information, including our support policies and licensing rules.', 'LayerSlider'), '<a href="https://layerslider.kreaturamedia.com/documentation/" target="_blank">', '</a>', '<a href="https://kreatura.ticksy.com/" target="_blank">', '</a>').'</p>'
+			'content' => '<p>'. sprintf(__('Please read our  %sOnline Documentation%s carefully, it will likely answer all of your questions.<br><br>You can also check the %sFAQs%s for additional information, including our support policies and licensing rules.', 'LayerSlider'), '<a href="https://layerslider.kreaturamedia.com/documentation/" target="_blank">', '</a>', '<a href="https://layerslider.kreaturamedia.com/help/" target="_blank">', '</a>').'</p>'
 		));
 	}
 }
@@ -84,10 +84,6 @@ function layerslider_router() {
 
 			case 'about':
 				include(LS_ROOT_PATH.'/views/about.php');
-				break;
-
-			case 'gdpr':
-				include(LS_ROOT_PATH.'/views/gdpr.php');
 				break;
 
 			case 'skin-editor':

@@ -49,7 +49,7 @@ class avia_font_manager{
 		//get the file path of the zip file
 		$attachment = $_POST['values'];
 		$path 		= realpath(get_attached_file($attachment['id']));
-		$unzipped 	= $this->zip_flatten( $path , array('\.eot','\.svg','\.ttf','\.woff','\.json'));
+		$unzipped 	= $this->zip_flatten( $path , array( '\.eot', '\.svg', '\.ttf', '\.woff', '\.woff2', '\.json'));
 		
 		// if we were able to unzip the file and save it to our temp folder extract the svg file
 		if($unzipped)
@@ -285,7 +285,7 @@ class avia_font_manager{
 	
 	function rename_files()
 	{
-		$extensions = array('eot','svg','ttf','woff');
+		$extensions = array( 'eot', 'svg', 'ttf', 'woff', 'woff2' );
 		$folder = trailingslashit($this->paths['tempdir']);
 	
 		foreach(glob($folder.'*') as $file)   
@@ -517,7 +517,8 @@ class avia_font_manager{
 @font-face {font-family: '{$font_name}'; font-weight: normal; font-style: normal; font-display: {$font_display};
 src: url('{$fstring}.eot{$append}');
 src: url('{$fstring}.eot{$qmark}#iefix') format('embedded-opentype'), 
-url('{$fstring}.woff{$append}') format('woff'), 
+url('{$fstring}.woff{$append}') format('woff'),
+url('{$fstring}.woff2{$append}') format('woff2'),
 url('{$fstring}.ttf{$append}') format('truetype'), 
 url('{$fstring}.svg{$append}#{$font_name}') format('svg');
 } #top .avia-font-{$font_name}, body .avia-font-{$font_name}, html body [data-av_iconfont='{$font_name}']:before{ font-family: '{$font_name}'; }

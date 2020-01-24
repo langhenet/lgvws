@@ -116,10 +116,10 @@
   padding: 0 !important;
   margin: -9px 0 10px 24px; }
   .ls-font-search input {
-    width: 260px;
+    width: 300px;
     height: 27px;
     margin: 0 5px 0 10px;
-    font-size: 12px;
+    font-size: 13px;
     border-radius: 2px;
     line-height: 17px; }
 
@@ -284,34 +284,28 @@ ul.ls-font-list {
   top: 3px;
   right: 0px; }
 
+#ls-phpinfo-modal-window,
+#ls-phpinfo-modal-window iframe {
+  width: 100%;
+  height: 100%;
+  position: absolute; }
+
 .button.ls-erase-button {
   float: right; }
 
-.button.ls-erase-button,
-#ls-erase-modal-window .button {
-  background: #e14d43 !important;
-  border-color: #d02c21 #ba281e #ba281e !important;
-  color: #fff !important;
-  -webkit-box-shadow: 0 1px 0 #ba281e !important;
-  box-shadow: 0 1px 0 #ba281e !important;
-  text-shadow: 0 -1px 1px #ba281e,1px 0 1px #ba281e,0 1px 1px #ba281e,-1px 0 1px #ba281e !important; }
-  .button.ls-erase-button.disabled,
-  #ls-erase-modal-window .button.disabled {
-    color: #d1c8c7 !important;
-    background: #d92e23 !important;
-    border-color: #ba281e !important;
-    text-shadow: none !important; }
+#ls-erase-modal-window li {
+  list-style-type: circle;
+  margin: 0 0 10px 30px !important; }
 
-#ls-erase-modal-window i.ls-notice {
-  position: absolute;
-  bottom: 16px;
-  right: 15px;
-  width: 350px;
+#ls-erase-modal-window .ls-dark {
+  color: #222; }
+
+#ls-erase-modal-window .ls-notice {
+  margin-top: 10px;
   color: #E14D43; }
 
-#ls-erase-modal-window {
-  height: 550px;
-  margin-top: -275px; }
+#ls-erase-modal-window .button {
+  box-shadow: none !important; }
 
 .ls-system-status-actions {
   margin-top: 50px; }

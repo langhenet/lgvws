@@ -80,7 +80,7 @@ if( ! class_exists( 'avia_social_media_icons' ) )
 			$this->args = array_merge( $default_arguments, $args );
 
 			$this->post_data = $post_data;
-			$this->icons = apply_filters( 'avia_filter_social_icons', avia_get_option('social_icons') );
+			$this->icons = apply_filters( 'avia_filter_social_icons', avia_get_option( 'social_icons' ) );
 			$this->html = '';
 			$this->counter = 1;
 		}
@@ -146,10 +146,10 @@ if( ! class_exists( 'avia_social_media_icons' ) )
 
 			if( empty( $icon['social_icon_link'] ) ) 
 			{
-				$icon['social_icon_link'] = "#";
+				$icon['social_icon_link'] = '#';
 			}
 			
-			//dont add target blank to relative urls or urls to the same dmoain
+			//dont add target blank to relative urls or urls to the same domain
 			$blank = ( strpos( $icon['social_icon_link'], 'http') === false || strpos( $icon['social_icon_link'], home_url() ) === 0 ) ? '' : ' target="_blank"';
 			
 			/**
@@ -162,7 +162,7 @@ if( ! class_exists( 'avia_social_media_icons' ) )
 				$aria_label = 'aria-label="' . esc_attr( $aria_label ) . '"';
 			}
 			
-			$html  = "";
+			$html  = '';
 			$html .= "<{$this->args['inside']} class='{$this->args['class']}_{$icon['social_icon']} av-social-link-{$icon['social_icon']} social_icon_{$this->counter}'>";
 			$html .=	"<a {$blank} {$aria_label} href='" . esc_url( $icon['social_icon_link'] ) . "' " . av_icon_string( $icon['social_icon'] ) . " title='{$display_name}'>";
 			$html .=		"<span class='avia_hidden_link_text'>{$display_name}</span>";
@@ -170,6 +170,7 @@ if( ! class_exists( 'avia_social_media_icons' ) )
 			
 			$html .= "</{$this->args['inside']}>";
 
+			$html = avia_targeted_link_rel( $html );
 			return $html;
 		}
 
@@ -271,17 +272,57 @@ if( ! class_exists( 'avia_social_share_links' ) )
 		 */
 		public function __construct( $args = array(), $options = false, $title = false )
 		{
+			
 			$default_arguments = array
 			(
-				'facebook' 	=> array("encode"=>true, "encode_urls"=>false, "pattern" => "https://www.facebook.com/sharer.php?u=[permalink]&amp;t=[title]"),
-				'twitter' 	=> array("encode"=>true, "encode_urls"=>false, "pattern" => "https://twitter.com/share?text=[title]&url=[shortlink]"),
-				'whatsapp'	=> array("encode"=>true, "encode_urls"=>false, "pattern" => "https://api.whatsapp.com/send?text=[permalink]", 'label' => __( 'Share on WhatsApp', 'avia_framework' ) ),
-				'pinterest' => array("encode"=>true, "encode_urls"=>true, "pattern" => "https://pinterest.com/pin/create/button/?url=[permalink]&amp;description=[title]&amp;media=[thumbnail]"),
-				'linkedin' 	=> array("encode"=>true, "encode_urls"=>false, "pattern" => "https://linkedin.com/shareArticle?mini=true&amp;title=[title]&amp;url=[permalink]" ),
-				'tumblr' 	=> array("encode"=>true, "encode_urls"=>true, "pattern" => "https://www.tumblr.com/share/link?url=[permalink]&amp;name=[title]&amp;description=[excerpt]"),
-				'vk' 		=> array("encode"=>true, "encode_urls"=>false, "pattern" => "https://vk.com/share.php?url=[permalink]"),
-				'reddit' 	=> array("encode"=>true, "encode_urls"=>false, "pattern" => "https://reddit.com/submit?url=[permalink]&amp;title=[title]"),
-				'mail' 		=> array("encode"=>true, "encode_urls"=>false, "pattern" => "mailto:?subject=[title]&amp;body=[permalink]", 'label' => __("Share by Mail",'avia_framework') ),
+				'facebook' 	=> array(
+								'encode'		=> true, 
+								'encode_urls'	=> false, 
+								'pattern'		=> 'https://www.facebook.com/sharer.php?u=[permalink]&amp;t=[title]'
+							),
+				'twitter' 	=> array(
+								'encode'		=> true, 
+								'encode_urls'	=> false, 
+								'pattern'		=> 'https://twitter.com/share?text=[title]&url=[shortlink]'
+							),
+				'whatsapp'	=> array(
+								'encode'		=> true, 
+								'encode_urls'	=> false, 
+								'pattern'		=> 'https://api.whatsapp.com/send?text=[permalink]', 
+								'label'			=> __( 'Share on WhatsApp', 'avia_framework' ) 
+							),
+				'pinterest' => array(
+								'encode'		=> true, 
+								'encode_urls'	=> true, 
+								'pattern'		=> 'https://pinterest.com/pin/create/button/?url=[permalink]&amp;description=[title]&amp;media=[thumbnail]'
+							),
+				'linkedin' 	=> array(
+								'encode'		=> true, 
+								'encode_urls'	=> false, 
+								'pattern'		=> 'https://linkedin.com/shareArticle?mini=true&amp;title=[title]&amp;url=[permalink]' 
+							),
+				'tumblr' 	=> array(
+								'encode'		=> true, 
+								'encode_urls'	=> true, 
+								'pattern'		=> 'https://www.tumblr.com/share/link?url=[permalink]&amp;name=[title]&amp;description=[excerpt]'
+							),
+				'vk' 		=> array(
+								'encode'		=> true, 
+								'encode_urls'	=> false, 
+								'pattern'		=> 'https://vk.com/share.php?url=[permalink]'
+							),
+				'reddit' 	=> array(
+								'encode'		=> true, 
+								'encode_urls'	=> false, 
+								'pattern'		=> 'https://reddit.com/submit?url=[permalink]&amp;title=[title]'
+							),
+				'mail' 		=> array(
+								'encode'		=> true, 
+								'encode_urls'	=> false, 
+								'pattern'		=> 'mailto:?subject=[title]&amp;body=[permalink]', 
+								'label'			=> __( 'Share by Mail', 'avia_framework' ) 
+							),
+				'yelp' 		=> $this->default_yelp_link( $args, $options, $title )
 			);
 			
 			$this->args = apply_filters( 'avia_social_share_link_arguments', array_merge( $default_arguments, $args ) );
@@ -307,9 +348,75 @@ if( ! class_exists( 'avia_social_share_links' ) )
 			unset( $this->post_data );
 		}
 		
+		
+		/**
+		 * Initialize and filter the default yelp array.
+		 * If $options = false or no link provided in $options fallback to
+		 * link in theme options or yelp homepage
+		 * 
+		 * @since 4.6.4
+		 * @param array $args
+		 * @param array|false $options
+		 * @param string|false $title
+		 * @return array
+		 */
+		protected function default_yelp_link( $args, $options, $title ) 
+		{
+			/**
+			 * Fallback URL used if no url specified in theme options "Social Profiles" or in custom social share button
+			 * 
+			 * @since 4.7.1.1
+			 * @param string
+			 * @return string
+			 */
+			$pattern = apply_filters( 'avf_default_yelp_url', 'https://www.yelp.com' );
+			
+			$icons = apply_filters( 'avia_filter_social_icons', avia_get_option( 'social_icons' ) );
+			foreach( $icons as $icon ) 
+			{
+				if( 'yelp' == $icon['social_icon'] )
+				{
+					if( ! empty( $icon['social_icon_link'] ) )
+					{
+						$pattern = esc_url( $icon['social_icon_link'] );
+					}
+					
+					break;
+				}
+			}
+			
+			if( is_array( $options ) && ( 'disabled' != $options['share_yelp'] ) && ( 'disabled' != $options['yelp_link'] ) )
+			{
+				$pattern = esc_url( $options['yelp_link'] );
+			}
+			
+			$default = array(
+						'encode'		=> false, 
+						'encode_urls'	=> false, 
+						'pattern'		=> $pattern, 
+						'label'			=> __( 'Visit us on Yelp','avia_framework' ) 
+					);
+			
+			/**
+			 * Filter the default yelp array
+			 * e.g. allow on blogposts is_single() to change link to post specific yelp page
+			 * 
+			 * @since 4.6.4
+			 * @param array $default
+			 * @param array $args
+			 * @param array|false $options
+			 * @param string|false $title
+			 * @return array
+			 */
+			$default = apply_filters( 'avf_default_yelp_link', $default, $args, $options, $title );
+			
+			return $default;
+		}
+		
 		/**
 		 * Filter social icons that are disabled in the backend. everything that is left will be displayed.
-		 * that way the user can hook into the "avia_social_share_link_arguments" filter above and add new social icons without the need to add a new backend option
+		 * That way the user can hook into the 'avia_social_share_link_arguments' filter above and add new social icons 
+		 * without the need to add a new backend option
 		 * 
 		 * @since < 4.0
 		 */
@@ -333,8 +440,8 @@ if( ! class_exists( 'avia_social_share_links' ) )
 				$share_key  = 'share_' . $key;
 				$url 		= $share['pattern'];
 				
-				//if the backend option is disabled skip to the next link. in any other case generate the share link
-				if( isset( $this->options[ $share_key ] ) && $this->options[ $share_key ] == 'disabled' ) 
+				//if the backend option is disabled (or missing) skip to the next link. in any other case generate the share link
+				if( ! isset( $this->options[ $share_key ] ) || ( isset( $this->options[ $share_key ] ) && $this->options[ $share_key ] == 'disabled' ) ) 
 				{
 					continue;
 				}
@@ -441,6 +548,7 @@ if( ! class_exists( 'avia_social_share_links' ) )
 			$this->html .= 		'</ul>';
 			$this->html .=	'</div>';
 			
+			$this->html = avia_targeted_link_rel( $this->html );
 			return $this->html;
 		}
 		

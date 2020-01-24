@@ -14,7 +14,7 @@ if( !empty( $_GET['user'] ) ) {
 	$deleteLink = wp_nonce_url('users.php?action=delete&amp;user='.(int)$_GET['user'], 'bulk-users' );
 }
 
-$authorized = get_option('layerslider-authorized-site', false);
+$authorized = LS_Config::isActivatedSite();
 $isAdmin 	= current_user_can('manage_options');
 
 $notifications = array(
@@ -127,7 +127,7 @@ $notifications = array(
 						<td>
 							<?php if( ! $test ) : ?>
 							<span>
-								<?php echo __('Using LayerSlider from a non-standard install location or having a different directory name could lead issues in receiving and installing updates. Commonly, you see this issue when you’re using a theme-included version of LayerSlider. To fix this, please first search for an option to disable/unload the bundled version in your theme, then re-install a fresh copy downloaded from CodeCanyon. Your sliders and settings are stored in the database, re-installing the plugin will not harm them.', 'LayerSlider') ?>
+								<?php echo __('Using LayerSlider from a non-standard install location or having a different directory name could lead issues in receiving and installing updates. Commonly, you see this issue when you’re using a theme-included version of LayerSlider. To fix this, please first search for an option to disable/unload the bundled version in your theme, then re-install a fresh copy. Your sliders and settings are stored in the database, re-installing the plugin will not harm them.', 'LayerSlider') ?>
 							</span>
 							<?php endif ?>
 						</td>
@@ -229,7 +229,7 @@ $notifications = array(
 						</td>
 					</tr>
 					<tr>
-						<?php $test = (int)$memory > 0 && $memoryB < 64 * 1024 * 1024; ?>
+						<?php $test = (int)$memory > 0 && $memoryB < 64 * 1000 * 1000; ?>
 						<td><?php _e('PHP Memory Limit:', 'LayerSlider') ?></td>
 						<td><span class="dashicons <?php echo empty($test) ? 'dashicons-yes' : 'dashicons-warning' ?>"></span></td>
 						<td><?php echo $memory ?></td>
@@ -241,7 +241,7 @@ $notifications = array(
 
 					</tr>
 					<tr>
-						<?php $test = $postMaxB < 16 * 1024 * 1024; ?>
+						<?php $test = $postMaxB < 16 * 1000 * 1000; ?>
 						<td><?php _e('PHP Post Max Size:', 'LayerSlider') ?></td>
 						<td><span class="dashicons <?php echo empty($test) ? 'dashicons-yes' : 'dashicons-warning' ?>"></span></td>
 						<td><?php echo ini_get('post_max_size') ?></td>
@@ -252,7 +252,7 @@ $notifications = array(
 						</td>
 					</tr>
 					<tr>
-						<?php $test = $uploadB < 16 * 1024 * 1024; ?>
+						<?php $test = $uploadB < 16 * 1000 * 1000; ?>
 						<td><?php _e('PHP Max Upload Size:', 'LayerSlider') ?></td>
 						<td><span class="dashicons <?php echo empty($test) ? 'dashicons-yes' : 'dashicons-warning' ?>"></span></td>
 						<td><?php echo ini_get('upload_max_filesize') ?></td>
@@ -363,50 +363,48 @@ $notifications = array(
 
 	<script type="text/html" id="ls-phpinfo-modal">
 		<div id="ls-phpinfo-modal-window">
-			<header class="header">
-				<h1><?php _e('Advanced Debug Details', 'LayerSlider') ?></h1>
-				<b class="dashicons dashicons-no"></b>
-			</header>
-			<iframe class="km-ui-modal-scrollable"></iframe>
+			<h1 class="kmw-modal-title"><?php _e('Advanced Debug Details', 'LayerSlider') ?></h1>
+			<iframe></iframe>
 		</div>
 	</script>
 
 
 	<script type="text/html" id="ls-erase-modal">
 		<div id="ls-erase-modal-window">
-			<header>
-				<h1><?php _e('Erase All Plugin Data', 'LayerSlider') ?></h1>
-				<b class="dashicons dashicons-no"></b>
-			</header>
-			<div class="km-ui-modal-scrollable">
-				<form method="post" class="inner" onsubmit="return confirm('<?php _e('This action cannot be undone. All LayerSlider data will be permanently deleted and you will not be able to restore them afterwards. Please consider every possibility before deciding.\r\n\r\n Are you sure you want to continue?', 'LayerSlider') ?>');">
-					<?php wp_nonce_field('erase_data'); ?>
-					<p><?php _e('When you remove LayerSlider, it does not automatically delete your settings and sliders by default to prevent accidental data loss. You can use this utility if you really want to erase all data used by LayerSlider.', 'LayerSlider') ?></p>
-					<p class="km-ui-font-dark"><?php _e('The following actions will be performed when you confirm your intention to erase all plugin data:', 'LayerSlider'); ?></p>
 
-					<ul>
-						<li><?php _e('Remove the <i>wp_layerslider</i> database table, which stores your sliders.', 'LayerSlider') ?></li>
-						<li><?php _e('Remove the relevant entries from the <i>wp_options</i> database table, which stores plugin settings.', 'LayerSlider') ?></li>
-						<li><?php _e('Remove the relevant entries from the <i>wp_usermeta</i> database table, which stores user associated plugin settings.', 'LayerSlider') ?></li>
-						<li><?php _e('Remove files and folders created by LayerSlider from the <i>/wp-content/uploads</i> directory. This will not affect your own uploads in the Media Library.', 'LayerSlider') ?></li>
-						<li><?php _e('Deactivate LayerSlider as a last step.', 'LayerSlider') ?></li>
-					</ul>
-					<p><i><?php _e('The actions above will be performed on this blog only. If you have a multisite network and you are a network administrator, then an “Apply to all sites” checkbox will appear, which you can use to erase data from every site in your network if you choose so.', 'LayerSlider') ?></i></p>
+			<h1 class="kmw-modal-title"><?php _e('Erase All Plugin Data', 'LayerSlider') ?></h1>
+			<form method="post" class="inner" onsubmit="return confirm('<?php _e('This action cannot be undone. All LayerSlider data will be permanently deleted and you will not be able to restore them afterwards. Please consider every possibility before deciding.\r\n\r\n Are you sure you want to continue?', 'LayerSlider') ?>');">
+				<?php wp_nonce_field('erase_data'); ?>
+				<p><?php _e('When you remove LayerSlider, it does not automatically delete your settings and sliders by default to prevent accidental data loss. You can use this utility if you really want to erase all data used by LayerSlider.', 'LayerSlider') ?></p>
+				<p class="ls-dark"><?php _e('The following actions will be performed when you confirm your intention to erase all plugin data:', 'LayerSlider'); ?></p>
 
-					<p><?php _e('Please note: You CANNOT UNDO this action. Please CONSIDER EVERY POSSIBILITY before choosing to erase all plugin data, as you will not be able to restore data afterwards.', 'LayerSlider') ?></p>
+				<ul>
+					<li><?php _e('Remove the <i>wp_layerslider</i> database table, which stores your sliders.', 'LayerSlider') ?></li>
+					<li><?php _e('Remove the relevant entries from the <i>wp_options</i> database table, which stores plugin settings.', 'LayerSlider') ?></li>
+					<li><?php _e('Remove the relevant entries from the <i>wp_usermeta</i> database table, which stores user associated plugin settings.', 'LayerSlider') ?></li>
+					<li><?php _e('Remove files and folders created by LayerSlider from the <i>/wp-content/uploads</i> directory. This will not affect your own uploads in the Media Library.', 'LayerSlider') ?></li>
+					<li><?php _e('Deactivate LayerSlider as a last step.', 'LayerSlider') ?></li>
+				</ul>
+				<p><i><?php _e('The actions above will be performed on this blog only. If you have a multisite network and you are a network administrator, then an “Apply to all sites” checkbox will appear, which you can use to erase data from every site in your network if you choose so.', 'LayerSlider') ?></i></p>
 
-					<?php if( is_multisite() && current_user_can('manage_network') ) : ?>
-						<p class="center centered">
-							<label><input type="checkbox" name="networkwide" onclick="return confirm('<?php _e('Are you sure you want to erase plugin data from every site in network?', 'LayerSlider') ?>');"> <?php _e('Apply to all sites in multisite network', 'LayerSlider') ?></label>
-						</p>
-					<?php endif ?>
+				<p><?php _e('Please note: You CANNOT UNDO this action. Please CONSIDER EVERY POSSIBILITY before choosing to erase all plugin data, as you will not be able to restore data afterwards.', 'LayerSlider') ?></p>
 
-					<button type="submit" name="ls-erase-plugin-data" class="button button-primary button-hero <?php echo $isAdmin ? '' : 'disabled' ?>" <?php echo $isAdmin ? '' : 'disabled' ?>><?php _e('Erase Plugin Data', 'LayerSlider') ?></button>
+				<?php if( is_multisite() && current_user_can('manage_network') ) : ?>
+					<p class="ls-center">
+						<label><input type="checkbox" name="networkwide" onclick="return confirm('<?php _e('Are you sure you want to erase plugin data from every site in network?', 'LayerSlider') ?>');"> <?php _e('Apply to all sites in multisite network', 'LayerSlider') ?></label>
+					</p>
+				<?php endif ?>
+
+
+				<div class="ls-center">
+					<button type="submit" name="ls-erase-plugin-data" class="button ls-button-red button-hero <?php echo $isAdmin ? '' : 'disabled' ?>" <?php echo $isAdmin ? '' : 'disabled' ?>><?php _e('Erase Plugin Data', 'LayerSlider') ?></button>
 					<?php if( ! $isAdmin ) : ?>
-					<i class="ls-notice"><?php _e('You must be an administrator to use this feature.', 'LayerSlider') ?></i>
+					<div class="ls-notice">
+						<?php _e('You must be an administrator to use this feature.', 'LayerSlider') ?>
+					</div>
 					<?php endif ?>
-				</form>
-			</div>
+				</div>
+			</form>
 		</div>
 	</script>
 
@@ -414,27 +412,36 @@ $notifications = array(
 	<div class="ls-system-status-actions">
 		<button class="button button-hero button-primary ls-phpinfo-button"><?php _e('Show Advanced Details', 'LayerSlider') ?></button>
 
-		<button class="button button-hero button-primary ls-erase-button"><?php _e('Erase All Plugin Data', 'LayerSlider') ?></button>
+		<button class="button button-hero ls-button-red ls-erase-button"><?php _e('Erase All Plugin Data', 'LayerSlider') ?></button>
 	</div>
 
 
 	<script>
 
 		jQuery(document).ready(function() {
+
 			jQuery('.ls-phpinfo-button').click(function() {
 
-				var $modal 		= kmUI.modal.open( '#ls-phpinfo-modal', {
-					width: 940,
-					height: 2000
-				}),
-					$contents 	= jQuery( jQuery('#ls-phpinfo').text() );
+				var $modal = kmw.modal.open({
+					content: '#ls-phpinfo-modal',
+					minWidth: 400,
+					maxWidth: 1200,
+					maxHeight: '100%'
+				});
+
+				var $contents = jQuery('#ls-phpinfo').text();
 
 				$modal.find('iframe').contents().find('html').html( $contents );
 			});
 
 
 			jQuery('.ls-erase-button').click(function() {
-				kmUI.modal.open('#ls-erase-modal');
+
+				kmw.modal.open({
+					content: '#ls-erase-modal',
+					minWidth: 400,
+					maxWidth: 1000
+				});
 			});
 
 		});

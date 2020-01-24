@@ -64,6 +64,13 @@ line-height: 21px;
 	left: -2000px;
 }
 
+.avia_ajax_form.av-form-labels-hidden label.input_checkbox_label{
+	position: initial;
+	top: initial;
+	left: initial;
+}
+
+
 .avia_ajax_form p{ position: relative; clear:both; float:left; width:100%; margin: 11px 0;}
 .avia_ajax_form.av-form-labels-hidden p{margin-top: 8px; margin-bottom: 8px;}
 .avia_ajax_form p.hidden{position: absolute; width:0px; left:0; top:0; }
@@ -253,8 +260,7 @@ background-color: transparent;
 
 /* recaptcha */
 #top .avia_ajax_form .av-recaptcha-area{
-	display: inline-block;
-	margin: 10px 0;
+	display: block;
 }
 
 #top .avia_ajax_form .av-recaptcha-submit.avia_button_inactive,
@@ -285,10 +291,12 @@ background-color: transparent;
 }
 
 #top .avia_ajax_form .av-recaptcha-error.av-err-content{
-	margin: 10px 0;
+	margin: 5px 0;
 	color: #fe6d4e;
 	background-color: #FFF;
 	font-weight: 700;
+	display: block;
+	clear: both;
 }
 
 body .grecaptcha-badge{
@@ -307,7 +315,6 @@ body.av-google-badge-visible #scroll-top-link{
 	padding: 12px 0 0 0;
 	min-width: 300px;
 	max-width: 90%;
-	width: 30%;
 	font-size: 0.8em;
 	line-height: 1.3em;
 }
@@ -321,18 +328,18 @@ body.av-google-badge-visible #scroll-top-link{
 	float: left;
 }
 
-#top .avia_ajax_form .avia-disabled-forn{
+#top .avia_ajax_form .avia-disabled-form{
 	padding: 15px 15px;
 	font-size: 1.5em;
 	font-weight: 900;
 	display: none;
 }
 
-#top .avia_ajax_form.av-form-user-disabled .avia-disabled-forn{
+#top .avia_ajax_form.av-form-user-disabled .avia-disabled-form{
 	display: block;
 }
 
-#top .avia_ajax_form.av-centered-form .avia-disabled-forn{
+#top .avia_ajax_form.av-centered-form .avia-disabled-form{
 	text-align: center;
 }
 

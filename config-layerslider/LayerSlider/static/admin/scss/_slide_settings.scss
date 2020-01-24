@@ -479,6 +479,15 @@
 				box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.3);
 				min-height: 0 !important;
 
+				li {
+					padding: 0;
+				}
+
+				a {
+					display: block;
+					padding: 5px;
+				}
+
 				&:before {
 					background: white;
 					box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.3);
@@ -541,7 +550,7 @@
 	td.slide-parallax {
 
 		input, select {
-			width: 80px !important;
+			width: 100px !important;
 		}
 
 		border-right: 0px !important;
@@ -695,14 +704,17 @@ div.ls-image {
 	&.has-image:hover:after {
 		content: attr(data-l10n-set);
 		position: absolute;
-		top: 0;
-		bottom: 0;
-		left: 0;
-		right: 0;
+		top: 50%;
+		left: 50%;
+
+		width: 140px;
+		padding: 0 5px;
+		transform: translate(-50%, -50%);
+
+		white-space: normal;
 		cursor: pointer;
+		font-size: 13px;
 		text-align: center;
-		line-height: 50px;
-		font-size: 14px;
 		text-transform: uppercase;
 		color: #555;
 		text-shadow: 0 0 1px white;
@@ -732,32 +744,44 @@ div.ls-image {
 		border-radius: 50%;
 	}
 
-	&.hover a.aviary {
-		display: none !important;
+	&.hover a.pixie {
 		top: -6px;
-		left: -10px;
-		width: 27px;
+		left: -8px;
+		width: 20px;
 		height: 20px;
-		background: url('../img/cclogo.png') 50% 50% no-repeat;
-	    background-size: contain;
-		border-radius: 0;
+	    background: transparent;
+	    color: #555;
+	    text-align: center;
+	    line-height: 20px;
 		cursor: pointer;
+		text-shadow: 0px 0px 5px white;
+
+
+		&:after {
+			content: "\f100";
+			font-family: dashicons;
+			font-size: 26px;
+			-webkit-font-smoothing: antialiased;
+			-moz-osx-font-smoothing: grayscale;
+		}
 	}
 }
 
-#ls-post-options {
-	display: none;
+#ls-post-options-window {
+
+	.kmw-modal-inner {
+		margin: 0 0 10px 0 !important;
+	}
+}
+
+#tmpl-post-options {
+
+	#ls-post-options {
+		display: none;
+	}
 }
 
 .ls-configure-posts-modal {
-	position: fixed;
-	top: 50%;
-	left: 50%;
-	z-index: 2001;
-	width: 800px;
-	height: auto !important;
-	margin: -329px 0 0 -400px;
-	box-shadow: 0 0 5px 2px #666;
 
 	.header {
 		a {
@@ -770,7 +794,8 @@ div.ls-image {
 	}
 
 	.subheader {
-		margin: 0;
+		margin: 10px 0 10px 0;
+		font-size: 13px;
 	}
 
 	.preview-subheader {
@@ -778,7 +803,6 @@ div.ls-image {
 	}
 
 	.inner {
-		background: white;
 		text-align: center;
 	}
 
@@ -816,12 +840,12 @@ div.ls-image {
 }
 
 .ls-post-filters {
-	width: 720px;
+	width: 800px;
 	margin: 0 auto;
 
 	select {
 		float: left;
-		margin: 0 10px 10px 0;
+		margin: 0 14px 10px 14px;
 
 		&.ls-post-taxonomy {
 			height: 26px;
@@ -877,6 +901,7 @@ div.ls-image {
 		margin: 0;
 		padding: 10px;
 		border-bottom: 1px solid #dfdfdf;
+		overflow: hidden;
 
 		h4 {
 			margin-top: 80px;
@@ -916,7 +941,7 @@ div.ls-image {
 			font-family: Arial;
 		}
 
-		p {
+		.content {
 			height: 32px;
 			margin: 5px 0 0 105px;
 			text-align: justify;
@@ -930,6 +955,7 @@ div.ls-image {
 			top: 10px;
 			right: 10px;
 			color: #999;
+			font-size: 13px;
 		}
 
 	}
@@ -1025,7 +1051,7 @@ div.ls-image {
 	display: inline-block;
 	height: 23px;
 	padding: 0 0 0 22px;
-	margin: 0 15px 8px 0;
+	margin: 0 20px 8px 0;
 	float: left;
 	background: url(../img/tag.png) no-repeat left top;
 	cursor: pointer;
@@ -1646,10 +1672,14 @@ select.sublayerprop.connect-hover {
 
 	.ls-layer-placeholder {
 		width: 144px !important;
-		background: rgba(0, 0, 0, 0.5);
-		color: white;
+		height: 144px !important;
+		background: rgba(0, 0, 0, 0.5) !important;
+		color: white !important;
+		font-family: inherit !important;
+		font-weight: normal !important;
+		line-height: 15px !important;
 		text-align: center !important;
-		border-radius: 5px;
+		border-radius: 5px !important;
 
 		.dashicons {
 			display: block;
@@ -1978,6 +2008,7 @@ $ruler-size: 16px;
 
 .ls-preview-context-menu {
 	position: absolute;
+	z-index: 99999;
 
 	ul {
 		position: relative;
@@ -1987,7 +2018,6 @@ $ruler-size: 16px;
 		background: rgba(0, 0, 0, 0.9);
 		border-radius: 10px;
 		box-shadow: 2px 2px 20px rgba(0, 0, 0, 0.6);
-		z-index: 99999;
 
 		.divider {
 			height: 1px;
@@ -2030,6 +2060,14 @@ $ruler-size: 16px;
 			.dashicons {
 				font-size: 16px;
 				line-height: 28px;
+				transition: none;
+			}
+
+			span {
+				width: 185px !important;
+				margin-left: 0 !important;
+				white-space: pre;
+				text-overflow: ellipsis;
 			}
 
 			p {
@@ -2323,6 +2361,7 @@ $ruler-size: 16px;
 #tmpl-import-slide-modal-window {
 
 	.columns {
+		text-align: center;
 
 		.half {
 			position: absolute;
@@ -2382,4 +2421,8 @@ $ruler-size: 16px;
 			}
 		}
 	}
+}
+
+#tmpl-import-layer-modal-window {
+	text-align: center;
 }

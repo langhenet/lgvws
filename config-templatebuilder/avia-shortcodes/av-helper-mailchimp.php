@@ -6,7 +6,7 @@
 if ( ! defined( 'ABSPATH' ) ) {  exit;  }    // Exit if accessed directly
 
 
-if ( !class_exists( 'av_mailchimp_api' ) )
+if ( ! class_exists( 'av_mailchimp_api' ) )
 {
 	class av_mailchimp_api
 	{
@@ -70,7 +70,7 @@ if ( !class_exists( 'av_mailchimp_api' ) )
 	    
 	    public function __construct( $api_key = '' ) 
 	    {
-		    $server = "";
+		    $server = '';
 			$this->verified_key = '';
 			
 			$this->api_key = $api_key;
@@ -78,11 +78,11 @@ if ( !class_exists( 'av_mailchimp_api' ) )
 			
 			if( $dash_position !== false ) 
 			{
-				$server =  substr( $api_key, $dash_position + 1 ). ".";
+				$server =  substr( $api_key, $dash_position + 1 ) . '.';
 			}
 			
-			$this->api_old = 'https://' . $server . $this->api_url ."/2.0/";
-			$this->api_url = 'https://' . $server . $this->api_url ."/" . $this->api_version . "/";
+			$this->api_old = 'https://' . $server . $this->api_url . '/2.0/';
+			$this->api_url = 'https://' . $server . $this->api_url . '/' . $this->api_version . '/';
 			
 			
 			$this->msg = apply_filters( 'avf_mailchimp_messages' , array(
@@ -142,7 +142,7 @@ if ( !class_exists( 'av_mailchimp_api' ) )
 		}
 		
 
-		public function get( $url = "" , $data = array())
+		public function get( $url = '' , $data = array())
 		{
 			$url = $this->api_url . $url ;
 		
@@ -160,7 +160,7 @@ if ( !class_exists( 'av_mailchimp_api' ) )
 			return $response;
 		}
 		
-		public function post( $url = "" , $data = array() , $file_extension = "" )
+		public function post( $url = '' , $data = array() , $file_extension = '' )
 		{
 			if($file_extension)
 			{	//can be removed once v3 merge fields work properly
@@ -274,7 +274,7 @@ if ( !class_exists( 'av_mailchimp_api' ) )
 		
 		
 		 //once v3 merge field work use this
-		public function get_list_fields_new( $list_id = "")
+		public function get_list_fields_new( $list_id = '')
 		{
 			$response = $this->get( "lists/{$list_id}/merge-fields");
 			
@@ -300,7 +300,7 @@ if ( !class_exists( 'av_mailchimp_api' ) )
 		
 		
 		//once 3.0 works fine remove this function and rename get_list_fields_new to get_list_fields
-		public function get_list_fields( $list_id = "")
+		public function get_list_fields( $list_id = '')
 		{
 			$response 	= $this->post( 'lists/merge-vars', array('id' => array( $list_id ) ) , '.json');
 			$results  	= array();
@@ -314,7 +314,7 @@ if ( !class_exists( 'av_mailchimp_api' ) )
 					$field->required = $field->req;
 					$field->type = $field->field_type;
 					$field->display_order = $field->order;
-					$field->default_value = empty($field->default) ? "" : $field->default;
+					$field->default_value = empty($field->default) ? '' : $field->default;
 					if(isset($field->choices))
 					{
 						$field->options = new stdClass();
@@ -481,7 +481,7 @@ if ( !class_exists( 'av_mailchimp_api' ) )
 					$list_output = '';
 					$list_output_default = '';
 					
-					$list_output .= "<div class='av-verification-cell'><strong>".__('Available Lists', 'avia_framework').":</strong></div>";
+					$list_output .= "<div class='av-verification-cell'><strong>" . __( 'Available Lists', 'avia_framework' ) . ':</strong></div>';
 					
 					foreach($list_fields as $key => $list_items)
 					{
@@ -489,22 +489,22 @@ if ( !class_exists( 'av_mailchimp_api' ) )
 						
 						$list_output .= "<div class='av-verification-cell av-verification-cell-heading'>";
 						$list_output .= "<strong>{$lists[$key]['name']}</strong>";
-						$list_output .= "<small class='av-verification-extra-data'> (".__('Subscriber', 'avia_framework').": {$sub})</small>";
-						$list_output .= "<small class='av-verification-extra-data av-verification-extra-data-right'>(".__('ID', 'avia_framework').": {$key})</small>";
-						$list_output .= "</div>";
+						$list_output .= "<small class='av-verification-extra-data'> (" . __('Subscriber', 'avia_framework') . ": {$sub})</small>";
+						$list_output .= "<small class='av-verification-extra-data av-verification-extra-data-right'>(" . __( 'ID', 'avia_framework' ) . ": {$key})</small>";
+						$list_output .= '</div>';
 						
 						
 						foreach($list_items as $key => $field)
 						{
-							$required = !empty($field->required) ? "<span class='av-verification-required'>*</span>" : "";
+							$required = !empty($field->required) ? "<span class='av-verification-required'>*</span>" : '';
 							$list_output .= "<div class='av-verification-cell av-verification-cell-sub'>";
 							$list_output .= "{$field->name} {$required}";
 							$list_output .= "<span class='av-verification-extra-data av-verification-extra-data-right'>{$field->type}</span>";
-							$list_output .= "</div>";
+							$list_output .= '</div>';
 						}
 					}
 					
-					$list_output .= "<div class='av-verification-cell av-verification-cell-heading'><strong>".__('If you ever change the fields in your list please re-validate your API key to update the list data presented here.', 'avia_framework')."</strong></div>";
+					$list_output .= "<div class='av-verification-cell av-verification-cell-heading'><strong>" . __( 'If you ever change the fields in your list please re-validate your API key to update the list data presented here.', 'avia_framework' ) . '</strong></div>';
 				}
 				
 			}
@@ -512,26 +512,26 @@ if ( !class_exists( 'av_mailchimp_api' ) )
 			$output  =	"<div class='av-verification-response-wrapper'>";
 			$output .=		"<div class='av-text-notice {$response_class}'>";
 			$output .=			$response_text;
-			$output .=		"</div>";
+			$output .=		'</div>';
 			
 			if(!empty($list_output) || !empty($list_output_default))
 			{
 				$output .=	"<div class='av-verification-mailchimp-list'>";
 				
-				if(!empty($list_output))
+				if( ! empty( $list_output ) )
 				{
 					$output .= $list_output;
 				}
 				
 				if(!empty($list_output_default))
 				{
-					$output .=		"<div class='av-verification-cell'>".$list_output_default."</div>";
+					$output .=		"<div class='av-verification-cell'>{$list_output_default}</div>";
 				}
 				
-				$output .=	"</div>";
+				$output .=	'</div>';
 			}
 			
-			$output .=	"</div>";
+			$output .=	'</div>';
 			
 			if( $ajax )
 			{

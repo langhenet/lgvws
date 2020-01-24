@@ -11,7 +11,9 @@ add_filter('ls_parse_defaults', 'ls_parse_defaults', 10, 2);
 
 function ls_filter_slider_title($sliderName = '', $maxLength = 50) {
 	$name = empty($sliderName) ? 'Unnamed' : htmlspecialchars(stripslashes($sliderName));
-	return isset($name[$maxLength]) ? substr($name, 0, $maxLength) . ' ...' : $name;
+	$return = isset($name[$maxLength]) ? substr($name, 0, $maxLength) . ' ...' : $name;
+
+	return $return;
 }
 
 function ls_preview_for_slider( $slider = array() ) {
@@ -37,7 +39,7 @@ function ls_preview_for_slider( $slider = array() ) {
 				$image = $layer['properties']['thumbnail'];
 
 				if( ! empty( $layer['properties']['thumbnailId'] ) ) {
-					$src = wp_get_attachment_image_src( $layer['properties']['thumbnailId'], 'medium');
+					$src = wp_get_attachment_image_src( $layer['properties']['thumbnailId'], 'large');
 					if( ! empty( $src[0] ) ) {
 						$image = $src[0];
 					}
@@ -50,7 +52,7 @@ function ls_preview_for_slider( $slider = array() ) {
 				$image = $layer['properties']['background'];
 
 				if( ! empty($layer['properties']['backgroundId'] ) ) {
-					$src = wp_get_attachment_image_src( $layer['properties']['backgroundId'], 'medium');
+					$src = wp_get_attachment_image_src( $layer['properties']['backgroundId'], 'large');
 					if( ! empty( $src[0] ) ) {
 						$image = $src[0];
 					}
@@ -102,7 +104,7 @@ function ls_get_image($id = null, $url = null) {
 function ls_parse_defaults($defaults = array(), $raw = array()) {
 
 
-	$activated 	= get_option('layerslider-authorized-site', false);
+	$activated 	= LS_Config::isActivatedSite();
 	$capability = get_option('layerslider_custom_capability', 'manage_options');
 	$permission = current_user_can( $capability );
 	$ret = array();
@@ -145,9 +147,12 @@ function ls_parse_defaults($defaults = array(), $raw = array()) {
 			$ret[$retKey][$jsKey] = $raw[$phpKey];
 
 		} elseif(isset($raw[$phpKey]) && is_bool($default['value'])) {
-			if($default['value'] == true && empty($raw[$phpKey])) {
+
+			if( $default['value'] == true && ( empty( $raw[$phpKey] ) || $raw[$phpKey] === 'disabled' ) ) {
 				$ret[$retKey][$jsKey] = false;
-			} elseif($default['value'] == false && !empty($raw[$phpKey])) {
+
+			} elseif( $default['value'] == false && ( ! empty( $raw[$phpKey] ) || $raw[$phpKey] === 'enabled') ) {
+
 				$ret[$retKey][$jsKey] = true;
 			}
 

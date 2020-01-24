@@ -107,6 +107,7 @@ jQuery(function($) {
 			
 			var saveButtons = $('.avia_submit', this),
 				resetButtons = $('.avia_reset', this),
+				resetSelectedButtons = $('.avia_reset_selected', this),
 				importButton = $('.avia_import_button', this),
 				importParentSettingsButton = $('.avia_import_parent_button', this),
 				hiddenDataContainer = $('#avia_hidden_data', this),
@@ -123,16 +124,18 @@ jQuery(function($) {
 								nonceImportParent  :	$('input[name=avia-nonce-import-parent]', container).val(),
 								ref	   :		$('input[name=_wp_http_referer]', hiddenDataContainer).val(),
 								first_call:		$('input[name=avia_options_first_call]', hiddenDataContainer),
-								saveButtons: 	saveButtons
+								saveButtons: 	saveButtons,
+								object:			methods
 							 };
 
 						
 			//bind actions:
-			saveButtons.on('click', {set: saveData}, methods.save); 		//saves the current form
-			resetButtons.on('click', {set: saveData}, methods.reset); 	//resets the option page
-			importButton.on('click', {set: saveData}, methods.do_import); //imports dummy daa
-			importParentSettingsButton.on('click', {set: saveData}, methods.do_parent_import); //imports parent theme data
-			//
+			saveButtons.on('click', {set: saveData}, methods.save);			//saves the current form
+			resetButtons.on('click', {set: saveData}, methods.reset);		//resets the option page
+			resetSelectedButtons.on('click', {set: saveData}, methods.resetSelected);	//resets the option page for selected elements
+			importButton.on('click', {set: saveData}, methods.do_import);	//imports dummy daa
+			importParentSettingsButton.on('click', {set: saveData}, methods.do_parent_import);	//imports parent theme data
+
 			//add "form listener"
 			methods.activateSaveButton(container);
 			
@@ -483,19 +486,69 @@ jQuery(function($) {
 			return false;
 		},
 		
-		
-		
-		
+		/**
+		 * Reset only selected options button.
+		 */
+		resetSelected: function(passed)
+		{
+			passed.preventDefault();
+			
+			var button = $(this);
+			var filter_keys = [ 'filter_tabs', 'filter_values', 'skip_tabs', 'skip_values' ];
+			var filter = {};
+			var found = false;
+			var data = button.data();
+
+			/*
+			 * It is possible to use a reset button and add filters hardcoded using filter_keys when defining the element.
+			 * If a single filterkey exists we do not check for input fields
+			 */
+			$.each( filter_keys, function( index, value ){
+						if( 'undefined' != typeof data[value] )
+						{
+							filter[value] = data[value];
+							found = true;
+						}
+					});
+
+			if( ! found )
+			{
+				var container = button.closest('#avia_upload');
+
+				if( container.find('input#reset_filter_checkbox:checked').length > 0)
+				{
+					if( container.find('input#reset_keep_quick_css:checked').length > 0)
+					{
+						filter.skip_values = 'avia:quick_css';
+					}
+
+					var selectedValues = container.find('select#reset_filter_tabs').val();
+
+					//	jQuery > 3.0 returns 0
+					if( null != selectedValues && selectedValues.length > 0 )
+					{
+						filter.filter_tabs = selectedValues.join(',');
+					}
+				}
+			}
+
+			passed.data.set.filter = filter;
+			passed.data.set.button_id = 'undefined' != typeof( button.attr('id') ) ? button.attr('id') : '';
+			passed.data.set.object.reset.call( this, passed );
+		},
 		
 		
 		/**
-		 *  reset all options by removing the database set that saves them
+		 *  reset all options by removing the database set that saves them.
+		 *  Since 4.6.4 we also support filtered reset.
 		 */
-		
 		reset: function(passed)
 		{
-			var me = passed.data.set,
-				answer = confirm("This will delete every theme setting made so far and revert the theme option pages to factory settings. \nDo you really want to do that? ");
+			var me = passed.data.set;
+			var filter = 'undefined' != typeof( me.filter ) ? me.filter : {};
+			var button_id = 'undefined' != typeof( me.button_id ) ? me.button_id : '';
+		
+			var	answer = confirm("This will delete every theme setting made so far and revert the theme option pages to factory settings. \nDo you really want to do that? ");
 			
 			if(answer)
 			{
@@ -505,13 +558,16 @@ jQuery(function($) {
 						data: 
 						{
 							action: me.actionReset,
+							avia_filter: filter,
+							avia_id: button_id,
+							avia_request: true,
 							_wpnonce: me.nonceReset,
 							_wp_http_referer: me.ref
 						},
 						beforeSend: function()
 						{
 							//show loader
-							$('.avia_header .avia_loading, .avia_footer .avia_loading',  me.container).css({opacity:0, display:"block", visibility:'visible'}).animate({opacity:1});
+							$('.avia_header .avia_loading, .avia_footer .avia_loading, .avia_reset_selected_button .avia_loading',  me.container).css({opacity:0, display:"block", visibility:'visible'}).animate({opacity:1});
 						},
 						error: function()
 						{
@@ -523,8 +579,12 @@ jQuery(function($) {
 						{
 							if(response.match('avia_reset'))
 							{
-								window.location.hash = "#wpwrap";
-						 		window.location.reload(true);
+								$('body').avia_alert({text: 'Alright!<br/>Reset of options was successful. <br/>The page will now be reloaded to reflect the changes'}, function()
+									{
+										// window.location.hash = "#goto_importexport";
+										window.location.hash = "wpwrap";
+										window.location.reload(true);
+									});
 							}
 							else
 							{	
@@ -555,13 +615,7 @@ jQuery(function($) {
 			return false;
 		}
 		
-		
-		 
-		
-		
-		
-		// end save method
-	};
+	};	//	end methods
 	
 	
 })(jQuery);	 

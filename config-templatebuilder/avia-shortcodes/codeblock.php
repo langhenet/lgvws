@@ -10,19 +10,19 @@ if ( ! defined( 'ABSPATH' ) ) {  exit;  }    // Exit if accessed directly
 
 if ( ! class_exists( 'avia_sc_codeblock' ) )
 {
-    class avia_sc_codeblock extends aviaShortcodeTemplate
-    {
+	class avia_sc_codeblock extends aviaShortcodeTemplate
+	{
 		/**
 		 * @since < 4.0
 		 * @var int
 		 */
-        static public $codeblock_id = 0;
+		static public $codeblock_id = 0;
 		
 		/**
 		 * @since < 4.0
 		 * @var array 
 		 */
-        static public $codeblocks = array();
+		static public $codeblocks = array();
 		
 		/**
 		 * @since < 4.0
@@ -30,152 +30,236 @@ if ( ! class_exists( 'avia_sc_codeblock' ) )
 		 */
 		static public $shortcodes_executed = array();
         
-        /**
-         * Create the config array for the shortcode button
-         */
-        public function shortcode_insert_button()
-        {
-			$this->config['self_closing']	=	'no';
+		/**
+		 * Create the config array for the shortcode button
+		 */
+		public function shortcode_insert_button()
+		{
+			$this->config['version']		= '1.0';
+			$this->config['self_closing']	= 'no';
 			
-            $this->config['name']           = __( 'Code Block', 'avia_framework' );
-            $this->config['tab']            = __( 'Content Elements', 'avia_framework' );
-            $this->config['icon']           = AviaBuilder::$path['imagesURL']."sc-codeblock.png";
-            $this->config['order']          = 1;
-            $this->config['target']         = 'avia-target-insert';
-            $this->config['shortcode']      = 'av_codeblock';
-            $this->config['tinyMCE']        = array( 'disable' => true );
-            $this->config['tooltip']        = __( 'Add text, shortcodes, HTML, CSS, JavaScript and non executeable codesnippets to your website (without any formatting or text optimization).', 'avia_framework' );
+			$this->config['name']           = __( 'Code Block', 'avia_framework' );
+			$this->config['tab']            = __( 'Content Elements', 'avia_framework' );
+			$this->config['icon']           = AviaBuilder::$path['imagesURL'] . 'sc-codeblock.png';
+			$this->config['order']          = 1;
+			$this->config['target']         = 'avia-target-insert';
+			$this->config['shortcode']      = 'av_codeblock';
+			$this->config['tinyMCE']        = array( 'disable' => true );
+			$this->config['tooltip']        = __( 'Add text, shortcodes, HTML, CSS, JavaScript and non executeable codesnippets to your website (without any formatting or text optimization).', 'avia_framework' );
 			$this->config['id_name']		= 'id';
 			$this->config['id_show']		= 'yes';
-        }
+			$this->config['alb_desc_id']	= 'alb_description';
+		}
 
-        /**
-         * Popup Elements
-         *
-         * If this function is defined in a child class the element automatically gets an edit button, that, when pressed
-         * opens a modal window that allows to edit the element properties
-         *
-         * @return void
-         */
-        public function popup_elements()
-        {
-            $this->elements =  array(
-	            
-	            array(
-						"type" 	=> "tab_container", 'nodescription' => true
-					),
-					
+		/**
+		 * Popup Elements
+		 *
+		 * If this function is defined in a child class the element automatically gets an edit button, that, when pressed
+		 * opens a modal window that allows to edit the element properties
+		 *
+		 * @return void
+		 */
+		public function popup_elements()
+		{
+			$this->elements =  array(
+				
 				array(
-						"type" 	=> "tab",
-						"name"  => __("Content" , 'avia_framework'),
-						'nodescription' => true),
-	            
-                array(
-                    "name"  => __("Code Block Content. Add your own HTML/CSS/Javascript here", 'avia_framework'),
-                    "desc"  => __("Enter some text/code/shortcode. You can also add plugin shortcodes here. Adding theme shortcodes is supported now for many elements. Be carefull not to nest same named shortcodes because this is not supported by WordPress ([foo] [foo]  [/foo] [/foo] will break layout !!! )", 'avia_framework'),
-                    "id"    => "content",
-					'container_class' =>"avia-element-fullwidth",
-                    "type"  => "textarea",
-                    "std"   => "",
-                ),
-
-                array(
-                    "name"  => __("Code Wrapper Element", 'avia_framework' ),
-                    "desc"  => __("Wrap your code into a html tag (i.e. pre or code tag). Insert the tag without <>", 'avia_framework' ) ,
-                    "id"    => "wrapper_element",
-                    "std"   => '',
-                    "type"  => "input"),
-
-                array(
-                    "name"  => __("Code Wrapper Element Attributes", 'avia_framework' ),
-                    "desc"  => __("Enter one or more attribute values which should be applied to the wrapper element. Leave the field empty if no attributes are required.", 'avia_framework' ) ,
-                    "id"    => "wrapper_element_attributes",
-                    "std"   => '',
-                    "required" => array('wrapper_element', 'not', ''),
-                    "type"  => "input"),
-				
-				array(	
-					"name" 	=> __( "Action with codeblock", 'avia_framework' ),
-					"desc" 	=> __( "Select if you want to execute codeblock or display it to the user only.", 'avia_framework' ),
-					"id" 	=> "codeblock_type",
-					"type" 	=> "select",
-					"std" 	=> "",
-					"subtype" => array(
-								__( "Add codeblock to content", 'avia_framework' ) => '',
-								__( "Display codeblock as code snippet", 'avia_framework' ) => 'snippet'
-						)
-					), 
-
-                array(
-                    "name"  => __("Escape HTML Code", 'avia_framework' ),
-                    "desc"  => __("WordPress will convert the html tags to readable text.", 'avia_framework' ) ,
-                    "id"    => "escape_html",
-                    "std"   => false,
-					"required" => array( 'codeblock_type', 'equals', '' ),
-                    "type"  => "checkbox"),
-
-                array(
-                    "name"  => __("Disable Shortcode Processing", 'avia_framework' ),
-                    "desc"  => __("Check if you want to disable the shortcode processing for this code block", 'avia_framework' ) ,
-                    "id"    => "deactivate_shortcode",
-                    "std"   => false,
-					"required" => array('escape_html', 'equals', '' ),
-                    "type"  => "checkbox"),
-
-                array(
-                    "name"  => __("Deactivate schema.org markup", 'avia_framework' ),
-                    "desc"  => __("Output the code without any additional wrapper elements. (not recommended)", 'avia_framework' ) ,
-                    "id"    => "deactivate_wrapper",
-                    "std"   => false,
-                    "type"  => "checkbox"),
-                    
-                array(
-						"type" 	=> "close_div",
+						'type' 	=> 'tab_container', 
 						'nodescription' => true
-					),
-				
-				array(	
-						'type'			=> 'template',
-						'template_id'	=> 'screen_options_tab'
 					),
 						
-
 				array(
-						"type" 	=> "close_div",
+						'type' 	=> 'tab',
+						'name'  => __( 'Content', 'avia_framework' ),
 						'nodescription' => true
 					),
+				
+					array(	
+								'type'			=> 'template',
+								'template_id'	=> $this->popup_key( 'content_code' )
+							),
+				
+				array(
+						'type' 	=> 'tab_close',
+						'nodescription' => true
+					),
+				
+				array(
+						'type' 	=> 'tab',
+						'name'  => __( 'Advanced', 'avia_framework' ),
+						'nodescription' => true
+					),
+				
+					array(
+							'type' 	=> 'toggle_container',
+							'nodescription' => true
+						),
+				
+						array(	
+								'type'			=> 'template',
+								'template_id'	=> $this->popup_key( 'layout_settings' )
+							),
+				
+						array(	
+								'type'			=> 'template',
+								'template_id'	=> 'screen_options_toggle'
+							),
+				
+						array(	
+								'type'			=> 'template',
+								'template_id'	=> 'developer_options_toggle',
+								'args'			=> array( 'sc' => $this )
+							),
+				
+					array(
+							'type' 	=> 'toggle_container_close',
+							'nodescription' => true
+						),
+				
+				array(
+						'type' 	=> 'tab_close',
+						'nodescription' => true
+					),
+
+				array(
+						'type' 	=> 'tab_container_close',
+						'nodescription' => true
+					)
+			
+	           
                 
-                
-            );
+		    );
 
-        }
+		}
+		
+		/**
+		 * Create and register templates for easier maintainance
+		 * 
+		 * @since 4.6.4
+		 */
+		protected function register_dynamic_templates()
+		{
+			
+			/**
+			 * Content Tab
+			 * ===========
+			 */
+			
+			$c = array(
+						array(
+							'name'  => __( 'Code Block Content. Add your own HTML/CSS/Javascript here', 'avia_framework' ),
+							'desc'  => __( 'Enter some text/code/shortcode. You can also add plugin shortcodes here. Adding theme shortcodes is supported now for many elements. Be carefull not to nest same named shortcodes because this is not supported by WordPress ([foo] [foo]  [/foo] [/foo] will break layout !!! )', 'avia_framework' ),
+							'id'    => 'content',
+							'container_class' => 'avia-element-fullwidth',
+							'type'  => 'textarea',
+							'std'   => '',
+						),
 
-        /**
-         * Editor Element - this function defines the visual appearance of an element on the AviaBuilder Canvas
-         * Most common usage is to define some markup in the $params['innerHtml'] which is then inserted into the drag and drop container
-         * Less often used: $params['data'] to add data attributes, $params['class'] to modify the className
-         *
-         *
-         * @param array $params this array holds the default values for $content and $args.
-         * @return $params the return array usually holds an innerHtml key that holds item specific markup.
-         */
-        public function editor_element($params)
-        {
-            $params['innerHtml'] = "<img src='".$this->config['icon']."' title='".$this->config['name']."' />";
-            $params['innerHtml'].= "<div class='avia-element-label'>".$this->config['name']."</div>";
-            return $params;
-        }
+						array(
+							'name'  => __( 'Code Wrapper Element', 'avia_framework' ),
+							'desc'  => __( 'Wrap your code into a html tag (i.e. pre or code tag). Insert the tag without <>', 'avia_framework' ),
+							'id'    => 'wrapper_element',
+							'std'   => '',
+							'type'  => 'input'
+						),
 
-        /**
-         * Frontend Shortcode Handler
-         *
-         * @param array $atts array of attributes
-         * @param string $content text within enclosing form of shortcode element
-         * @param string $shortcodename the shortcode found, when == callback name
-         * @return string $output returns the modified html string
-         */
-        public function shortcode_handler( $atts, $content = '', $shortcodename = '', $meta = '' )
-        {
+						array(
+							'name'  => __( 'Code Wrapper Element Attributes', 'avia_framework' ),
+							'desc'  => __( 'Enter one or more attribute values which should be applied to the wrapper element. Leave the field empty if no attributes are required.', 'avia_framework' ),
+							'id'    => 'wrapper_element_attributes',
+							'std'   => '',
+							'required' => array( 'wrapper_element', 'not', '' ),
+							'type'  => 'input'
+						),
+				
+				);
+			
+			AviaPopupTemplates()->register_dynamic_template( $this->popup_key( 'content_code' ), $c );
+			
+			/**
+			 * Layout Tab
+			 * ===========
+			 */
+			
+			$c = array(
+						array(	
+							'name' 	=> __( 'Action with codeblock', 'avia_framework' ),
+							'desc' 	=> __( 'Select if you want to execute codeblock or display it to the user only.', 'avia_framework' ),
+							'id' 	=> 'codeblock_type',
+							'type' 	=> 'select',
+							'std' 	=> '',
+							'subtype'	=> array(
+												__( 'Add codeblock to content', 'avia_framework' ) => '',
+												__( 'Display codeblock as code snippet', 'avia_framework' ) => 'snippet'
+											)
+						), 
+
+						array(
+							'name'  => __( 'Escape HTML Code', 'avia_framework' ),
+							'desc'  => __( 'WordPress will convert the html tags to readable text.', 'avia_framework' ) ,
+							'id'    => 'escape_html',
+							'std'   => false,
+							'required' => array( 'codeblock_type', 'equals', '' ),
+							'type'  => 'checkbox'
+						),
+
+						array(
+							'name'  => __( 'Disable Shortcode Processing', 'avia_framework' ),
+							'desc'  => __( 'Check if you want to disable the shortcode processing for this code block', 'avia_framework' ),
+							'id'    => 'deactivate_shortcode',
+							'std'   => false,
+							'required' => array( 'escape_html', 'equals', '' ),
+							'type'  => 'checkbox'
+						),
+
+						array(
+							'name'  => __( 'Deactivate schema.org markup', 'avia_framework' ),
+							'desc'  => __( 'Output the code without any additional wrapper elements. (not recommended)', 'avia_framework' ),
+							'id'    => 'deactivate_wrapper',
+							'std'   => false,
+							'type'  => 'checkbox'
+						),
+				
+				);
+			
+			$template = array(
+							array(	
+								'type'			=> 'template',
+								'template_id'	=> 'toggle',
+								'title'			=> __( 'Codeblock Behaviour', 'avia_framework' ),
+								'content'		=> $c 
+							),
+					);
+			
+			AviaPopupTemplates()->register_dynamic_template( $this->popup_key( 'layout_settings' ), $template );
+			
+		}
+
+		/**
+		 * Editor Element - this function defines the visual appearance of an element on the AviaBuilder Canvas
+		 * Most common usage is to define some markup in the $params['innerHtml'] which is then inserted into the drag and drop container
+		 * Less often used: $params['data'] to add data attributes, $params['class'] to modify the className
+		 *
+		 *
+		 * @param array $params this array holds the default values for $content and $args.
+		 * @return $params the return array usually holds an innerHtml key that holds item specific markup.
+		 */
+		public function editor_element( $params )
+		{
+			$params = parent::editor_element( $params );
+			return $params;
+		}
+
+		/**
+		 * Frontend Shortcode Handler
+		 *
+		 * @param array $atts array of attributes
+		 * @param string $content text within enclosing form of shortcode element
+		 * @param string $shortcodename the shortcode found, when == callback name
+		 * @return string $output returns the modified html string
+		 */
+		public function shortcode_handler( $atts, $content = '', $shortcodename = '', $meta = '' )
+		{
 			/**
 			 * Fix in case shortcode is called before extraction has taken place. Occurs if post content is
 			 * preprocessed by 3rd party plugins e.g. in get_header().
@@ -187,11 +271,11 @@ if ( ! class_exists( 'avia_sc_codeblock' ) )
 				return '';
 			}
 			
-	        extract( AviaHelper::av_mobile_sizes( $atts ) ); //return $av_font_classes, $av_title_font_classes and $av_display_classes 
+			extract( AviaHelper::av_mobile_sizes( $atts ) ); //return $av_font_classes, $av_title_font_classes and $av_display_classes 
 
-            $custom_class = !empty($meta['custom_class']) ? $meta['custom_class'] : "";
+			$custom_class = ! empty( $meta['custom_class'] ) ? $meta['custom_class'] : '';
 
-            $atts = shortcode_atts( array(
+			$atts = shortcode_atts( array(
 							'wrapper_element'				=> '',
 							'wrapper_element_attributes'	=> '',
 							'codeblock_type'				=> '',
@@ -201,37 +285,40 @@ if ( ! class_exists( 'avia_sc_codeblock' ) )
 							
 					), $atts, $this->config['shortcode'] );
 
-            $content = ' [avia_codeblock_placeholder uid="' . avia_sc_codeblock::$codeblock_id . '"] ';
+			$content = '[avia_codeblock_placeholder uid="' . avia_sc_codeblock::$codeblock_id . '"]';
 			
 			if( ! empty( $atts['codeblock_type'] ) && ( 'snippet' == $atts['codeblock_type'] ) )
 			{
 				$content = '<pre class="avia_codeblock-snippet"><code>' . trim( $content ) . '</code></pre>';
 			}
 			
-            if(!empty($atts['wrapper_element'])) $content = "<{$atts['wrapper_element']} {$atts['wrapper_element_attributes']}>{$content}</{$atts['wrapper_element']}>";
+			if( ! empty( $atts['wrapper_element'] ) ) 
+			{
+				$content = "<{$atts['wrapper_element']} {$atts['wrapper_element_attributes']}>{$content}</{$atts['wrapper_element']}>";
+			}
 
-            if(empty($atts['deactivate_wrapper']))
-            {
-                $output = '';
-                $markup = avia_markup_helper(array('context' => 'entry', 'echo' => false, 'custom_markup'=>$meta['custom_markup']));
-                $markup_text = avia_markup_helper(array('context' => 'entry_content', 'echo' => false, 'custom_markup'=>$meta['custom_markup']));
+			if( empty( $atts['deactivate_wrapper'] ) )
+			{
+				$output = '';
+				$markup = avia_markup_helper(array('context' => 'entry', 'echo' => false, 'custom_markup'=>$meta['custom_markup']));
+				$markup_text = avia_markup_helper(array('context' => 'entry_content', 'echo' => false, 'custom_markup'=>$meta['custom_markup']));
 
-                $output .= '<section class="avia_codeblock_section '.$av_display_classes.' avia_code_block_' . avia_sc_codeblock::$codeblock_id . ' ' . $meta['custom_class'] . '" ' . $markup . $meta['custom_el_id'] . '>';
-                $output .=		"<div class='avia_codeblock {$custom_class}' $markup_text>" . $content . "</div>";
-                $output .= '</section>';
-                $content = $output;
-            }
+				$output .= '<section class="avia_codeblock_section '.$av_display_classes.' avia_code_block_' . avia_sc_codeblock::$codeblock_id . '" ' . $markup . $meta['custom_el_id'] . '>';
+				$output .=		"<div class='avia_codeblock {$custom_class}' {$markup_text}>{$content}</div>";
+				$output .= '</section>';
+				$content = $output;
+			}
 
 			ShortcodeHelper::$shortcode_index += avia_sc_codeblock::$shortcodes_executed[ avia_sc_codeblock::$codeblock_id ];
 			
-            avia_sc_codeblock::$codeblock_id++;
-            return $content;
-        }
+			avia_sc_codeblock::$codeblock_id++;
+			return $content;
+		}
         
-        public function extra_assets()
+		public function extra_assets()
 		{
-			add_filter('avia_builder_precompile', array($this, 'code_block_extraction'), 10, 1);
-    		add_filter('avf_template_builder_content', array($this, 'code_block_injection'), 10, 1);
+			add_filter( 'avia_builder_precompile', array( $this, 'code_block_extraction' ), 10, 1 );
+			add_filter( 'avf_template_builder_content', array ($this, 'code_block_injection' ), 10, 1 );
 		}
         
 		/**
@@ -242,7 +329,7 @@ if ( ! class_exists( 'avia_sc_codeblock' ) )
 		 * @param string $content
 		 * @return string
 		 */
-		public function code_block_extraction($content)
+		public function code_block_extraction( $content )
 		{	
 			if ( strpos( $content, '[av_codeblock' ) === false ) 
 			{
@@ -375,5 +462,5 @@ if ( ! class_exists( 'avia_sc_codeblock' ) )
 			return $content;
 		}
 	}
-  }
+}
 

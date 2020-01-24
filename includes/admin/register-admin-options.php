@@ -21,15 +21,16 @@ $avia_pages = array(
 	array( 'slug' => 'google', 		'parent'=>'avia', 'icon'=>"new/paper-map-7@3x.png", 			'title' =>  __('Google Services', 'avia_framework')),
 );
 
-if(class_exists( 'woocommerce' ))
+if( class_exists( 'woocommerce' ) )
 {
 	$avia_pages[] = array( 'slug' => 'shop', 'parent'=>'avia', 'icon'=>"new/shopping-cart-7@3x.png", 'title' =>  __('Shop Options','avia_framework') );
 }
 
 
-if(!current_theme_supports('avia_disable_import_export')){
+if( ! current_theme_supports( 'avia_disable_import_export' ) )
+{
 	$avia_pages[] = array( 'slug' => 'demo', 		'parent'=>'avia', 'icon'=>"new/window-up-7@3x.png", 'title' => __('Demo Import', 'avia_framework'));
-	$avia_pages[] = array( 'slug' => 'upload', 		'parent'=>'avia', 'icon'=>"new/connect-arrow-up-down-7@3x.png", 'title' => __('Import/Export', 'avia_framework'));
+	$avia_pages[] = array( 'slug' => 'upload', 		'parent'=>'avia', 'icon'=>"new/connect-arrow-up-down-7@3x.png", 'title' => __('Import/Export/...', 'avia_framework'));
 }
 
 
@@ -491,7 +492,7 @@ $avia_elements[] = array(
 						'id' 	=> 'lock_alb_for_admins',
 						'type' 	=> $loack_alb,
 						'std'	=> '',
-						'required' => array( 'lock_alb', '{true}' ),
+						'required' => array( 'lock_alb', 'lock_alb' ),
 						'slug'	=> 'builder'
 					);	
 
@@ -511,68 +512,15 @@ $avia_elements[] = array(
 					);
 
 $avia_elements[] = array(
-						'slug'          => 'builder',
-						'name'          => __( 'Builder Options For Developers', 'avia_framework' ),
-						'desc'          => '',
-						'id'            => 'avia_builder_developer_title',
-						'std'           => '',
-						'type'          => 'heading',
-						'nodescription' => true
-					);
-
-$desc  = __( 'Select to display an input field that allows you to add custom CSS classes to an element for individual styling.', 'avia_framework' );
-$desc .= '<br />';
-$desc .= '<strong>' . __( 'Using theme support &quot;avia_template_builder_custom_css&quot; will override this option to &quot;Show and allow... &quot; - will be removed in a future version.', 'avia_framework' ) . '</strong>';
-
-$avia_elements[] = array(
 						'slug'		=> 'builder',
-						'name'		=> __( 'Custom CSS classes input field', 'avia_framework' ),
-						'desc'		=> $desc,
-						'id'		=> 'developer_options',
-						'type'		=> 'select',
-						'no_first'	=> true,
-						'std'	=> 'deactivate',
-						'subtype'	=> array( 
-											__( 'Do not show, ignore all added classes', 'avia_framework' )	=> 'deactivate',
-											__( 'Do not show, but use added classes', 'avia_framework' )	=> 'hide',
-											__( 'Show and allow to edit classes', 'avia_framework' )		=> 'developer_options',
-										)
+						'name'		=> __( 'Hide template builder developer options', 'avia_framework' ),
+						'desc'		=> __( 'Activate to hide the developer options for template builder elements. (Usually located in the "advanced" tab of the element and containing options like custom IDs and CSS classes). More details can be found in our documentation: ', 'avia_framework' ) . '<a href="https://kriesi.at/documentation/enfold/intro-to-layout-builder/#developer-options" target="_blank" rel="noopener noreferrer">' . __( 'Intro to Layout Builder', 'avia_framework' ) . '</a>.',
+						'id'		=> 'alb_developer_options',
+						'type'		=> 'checkbox',
+						'std'		=> ''
 					);
 
-$desc  = __( 'Select to display an input field that allows you to add a unique ID to an element for individual styling or as anchor.', 'avia_framework' );
-$desc .= '<br />';
-$desc .= '<strong>' . __( 'Using theme support &quot;avia_template_builder_custom_tab_toogle_id&quot; will override this option to &quot;Show and allow... &quot; - will be removed in a future version.', 'avia_framework' ) . '</strong>';
 
-		
-$avia_elements[] = array(
-						'slug'		=> 'builder',
-						'name'		=> __( 'ID attribute input field', 'avia_framework' ),
-						'desc'		=> $desc,
-						'id'		=> 'developer_id_attribute',
-						'type'		=> 'select',
-						'no_first'	=> true,
-						'std'	=> 'deactivate',
-						'subtype'	=> array( 
-											__( 'Do not show - ignore all added ids', 'avia_framework' )	=> 'deactivate',
-											__( 'Do not show, but use added ids', 'avia_framework' )		=> 'hide',
-											__( 'Show and allow to edit ids', 'avia_framework' )			=> 'developer_id_attribute',
-										)
-					);
-
-$avia_elements[] = array(
-						'slug'	=> 'builder',
-						'name' 	=> __( 'Customize heading styling', 'avia_framework' ),
-						'desc' 	=> __( 'Select to display options to change heading tags and add custom classes for easier styling. Enfold only provides CSS for theme default tags so it might be necessary to add your own CSS rules when you change the tags.', 'avia_framework' ),
-						'id' 	=> 'developer_seo_heading_tags',
-						'type' 	=> 'select',
-						'no_first'	=> true,
-						'std'	=> 'deactivate',
-						'subtype'	=> array( 
-											__( 'Do not show - use theme defaults', 'avia_framework' )			=> 'deactivate',
-											__( 'Do not show, but use selected stylings', 'avia_framework' )	=> 'hide',
-											__( 'Show and allow to edit stylings', 'avia_framework' )			=> 'developer_seo_heading_tags',
-										)
-					);
 
 $avia_elements[] = array(	
 						'slug'			=> 'builder', 
@@ -954,10 +902,16 @@ $avia_elements[] = array(
 							'nodescription' => true
 						);
 
+$desc  = __( 'Either enter your Google tracking id (UA-XXXXX-X) or your full Google Analytics tracking Code here.', 'avia_framework');
+$desc .= '<br><br>';
+$desc .= __( 'If you want to offer your visitors the option to stop being tracked you can place the shortcode [av_privacy_google_tracking] somewhere on your site.', 'avia_framework' ) . ' ';
+$desc .= __( 'More information and more privacy settings you find here:', 'avia_framework' ) . ' ';
+$desc .= '<a href="' . admin_url( 'admin.php?page=avia#goto_cookie' )  . '">' . __( 'Privacy and Cookies', 'avia_framework' ) . '</a>';
+		
 $avia_elements[] =	array(
 							'slug'  => 'google',
 							'name'  => __( 'Google Analytics Tracking Code', 'avia_framework' ),
-							'desc'  => __( 'Either enter your Google tracking id (UA-XXXXX-X) or your full Google Analytics tracking Code here.', 'avia_framework') . '<br><br>' . __( 'If you want to offer your visitors the option to stop being tracked you can place the shortcode [av_privacy_google_tracking] somewhere on your site', 'avia_framework' ),
+							'desc'  => $desc,
 							'class' => 'av_small_textarea',
 							'id'    => 'analytics',
 							'type'  => 'textarea'
@@ -984,7 +938,7 @@ $tutorial_link = 'https://kriesi.at/documentation/enfold/how-to-register-a-googl
 
 $avia_elements[] = array(	
 							'name'	=> __( 'Google Maps', 'avia_framework' ),
-							'desc'	=> __( 'Google recently changed the way their map service works. New pages which want to use Google Maps need to register an API key for their website. Older pages should  work fine without this API key. If the google map elements of this theme do not work properly you need to register a new API key.', 'avia_framework' ) . "<br><a href='{$google_link}' target='_blank'>" . __( 'Register an API Key', 'avia_framework' ) . "</a> | <a target='_blank' href='{$tutorial_link}'>" . __( 'Tutorial: How to create an API key', 'avia_framework' ) . '</a>',
+							'desc'	=> __( 'Google recently changed the way their map service works. New pages which want to use Google Maps need to register an API key for their website. Older pages should  work fine without this API key. If the google map elements of this theme do not work properly you need to register a new API key.', 'avia_framework' ) . "<br><a href='{$google_link}' target='_blank' rel='noopener noreferrer'>" . __( 'Register an API Key', 'avia_framework' ) . "</a> | <a target='_blank' href='{$tutorial_link}' rel='noopener noreferrer'>" . __( 'Tutorial: How to create an API key', 'avia_framework' ) . '</a>',
 							'id'	=> 'avia_gmaps_heading',
 							'std'	=> '',
 							'slug'	=> 'google',
@@ -998,7 +952,7 @@ $avia_elements[] = array(
 							'desc'		=> __( 'Select if you want to use Google Maps on your site. If it is disabled no Javascript to connect to Google Maps will be loaded in frontend.', 'avia_framework' ),
 							'id'		=> 'gmap_enabled',
 							'type'		=> 'select',
-							'std'		=> '',
+							'std'		=> 'disable_gmap',
 							'no_first'	=> true,
 							'subtype'	=> array(
 												__( 'Disable Google Maps', 'avia_framework' )	=> 'disable_gmap',
@@ -1062,8 +1016,8 @@ $recaptcha_admin = 'https://www.google.com/recaptcha/admin';
 $recaptcha_doc = 'https://kriesi.at/documentation/enfold/contact-form/#captcha';
 
 $recaptcha_desc  = __( 'Add Google reCAPTCHA widget functionality to the theme to verify if user is a human. Currently only enfold contact forms are supported and you can choose for each form individually if you want to use a reCAPTCHA.', 'avia_framework' ) . '<br />';
-$recaptcha_desc .= sprintf( __( 'Info about <a href="%1$s" target="_blank">Google reCAPTCHA</a>. You need to create <a href="%2$s" target="_blank">API keys</a> for your site. Also check our <a href="%3$s" target="_blank">documentation.</a>', 'avia_framework' ), $recaptcha, $recaptcha_admin, $recaptcha_doc ) . '<br />';
-$recaptcha_v3 = sprintf( __( 'Please keep in mind that Version 3 needs to <a href="%1$s" target="_blank">monitor user behaviour and collects user data</a>. In case the score does not recognize a human Version 2 checkbox will be used additionally for verification. Therefore you must also register V2 keys.', ''), $recaptcha_v3 );
+$recaptcha_desc .= sprintf( __( 'Info about <a href="%1$s" target="_blank" rel="noopener noreferrer">Google reCAPTCHA</a>. You need to create <a href="%2$s" target="_blank" rel="noopener noreferrer">API keys</a> for your site. Also check our <a href="%3$s" target="_blank" rel="noopener noreferrer">documentation.</a>', 'avia_framework' ), $recaptcha, $recaptcha_admin, $recaptcha_doc ) . '<br />';
+$recaptcha_v3 = sprintf( __( 'Please keep in mind that Version 3 needs to <a href="%1$s" target="_blank" rel="noopener noreferrer">monitor user behaviour and collects user data</a>. In case the score does not recognize a human Version 2 checkbox will be used additionally for verification. Therefore you must also register V2 keys.', ''), $recaptcha_v3 );
 $recaptcha_score = __( 'A score of 1.0 is very likely a good interaction, 0.0 is very likely a bot. Google recommends a threshold of 0.5 by default. In case we encounter a non human we ask user to verify with Version 2 chckbox.', 'avia_framework' );
 
 $avia_elements[] = array(
@@ -1110,21 +1064,6 @@ $avia_elements[] = array(
 						);
 
 $avia_elements[] = array(
-							'slug'     => 'google',
-							'name'     => __( 'Select Theme Style For Verification In Backend', 'avia_framework' ),
-							'desc'     => __( 'This selection is used in backend to verify the keys. Adjust it according to your WP backend settings to be able to see the reCAPTCHA checkbox in backend. This setting can also be used in frontend as default setting.', 'avia_framework' ),
-							'id'       => 'avia_recaptcha_v2_theme',
-							'type'     => 'select',
-							'no_first' => true,
-							'std'      => '5',
-							'required' => array( 'avia_recaptcha_version', '{contains_array}avia_recaptcha_v2;avia_recaptcha_v3' ),
-							'subtype'  => array( 
-												__( 'Light theme', 'avia_framework' )  => '',
-												__( 'Dark theme', 'avia_framework' )   => 'dark',
-											)
-						);
-
-$avia_elements[] = array(
 							'slug'           => 'google',
 							'name'           => '',
 							'desc'           => '',
@@ -1132,7 +1071,7 @@ $avia_elements[] = array(
 							'required'       => array( 'avia_recaptcha_version','{contains_array}avia_recaptcha_v2;avia_recaptcha_v3'),
 							'type'           => 'verification_field',
 							'force_callback' => true,
-							'input_ids'		 => array( 'avia_recaptcha_version', 'avia_recaptcha_pkey_v2', 'avia_recaptcha_skey_v2', 'avia_recaptcha_pkey_v3', 'avia_recaptcha_skey_v3', 'avia_recaptcha_v2_theme' ),
+							'input_ids'		 => array( 'avia_recaptcha_version', 'avia_recaptcha_pkey_v2', 'avia_recaptcha_skey_v2', 'avia_recaptcha_pkey_v3', 'avia_recaptcha_skey_v3' ),
 							'ajax'           => 'av_recaptcha_api_check',
 							'js_callback'    => 'av_recaptcha_js_api_check',
 							'class'          => 'av_full_description',
@@ -1177,20 +1116,57 @@ $avia_elements[] = array(
 							'subtype'  => $numbers
 						);
 
-$avia_elements[] = array(
+/**
+ * @used_by				av_google_recaptcha
+ * @since 4.6.2
+ */
+if( current_theme_supports( 'avia_recaptcha_show_legal_information' ) )
+{
+	$desc  = __( 'Select if you want to show the default Google badge or only a message below the submit button. This is mandatory if you want to use V3.', 'avia_framework' );
+	$desc .= ' <a href="https://developers.google.com/recaptcha/docs/faq#id-like-to-hide-the-recaptcha-badge-what-is-allowed" target="_blank" rel="noopener noreferrer">' . __( 'See Google documentation', 'avia_framework' ) . '</a>.';
+
+	$avia_elements[] = array(
 							'slug'     => 'google',
 							'name'     => __( 'Google Legal Information', 'avia_framework' ),
-							'desc'     => __( 'Select if you want to show the default Google badge or only a message below the submit button. This is mandatory if you want to use V3.', 'avia_framework' ),
+							'desc'     => $desc,
 							'id'       => 'avia_recaptcha_badge',
 							'type'     => 'select',
 							'no_first' => true,
-							'std'      => '',
+							'std'      => 'contact_only_message',
 							'required' => array( 'avia_recaptcha_version', 'avia_recaptcha_v3' ),
 							'subtype'  => array(
-												__( 'Show default Google badge', 'avia_framework' )	=> '',
-												__( 'Show a default message string only', 'avia_framework' )		=> 'message',
+												__( 'Show default Google badge on all pages', 'avia_framework' )				=> '',
+												__( 'Show a message string on contact form page instead', 'avia_framework' )	=> 'message',
+												__( 'Show message string on contact form page only, hide badge on other pages', 'avia_framework' ) => 'contact_only_message',
+												__( 'Hide badge and string completly on every page', 'avia_framework' )			=> 'hide'
 											),
 						);
+}
+else
+{
+	$desc = '<strong>' . __( 'Google Legal Information - for developers', 'avia_framework' ) . '</strong><br />';
+	$desc .= __( 'If you want to change the default behaviour you can display a selectbox by adding to functions.php:', 'avia_framework' ) . '<br />';
+	$desc .= 'add_theme_support( "avia_recaptcha_show_legal_information" );';
+	
+	$avia_elements[] =	array(
+							'name'	=> '',
+							'desc'	=> $desc,
+							'id'	=> 'avia_recaptcha_legal_description',
+							'std'	=> '',
+							'slug'	=> 'google',
+							'type'	=> 'heading',
+							'nodescription' => true
+						);
+	
+	$avia_elements[] = array(	
+							'slug'      => 'google',
+							'std'       => 'contact_only_message',
+							'name'      => __( 'Google Legal Information - hidden - uses default value', 'avia_framework' ),
+							'desc'      => '',
+							'id'        => 'avia_recaptcha_badge',
+							'type'      => 'hidden',
+					);
+}
 
 $avia_elements[] = array(
 							'slug'           => 'google',
@@ -1200,7 +1176,7 @@ $avia_elements[] = array(
 							'required'       => array( 'avia_recaptcha_version', 'avia_recaptcha_v3' ),
 							'type'           => 'verification_field',
 							'force_callback' => true,
-							'input_ids'		 => array( 'avia_recaptcha_version', 'avia_recaptcha_pkey_v2', 'avia_recaptcha_skey_v2', 'avia_recaptcha_pkey_v3', 'avia_recaptcha_skey_v3', 'avia_recaptcha_v2_theme' ),
+							'input_ids'		 => array( 'avia_recaptcha_version', 'avia_recaptcha_pkey_v2', 'avia_recaptcha_skey_v2', 'avia_recaptcha_pkey_v3', 'avia_recaptcha_skey_v3' ),
 							'ajax'           => 'av_recaptcha_api_check',
 							'js_callback'    => 'av_recaptcha_js_api_check',
 							'class'          => 'av_full_description',
@@ -1240,7 +1216,38 @@ $avia_elements[] = array(
  * @author kriesi
  * @since 4.4
  */
-$avia_elements[] = array("slug"	=> "cookie", "type" => "visual_group_start", "id" => "avia_privacy_group_start", "nodescription" => true);
+ 
+$avia_elements[] = array(
+						'slug'          => 'cookie',
+						'name'          => __( 'Privacy and Cookies','avia_framework' ),
+						'desc'          => '',
+						'id'            => 'avia_p_and_c',
+						'std'           => '',
+						'type'          => 'heading',
+						'nodescription' => true
+					);
+
+
+
+//START TAB CONTAINER
+$avia_elements[] = array(	
+					"slug"	=> "cookie", 
+					"type"	=> "visual_group_start", 
+					"id"	=> "avia_cookietab1", 
+					"nodescription" => true, 
+					'class'	=> 'avia_tab_container avia_set'
+				);
+
+// Start TAB
+$avia_elements[] = array(	
+					"slug"	=> "cookie", 
+					"type"	=> "visual_group_start", 
+					"id"	=> "avia_cookietab5", 
+					"nodescription" => true, 
+					'class'	=> 'avia_tab avia_tab2',
+					'name'	=> __( 'Privacy Policy', 'avia_framework' )
+				);
+
 
 $eu_msg  = __( "In case you deal with any EU customers/visitors these options allow you to make your site GDPR compliant.", 'avia_framework' ) . '<br />';
 $eu_msg .= __( "The following default text will be applied if you leave the textfields empty:", 'avia_framework' ) . '<br />';
@@ -1390,14 +1397,24 @@ $avia_elements[] =	array(
     "required" => array("privacy_message_registration_active",'privacy_message_registration_active'),
 );
 
-$avia_elements[] =	array(
-    "slug"	=> "cookie",
-    "id" 	=> "privacy_hr1",
-    "type" 	=> "hr",
-    "std"	=> false,
-    "class" => "small-hr",
-    "nodescription"=>true
-);
+
+// END TAB
+$avia_elements[] = array(	
+			'slug'		=> 'cookie', 
+			'type'		=> 'visual_group_end', 
+			'id'		=> 'avia_tab5_end', 
+			'nodescription' => true
+		);
+
+// Start TAB
+$avia_elements[] = array(	
+			'slug'	=> 'cookie', 
+			'type'	=> 'visual_group_start', 
+			'id'	=> 'avia_cookietab5', 
+			'nodescription' => true, 
+			'class'	=> 'avia_tab avia_tab2',
+			'name'	=>	__( 'Privacy Shortcodes', 'avia_framework' )
+		);
 
 $pp_id = get_option('wp_page_for_privacy_policy');
 $pp_url = admin_url("post.php?post={$pp_id}&action=edit");
@@ -1424,6 +1441,7 @@ $avia_elements[] =	array(
 			
 	'<li><strong>[av_privacy_cookie_info id="" class=""]</strong> - ' . __( ' adds a list about used and accessable cookies in domain with value and additional info about the cookie', 'avia_framework' ) . '</li>' .
 	'<li><strong>[av_privacy_accept_button wrapper_class="" id="" class=""]your button text[/av_privacy_accept_button]</strong> - ' . __( ' adds an accept cookies button', 'avia_framework' ) . '</li>' .
+	'<li><strong>[av_privacy_accept_all_button wrapper_class="" id="" class=""]your button text[/av_privacy_accept_all_button]</strong> - ' . __( ' adds an accept all cookies and services button', 'avia_framework' ) . '</li>' .		
 	'<li><strong>[av_privacy_do_not_accept_button wrapper_class="" id="" class=""]your button text[/av_privacy_do_not_accept_button]</strong> - ' . __( ' adds a do not accept cookies button', 'avia_framework' ) . '</li>' .
 	'<li><strong>[av_privacy_modal_popup_button wrapper_class="" id="" class=""]your button text[/av_privacy_modal_popup_button]</strong> - ' . __( ' adds a button that opens the privacy modal popup window - you have to enable cookie consent message bar', 'avia_framework' ) . '</li>' .
 	'</ul><br>',
@@ -1437,16 +1455,51 @@ $avia_elements[] =	array(
 
 
 } 
-/***************************************************************************************************/
 
 
- $avia_elements[] = array(
+$avia_elements[] = array(	
+			'slug'		=> 'cookie', 
+			'type'		=> 'visual_group_end', 
+			'id'		=> 'avia_tab5_end', 
+			'nodescription' => true
+		);
+
+
+// Start TAB
+$avia_elements[] = array(	
 			'slug'	=> 'cookie', 
-			'type'	=> 'visual_group_end', 
-			'id'	=> 'avia_privacy_group_end', 
+			'type'	=> 'visual_group_start', 
+			'id'	=> 'avia_cookietab5', 
+			'nodescription' => true, 
+			'class'	=> 'avia_tab avia_tab2',
+			'name'	=>	__( 'Cookie Handling', 'avia_framework' )
+		);
+
+
+
+
+$cookie_desc = '';
+$cookie_desc .= __( "Make sure you comply with the <a target='_blank' href='http://ec.europa.eu/ipg/basics/legal/cookies/index_en.htm' rel='noopener noreferrer'>EU cookie law</a> by informing users that your site uses cookies. This can be done with a small notification bar or modal popup window", 'avia_framework' );
+$cookie_desc .= '<br><br>'; 
+$cookie_desc .= __( 'You can also use the message bar to display a one time message not related to cookies if you do not need to inform your customers about the use of cookies.', 'avia_framework' ) . ' ';
+$cookie_desc .= '<br><br>'; 
+$cookie_desc .= __( 'More detailed information about the cookie law, message bar usage, the styling of the bar and more can be found in our documentation: ', 'avia_framework' ) . '<br><a href="https://kriesi.at/documentation/enfold/privacy-cookies/" target="_blank" rel="noopener noreferrer">' . __( 'Enfold Privacy And Cookies', 'avia_framework' ) . '</a>.'; 
+$cookie_desc .= '<br><br>';
+$cookie_desc .= '<strong>' . __( 'Using a caching plugin: Whenever you make changes here please clear server cache to allow a rebuild of the pages to reflect the changed options.', 'avia_framework' ) . '</strong>';
+
+$avia_elements[] =	array(
+			'name'	=> __( 'Cookie Handling and Cookie Consent Messages', 'avia_framework' ),
+			'desc'	=> $cookie_desc,
+			'id'	=> 'overlay_description',
+//			'class'	=> 'avia_heading_boxed',
+			'std'	=> '',
+			'slug'	=> 'cookie',
+			'type'	=> 'heading',
 			'nodescription'	=> true
 		);
 
+
+/***************************************************************************************************/
 /**
  * Cookie Consent section
  *
@@ -1454,35 +1507,7 @@ $avia_elements[] =	array(
  * @since 4.3
  * @since 4.5.7.2 extended by Günter
  */
-$cookie_desc = '';
-$cookie_desc .= __( "Make your site comply with the <a target='_blank' href='http://ec.europa.eu/ipg/basics/legal/cookies/index_en.htm'>EU cookie law</a> by informing users that your site uses cookies.", 'avia_framework' );
-$cookie_desc .= '<br><br>'; 
-$cookie_desc .= __( 'If user decides not to accept any cookies Enfold will use browser session storage to remember this selection but this is removed when user closes the browser window and also not recognized when opening a new tab or a new window.', 'avia_framework' ) . ' ';
-$cookie_desc .= '<a href="https://developer.mozilla.org/en-US/docs/Web/API/Window/sessionStorage" target="_blank">' . __( 'See MDN documentation for more info,', 'avia_framework' ) . '</a> ';
-$cookie_desc .= __( 'We add a confirm popup to the &quot;Do not accept&quot; button where you can inform user about that and also that crucial functions of your site like e.g. sessions, shopping cart,... will not work properly. We also try to remove all cookies set in the site domain to respect his selection, but this is not guaranteed because of browser security or WP or plugins may continue to add cookies if they are removed (e.g. WooCommerce)', 'avia_framework' );
-$cookie_desc .= '<br><br>'; 
-$cookie_desc .= '<strong>' . __( 'Keep in mind that due to browser security Enfold cannot remove cookies in other domains and even in own domain, if cookie path is not accessable.', 'avia_framework' ) . '</strong>';
-$cookie_desc .= '<br><br>'; 
-$cookie_desc .= __( 'If user accepts cookies you can decide if he must opt in for non essential cookies. If he decides to refuse essential cookies only 2 cookie are kept to save this selection and to hide the message bar and another one if he must opt in - all other cookies will be removed. We provide a shortcode av_privacy_cookie_info to list used cookies of the site domain with the value and a short info text. Cookies of other domaines can only be inspected in the browser setting or with developer tools.', 'avia_framework' ) . ' ';
-$cookie_desc .= '<br><br>'; 
-$cookie_desc .= __( 'If you make changes to the message text or the button labels of the message bar users will be prompted again for confirmation.', 'avia_framework' ) . ' ';
-$cookie_desc .= __( "Colors and styling for the message can be edited in <a href='#goto_customizer'>Advanced Styling</a>", 'avia_framework' );
-$cookie_desc .= '<br><br>'; 
-$cookie_desc .= __( 'You can also use the message bar to display a one time message not related to cookies if you are using a plugin for this purpose or do not need to inform your customers about the use of cookies.', 'avia_framework' ) . ' ';
-$cookie_desc .= '<br><br>'; 
-$cookie_desc .= __( 'More detailed theme related information you can find here: ', 'avia_framework' ) . '<a href="https://kriesi.at/documentation/enfold/privacy-cookies/" target="_blank">' . __( 'Enfold Privacy And Cookies', 'avia_framework' ) . '</a>.'; 
-
-
-$avia_elements[] =	array(
-			'name'	=> __( 'Cookie Handling and Cookie Consent Messages', 'avia_framework' ),
-			'desc'	=> $cookie_desc,
-			'id'	=> 'overlay_description',
-			'std'	=> '',
-			'slug'	=> 'cookie',
-			'type'	=> 'heading',
-			'nodescription'	=> true
-		);
-
+ 
 $avia_elements[] = array(
 			'slug'	=> 'cookie',
 			'name'	=> __( 'Enable cookie consent messages', 'avia_framework' ),
@@ -1493,52 +1518,26 @@ $avia_elements[] = array(
 			'no_first'	=> true,
 			'subtype'	=> array(
 								__( 'Disable cookie consent messages', 'avia_framework' )		=> '',
-								__( 'Enable and show message bar', 'avia_framework' )			=> 'cookie_consent',
-								__( 'Enable but do not show a message bar', 'avia_framework' )	=> 'cookie__consent_no_bar',
-								__( 'Use as a simple message bar only', 'avia_framework' )		=> 'message_bar',
-							)
-		);
-
-$avia_elements[] = array(
-			'slug'	=> 'cookie',
-			'name'	=> __( 'Show A Badge', 'avia_framework' ),
-			'desc'	=> __( 'Select to show a badge to reopen the message bar', 'avia_framework' ),
-			'id'	=> 'cookie_consent_badge',
-			'type'	=> 'select',
-			'std'	=> '',
-			'required'	=> array( 'cookie_consent', '{contains_array}cookie_consent' ),
-			'no_first'	=> true,
-			'subtype'	=> array(
-								__( 'Disable cookie consent badge', 'avia_framework' )		=> '',
-								__( 'Show badge left bottom', 'avia_framework' )			=> 'left bottom',
-								__( 'Show badge right bottom', 'avia_framework' )			=> 'right bottom'
+								__( 'Enable cookie consent messages', 'avia_framework' )		=> 'cookie_consent'
 							)
 		);
 
 $avia_elements[] = array(
 			'slug'		=> 'cookie',
-			'name'		=> __( 'Default Cookie Option Settings', 'avia_framework' ),
-			'desc'		=> __( 'Select the default cookie option settings in modal &quot;Privacy and Cookie Info&quot; popup when user enters your site for the first time or refused to accept cookies.', 'avia_framework' ),
+			'name'		=> __( 'Default Cookie Behaviour', 'avia_framework' ),
+			'desc'		=> __( 'Select how cookies and privacy options should be loaded by default for new visitors', 'avia_framework' ),
 			'id'		=> 'cookie_default_settings',
 			'type'		=> 'select',
 			'required'	=> array( 'cookie_consent', '{contains_array}cookie_consent;cookie__consent_no_bar' ),
 			'std'		=> '',
 			'no_first'	=> true,
 			'subtype'	=> array(
-								__( 'Select all by default, user can opt out', 'avia_framework' )			=>	'',
-								__( 'User must opt in, only essential cookies selected', 'avia_framework' )	=>	'needs_opt_in',
+								__( 'All cookies and services are accepted on first page load, user can opt out', 'avia_framework' )	=> '',
+								__( 'User must accept and can opt out, all selected by default', 'avia_framework' )			=> 'can_opt_out',
+								__( 'User must accept and must opt in, only essential cookies selected', 'avia_framework' )	=> 'needs_opt_in',
 							)
 		);
 
-$avia_elements[] = array(
-			'slug'	=> 'cookie',
-			'name' 	=> __( 'Refuse Cookie Warning', 'avia_framework' ),
-			'desc' 	=> __( 'Provide a short message for a modal popup when user clicks the &quot;Do not accept and hide notification&quot; button. Inform him that refusing cookies will show the message bar every time he opens a new window or tab. Leave empty if you do not want to show the popup window.', 'avia_framework' ),
-			'id' 	=> 'cookie_refuse_button_alert',
-			'type' 	=> 'textarea',
-			'required'	=> array( 'cookie_consent', '{contains_array}cookie_consent;cookie__consent_no_bar' ),
-			'std'   => __( "When refusing all cookies this site might not be able to work as expected. Please check our settings page and opt out for cookies or functions you do not want to use and accept cookies. You will be shown this message every time you open a new window or a new tab.\n\nAre you sure you want to continue?", 'avia_framework' )
-		);
 
 $avia_elements[] = array(
 			'slug'	=> 'cookie', 
@@ -1552,6 +1551,7 @@ $avia_elements[] = array(
 			'name'	=> __( 'Cookie Consent Message Bar', 'avia_framework' ),
 			'desc'	=> __( 'Define content and buttons for your message bar to inform users about the use of cookies and services and depending on your country laws to opt in or opt out for services and cookies. If you make changes to message text or button label the message bar will be show again.', 'avia_framework' ),
 			'id'	=> 'consent_msg_bar_headline',
+//			'class'	=> 'avia_heading_boxed',
 			'std'	=> '',
 			'slug'	=> 'cookie',
 			'type'	=> 'heading',
@@ -1559,116 +1559,149 @@ $avia_elements[] = array(
 		);
 
 $avia_elements[] =	array(
-    "slug"	=> "cookie",
-    "name" 	=> __("Message", 'avia_framework'),
-    "desc" 	=> __("Provide a message which indicates that your site uses cookies.", 'avia_framework'),
-    "id" 	=> "cookie_content",
-    "type" 	=> "textarea",
-    "std"   => __( 'This site uses cookies. By continuing to browse the site, you are agreeing to our use of cookies.', 'avia_framework')
-);
+			'slug'	=> 'cookie',
+			'name' 	=> __( 'Message', 'avia_framework' ),
+			'desc' 	=> __( 'Provide a message which indicates that your site uses cookies.', 'avia_framework' ),
+			'id' 	=> 'cookie_content',
+			'type' 	=> 'textarea',
+			'std'   => __( 'This site uses cookies. By continuing to browse the site, you are agreeing to our use of cookies.', 'avia_framework' )
+		);
 
 
 $avia_elements[] =	array(
-    "slug"	=> "cookie",
-    "name" 	=> __("Message Bar Position", 'avia_framework'),
-    "desc" 	=> __("Where on the page should the message bar appear?", 'avia_framework'),
-    "id" 	=> "cookie_position",
-    "type" 	=> "select",
-    "std" 	=> "bottom",
-    "no_first"=>true,
-    "subtype" => array(
-        __('Top', 'avia_framework') =>'top',
-        __('Bottom', 'avia_framework') =>'bottom',
-        __('Top Left Corner', 'avia_framework') =>'top-left',
-        __('Top Right Corner', 'avia_framework') =>'top-right',
-        __('Bottom Left Corner', 'avia_framework') =>'bottom-left',
-        __('Bottom Right Corner', 'avia_framework') =>'bottom-right',
-    ));
+			'slug'	=> 'cookie',
+			'name'	=> __( 'Message Bar Position', 'avia_framework' ),
+			'desc'	=> __( 'Where on the page should the message bar appear?', 'avia_framework' ),
+			'id'	=> 'cookie_position',
+			'type'	=> 'select',
+			'std'	=> 'bottom',
+			'no_first'	=> true,
+			'subtype'	=> array(
+							__( 'Top', 'avia_framework' )			=>'top',
+							__( 'Bottom', 'avia_framework' )		=>'bottom',
+							__( 'Top Left Corner', 'avia_framework' )		=>'top-left',
+							__( 'Top Right Corner', 'avia_framework' )		=>'top-right',
+							__( 'Bottom Left Corner', 'avia_framework' )	=>'bottom-left',
+							__( 'Bottom Right Corner', 'avia_framework' )	=>'bottom-right',
+						)
+				);
 
-
-
+$avia_elements[] = array(
+			'slug'	=> 'cookie', 
+			'type'	=> 'visual_group_start', 
+			'id'	=> 'avia_button_group_start', 
+//			'class' => 'avia_boxed_visual_group',
+			'nodescription'	=> true, 
+		);
 
 $avia_elements[] = array(		
-						"name"	=> __("Buttons", 'avia_framework'),
-						"desc"	=> __("You can create any number of buttons/links for your message bar here:", 'avia_framework'),
-						"std"	=> "",
-						"slug"	=> "cookie",
-						"type"	=> "heading",
-						"nodescription" => true
-					);
+			'name'	=> __( 'Buttons', 'avia_framework' ),
+			'desc'	=> __( 'You can create any number of buttons/links for your message bar here:', 'avia_framework' ),
+			'std'	=> '',
+			'slug'	=> 'cookie',
+			'type'	=> 'heading',
+			'nodescription' => true
+		);
+
+
+$avia_elements[] = array(
+			'slug'	=> 'cookie', 
+			'type'	=> 'visual_group_end', 
+			'id'	=> 'avia_button_group_end', 
+			'nodescription'	=> true, 
+	);
+
+$avia_elements[] = array(
+			'slug'	=> 'cookie', 
+			'type'	=> 'visual_group_start', 
+			'id'	=> 'avia_button_group_def_start', 
+//			'class' => 'avia_boxed_visual_group',
+			'nodescription'	=> true, 
+		);
 
 $avia_elements[] =	array(
-					'type' 			=> 'group',
-					'id' 			=> 'msg_bar_buttons',
-					'slug'			=> 'cookie',
-					'linktext' 		=> '+',
-					'deletetext' 	=> '×',
-					'blank' 		=> true,
-					'nodescription' => true,
-					'std'			=> array(
-										array( 
-											'msg_bar_button_label'		=> __( 'Accept settings', 'avia_framework' ),
-											'msg_bar_button_action'		=> '',
-											'msg_bar_button_tooltip'	=> __( 'Allow to use cookies, you can modify used cookies in settings', 'avia_framework' )
-											),
-										array( 
-											'msg_bar_button_label'		=> __( 'Hide notification only', 'avia_framework' ),
-											'msg_bar_button_action'		=> 'hide_notification',
-											'msg_bar_button_tooltip'	=> __( 'Do not allow to use cookies - some functionality on our site might not work as expected.', 'avia_framework' )
-											),
-										array( 
-											'msg_bar_button_label'		=> __( 'Settings', 'avia_framework' ), 
-											'msg_bar_button_action'		=> 'info_modal',
-											'msg_bar_button_tooltip'	=> __( 'Get more info about cookies and select which one you want to allow or not.', 'avia_framework' ), 
-											),
+			'type' 			=> 'group',
+			'id' 			=> 'msg_bar_buttons',
+			'slug'			=> 'cookie',
+			'linktext' 		=> '+',
+			'deletetext' 	=> '×',
+			'blank' 		=> true,
+			'nodescription' => true,
+			'std'			=> array(
+									array( 
+										'msg_bar_button_label'		=> __( 'Accept settings', 'avia_framework' ),
+										'msg_bar_button_action'		=> '',
+										'msg_bar_button_tooltip'	=> __( 'Allow to use cookies, you can modify used cookies in settings', 'avia_framework' )
 										),
-					'subelements' 	=> array(
+									array( 
+										'msg_bar_button_label'		=> __( 'Hide notification only', 'avia_framework' ),
+										'msg_bar_button_action'		=> 'hide_notification',
+										'msg_bar_button_tooltip'	=> __( 'Do not allow to use cookies - some functionality on our site might not work as expected.', 'avia_framework' )
+										),
+									array( 
+										'msg_bar_button_label'		=> __( 'Settings', 'avia_framework' ), 
+										'msg_bar_button_action'		=> 'info_modal',
+										'msg_bar_button_tooltip'	=> __( 'Get more info about cookies and select which one you want to allow or not.', 'avia_framework' ), 
+										),
+									),
+			'subelements' 	=> array(
+								array(
+										'name' 	=> __( 'Button Label', 'avia_framework' ),
+										'desc' 	=> '',
+										'id' 	=> 'msg_bar_button_label',
+										'type' 	=> 'text',
+										'slug'	=> 'cookie',
+										'class' => 'av_3columns av_col_1'
+										),
 
-							array(
-								'name' 	=> __( 'Button Label', 'avia_framework' ),
-								'desc' 	=> '',
-								'id' 	=> 'msg_bar_button_label',
-								'type' 	=> 'text',
-								'slug'	=> 'cookie',
-								'class' => 'av_3columns av_col_1'
-								),
-							
-							array(
-								'name' 	=> __( 'Button Action', 'avia_framework' ),
-								'desc' 	=> '',
-								'id' 	=> 'msg_bar_button_action',
-								'type' 	=> 'select',
-								'slug'	=> 'cookie',
-								'class' => 'av_3columns av_col_2',
-								'no_first'	=> true,
-								'subtype'	=> array(
+									array(
+										'name' 	=> __( 'Button Action', 'avia_framework' ),
+										'desc' 	=> '',
+										'id' 	=> 'msg_bar_button_action',
+										'type' 	=> 'select',
+										'slug'	=> 'cookie',
+										'class' => 'av_3columns av_col_2',
+										'no_first'	=> true,
+										'subtype'	=> array(
 												__( 'Accept settings and dismiss notification', 'avia_framework' )	=> '',
+												__( 'Accept all cookies and services, dismiss notification', 'avia_framework' )	=> 'select_all',
 												__( 'Do not accept and hide notification', 'avia_framework' )		=> 'hide_notification',
 												__( 'Open info modal on privacy and cookies', 'avia_framework' )	=> 'info_modal',
 												__( 'Link to another page', 'avia_framework' )						=> 'link',
 											)
-								),
+										),
 
-							array(
-								'name' 	=> __( 'Button Link', 'avia_framework' ),
-								'desc' 	=> '',
-								'id' 	=> 'msg_bar_button_link',
-								'type' 	=> 'text',
-								'slug'	=> 'cookie',
-								'class' => 'av_3columns av_col_3',
-								'required' => array( 'msg_bar_button_action', '{contains}link' )
-						        ),
+									array(
+										'name' 	=> __( 'Button Link', 'avia_framework' ),
+										'desc' 	=> '',
+										'id' 	=> 'msg_bar_button_link',
+										'type' 	=> 'text',
+										'slug'	=> 'cookie',
+										'class' => 'av_3columns av_col_3',
+										'required' => array( 'msg_bar_button_action', '{contains}link' )
+										),
 						
-							array(
-								'name' 	=> __( 'Button Tooltip', 'avia_framework' ),
-								'desc' 	=> __( 'Enter an additional tooltip to give a closer information about use of the button', 'avia_framework' ),
-								'id' 	=> 'msg_bar_button_tooltip',
-								'type' 	=> 'text',
-								'slug'	=> 'cookie',
-								'class' => ''
-								),
-							)
+									array(
+										'name' 	=> __( 'Button Tooltip', 'avia_framework' ),
+										'desc' 	=> __( 'Enter an additional tooltip to give a closer information about use of the button', 'avia_framework' ),
+										'id' 	=> 'msg_bar_button_tooltip',
+										'type' 	=> 'text',
+										'slug'	=> 'cookie',
+										'class' => ''
+										),
+								)
 						);
+
+$avia_elements[] = array(
+			'slug'	=> 'cookie', 
+			'type'	=> 'visual_group_end', 
+			'id'	=> 'avia_button_group_def_end', 
+			'nodescription'	=> true, 
+	);
+
+
+
+
 
 
 $avia_elements[] = array(
@@ -1678,6 +1711,7 @@ $avia_elements[] = array(
 			'nodescription'	=> true, 
 			'required'	=> array( 'cookie_consent', '{contains_array}cookie_consent;message_bar' ),
 	);
+
 
 $avia_elements[] = array(
 			'slug'	=> 'cookie', 
@@ -1715,6 +1749,16 @@ $avia_elements[] = array(
 						)
 			);
 
+
+$avia_elements[] = array(
+			'slug'	=> 'cookie', 
+			'type'	=> 'visual_group_start', 
+			'id'	=> 'avia_button_group_start', 
+//			'class' => 'avia_boxed_visual_group',
+			'nodescription'	=> true, 
+		);
+		
+		
 $avia_elements[] =	array(
 					'type' 			=> 'group',
 					'id' 			=> 'modal_popup_window_buttons',
@@ -1756,6 +1800,7 @@ $avia_elements[] =	array(
 								'no_first'	=> true,
 								'subtype'	=> array(
 												__( 'Accept settings and dismiss notification', 'avia_framework' )	=> '',
+												__( 'Accept all cookies and services, dismiss notification', 'avia_framework' )	=> 'select_all',
 												__( 'Do not accept and hide notification', 'avia_framework' )		=> 'hide_notification',
 												__( 'Link to another page', 'avia_framework' )						=> 'link',
 											)
@@ -1782,11 +1827,17 @@ $avia_elements[] =	array(
 							)
 						);
 
+$avia_elements[] = array(
+			'slug'	=> 'cookie', 
+			'type'	=> 'visual_group_end', 
+			'id'	=> 'avia_cookie_custom_content_end', 
+			'nodescription'	=> true, 
+		);
 
 $avia_elements[] =	array(
 			'slug'	=> 'cookie',
-			'name'	=> __( 'Modal Window with Privacy and Cookie Info', 'avia_framework' ),
-			'desc'	=> __( 'Instead of displaying the default content set custom content yourself. We recommend to check the default content after theme updates for new features - unchecking this option will not change any of your settings.', 'avia_framework' ),
+			'name'	=> __( 'Modal Window Custom Content', 'avia_framework' ),
+			'desc'	=> __( 'Instead of displaying the default content set custom content yourself.', 'avia_framework' ),
 			'id'	=> 'cookie_info_custom_content',
 			'type'	=> 'checkbox',
 			'std'	=> false,
@@ -1800,9 +1851,20 @@ $avia_elements[] = array(
 			'required'	=> array( 'cookie_info_custom_content', 'cookie_info_custom_content' )
 		);
 
+$desc  = __( 'Define content of your modal popup window to inform visitors about your privacy policy. Use shortcodes to add toggles so visitors can opt in or out of services and cookies.', 'avia_framework' );
+$desc .= '<br /><br />';
+$desc .= '<strong>';
+$desc .=		__( 'If you want to allow your visitors to opt out of essential cookies and hide the message bar when returning to your site you need to add the following 2 shortcodes to your content:', 'avia_framework' );
+$desc .= '</strong>';
+$desc .= '<ul>';
+$desc .=	'<li><strong>[av_privacy_allow_cookies]</strong> - ' . __('allows a user to refuse cookies and hides message bar (needs 2 cookies for that, others are removed)', 'avia_framework' ) . '</li>';
+$desc .=	'<li><strong>[av_privacy_accept_essential_cookies]</strong> - ' . __('allows a user to opt out from essential theme and all other cookies (except 2 from av_privacy_allow_cookies)', 'avia_framework' ) . '</li>';
+$desc .= '</ul>';
+
+
 $avia_elements[] = array(
 			'name'	=> __( 'Modal Popup Window Content', 'avia_framework' ),
-			'desc'	=> __( 'Define content of your modal popup window to inform visitors about your privacy policy. Use shortcodes to add toggles so visitors can opt in or out of services and cookies.', 'avia_framework' ),
+			'desc'	=> $desc,
 			'id'	=> 'modal_popup_window_content_headline',
 			'std'	=> '',
 			'slug'	=> 'cookie',
@@ -1870,14 +1932,143 @@ $avia_elements[] = array(
 $avia_elements[] = array(
 			'slug'	=> 'cookie', 
 			'type'	=> 'visual_group_start', 
-			'id'	=> 'avia_cookie_custom_cookies_start', 
+			'id'	=> 'avia_cookie_advanced_options_start', 
 			'nodescription'	=> true,
-			'required'	=> array( 'cookie_consent', '{contains_array}cookie_consent;cookie__consent_no_bar' )
+			'required'	=> array( 'cookie_consent', '{contains_array}cookie_consent' )
 		);
 
 
+$avia_elements[] = array(
+			'name'	=> __( 'Advanced Options', 'avia_framework' ),
+			'desc'	=> '',
+			'id'	=> 'cookie_advanced_options_headline',
+			'std'	=> '',
+			'slug'	=> 'cookie',
+			'type'	=> 'heading',
+//			'class' => 'avia_boxed_visual_group',
+			'nodescription'	=> true
+		);
+
+$avia_elements[] =	array(
+			'slug'	=> 'cookie',
+			'name'	=> __( 'Show advanced options', 'avia_framework' ),
+			'desc'	=> __( 'Contains options for special use cases like using the message bar just for simple notifications', 'avia_framework' ),
+			'id'	=> 'cookie_show_advanced_options',
+			'type'	=> 'checkbox',
+			'std'	=> false,
+		);
+
+$avia_elements[] = array(
+			'slug'	=> 'cookie', 
+			'type' => 'visual_group_start', 
+			'id' => 'avia_cookie_advanced_start', 
+			'nodescription' => true, 
+			'required' => array( 'cookie_show_advanced_options', '{contains_array}cookie_show_advanced_options' )
+		);
+
+$desc  = __( 'Select if you want to use cookie logic or only display one time messages to your visitor but do not need the cookie logic. The message bar pops up again whenever you change the displayed text or button labels.', 'avia_framework' );
+$desc .= '<br /><br />';
+$desc .= __( 'To use cookie logic without showing a message bar please check our documentation:', 'avia_framework' ) . ' <a href="https://kriesi.at/documentation/enfold/privacy-cookies/#notification-bar" target="_blank" rel="noopener noreferrer">' . __( 'Enfold Privacy And Cookies', 'avia_framework' ) .'</a>.';
+
+$avia_elements[] = array(
+			'slug'	=> 'cookie',
+			'name'	=> __( 'Select use of the message bar', 'avia_framework' ),
+			'desc'	=> $desc,
+			'id'	=> 'cookie_message_bar_only',
+			'required'	=> array( 'cookie_show_advanced_options', '{contains_array}cookie_show_advanced_options' ),
+			'type'	=> 'select',
+			'std'	=> '',
+			'no_first'	=> true,
+			'subtype'	=> array(
+								__( 'Display message bar and use cookie logic', 'avia_framework' )		=> '',
+								__( 'Use as a simple message bar without cookie logic', 'avia_framework' )	=> 'cookie_message_bar_only bottom',
+							)
+		);
+
+//
+//if( current_theme_supports( 'avia_gdpr_permanent_hide_message_bar' ) )
+//{
+//	$avia_elements[] = array(
+//				'slug'	=> 'cookie',
+//				'name'	=> __( 'Hide Message Bar permanently', 'avia_framework' ),
+//				'desc'	=> __( 'Select if you want to use the implemented cookie logic and allow visitors to opt in or opt out of cookies and services but only want to provide a custom settings page.', 'avia_framework' ),
+//				'id'	=> 'cookie_consent_no_bar',
+//				'type'	=> 'select',
+//				'std'	=> '',
+//				'no_first'	=> true,
+//				'subtype'	=> array(
+//									__( 'Display message bar', 'avia_framework' )		=> '',
+//									__( 'Hide Message Bar permanently', 'avia_framework' )	=> 'cookie_consent_no_bar',
+//								)
+//			);
+//	
+//	$requ_cookie_consent_no_bar = array( 'cookie_consent_no_bar', '' );
+//}
+
+
+$avia_elements[] = array(
+			'slug'	=> 'cookie',
+			'name'	=> __( 'Show reopen badge', 'avia_framework' ),
+			'desc'	=> __( 'Select to show a badge to reopen the message bar', 'avia_framework' ),
+			'id'	=> 'cookie_consent_badge',
+//			'required'	=> array( 'cookie_consent_no_bar', '' ),
+			'type'	=> 'select',
+			'std'	=> '',
+			'no_first'	=> true,
+			'subtype'	=> array(
+								__( 'Disable badge', 'avia_framework' )		=> '',
+								__( 'Show badge at the bottom left of the screen', 'avia_framework' )			=> 'left bottom',
+								__( 'Show badge at the bottom right of the screen', 'avia_framework' )			=> 'right bottom'
+							)
+		);
+
+$avia_elements[] = array(
+			'slug'	=> 'cookie', 
+			'type' => 'visual_group_start', 
+			'id' => 'avia_cookie_message_bar_start', 
+			'nodescription' => true, 
+			'required' => array( 'cookie_message_bar_only', '' )
+		);
+
+$desc  = __( 'Select to force a reload of the page when user clicks the &quot;Accept Settings....&quot; or &quot;Do not accept....&quot; button. If you do not use external services a page reload is usually not necessary.', 'avia_framework' );
+
+$avia_elements[] = array(
+			'slug'		=> 'cookie',
+			'name'		=> __( 'Auto Reload Page', 'avia_framework' ),
+			'desc'		=> $desc,
+			'id'		=> 'cookie_auto_reload',
+			'type'		=> 'select',
+			'std'		=> '',
+			'no_first'	=> true,
+			'subtype'	=> array(
+								__( 'No auto reload required', 'avia_framework' )								=> '',
+								__( 'Auto reload on &quot;Accept Settings ...&quot; only', 'avia_framework' )	=> 'reload_accept',
+								__( 'Auto reload on &quot;Do not accept ...&quot; only', 'avia_framework' )		=> 'reload_no_accept',
+								__( 'Auto reload on both buttons', 'avia_framework' )							=> 'reload_both'
+							)
+		);
+
+$avia_elements[] = array(
+			'slug'	=> 'cookie',
+			'name' 	=> __( 'Refuse Cookie Warning', 'avia_framework' ),
+			'desc' 	=> __( 'Provide a short message for a browser alert when user clicks the &quot;Do not accept and hide notification&quot; button. Inform him that refusing cookies will show the message bar every time he opens a new window or tab. Leave empty if you do not want to show the browser alert.', 'avia_framework' ),
+			'id' 	=> 'cookie_refuse_button_alert',
+			'type' 	=> 'textarea',
+			'std'   => __( "When refusing all cookies this site migsht not be able to work as expected. Please check our settings page and opt out for cookies or functions you do not want to use and accept cookies. You will be shown this message every time you open a new window or a new tab.\n\nAre you sure you want to continue?", 'avia_framework' )
+		);
+
+
+$avia_elements[] = array(
+			'slug'	=> 'cookie', 
+			'type'	=> 'visual_group_start', 
+			'id'	=> 'avia_cookie_custom_cookies_start', 
+			'nodescription'	=> true,
+		);
+
+
+
 $desc  = __( 'Define additional custom cookies set by plugins. There are browser security limitations and it might not be possible to remove them using JavaScript or PHP.', 'avia_framework' ) . ' ';
-$desc .= __( 'Cookies must be in same domain and you need to specify exactly the name and the path (case sensitive) that is shown in the developer tools of the browser.', 'avia_framework' );
+$desc .= __( 'Cookies must be in the same domain and you need to specify the name and the path (case sensitive) that is shown in the developer tools of your browser.', 'avia_framework' );
 $desc .= '<br /><br />';
 $desc .= __( 'To add a toggle for that cookie use the following shortcodes:', 'avia_framework' );
 $desc .= '<br /><br />';
@@ -1903,7 +2094,15 @@ $avia_elements[] =	array(
 			'deletetext'	=> '×',
 			'blank'			=> true,
 			'nodescription'	=> true,
-			'std'			=> '',
+			'std'			=> array(
+									array(
+										'cookie_name'		=> '',
+										'cookie_path'		=> '',
+										'cookie_content'	=> '',
+										'cookie_info_desc'	=> '',
+										'cookie_compare_action'	=> ''
+									)
+								),
 			'subelements'	=> array(
 							array(
 								'name' 	=> __( 'Cookie Name', 'avia_framework' ),
@@ -1961,14 +2160,54 @@ $avia_elements[] = array(
 			'type'	=> 'visual_group_end', 
 			'id'	=> 'avia_cookie_custom_cookies_end', 
 			'nodescription'	=> true, 
-			'required'	=> array( 'cookie_consent', '{contains_array}cookie_consent;cookie__consent_no_bar' )
+		);
+
+$avia_elements[] = array(
+			'slug'	=> 'cookie', 
+			'type' => 'visual_group_end', 
+			'id' => 'avia_cookie_message_bar_end', 
+			'nodescription' => true, 
+			'required' => array( 'cookie_message_bar_only', '' )
+		);
+
+$avia_elements[] = array(
+			'slug'	=> 'cookie', 
+			'type'	=> 'visual_group_end', 
+			'id'	=> 'avia_cookie_advanced_end', 
+			'nodescription'	=> true, 
+			'required'	=> array( 'cookie_show_advanced_options', '{contains_array}cookie_show_advanced_options' )
+		);
+
+$avia_elements[] = array(
+			'slug'	=> 'cookie', 
+			'type'	=> 'visual_group_end', 
+			'id'	=> 'avia_cookie_advanced_options_end', 
+			'nodescription'	=> true, 
+			'required'	=> array( 'cookie_consent', '{contains_array}cookie_consent' )
+		);
+
+
+//END TAB
+$avia_elements[] = array(	
+			'slug'		=> 'cookie', 
+			'type'		=> 'visual_group_end', 
+			'id'		=> 'avia_tab5_end', 
+			'nodescription' => true
+		);
+
+//END TAB CONTAINER
+$avia_elements[] = array(	
+			'slug'		=> 'cookie', 
+			'type'		=> 'visual_group_end', 
+			'id'		=> 'avia_tab_container_end', 
+			'nodescription' => true
 		);
 
 
 /*newsletter*/
 
 $avia_elements[] = array(	"name" => 	__("Newsletter via Mailchimp", 'avia_framework'),
-								"desc" => __("Mailchimp allows you to easily use newsletter functionality with this theme. In order to use the Newsletter features you need to create a Mailchimp account and enter your API key into the field below.", 'avia_framework')."<br/><br/><a href='https://admin.mailchimp.com/account/api' target='_blank'>".__("You can find your API key here", 'avia_framework')."</a>",
+								"desc" => __("Mailchimp allows you to easily use newsletter functionality with this theme. In order to use the Newsletter features you need to create a Mailchimp account and enter your API key into the field below.", 'avia_framework')."<br/><br/><a href='https://admin.mailchimp.com/account/api' target='_blank' rel='noopener noreferrer'>".__("You can find your API key here", 'avia_framework')."</a>",
 								"std" => "",
 								"slug"	=> "newsletter",
 								"type" => "heading",
@@ -2471,46 +2710,155 @@ $avia_elements[] = array(	"slug"	=> "layout", "type" => "visual_group_end", "id"
 $avia_elements[] = array(	"slug"	=> "layout", "type" => "visual_group_end", "id" => "avia_tab_container_end2", "nodescription" => true);
 		
 		
-/*Frontpage Settings*/
+
+$warning  = '<br />';
+$warning .= '<strong>';
+$warning .= __( 'We strongly recommend to export your current settings now to have a fallback.', 'avia_framework' );
+$warning .= '</strong>';
 
 
-if(is_child_theme()){
-$avia_elements[] =	array(
-					"slug"	=> "upload",
-					"name" 	=> __("Import Settings from your Parent Theme", 'avia_framework'),
-					"desc" 	=> __("We have detected that you are using a Child Theme. That's Great!. If you want to, we can import the settings of your Parent theme to your Child theme. Please be aware that this will overwrite your current child theme settings.", 'avia_framework'),
-					"id" 	=> "parent_setting_import",
-					"type" 	=> "parent_setting_import");
+if( is_child_theme() )
+{
+	$avia_elements[] =	array(
+				'slug'	=> 'upload',
+				'name' 	=> __( 'Import Settings From Your Parent Theme', 'avia_framework' ),
+				'desc' 	=> __( "We have detected that you are using a Child Theme. That's Great!. If you want to, we can import the settings of your Parent theme to your Child theme. Please be aware that this will overwrite your current child theme settings.", 'avia_framework' ) . $warning,
+				'id' 	=> 'parent_setting_import',
+				'type' 	=> 'parent_setting_import'
+			);
 }
 
 
 $avia_elements[] =	array(
-    "slug"	=> "upload",
-    "name" 	=> __("Export Theme Settings File", 'avia_framework'),
-    "desc" 	=> __("Click the button to generate and download a config file which contains the theme settings. You can use the config file to import the theme settings on another sever.", 'avia_framework'),
-    "id" 	=> "theme_settings_export",
-    "type" 	=> "theme_settings_export");
+			'slug'	=> 'upload',
+			'name' 	=> __( 'Export Theme Settings File', 'avia_framework' ),
+			'desc' 	=> __( 'Click the button to generate and download a config file which contains the theme settings. You can use the config file to import the theme settings on another sever.', 'avia_framework' ),
+			'id' 	=> 'theme_settings_export',
+			'type' 	=> 'theme_settings_export'
+		);
+
+
+$avia_elements[] = array(
+			'slug'	=> 'upload',
+			'name' 	=> __( 'Select Theme Options To Import', 'avia_framework' ),
+			'desc' 	=> __( 'Check if you do not want to import all settings from an exported theme settings file. Please read the <a href="https://kriesi.at/documentation/enfold/backup-theme-settings" target="_blank" rel="noopener noreferrer">documentation</a> for more information how to customize import.', 'avia_framework' ),
+			'id' 	=> 'upload_filter_checkbox',
+			'type' 	=> 'checkbox',
+			'std'	=> ''
+		);
+
+$avia_elements[] = array(
+			'slug'		=> 'upload',
+			'name'		=> __( 'Keep Quick CSS Content', 'avia_framework' ),
+			'desc'		=> __( 'Check if you want to keep your added CSS stylings in &quot;General Styling -> Quick CSS&quot;. In case you select single tabs to import below your Quick CSS settings will be kept by default except you select the tab containing the Quick CSS field. In this case you must check here to keep them.', 'avia_framework' ),
+			'id'		=> 'upload_keep_quick_css',
+			'type'		=> 'checkbox',
+			'std'		=> '',
+			'required'	=> array( 'upload_filter_checkbox', 'upload_filter_checkbox' ),
+		);
+
+$avia_elements[] = array(
+			'slug'		=> 'upload',
+			'name'		=> __( 'Select Theme Options Tabs For Import', 'avia_framework' ),
+			'desc'		=> __( 'Do not select any tabs to import all or select which tabs of the theme options you want to import from the uploaded settings file. All options in these selected tabs will be imported - options in other tabs will not be modified.', 'avia_framework'),
+			'id'		=> 'upload_filter_tabs',
+			'type'		=> 'select',
+			'multiple'	=> '6',
+			'required'	=> array( 'upload_filter_checkbox', 'upload_filter_checkbox' ),
+			'std'		=> '',
+			'no_first'	=> true,
+			'subtype'	=> 'option_page_tabs'
+		);
 
 $avia_elements[] =	array(
-    "slug"		=> "upload",
-    "name" 		=> __("Import Theme Settings File", 'avia_framework'),
-    "desc" 		=> __("Upload a theme configuration file here. Note that the configuration file settings will overwrite your current configuration and you can't restore the current configuration afterwards.", 'avia_framework'),
-    "id" 		=> "config_file_upload",
-    "title" 	=> __("Upload Theme Settings File", 'avia_framework'),
-    "button" 	=> __("Insert Settings File", 'avia_framework'),
-    "trigger" 	=> "av_config_file_insert",
-    // "fopen_check" 	=> "true",
-    "std"	  	=> "",
-    "file_extension" => "txt",
-    "file_type"		=> "text/plain",
-    "type" 		=> "file_upload");
-    
-  					
+			'slug'		=> 'upload',
+			'name' 		=> __( 'Import Theme Settings File', 'avia_framework' ),
+			'desc' 		=> __( "Upload a theme configuration file here. Note that the configuration file settings will overwrite your current configuration and you can't restore the current configuration afterwards.", 'avia_framework' ) . $warning,
+			'id' 		=> 'config_file_upload',
+			'title' 	=> __( 'Upload Theme Settings File', 'avia_framework' ),
+			'button' 	=> __( 'Insert Settings File', 'avia_framework' ),
+			'trigger' 	=> 'av_config_file_insert',
+			// 'fopen_check' 	=> 'true',
+			'std'	  	=> '',
+			'file_extension' => 'txt',
+			'file_type'	=> 'text/plain',
+			'type' 		=> 'file_upload'
+		);
+
+if( ! current_theme_supports( 'avia_disable_reset_options' ) ) 
+{
+				
+	$avia_elements[] = array(
+				'slug'	=> 'upload',
+				'name' 	=> __( 'Select Theme Options To Reset', 'avia_framework' ),
+				'desc' 	=> __( 'Check if you do not want to reset all options. Please read the <a href="https://kriesi.at/documentation/enfold/backup-theme-settings" target="_blank" rel="noopener noreferrer">documentation</a> for more information how to customize resetting theme options.', 'avia_framework' ),
+				'id' 	=> 'reset_filter_checkbox',
+				'type' 	=> 'checkbox',
+				'std'	=> ''
+			);
+
+	$avia_elements[] = array(
+				'slug'		=> 'upload',
+				'name'		=> __( 'Keep Quick CSS Content', 'avia_framework' ),
+				'desc'		=> __( 'Check if you want to keep your added CSS stylings in &quot;General Styling -> Quick CSS&quot;. In case you select single tabs to reset below your Quick CSS settings will be kept by default except you select the tab containing the Quick CSS field. In this case you must check here to keep them.', 'avia_framework' ),
+				'id'		=> 'reset_keep_quick_css',
+				'type'		=> 'checkbox',
+				'std'		=> '',
+				'required'	=> array( 'reset_filter_checkbox', 'reset_filter_checkbox' ),
+			);
+
+	$avia_elements[] = array(
+				'slug'		=> 'upload',
+				'name'		=> __( 'Select Theme Options Tabs To Reset', 'avia_framework' ),
+				'desc'		=> __( 'Do not select any tabs to reset all options or select which tabs of the theme options you want to reset. All options in these selected tabs will be set to theme factory values - options in other tabs will not be modified.', 'avia_framework' ),
+				'id'		=> 'reset_filter_tabs',
+				'type'		=> 'select',
+				'multiple'	=> '6',
+				'required'	=> array( 'reset_filter_checkbox', 'reset_filter_checkbox' ),
+				'std'		=> '',
+				'no_first'	=> true,
+				'subtype'	=> 'option_page_tabs'
+			);
+
+	$avia_elements[] =	array(
+				'slug'	=> 'upload',
+				'name' 	=> __( 'Reset Selected Options', 'avia_framework' ),
+				'desc' 	=> __( 'Click the button to reset selected options to theme factory default values. Note that this will overwrite your current configuration and you cannot restore the current configuration afterwards.', 'avia_framework' ) . $warning,
+				'id' 	=> 'reset_selected_button',
+				'type' 	=> 'reset_selected_button',
+				'required'	=> array( 'reset_filter_checkbox', 'reset_filter_checkbox' ),
+			);
+
+}
+
+$avia_elements[] =	array(
+			'slug'	=> 'upload',
+			'name' 	=> __( 'Export Layout Builder Templates', 'avia_framework' ),
+			'desc' 	=> __( 'Click the button to generate and download a file which contains the Layout Builder saved templates. You can use this file to import the templates on another sever.', 'avia_framework' ),
+			'id' 	=> 'alb_templates_export',
+			'type' 	=> 'alb_templates_export'
+		);
+
+$avia_elements[] =	array(
+			'slug'		=> 'upload',
+			'name' 		=> __( 'Import Layout Builder Templates File', 'avia_framework' ),
+			'desc' 		=> __( "Upload a Layout Builder Templates file here. The uploaded templates will be added to the existing templates. Same named templates will not be overwritten.", 'avia_framework' ),
+			'id' 		=> 'alb_templates_upload',
+			'title' 	=> __( 'Upload Layout Builder Templates File', 'avia_framework' ),
+			'button' 	=> __( 'Insert Layout Builder Templates File', 'avia_framework' ),
+			'trigger' 	=> 'av_alb_templates_file_insert',
+			// 'fopen_check' 	=> 'true',
+			'std'	  	=> '',
+			'file_extension' => 'txt',
+			'file_type'	=> 'text/plain',
+			'type' 		=> 'file_upload'
+		);
+
 $avia_elements[] =	array(
 	"slug"		=> "upload",
 	"name" 		=> __("Iconfont Manager", 'avia_framework'),
-	"desc" 		=> __("You can upload additional Iconfont Packages generated with", 'avia_framework') . " <a href='http://fontello.com/' target='_blank'>Fontello</a>  ".
-	__("or use monocolored icon sets from", 'avia_framework') . " <a href='http://www.flaticon.com/' target='_blank'>Flaticon</a>. ".
+	"desc" 		=> __("You can upload additional Iconfont Packages generated with", 'avia_framework') . " <a href='http://fontello.com/' target='_blank' rel='noopener noreferrer'>Fontello</a>  ".
+	__("or use monocolored icon sets from", 'avia_framework') . " <a href='http://www.flaticon.com/' target='_blank' rel='noopener noreferrer'>Flaticon</a>. ".
 	__("Those icons can then be used in your Layout Builder.", 'avia_framework') ."<br/><br/>".
 	__("The 'Default Font' can't be deleted.", 'avia_framework') ."<br/><br/>".
 	__("Make sure to delete any fonts that you are not using, to keep the loading time for your visitors low", 'avia_framework'),
@@ -2529,7 +2877,7 @@ $avia_elements[] =	array(
 $avia_elements[] =	array(
 	"slug"		=> "upload",
 	"name" 		=> __("Custom Font Manager", 'avia_framework'),
-	"desc" 		=> __("You can upload your custom Font zip files. Intended for <a href='https://fonts.google.com/' target='_blank'>Google Webkit Fonts</a>.", 'avia_framework') . 
+	"desc" 		=> __("You can upload your custom Font zip files. Intended for <a href='https://fonts.google.com/' target='_blank' rel='noopener noreferrer'>Google Webkit Fonts</a>.", 'avia_framework') . 
 	"<br/><br/>" .
 	__("Make sure to delete any fonts that you are not using, to keep the loading time for your visitors low", 'avia_framework'),
 	"id" 		=> "typefont_upload",
@@ -2544,6 +2892,7 @@ $avia_elements[] =	array(
 	);	  
 
     
+/*Frontpage Settings*/
 
 
 $avia_elements[] =	array(
@@ -2596,7 +2945,7 @@ $avia_elements[] =	array(
 					"name" 	=> __("Favicon", 'avia_framework'),
 					"desc" 	=> __("Specify a favicon for your site.", 'avia_framework')." <br/>".__("Accepted formats: .ico, .png, .gif", 'avia_framework')." <br/><br/>".
 					__("What is a", 'avia_framework').
-					" <a target='_blank' href='http://en.wikipedia.org/wiki/Favicon'>".
+					" <a target='_blank' href='http://en.wikipedia.org/wiki/Favicon' rel='noopener noreferrer'>".
 					__( "favicon", 'avia_framework').
 					"?</a>",
 					"id" 	=> "favicon",
@@ -2755,7 +3104,7 @@ if( version_compare( $wp_version, '5.0', '>=' ) )
 						'std'		=> '',
 						'no_first'	=> true,
 						'subtype'	=> array(
-										__( 'Use Block Editor', 'avia_framework' )								=> '',
+										__( 'Use Block Editor', 'avia_framework' )		=> '',
 										__( 'Use WP Classic Editor', 'avia_framework' )	=> 'enable_wp_classic_editor'
 									)
 					);
@@ -2837,7 +3186,7 @@ $avia_elements[] =	array(
 					"desc" 		=> __("If a value is left empty or set to default then it will not be changed from the value defined in your CSS files", 'avia_framework')."<br/><br/><strong>".
 									__("Attention", 'avia_framework').": </strong>".
 									__("This feature is in active BETA! We will constantly add new elements to customize and need your help: If you got any suggestions on what to add please post them here:", 'avia_framework').
-									" <a target='_blank' href='https://kriesi.at/support/enfold-feature-requests/'>".
+									" <a target='_blank' href='https://kriesi.at/support/enfold-feature-requests/' rel='noopener noreferrer'>".
 									__("Enfold Feature Requests", 'avia_framework').
 									"</a><br/><br/>"
 									,
@@ -2848,7 +3197,9 @@ $avia_elements[] =	array(
 									__("Headings",'avia_framework'), 
 									__("Main Menu",'avia_framework'), 
 									__("Main Menu (Icon)",'avia_framework'), 
-									__("Misc",'avia_framework')),
+									__("Cookie Consent Bar",'avia_framework'),
+									__("Misc",'avia_framework')
+								),
 					"std" 		=> "",
 					"class"		=> "",
 					"elements" => $advanced);
@@ -3381,7 +3732,7 @@ $avia_elements[] =	array(
 					"slug"	=> "styling",
 					"name" 	=> __("Quick CSS", 'avia_framework'),
 					"desc" 	=> __("Just want to do some quick CSS changes? Enter them here, they will be applied to the theme. If you need to change major portions of the theme please use the custom.css file", 'avia_framework').
-					" <a target='_blank' href='https://kriesi.at/documentation/enfold/using-a-child-theme/'>".
+					" <a target='_blank' href='https://kriesi.at/documentation/enfold/using-a-child-theme/' rel='noopener noreferrer'>".
 					__("or the Enfold Child theme.","avia_framework").
 					"</a>"
 					,
@@ -4039,6 +4390,7 @@ $avia_elements[] =	array(
 									'Vimeo' 	=> 'vimeo',
 									'Vk' 		=> 'vk',
 									'Xing' 		=> 'xing',
+									'Yelp'		=> 'yelp',
 									'YouTube'   => 'youtube',
 									'WhatsApp'	=> 'whatsapp',
 									__('Special: RSS (add RSS URL, leave blank if you want to use default WordPress RSS feed)', 'avia_framework') => 'rss',
@@ -4406,7 +4758,14 @@ $avia_elements[] = array(
 		"class" => "av_3col av_col_2",
 		"slug"	=> "blog");				
 		
-		
+$avia_elements[] = array(
+		"name" 	=> __("Yelp link", 'avia_framework'),
+		"desc" 	=> __("Check to display", 'avia_framework'),
+		"id" 	=> "share_yelp",
+		"type" 	=> "checkbox",
+		"std"	=> "",
+		"class" => "av_3col av_col_1",
+		"slug"	=> "blog");	
 		
 		
 		
@@ -4419,7 +4778,7 @@ $avia_elements[] = array("slug"	=> "blog", "type" => "visual_group_end", "id" =>
 
 $avia_elements[] =	array(	"name" => __("Import demo files", 'avia_framework'),
 							"desc" => __("If you are new to wordpress or have problems creating posts or pages that look like the Theme Demo you can import dummy posts and pages here that will definitely help to understand how those tasks are done.", 'avia_framework')."<br/><br/><strong class='av-text-notice'>".
-							__("Notice: If you want to completely remove a demo installation after importing it, you can use a plugin like", 'avia_framework')." <a target='_blank' href='https://wordpress.org/plugins/wordpress-reset/'>WordPress Reset</a></strong>"
+							__("Notice: If you want to completely remove a demo installation after importing it, you can use a plugin like", 'avia_framework')." <a target='_blank' href='https://wordpress.org/plugins/wordpress-reset/' rel='noopener noreferrer'>WordPress Reset</a></strong>"
 							,
 							"id" => "widgetdescription",
 							"std" => "",
@@ -4437,10 +4796,10 @@ $online_demo 	= __("Online Demo", 'avia_framework');
 $avia_elements[] =	array(
 					"slug"	=> "demo",
 					"name" 	=> __("Import: Default Demo", 'avia_framework'),
-					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold/' target='_blank'>{$online_demo}</a></strong></p>"
+					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold/' target='_blank' rel='noopener noreferrer'>{$online_demo}</a></strong></p>"
 								."<h4 class='av-before-plugins'>".__("Recommended Plugins:", 'avia_framework')."</h4><ul>"
-								."<li><a href='http://woocommerce.com/?ref=84' target='_blank'>WooCommerce</a> ".__("(for shop functionality)", 'avia_framework')."</li>"
-								."<li><a href='https://wordpress.org/plugins/bbpress/' target='_blank'>BBPress</a> ".__("(for forum functionality)", 'avia_framework')."</li>"
+								."<li><a href='http://woocommerce.com/?ref=84' target='_blank' rel='noopener noreferrer'>WooCommerce</a> ".__("(for shop functionality)", 'avia_framework')."</li>"
+								."<li><a href='https://wordpress.org/plugins/bbpress/' target='_blank' rel='noopener noreferrer'>BBPress</a> ".__("(for forum functionality)", 'avia_framework')."</li>"
 								."</ul>"
 								."<h4 class='av-before-plugins'>".__("Demo Images included:", 'avia_framework')."</h4><ul>"
 								."<li>".__("A few", 'avia_framework')."</li>"
@@ -4454,10 +4813,10 @@ $avia_elements[] =	array(
 $avia_elements[] =	array(
 					"slug"	=> "demo",
 					"name" 	=> __("Import: Enfold 2017", 'avia_framework'),
-					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-2017/' target='_blank'>{$online_demo}</a></strong></p>"
+					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-2017/' target='_blank' rel='noopener noreferrer'>{$online_demo}</a></strong></p>"
 								."<h4 class='av-before-plugins'>".__("Recommended Plugins:", 'avia_framework')."</h4><ul>"
-								."<li><a href='http://woocommerce.com/?ref=84' target='_blank'>WooCommerce</a> ".__("(for shop functionality)", 'avia_framework')."</li>"
-								."<li><a href='https://wordpress.org/plugins/bbpress/' target='_blank'>BBPress</a> ".__("(for forum functionality)", 'avia_framework')."</li>"
+								."<li><a href='http://woocommerce.com/?ref=84' target='_blank' rel='noopener noreferrer'>WooCommerce</a> ".__("(for shop functionality)", 'avia_framework')."</li>"
+								."<li><a href='https://wordpress.org/plugins/bbpress/' target='_blank' rel='noopener noreferrer'>BBPress</a> ".__("(for forum functionality)", 'avia_framework')."</li>"
 								."</ul>"
 								."<h4 class='av-before-plugins'>".__("Demo Images included:", 'avia_framework')."</h4><ul>"
 								."<li>".__("All", 'avia_framework')."</li>"
@@ -4472,7 +4831,7 @@ $avia_elements[] =	array(
 $avia_elements[] =	array(
 					"slug"	=> "demo",
 					"name" 	=> __("Import: Small Business - Flat Demo", 'avia_framework'),
-					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-business-flat/' target='_blank'>{$online_demo}</a></strong></p>"
+					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-business-flat/' target='_blank' rel='noopener noreferrer'>{$online_demo}</a></strong></p>"
 								."<h4 class='av-before-plugins'>".__("Recommended Plugins:", 'avia_framework')."</h4><ul>"
 								."<li>".__("None", 'avia_framework')."</li>"
 								."</ul>"
@@ -4488,7 +4847,7 @@ $avia_elements[] =	array(
 $avia_elements[] =	array(
 					"slug"	=> "demo",
 					"name" 	=> __("Import: Startup Business Demo", 'avia_framework'),
-					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-startup/' target='_blank'>{$online_demo}</a></strong></p>"
+					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-startup/' target='_blank' rel='noopener noreferrer'>{$online_demo}</a></strong></p>"
 								."<h4 class='av-before-plugins'>".__("Recommended Plugins:", 'avia_framework')."</h4><ul>"
 								."<li>".__("None", 'avia_framework')."</li>"
 								."</ul>"
@@ -4505,7 +4864,7 @@ $avia_elements[] =	array(
 $avia_elements[] =	array(
 					"slug"	=> "demo",
 					"name" 	=> __("Import: One Page Portfolio Demo", 'avia_framework'),
-					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-one-page-portfolio/' target='_blank'>{$online_demo}</a></strong></p>"
+					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-one-page-portfolio/' target='_blank' rel='noopener noreferrer'>{$online_demo}</a></strong></p>"
 								."<h4 class='av-before-plugins'>".__("Recommended Plugins:", 'avia_framework')."</h4><ul>"
 								."<li>".__("None", 'avia_framework')."</li>"
 								."</ul>"
@@ -4522,7 +4881,7 @@ $avia_elements[] =	array(
 $avia_elements[] =	array(
 					"slug"	=> "demo",
 					"name" 	=> __("Import: Minimal Portfolio Demo", 'avia_framework'),
-					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-minimal-portfolio/' target='_blank'>{$online_demo}</a></strong></p>"
+					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-minimal-portfolio/' target='_blank' rel='noopener noreferrer'>{$online_demo}</a></strong></p>"
 								."<h4 class='av-before-plugins'>".__("Recommended Plugins:", 'avia_framework')."</h4><ul>"
 								."<li>".__("None", 'avia_framework')."</li>"
 								."</ul>"
@@ -4538,7 +4897,7 @@ $avia_elements[] =	array(
 $avia_elements[] =	array(
 					"slug"	=> "demo",
 					"name" 	=> __("Import: Elegant Portfolio Demo", 'avia_framework'),
-					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-elegant-portfolio/' target='_blank'>{$online_demo}</a></strong></p>"
+					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-elegant-portfolio/' target='_blank' rel='noopener noreferrer'>{$online_demo}</a></strong></p>"
 								."<h4 class='av-before-plugins'>".__("Recommended Plugins:", 'avia_framework')."</h4><ul>"
 								."<li>".__("None", 'avia_framework')."</li>"
 								."</ul>"
@@ -4558,9 +4917,9 @@ $avia_elements[] =	array(
 $avia_elements[] =	array(
 					"slug"	=> "demo",
 					"name" 	=> __("Import: Photography Portfolio Demo", 'avia_framework'),
-					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-photography/' target='_blank'>{$online_demo}</a></strong></p>"
+					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-photography/' target='_blank' rel='noopener noreferrer'>{$online_demo}</a></strong></p>"
 								."<h4 class='av-before-plugins'>".__("Recommended Plugins:", 'avia_framework')."</h4><ul>"
-								."<li><a href='http://woocommerce.com/?ref=84' target='_blank'>WooCommerce</a> ".__("(if you want to sell photos online)", 'avia_framework')."</li>"
+								."<li><a href='http://woocommerce.com/?ref=84' target='_blank' rel='noopener noreferrer'>WooCommerce</a> ".__("(if you want to sell photos online)", 'avia_framework')."</li>"
 								."</ul>"
 								."<h4 class='av-before-plugins'>".__("Demo Images included:", 'avia_framework')."</h4><ul>"
 								."<li>".__("All", 'avia_framework')."</li>"
@@ -4574,7 +4933,7 @@ $avia_elements[] =	array(
 $avia_elements[] =	array(
 					"slug"	=> "demo",
 					"name" 	=> __("Import: Minimal Photography Demo", 'avia_framework'),
-					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-minimal-photography/' target='_blank'>{$online_demo}</a></strong></p>"
+					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-minimal-photography/' target='_blank' rel='noopener noreferrer'>{$online_demo}</a></strong></p>"
 								."<h4 class='av-before-plugins'>".__("Recommended Plugins:", 'avia_framework')."</h4><ul>"
 								."<li>".__("None", 'avia_framework')."</li>"
 								."</ul>"
@@ -4591,7 +4950,7 @@ $avia_elements[] =	array(
 $avia_elements[] =	array(
 					"slug"	=> "demo",
 					"name" 	=> __("Import: Dark Photography Demo", 'avia_framework'),
-					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-dark-photography/' target='_blank'>{$online_demo}</a></strong></p>"
+					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-dark-photography/' target='_blank' rel='noopener noreferrer'>{$online_demo}</a></strong></p>"
 								."<h4 class='av-before-plugins'>".__("Recommended Plugins:", 'avia_framework')."</h4><ul>"
 								."<li>".__("None", 'avia_framework')."</li>"
 								."</ul>"
@@ -4611,7 +4970,7 @@ $avia_elements[] =	array(
 $avia_elements[] =	array(
 					"slug"	=> "demo",
 					"name" 	=> __("Import: Creative Studio Demo", 'avia_framework'),
-					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-creative-studio/' target='_blank'>{$online_demo}</a></strong></p>"
+					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-creative-studio/' target='_blank' rel='noopener noreferrer'>{$online_demo}</a></strong></p>"
 								."<h4 class='av-before-plugins'>".__("Recommended Plugins:", 'avia_framework')."</h4><ul>"
 								."<li>".__("None", 'avia_framework')."</li>"
 								."</ul>"
@@ -4646,7 +5005,7 @@ $avia_elements[] =	array(
 $avia_elements[] =	array(
 					"slug"	=> "demo",
 					"name" 	=> __("Import: Medical Demo", 'avia_framework'),
-					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-medical/' target='_blank'>{$online_demo}</a></strong></p>"
+					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-medical/' target='_blank' rel='noopener noreferrer'>{$online_demo}</a></strong></p>"
 								."<h4 class='av-before-plugins'>".__("Recommended Plugins:", 'avia_framework')."</h4><ul>"
 								."<li>".__("None", 'avia_framework')."</li>"
 								."</ul>"
@@ -4664,9 +5023,9 @@ $avia_elements[] =	array(
 $avia_elements[] =	array(
 					"slug"	=> "demo",
 					"name" 	=> __("Import: Shop Demo", 'avia_framework'),
-					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-shop/' target='_blank'>{$online_demo}</a></strong></p>"
+					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-shop/' target='_blank' rel='noopener noreferrer'>{$online_demo}</a></strong></p>"
 								."<h4 class='av-before-plugins'>".__("Required Plugins:", 'avia_framework')."</h4><ul>"
-								."<li><a href='http://woocommerce.com/?ref=84' target='_blank'>WooCommerce</a> ".__("(needs to be active to install the demo)", 'avia_framework')."</li>"
+								."<li><a href='http://woocommerce.com/?ref=84' target='_blank' rel='noopener noreferrer'>WooCommerce</a> ".__("(needs to be active to install the demo)", 'avia_framework')."</li>"
 								."</ul>"
 								."<h4 class='av-before-plugins'>".__("Demo Images included:", 'avia_framework')."</h4><ul>"
 								."<li>".__("All", 'avia_framework')."</li>"
@@ -4686,9 +5045,9 @@ $avia_elements[] =	array(
 $avia_elements[] =	array(
 					"slug"	=> "demo",
 					"name" 	=> __("Import: Restaurant Demo", 'avia_framework'),
-					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-restaurant/' target='_blank'>{$online_demo}</a></strong></p>"
+					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-restaurant/' target='_blank' rel='noopener noreferrer'>{$online_demo}</a></strong></p>"
 								."<h4 class='av-before-plugins'>".__("Recommended Plugins:", 'avia_framework')."</h4><ul>"
-								."<li><a href='http://woocommerce.com/?ref=84' target='_blank'>WooCommerce</a> ".__("(if you want to provide online ordering and delivery)", 'avia_framework')."</li>"
+								."<li><a href='http://woocommerce.com/?ref=84' target='_blank' rel='noopener noreferrer'>WooCommerce</a> ".__("(if you want to provide online ordering and delivery)", 'avia_framework')."</li>"
 								."</ul>"
 								."<h4 class='av-before-plugins'>".__("Demo Images included:", 'avia_framework')."</h4><ul>"
 								."<li>".__("All", 'avia_framework')."</li>"
@@ -4702,9 +5061,9 @@ $avia_elements[] =	array(
 $avia_elements[] =	array(
 					"slug"	=> "demo",
 					"name" 	=> __("Import: Restaurant One Page Demo", 'avia_framework'),
-					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-restaurant-one-page/' target='_blank'>{$online_demo}</a></strong></p>"
+					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-restaurant-one-page/' target='_blank' rel='noopener noreferrer'>{$online_demo}</a></strong></p>"
 								."<h4 class='av-before-plugins'>".__("Recommended Plugins:", 'avia_framework')."</h4><ul>"
-								."<li><a href='http://woocommerce.com/?ref=84' target='_blank'>WooCommerce</a> ".__("(if you want to provide online ordering and delivery)", 'avia_framework')."</li>"
+								."<li><a href='http://woocommerce.com/?ref=84' target='_blank' rel='noopener noreferrer'>WooCommerce</a> ".__("(if you want to provide online ordering and delivery)", 'avia_framework')."</li>"
 								."</ul>"
 								."<h4 class='av-before-plugins'>".__("Demo Images included:", 'avia_framework')."</h4><ul>"
 								."<li>".__("All", 'avia_framework')."</li>"
@@ -4718,7 +5077,7 @@ $avia_elements[] =	array(
 $avia_elements[] =	array(
 					"slug"	=> "demo",
 					"name" 	=> __("Import: One Page Wedding Demo", 'avia_framework'),
-					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-wedding/' target='_blank'>{$online_demo}</a></strong></p>"
+					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-wedding/' target='_blank' rel='noopener noreferrer'>{$online_demo}</a></strong></p>"
 								."<h4 class='av-before-plugins'>".__("Recommended Plugins:", 'avia_framework')."</h4><ul>"
 								."<li>".__("None", 'avia_framework')."</li>"
 								."</ul>"
@@ -4734,7 +5093,7 @@ $avia_elements[] =	array(
 $avia_elements[] =	array(
 					"slug"	=> "demo",
 					"name" 	=> __("Import: Construction Demo", 'avia_framework'),
-					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-construction/' target='_blank'>{$online_demo}</a></strong></p>"
+					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-construction/' target='_blank' rel='noopener noreferrer'>{$online_demo}</a></strong></p>"
 								."<h4 class='av-before-plugins'>".__("Recommended Plugins:", 'avia_framework')."</h4><ul>"
 								."<li>".__("None", 'avia_framework')."</li>"
 								."</ul>"
@@ -4752,11 +5111,11 @@ $avia_elements[] =	array(
 $avia_elements[] =	array(
 					"slug"	=> "demo",
 					"name" 	=> __("Import: Church Demo", 'avia_framework'),
-					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-church/' target='_blank'>{$online_demo}</a></strong></p>"
+					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-church/' target='_blank' rel='noopener noreferrer'>{$online_demo}</a></strong></p>"
 								."<h4 class='av-before-plugins'>".__("Required Plugins:", 'avia_framework')."</h4><ul>"
-								."<li><a href='https://wordpress.org/plugins/the-events-calendar/' target='_blank'>The Events Calendar</a> "
+								."<li><a href='https://wordpress.org/plugins/the-events-calendar/' target='_blank' rel='noopener noreferrer'>The Events Calendar</a> "
 								.__("(needs to be active to install the demo)", 'avia_framework')."</li>"
-								."<li>or <a href='http://mbsy.co/6cr37' target='_blank'>The Events Calendar PRO</a></li>"
+								."<li>or <a href='http://mbsy.co/6cr37' target='_blank' rel='noopener noreferrer'>The Events Calendar PRO</a></li>"
 								."</ul>"
 								."<h4 class='av-before-plugins'>".__("Demo Images included:", 'avia_framework')."</h4><ul>"
 								."<li>".__("All", 'avia_framework')."</li>"
@@ -4773,7 +5132,7 @@ $avia_elements[] =	array(
 $avia_elements[] =	array(
 					"slug"	=> "demo",
 					"name" 	=> __("Import: Simple Blog Demo", 'avia_framework'),
-					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-blog/' target='_blank'>{$online_demo}</a></strong></p>"
+					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-blog/' target='_blank' rel='noopener noreferrer'>{$online_demo}</a></strong></p>"
 								."<h4 class='av-before-plugins'>".__("Recommended Plugins:", 'avia_framework')."</h4><ul>"
 								."<li>".__("None", 'avia_framework')."</li>"
 								."</ul>"
@@ -4791,7 +5150,7 @@ $avia_elements[] =	array(
 $avia_elements[] =	array(
 					"slug"	=> "demo",
 					"name" 	=> __("Import: Lifestyle Blog Demo", 'avia_framework'),
-					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-lifestyle-blog/' target='_blank'>{$online_demo}</a></strong></p>"
+					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-lifestyle-blog/' target='_blank' rel='noopener noreferrer'>{$online_demo}</a></strong></p>"
 								."<h4 class='av-before-plugins'>".__("Recommended Plugins:", 'avia_framework')."</h4><ul>"
 								."<li>".__("None", 'avia_framework')."</li>"
 								."</ul>"
@@ -4808,7 +5167,7 @@ $avia_elements[] =	array(
 $avia_elements[] =	array(
 					"slug"	=> "demo",
 					"name" 	=> __("Import: 'Coming Soon' Demo", 'avia_framework'),
-					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-coming-soon/' target='_blank'>{$online_demo}</a></strong></p>"
+					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-coming-soon/' target='_blank' rel='noopener noreferrer'>{$online_demo}</a></strong></p>"
 								."<h4 class='av-before-plugins'>".__("Recommended Plugins:", 'avia_framework')."</h4><ul>"
 								."<li>".__("None", 'avia_framework')."</li>"
 								."</ul>"
@@ -4825,7 +5184,7 @@ $avia_elements[] =	array(
 $avia_elements[] =	array(
 					"slug"	=> "demo",
 					"name" 	=> __("Import: 'Landing Page' Demo", 'avia_framework'),
-					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-landing-page/' target='_blank'>{$online_demo}</a></strong></p>"
+					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-landing-page/' target='_blank' rel='noopener noreferrer'>{$online_demo}</a></strong></p>"
 								."<h4 class='av-before-plugins'>".__("Recommended Plugins:", 'avia_framework')."</h4><ul>"
 								."<li>".__("None", 'avia_framework')."</li>"
 								."</ul>"
@@ -4842,12 +5201,12 @@ $avia_elements[] =	array(
 $avia_elements[] =	array(
 					"slug"	=> "demo",
 					"name" 	=> __("Import: Travel Demo", 'avia_framework'),
-					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-travel/' target='_blank'>{$online_demo}</a></strong></p>"
+					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-travel/' target='_blank' rel='noopener noreferrer'>{$online_demo}</a></strong></p>"
 								."<h4 class='av-before-plugins'>".__("Required Plugins:", 'avia_framework')."</h4><ul>"
-								."<li><a href='http://woocommerce.com/?ref=84' target='_blank'>WooCommerce</a> ".__("(needs to be active to install the demo)", 'avia_framework')."</li>"
+								."<li><a href='http://woocommerce.com/?ref=84' target='_blank' rel='noopener noreferrer'>WooCommerce</a> ".__("(needs to be active to install the demo)", 'avia_framework')."</li>"
 								."</ul>"
 								."<h4 class='av-before-plugins'>".__("Recommended Plugins:", 'avia_framework')."</h4><ul>"
-								."<li><a href='https://woocommerce.com/products/woocommerce-bookings/?ref=84' target='_blank'>WooCommerce Bookings</a> ".__("(needs to be active to allow date based bookings)", 'avia_framework')."</li>"
+								."<li><a href='https://woocommerce.com/products/woocommerce-bookings/?ref=84' target='_blank' rel='noopener noreferrer'>WooCommerce Bookings</a> ".__("(needs to be active to allow date based bookings)", 'avia_framework')."</li>"
 								."</ul>"
 								."<h4 class='av-before-plugins'>".__("Demo Images included:", 'avia_framework')."</h4><ul>"
 								."<li>".__("All", 'avia_framework')."</li>"
@@ -4863,12 +5222,12 @@ $avia_elements[] =	array(
 $avia_elements[] =	array(
 					"slug"	=> "demo",
 					"name" 	=> __("Import: Hotel Demo", 'avia_framework'),
-					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-hotel/' target='_blank'>{$online_demo}</a></strong></p>"
+					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-hotel/' target='_blank' rel='noopener noreferrer'>{$online_demo}</a></strong></p>"
 								."<h4 class='av-before-plugins'>".__("Required Plugins:", 'avia_framework')."</h4><ul>"
-								."<li><a href='http://woocommerce.com/?ref=84' target='_blank'>WooCommerce</a> ".__("(needs to be active to install the demo)", 'avia_framework')."</li>"
+								."<li><a href='http://woocommerce.com/?ref=84' target='_blank' rel='noopener noreferrer'>WooCommerce</a> ".__("(needs to be active to install the demo)", 'avia_framework')."</li>"
 								."</ul>"
 								."<h4 class='av-before-plugins'>".__("Recommended Plugins:", 'avia_framework')."</h4><ul>"
-								."<li><a href='https://woocommerce.com/products/woocommerce-bookings/?ref=84' target='_blank'>WooCommerce Bookings</a> ".__("(needs to be active to allow date based bookings)", 'avia_framework')."</li>"
+								."<li><a href='https://woocommerce.com/products/woocommerce-bookings/?ref=84' target='_blank' rel='noopener noreferrer'>WooCommerce Bookings</a> ".__("(needs to be active to allow date based bookings)", 'avia_framework')."</li>"
 								."</ul>"
 								."<h4 class='av-before-plugins'>".__("Demo Images included:", 'avia_framework')."</h4><ul>"
 								."<li>".__("All", 'avia_framework')."</li>"
@@ -4884,10 +5243,10 @@ $avia_elements[] =	array(
 $avia_elements[] =	array(
 					"slug"	=> "demo",
 					"name" 	=> __("Import: Spa Demo", 'avia_framework'),
-					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-spa/' target='_blank'>{$online_demo}</a></strong></p>"
+					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-spa/' target='_blank' rel='noopener noreferrer'>{$online_demo}</a></strong></p>"
 								."<h4 class='av-before-plugins'>".__("Recommended Plugins:", 'avia_framework')."</h4><ul>"
-								."<li><a href='http://woocommerce.com/?ref=84' target='_blank'>WooCommerce</a></li>"
-								."<li><a href='https://woocommerce.com/products/woocommerce-bookings/?ref=84' target='_blank'>WooCommerce Bookings</a> ".__("(needs to be active to allow date based bookings)", 'avia_framework')."</li>"
+								."<li><a href='http://woocommerce.com/?ref=84' target='_blank' rel='noopener noreferrer'>WooCommerce</a></li>"
+								."<li><a href='https://woocommerce.com/products/woocommerce-bookings/?ref=84' target='_blank' rel='noopener noreferrer'>WooCommerce Bookings</a> ".__("(needs to be active to allow date based bookings)", 'avia_framework')."</li>"
 								."</ul>"
 								."<h4 class='av-before-plugins'>".__("Demo Images included:", 'avia_framework')."</h4><ul>"
 								."<li>".__("All", 'avia_framework')."</li>"
@@ -4901,7 +5260,7 @@ $avia_elements[] =	array(
 $avia_elements[] =	array(
 					"slug"	=> "demo",
 					"name" 	=> __("Import: Law Demo", 'avia_framework'),
-					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-law/' target='_blank'>{$online_demo}</a></strong></p>"
+					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-law/' target='_blank' rel='noopener noreferrer'>{$online_demo}</a></strong></p>"
 								."<h4 class='av-before-plugins'>".__("Recommended Plugins:", 'avia_framework')."</h4><ul>"
 								."<li>".__("None", 'avia_framework')."</li>"
 								."</ul>"
@@ -4917,7 +5276,7 @@ $avia_elements[] =	array(
 $avia_elements[] =	array(
 					"slug"	=> "demo",
 					"name" 	=> __("Import: Consulting Demo", 'avia_framework'),
-					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-consulting/' target='_blank'>{$online_demo}</a></strong></p>"
+					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-consulting/' target='_blank' rel='noopener noreferrer'>{$online_demo}</a></strong></p>"
 								."<h4 class='av-before-plugins'>".__("Recommended Plugins:", 'avia_framework')."</h4><ul>"
 								."<li>".__("None", 'avia_framework')."</li>"
 								."</ul>"
@@ -4934,7 +5293,7 @@ $avia_elements[] =	array(
 $avia_elements[] =	array(
 					"slug"	=> "demo",
 					"name" 	=> __("Import: Résumé Demo", 'avia_framework'),
-					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-resume/' target='_blank'>{$online_demo}</a></strong></p>"
+					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-resume/' target='_blank' rel='noopener noreferrer'>{$online_demo}</a></strong></p>"
 								."<h4 class='av-before-plugins'>".__("Recommended Plugins:", 'avia_framework')."</h4><ul>"
 								."<li>".__("None", 'avia_framework')."</li>"
 								."</ul>"
@@ -4951,7 +5310,7 @@ $avia_elements[] =	array(
 $avia_elements[] =	array(
 					"slug"	=> "demo",
 					"name" 	=> __("Import: GYM Demo", 'avia_framework'),
-					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-gym/' target='_blank'>{$online_demo}</a></strong></p>"
+					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-gym/' target='_blank' rel='noopener noreferrer'>{$online_demo}</a></strong></p>"
 								."<h4 class='av-before-plugins'>".__("Recommended Plugins:", 'avia_framework')."</h4><ul>"
 								."<li>".__("None", 'avia_framework')."</li>"
 								."</ul>"
@@ -4968,7 +5327,7 @@ $avia_elements[] =	array(
 $avia_elements[] =	array(
 					"slug"	=> "demo",
 					"name" 	=> __("Import: Health Demo", 'avia_framework'),
-					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-health-coach/' target='_blank'>{$online_demo}</a></strong></p>"
+					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-health-coach/' target='_blank' rel='noopener noreferrer'>{$online_demo}</a></strong></p>"
 								."<h4 class='av-before-plugins'>".__("Recommended Plugins:", 'avia_framework')."</h4><ul>"
 								."<li>".__("None", 'avia_framework')."</li>"
 								."</ul>"
@@ -4984,7 +5343,7 @@ $avia_elements[] =	array(
 $avia_elements[] =	array(
 					"slug"	=> "demo",
 					"name" 	=> __("Import: App Demo", 'avia_framework'),
-					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-app/' target='_blank'>{$online_demo}</a></strong></p>"
+					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-app/' target='_blank' rel='noopener noreferrer'>{$online_demo}</a></strong></p>"
 								."<h4 class='av-before-plugins'>".__("Recommended Plugins:", 'avia_framework')."</h4><ul>"
 								."<li>".__("None", 'avia_framework')."</li>"
 								."</ul>"
@@ -5000,7 +5359,7 @@ $avia_elements[] =	array(
 $avia_elements[] =	array(
 					"slug"	=> "demo",
 					"name" 	=> __("Import: Gaming Demo", 'avia_framework'),
-					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-gaming/' target='_blank'>{$online_demo}</a></strong></p>"
+					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-gaming/' target='_blank' rel='noopener noreferrer'>{$online_demo}</a></strong></p>"
 								."<h4 class='av-before-plugins'>".__("Recommended Plugins:", 'avia_framework')."</h4><ul>"
 								."<li>".__("None", 'avia_framework')."</li>"
 								."</ul>"
@@ -5016,7 +5375,7 @@ $avia_elements[] =	array(
 $avia_elements[] =	array(
 					"slug"	=> "demo",
 					"name" 	=> __("Import: DJ Demo", 'avia_framework'),
-					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-dj/' target='_blank'>{$online_demo}</a></strong></p>"
+					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-dj/' target='_blank' rel='noopener noreferrer'>{$online_demo}</a></strong></p>"
 								."<h4 class='av-before-plugins'>".__("Recommended Plugins:", 'avia_framework')."</h4><ul>"
 								."<li>".__("None", 'avia_framework')."</li>"
 								."</ul>"
@@ -5032,9 +5391,9 @@ $avia_elements[] =	array(
 $avia_elements[] =	array(
 					"slug"	=> "demo",
 					"name" 	=> __("Import: Band Demo", 'avia_framework'),
-					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-band/' target='_blank'>{$online_demo}</a></strong></p>"
+					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-band/' target='_blank' rel='noopener noreferrer'>{$online_demo}</a></strong></p>"
 								."<h4 class='av-before-plugins'>".__("Recommended Plugins:", 'avia_framework')."</h4><ul>"
-								."<li><a href='http://woocommerce.com/?ref=84' target='_blank'>WooCommerce</a></li>"
+								."<li><a href='http://woocommerce.com/?ref=84' target='_blank' rel='noopener noreferrer'>WooCommerce</a></li>"
 								."</ul>"
 								."<h4 class='av-before-plugins'>".__("Demo Images included:", 'avia_framework')."</h4><ul>"
 								."<li>".__("All", 'avia_framework')."</li>"
@@ -5049,7 +5408,7 @@ $avia_elements[] =	array(
 $avia_elements[] =	array(
 					"slug"	=> "demo",
 					"name" 	=> __("Import: Freelancer Demo", 'avia_framework'),
-					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-freelancer/' target='_blank'>{$online_demo}</a></strong></p>"
+					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-freelancer/' target='_blank' rel='noopener noreferrer'>{$online_demo}</a></strong></p>"
 								."<h4 class='av-before-plugins'>".__("Recommended Plugins:", 'avia_framework')."</h4><ul>"
 								."<li>".__("None", 'avia_framework')."</li>"
 								."</ul>"
@@ -5066,7 +5425,7 @@ $avia_elements[] =	array(
 $avia_elements[] =	array(
 					"slug"	=> "demo",
 					"name" 	=> __("Import: Visual Artist Demo", 'avia_framework'),
-					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-visual-artist/' target='_blank'>{$online_demo}</a></strong></p>"
+					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-visual-artist/' target='_blank' rel='noopener noreferrer'>{$online_demo}</a></strong></p>"
 								."<h4 class='av-before-plugins'>".__("Recommended Plugins:", 'avia_framework')."</h4><ul>"
 								."<li>".__("None", 'avia_framework')."</li>"
 								."</ul>"
@@ -5082,9 +5441,9 @@ $avia_elements[] =	array(
 $avia_elements[] =	array(
 					"slug"	=> "demo",
 					"name" 	=> __("Import: Knowledgebase Demo", 'avia_framework'),
-					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-knowledgebase-demo/' target='_blank'>{$online_demo}</a></strong></p>"
+					"desc" 	=> 	 "<p><strong>{$what_get} <a href='https://kriesi.at/themes/enfold-knowledgebase-demo/' target='_blank' rel='noopener noreferrer'>{$online_demo}</a></strong></p>"
 								."<h4 class='av-before-plugins'>".__("Recommended Plugins:", 'avia_framework')."</h4><ul>"
-								."<li><a href='https://wordpress.org/plugins/bbpress/' target='_blank'>BBPress</a> ".__("(for forum functionality)", 'avia_framework')."</li>"
+								."<li><a href='https://wordpress.org/plugins/bbpress/' target='_blank' rel='noopener noreferrer'>BBPress</a> ".__("(for forum functionality)", 'avia_framework')."</li>"
 								."</ul>"
 								."<h4 class='av-before-plugins'>".__("Demo Images included:", 'avia_framework')."</h4><ul>"
 								."<li>".__("All", 'avia_framework')."</li>"

@@ -5,7 +5,7 @@ var avia_cookie_consent_modal_callback = avia_cookie_consent_modal_callback ||
 			open: null,
 			close: null
 		}; 
-		
+
 		
 ( function($) {
 
@@ -13,15 +13,48 @@ var avia_cookie_consent_modal_callback = avia_cookie_consent_modal_callback ||
 	
 	$(document).ready( function() 
 	{
+		//	FF throws error when all cookies blocked !!
+		var sessionBlocked = false;
+		try
+		{
+			var test = sessionStorage.getItem( 'aviaCookieRefused' );
+		}
+		catch(e)
+		{
+			sessionBlocked = true;
+		}
+		
 		var $_html = $('html');
 		var aviaCookieConsentBar = $('.avia-cookie-consent');
 		var aviaCookieConsentBadge = $('#av-cookie-consent-badge');
 		var accept_btn = $('.avia-cookie-consent-button.avia-cookie-close-bar');
 		var newCookieContents = aviaCookieConsentBar.attr('data-contents');
-		var oldCookieContents = aviaGetCookie('aviaCookieConsent' );
-		var aviaCookieRefused = sessionStorage.getItem( 'aviaCookieRefused' );
+		var oldCookieContents = aviaGetCookie( 'aviaCookieConsent' );
+		var aviaCookieRefused = ! sessionBlocked ? sessionStorage.getItem( 'aviaCookieRefused' ) : null;
 		var forceHideMessageBar = aviaGetCookie('aviaPrivacyRefuseCookiesHideBar');
 		var cookie_paths = set_cookie_paths();		// object Cookie name: path  - filled from custom cookies
+		var reload_tooltip = $_html.find( 'a.avia-privacy-reload-tooltip-link' ).first();
+		
+		/**
+		 * Set a class to avoid calls to sessionStorage
+		 */
+		if( sessionBlocked || aviaCookieRefused )
+		{
+			$_html.addClass( 'av-cookies-session-refused' );
+		}
+		
+		/**
+		 * If user refuses cookies and silent accept of cookies is selected we need to remove this if we are in same session
+		 */
+		if( sessionBlocked || aviaCookieRefused || document.cookie.match(/aviaCookieConsent/) )
+		{
+			$_html.removeClass( 'av-cookies-user-silent-accept' );
+		}
+		
+		if( reload_tooltip.length > 0 )
+		{
+			new $.AviaTooltip({"class": 'avia-privacy-reload-tooltip', data: 'avia-privacy-reload-tooltip', event:'click', position:'top', scope: "body", attach:'element', within_screen: true});
+		}
 		
 		if( 'undefined' != typeof $.avia_utilities.av_popup && 'function' != typeof avia_cookie_consent_modal_callback.init )
 		{
@@ -31,6 +64,11 @@ var avia_cookie_consent_modal_callback = avia_cookie_consent_modal_callback ||
 		}
 		
 		check_fallback_cookie_setting();
+		
+		if( $_html.hasClass( 'avia-cookie-check-browser-settings' ) )
+		{
+			check_doNotTrack();
+		}
 		
 		if( newCookieContents != oldCookieContents )
 		{
@@ -53,10 +91,7 @@ var avia_cookie_consent_modal_callback = avia_cookie_consent_modal_callback ||
 		
 			if( ! ( oldCookieContents || aviaCookieRefused ) || msgbar_changed )
 			{
-				if( ( aviaCookieConsentBar.length > 0 ) && msgbar_changed )
-				{
-					aviaCookieConsentBar.removeClass('cookiebar-hidden');
-				}
+				aviaCookieConsentBar.removeClass('cookiebar-hidden');		
 			}
 		}
 		else if( msgbar_changed )
@@ -68,6 +103,11 @@ var avia_cookie_consent_modal_callback = avia_cookie_consent_modal_callback ||
 					e.preventDefault();
 					
 					var button = $(this);
+					
+					if( button.hasClass( 'avia-cookie-select-all' ) )
+					{
+						aviaSetCookieToggles( 'select_all' );
+					}
 					
 					aviaSetCookie( 'aviaCookieConsent', newCookieContents, 365 );
 					aviaCookieConsentBar.addClass('cookiebar-hidden');
@@ -95,6 +135,18 @@ var avia_cookie_consent_modal_callback = avia_cookie_consent_modal_callback ||
 					}
 					
 					aviaSetCookieToggles( 'set' );
+					
+					if( $_html.hasClass( 'avia-cookie-reload-accept' ) )
+					{
+						if( reload_tooltip.length > 0 )
+						{
+							reload_tooltip.closest( '.avia-privacy-reload-tooltip-link-container' ).addClass( 'av-display-tooltip' );
+							reload_tooltip.trigger( 'click' );
+						}
+						location.reload( true );
+					}
+					
+					button.trigger( 'avia-cookie-settings-changed' );
 			});
 			
 		//	hide and dismiss button
@@ -120,9 +172,28 @@ var avia_cookie_consent_modal_callback = avia_cookie_consent_modal_callback ||
 					}
 					
 					aviaSetCookieToggles( 'reset' );
-					sessionStorage.setItem( 'aviaCookieRefused', newCookieContents );
+					if( ! sessionBlocked )
+					{
+						sessionStorage.setItem( 'aviaCookieRefused', newCookieContents );
+					}
+					
+					$_html.addClass( 'av-cookies-session-refused' );
+					$_html.removeClass( 'av-cookies-user-silent-accept' );
+					
 					aviaCookieConsentBar.addClass( 'cookiebar-hidden' );
-					aviaCookieConsentBadge.addClass('avia_pop_class');
+					aviaCookieConsentBadge.addClass( 'avia_pop_class' );
+					
+					if( $_html.hasClass( 'avia-cookie-reload-no-accept' ) )
+					{
+						if( reload_tooltip.length > 0 )
+						{
+							reload_tooltip.closest( '.avia-privacy-reload-tooltip-link-container' ).addClass( 'av-display-tooltip' );
+							reload_tooltip.trigger( 'click' );
+						}
+						location.reload( true );
+					}
+					
+					button.trigger( 'avia-cookie-settings-changed' );
 			});
         
 		//	info button
@@ -167,9 +238,27 @@ var avia_cookie_consent_modal_callback = avia_cookie_consent_modal_callback ||
 			var new_options = {
 				type:'inline',
 				midClick: true, // Allow opening popup on middle mouse click. Always set it to true if you don't provide alternative source in href.
+				closeOnBgClick: false,
+				enableEscapeKey: false,
+				closeOnContentClick: false,
+				overflowY: scroll,
 				items:{
 					src: '#av-consent-extra-info',
 					type:'inline'
+				},
+				callbacks: {
+					open: function() { 
+							$('html').css(
+									{	overflow: 'hidden',
+										'max-height': '100%'
+									});
+						},
+					close: function() { 
+							$('html').css(
+									{	overflow: '',
+										'max-height': ''
+									});
+					}
 				}
 			};
 			
@@ -180,6 +269,7 @@ var avia_cookie_consent_modal_callback = avia_cookie_consent_modal_callback ||
 		function avia_magnificPopup_close()
 		{
 			$.magnificPopup.close();
+			$_html.trigger( 'avia-cookie-settings-changed', 'avia_magnificPopup_close' );
 		}
 		
 		function set_cookie_paths()
@@ -293,7 +383,16 @@ var avia_cookie_consent_modal_callback = avia_cookie_consent_modal_callback ||
 					var value = true;
 					var days = 360;
 					
-					if( action != 'reset' )
+					if( action == 'select_all' )
+					{
+						if( ! input.prop( 'checked' ) )
+						{
+							input.trigger( 'click' );
+						}
+						
+						return;
+					}
+					else if( action == 'set' )
 					{
 						if( input.prop( 'checked' ) && toggle.hasClass( 'av-cookie-save-unchecked' ) || false == input.prop( 'checked' ) && toggle.hasClass( 'av-cookie-save-checked' ) )
 						{
@@ -301,12 +400,18 @@ var avia_cookie_consent_modal_callback = avia_cookie_consent_modal_callback ||
 							days = -60;
 						}
 					}
-					else
+					else	//	reset
 					{
+						var hidden = input.closest( '.av-hidden-escential-sc' );
+						if( 0 == hidden.length )
+						{
+							input.prop( 'checked', false );
+						}
+						
 						value = false;
 						days = -60;
 					}
-
+					
 					aviaSetCookie( cookie, value, days );
 				});
 
@@ -315,9 +420,14 @@ var avia_cookie_consent_modal_callback = avia_cookie_consent_modal_callback ||
 				aviaSetCookie( 'aviaCookieConsent', false, -60 );
 				aviaSetCookie( 'aviaPrivacyMustOptInSetting', false, -60 );
 			}
-			else
+			else if( action == 'set' )
 			{
-				sessionStorage.removeItem( 'aviaCookieRefused' );
+				if( ! sessionBlocked )
+				{
+					sessionStorage.removeItem( 'aviaCookieRefused' );
+				}
+				
+				$_html.removeClass( 'av-cookies-session-refused' );
 			}
 		}
 		
@@ -379,6 +489,11 @@ var avia_cookie_consent_modal_callback = avia_cookie_consent_modal_callback ||
 		
 		function remove_all_cookies( keep_cookies )
 		{
+//			if( $_html.hasClass('av-cookies-user-silent-accept') )
+//			{
+//				return;
+//			}
+			
 			if( ! $.isArray( keep_cookies ) )
 			{
 				keep_cookies = [];
@@ -393,6 +508,12 @@ var avia_cookie_consent_modal_callback = avia_cookie_consent_modal_callback ||
 			var cookie_array = document.cookie.split(';').map( function( item ) { return item.trim(); } );
 			
 			$.each( cookie_array, function( i, cookie ){
+					
+							if( '' == cookie )
+							{
+								return;
+							}
+							
 							var values = cookie.split( '=' );
 							var name = values[0].trim();
 							var test_name = name.toLowerCase();
@@ -413,7 +534,6 @@ var avia_cookie_consent_modal_callback = avia_cookie_consent_modal_callback ||
 											return false;
 										}
 									}
-									
 								});
 								
 							if( remove )
@@ -523,7 +643,7 @@ var avia_cookie_consent_modal_callback = avia_cookie_consent_modal_callback ||
 			}
 			
 			/**
-			 * If we have hidden toggles and user accepted cookies already we add the hidden cookies
+			 * If we have hidden toggles and user accepted cookies already we click the hidden cookies
 			 */
 			var hidden_cookies = data.split( ',' );
 			
@@ -534,6 +654,31 @@ var avia_cookie_consent_modal_callback = avia_cookie_consent_modal_callback ||
 						}
 					});
 			
+		}
+		
+		function check_doNotTrack()
+		{
+			if( window.doNotTrack || navigator.doNotTrack || navigator.msDoNotTrack || ( 'undefined' != typeof window.external && 'msTrackingProtectionEnabled' in window.external ) ) 
+			{
+				// The browser supports Do Not Track!
+				if( window.doNotTrack == "1" || navigator.doNotTrack == "yes" || navigator.doNotTrack == "1" || navigator.msDoNotTrack == "1" || ( 'undefined' != typeof window.external && 'msTrackingProtectionEnabled' in window.external && window.external.msTrackingProtectionEnabled() ) )
+				{
+					var input = $( 'input.aviaPrivacyGoogleTrackingDisabled' );
+					if( input.length > 0 )
+					{
+						if( null == aviaGetCookie( 'aviaPrivacyGoogleTrackingDisabled' ) )
+						{
+							input.trigger( 'click' );
+						}
+						
+						var container = input.closest( '.av-toggle-switch' );
+						var message = container.data( 'disabled_by_browser' ).trim();
+						container.addClass('av-cookie-sc-disabled');
+						container.append( '<p><strong>' + message + '</strong></p>');
+						input.attr( 'disabled', 'disabled' );
+					}
+				}
+			}
 		}
 		
 		update_cookie_info_box();

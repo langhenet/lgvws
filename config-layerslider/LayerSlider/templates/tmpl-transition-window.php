@@ -1,13 +1,14 @@
 <?php if(!defined('LS_ROOT_FILE')) {  header('HTTP/1.0 403 Forbidden'); exit; } ?>
 <script type="text/html" id="tmpl-ls-transition-modal">
 	<div id="ls-transition-window" class="<?php echo ( LS_Config::get('theme_bundle') && ! $lsActivated ) ? 'hide-special-effects' : '' ?>">
-		<header>
-			<h1><?php _e('Select slide transitions', 'LayerSlider') ?></h1>
-			<b class="dashicons dashicons-no"></b>
 
+		<h1 class="kmw-modal-title"><?php _e('Select slide transitions', 'LayerSlider') ?></h1>
+
+		<div id="transitiongallery-header">
 			<div id="tryorigami">
 				<img src="<?php echo LS_ROOT_URL ?>/static/admin/img/origami.png" alt="Try the Origami Effect!">
 			</div>
+
 			<div id="transitionmenu" class="filters">
 				<span><?php _e('Show transitions:', 'LayerSlider') ?></span>
 				<ul>
@@ -22,8 +23,9 @@
 				<i><?php _e('Apply to others', 'LayerSlider') ?></i>
 				<i class="off"><?php _e('Select all', 'LayerSlider') ?></i>
 			</div>
-		</header>
-		<div class="km-ui-modal-scrollable inner">
+		</div>
+
+		<div class="inner">
 			<div id="ls-transitions-list">
 
 				<!-- 2D -->

@@ -130,10 +130,12 @@
 			//	check if videos are disabled by user setting via cookie - or user must opt in.
 			var cookie_check = $('html').hasClass('av-cookies-needs-opt-in') || $('html').hasClass('av-cookies-can-opt-out');
 			var allow_continue = true;
+			var silent_accept_cookie = $('html').hasClass('av-cookies-user-silent-accept');
+			var self_hosted = 'html5' == this.type;
 			
-			if( cookie_check )
+			if( cookie_check && ! silent_accept_cookie && ! self_hosted )
 			{
-				if( ! document.cookie.match(/aviaCookieConsent/) || sessionStorage.getItem( 'aviaCookieRefused' ) )
+				if( ! document.cookie.match(/aviaCookieConsent/) || $('html').hasClass('av-cookies-session-refused') )
 				{
 					allow_continue = false;
 				}

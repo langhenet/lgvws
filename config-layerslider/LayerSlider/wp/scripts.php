@@ -3,6 +3,12 @@
 $lsPriority = (int) get_option('ls_scripts_priority', 3);
 $lsPriority = ! empty($lsPriority) ? $lsPriority : 3;
 
+
+if( get_option('ls_gutenberg_block', true ) ) {
+	add_action('enqueue_block_editor_assets', 'ls_enqueue_slider_library');
+	add_action('init', 'layerslider_register_gutenberg_block');
+}
+
 add_action('wp_enqueue_scripts', 'layerslider_enqueue_content_res', $lsPriority);
 add_action('wp_footer', 'layerslider_footer_scripts', ($lsPriority+1));
 
@@ -36,6 +42,58 @@ function layerslider_script_attributes( $tag, $handle, $src ) {
 
 
 	return $tag;
+}
+
+
+function ls_enqueue_slider_library() {
+
+	// Dependencies: GreenSock & Kreatura Modal Window
+	wp_enqueue_script('layerslider-greensock', LS_ROOT_URL.'/static/layerslider/js/greensock.js', false, '1.18.0' );
+	wp_enqueue_style('kreatura-modal-window', LS_ROOT_URL.'/static/admin/css/kmw.css', false, LS_PLUGIN_VERSION );
+	wp_enqueue_script('kreatura-modal-window', LS_ROOT_URL.'/static/admin/js/kmw.js', array('jquery'), LS_PLUGIN_VERSION );
+
+	// Slider Library files
+	wp_enqueue_style('layerslider-slider-library', LS_ROOT_URL.'/static/admin/css/slider-library.css', false, LS_PLUGIN_VERSION );
+	wp_enqueue_script('layerslider-slider-library', LS_ROOT_URL.'/static/admin/js/slider-library.js', array('jquery'), LS_PLUGIN_VERSION );
+
+	// Slider Library Localization
+	include LS_ROOT_PATH.'/wp/slider_library_l10n.php';
+	wp_localize_script('layerslider-slider-library', 'LS_SLibrary_l10n', $l10n_ls_slider_library);
+}
+
+
+function layerslider_register_gutenberg_block() {
+
+	if( function_exists('register_block_type') ) {
+
+		include LS_ROOT_PATH.'/wp/gutenberg_l10n.php';
+		wp_register_script('layerslider-gutenberg', LS_ROOT_URL.'/static/admin/js/gutenberg.js', array( 'wp-blocks', 'wp-i18n', 'wp-element', 'wp-components', 'wp-editor' ), LS_PLUGIN_VERSION );
+		wp_localize_script('layerslider-gutenberg', 'LS_GB_l10n', $l10n_ls_gutenberg);
+
+		wp_register_style('layerslider-gutenberg', LS_ROOT_URL.'/static/admin/css/gutenberg.css', false, LS_PLUGIN_VERSION );
+
+
+		register_block_type('kreatura/layerslider', array(
+			'editor_style' => array(
+				'layerslider-gutenberg',
+				'kreatura-modal-window'
+			),
+			'editor_script' => array(
+				'layerslider-gutenberg',
+				'layerslider-greensock',
+				'kreatura-modal-window'
+			),
+			'render_callback' => 'layerslider_render_gutenberg_block'
+		));
+	}
+}
+
+
+function layerslider_render_gutenberg_block( $attributes )  {
+
+	if( ! empty( $attributes['id'] ) ) {
+		return LS_Shortcode::handleShortcode( $attributes );
+	}
 }
 
 
@@ -76,14 +134,20 @@ function layerslider_enqueue_content_res() {
 	wp_register_style('layerslider-font-awesome', LS_ROOT_URL.'/static/font-awesome/css/font-awesome.min.css', false, LS_PLUGIN_VERSION );
 
 	// Build LS_Meta object
-	$LS_Meta = array('v' => LS_PLUGIN_VERSION);
+	$LS_Meta = array();
+
+	if( ! get_option('ls_suppress_debug_info', false ) ) {
+		$LS_Meta['v'] = LS_PLUGIN_VERSION;
+	}
 
 	if( get_option('ls_gsap_sandboxing', false) ) {
 		$LS_Meta['fixGSAP'] = true;
 	}
 
 	// Print LS_Meta object
-	wp_localize_script('layerslider-greensock', 'LS_Meta', $LS_Meta);
+	if( ! empty( $LS_Meta ) ) {
+		wp_localize_script('layerslider-greensock', 'LS_Meta', $LS_Meta);
+	}
 
 	// User resources
 	$uploads = wp_upload_dir();
@@ -162,6 +226,7 @@ function layerslider_footer_scripts() {
 	if( ! empty( $GLOBALS['lsSliderInit'] ) ) {
 		wp_add_inline_script( 'layerslider', implode('', $GLOBALS['lsSliderInit']) );
 	}
+
 }
 
 
@@ -199,10 +264,10 @@ function layerslider_enqueue_admin_res() {
 		}
 
 		// Load some bundled WP resources
-		wp_enqueue_script('thickbox');
-		wp_enqueue_style('thickbox');
 		wp_enqueue_script('wp-pointer');
 		wp_enqueue_style('wp-pointer');
+
+		wp_enqueue_script('jquery-ui-droppable');
 
 		// Dashicons
 		if( version_compare( get_bloginfo('version'), '3.8', '<') ) {
@@ -212,7 +277,10 @@ function layerslider_enqueue_admin_res() {
 		// Global scripts & stylesheets
 		wp_enqueue_script('layerslider-greensock', LS_ROOT_URL.'/static/layerslider/js/greensock.js', false, '1.18.0' );
 		wp_enqueue_script('kreaturamedia-ui', LS_ROOT_URL.'/static/admin/js/km-ui.js', array('jquery'), LS_PLUGIN_VERSION );
+		wp_enqueue_script('kreatura-modal-window', LS_ROOT_URL.'/static/admin/js/kmw.js', array('jquery'), LS_PLUGIN_VERSION );
 		wp_enqueue_script('ls-admin-global', LS_ROOT_URL.'/static/admin/js/ls-admin-common.js', array('jquery'), LS_PLUGIN_VERSION );
+
+		wp_enqueue_style('kreatura-modal-window', LS_ROOT_URL.'/static/admin/css/kmw.css', false, LS_PLUGIN_VERSION );
 		wp_enqueue_style('layerslider-admin', LS_ROOT_URL.'/static/admin/css/admin.css', false, LS_PLUGIN_VERSION );
 		wp_enqueue_style('layerslider-admin-new', LS_ROOT_URL.'/static/admin/css/admin_new.css', false, LS_PLUGIN_VERSION );
 		wp_enqueue_style('kreaturamedia-ui', LS_ROOT_URL.'/static/admin/css/km-ui.css', false, LS_PLUGIN_VERSION );
@@ -252,6 +320,7 @@ function layerslider_enqueue_admin_res() {
 
 				case 'about':
 					wp_enqueue_style('ls-about-page', LS_ROOT_URL.'/static/admin/css/about.css', false, LS_PLUGIN_VERSION );
+					wp_enqueue_script('ls-about-page', LS_ROOT_URL.'/static/admin/js/about.js', array('jquery'), LS_PLUGIN_VERSION );
 					break;
 
 				case 'skin-editor':
@@ -290,6 +359,11 @@ function layerslider_enqueue_admin_res() {
 
 			wp_enqueue_script('ls-admin-sliders', LS_ROOT_URL.'/static/admin/js/ls-admin-sliders.js', array('jquery'), LS_PLUGIN_VERSION );
 			wp_enqueue_script('ls-shuffle', LS_ROOT_URL.'/static/shuffle/shuffle.min.js', array('jquery'), LS_PLUGIN_VERSION );
+
+			wp_enqueue_style('ls-font-awesome-latest', LS_ROOT_URL.'/static/font-awesome-latest/css/all.min.css', false, LS_PLUGIN_VERSION );
+
+			wp_enqueue_script('layerslider', LS_ROOT_URL.'/static/layerslider/js/layerslider.kreaturamedia.jquery.js', array('jquery'), LS_PLUGIN_VERSION );
+			wp_enqueue_style('layerslider', LS_ROOT_URL.'/static/layerslider/css/layerslider.css', false, LS_PLUGIN_VERSION );
 
 		// Slider & Transition Builder
 		} else {
@@ -337,7 +411,6 @@ function ls_require_builder_assets() {
 	// 3rd-party: MiniColor
 	wp_enqueue_script('minicolor', LS_ROOT_URL.'/static/minicolors/jquery.minicolors.js', array('jquery'), LS_PLUGIN_VERSION );
 	wp_enqueue_style('minicolor', LS_ROOT_URL.'/static/minicolors/jquery.minicolors.css', false, LS_PLUGIN_VERSION );
-
 
 	// 3rd-party: Air Datepicker
 	wp_enqueue_style('air-datepicker', LS_ROOT_URL.'/static/air-datepicker/datepicker.min.css', false, '2.1.0' );
@@ -401,6 +474,12 @@ function ls_load_google_fonts() {
 }
 
 function ls_meta_generator() {
+
+	if( get_option('ls_suppress_debug_info', false ) ) {
+		return;
+	}
+
+
 	$str = '<meta name="generator" content="Powered by LayerSlider '.LS_PLUGIN_VERSION.' - Multi-Purpose, Responsive, Parallax, Mobile-Friendly Slider Plugin for WordPress." />' . NL;
 	$str.= '<!-- LayerSlider updates and docs at: https://layerslider.kreaturamedia.com -->' . NL;
 

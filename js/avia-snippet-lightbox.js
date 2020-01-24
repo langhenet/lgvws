@@ -23,7 +23,7 @@
 			        youtube: {
 			            index: 'youtube.com/watch', 
 			            id: function(url) {  
-				            
+
 				            //fetch the id      
 			                var m = url.match(/[\\?\\&]v=([^\\?\\&]+)/), id, params;
 			                if ( !m || !m[1] ) return null;
@@ -37,7 +37,25 @@
 			                return id + params;
 			            },
 			            src: '//www.youtube.com/embed/%id%'
-			        }
+			        },
+					vimeo: {
+						index: 'vimeo.com/', 
+						id: function(url) {        
+
+							//fetch the id
+							var m = url.match(/(https?:\/\/)?(www.)?(player.)?vimeo.com\/([a-z]*\/)*([0-9]{6,11})[?]?.*/), id, params;
+							if ( !m || !m[5] ) return null;
+							
+							id = m[5];
+							
+							//fetch params
+							params = url.split('?');
+							params = params[1];
+							
+							return id + '?' + params;
+						},
+						src: '//player.vimeo.com/video/%id%'
+					}
 			    }
 			},
 			image: {

@@ -639,7 +639,7 @@ $.fn.avia_link_column = function()
 				
 				if( 'undefined' !== typeof target || '_blank' == target )
 				{
-					window.open( url, '_blank' );
+					window.open( url, '_blank', 'noopener noreferrer' );
 				}
 				else
 				{

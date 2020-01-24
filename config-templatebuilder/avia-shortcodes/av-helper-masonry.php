@@ -66,7 +66,7 @@ if ( ! class_exists( 'avia_masonry' ) )
 								'animation'				=> 'active',
 								'offset'				=> 0,
 								'container_links'		=> true,
-								'container_class'		=> "",
+								'container_class'		=> '',
 								'paginate'				=> 'none',				//	'pagination' | 'load_more' | 'none'
 								'caption_elements'		=> 'title excerpt',
 								'caption_display'		=> 'always',
@@ -95,7 +95,7 @@ if ( ! class_exists( 'avia_masonry' ) )
 		 	
 		 	if($this->atts['caption_elements'] == 'none')
 		 	{
-			 	$this->atts['caption_styling'] = "";
+			 	$this->atts['caption_styling'] = '';
 		 	}
 		 	                                		
 		  	$this->atts = apply_filters( 'avf_masonry_settings', $this->atts, self::$element );
@@ -146,17 +146,18 @@ if ( ! class_exists( 'avia_masonry' ) )
 		}
 		
 		/**
-		 * 
+		 * Splits linkpicker string
+		 *  
 		 * @since < 4.0
 		 */
 		public function extract_terms()
 		{
-			if(isset($this->atts['link']))
+			if( isset( $this->atts['link'] ) )
 			{
-				$this->atts['link'] = explode(',', $this->atts['link'], 2 );
+				$this->atts['link'] = explode( ',', $this->atts['link'], 2 );
 				$this->atts['taxonomy'] = $this->atts['link'][0];
 
-				if(isset($this->atts['link'][1]))
+				if( isset( $this->atts['link'][1] ) )
 				{
 					$this->atts['categories'] = $this->atts['link'][1];
 				}
@@ -183,7 +184,7 @@ if ( ! class_exists( 'avia_masonry' ) )
 			 * To display private posts you need to set 'hide_empty' to false, 
 			 * otherwise a category with ONLY private posts will not be returned !!
 			 * 
-			 * You also need to add post_status "private" to the query params with filter avia_masonry_entries_query.
+			 * You also need to add post_status 'private' to the query params with filter avia_masonry_entries_query.
 			 * 
 			 * @since 4.4.2
 			 * @added_by Günter
@@ -199,7 +200,7 @@ if ( ! class_exists( 'avia_masonry' ) )
 			
 			$current_page_terms	= array();
 			$term_count 		= array();
-			$display_terms 		= is_array($this->atts['categories']) ? $this->atts['categories'] : array_filter(explode(',',$this->atts['categories']));
+			$display_terms 		= is_array( $this->atts['categories'] ) ? $this->atts['categories'] : array_filter( explode( ',', $this->atts['categories'] ) );
 
 			foreach( $this->loop as $entry )
 			{
@@ -209,16 +210,16 @@ if ( ! class_exists( 'avia_masonry' ) )
 				{
 					foreach( $current_item_terms as $current_item_term )
 					{
-						if(empty($display_terms) || in_array($current_item_term->term_id, $display_terms))
+						if( empty( $display_terms ) || in_array( $current_item_term->term_id, $display_terms ) )
 						{
-							$current_page_terms[$current_item_term->term_id] = $current_item_term->term_id;
+							$current_page_terms[ $current_item_term->term_id ] = $current_item_term->term_id;
 
-							if(!isset($term_count[$current_item_term->term_id] ))
+							if( ! isset($term_count[ $current_item_term->term_id ] ) )
 							{
-								$term_count[$current_item_term->term_id] = 0;
+								$term_count[ $current_item_term->term_id ] = 0;
 							}
 
-							$term_count[$current_item_term->term_id] ++;
+							$term_count[ $current_item_term->term_id ] ++;
 						}
 					}
 				}
@@ -226,22 +227,22 @@ if ( ! class_exists( 'avia_masonry' ) )
 			}
 			
 			
-			$hide 	= count($display_terms) <= 1 ? "hidden" : "";
-			$output = "";
+			$hide 	= count($display_terms) <= 1 ? 'hidden' : '';
+			$output = '';
 			
-			if(empty($hide))
+			if( empty( $hide ) )
 			{
-				$output  = "<div class='av-masonry-sort main_color av-sort-".$this->atts['sort']."' data-masonry-id='".self::$element."' >";
+				$output  = "<div class='av-masonry-sort main_color av-sort-{$this->atts['sort']}' data-masonry-id='".self::$element."' >";
 				//$output .= "<div class='container'>";
 				
-				$first_item_name = apply_filters('avf_masonry_sort_first_label', __('All','avia_framework' ), $this->atts);
+				$first_item_name = apply_filters( 'avf_masonry_sort_first_label', __( 'All', 'avia_framework' ), $this->atts );
 				$first_item_html = '<span class="inner_sort_button"><span>'.$first_item_name.'</span><small class="avia-term-count"> '.count($this->loop).' </small></span>';
 				
-				$output .= apply_filters('avf_masonry_sort_heading', "", $this->atts);
+				$output .= apply_filters( 'avf_masonry_sort_heading', '', $this->atts );
 				
 				if(strpos($this->atts['sort'], 'tax') !== false) $output .= "<div class='av-current-sort-title'>{$first_item_html}</div>";
 				
-				$sort_loop = "";
+				$sort_loop = '';
 				$allowed_terms = array();
 				
 				foreach($sort_terms as $term)
@@ -261,14 +262,14 @@ if ( ! class_exists( 'avia_masonry' ) )
 					$sort_loop .= 	'<a href="#" data-filter="'.$term->slug.'_sort" class="'.$term->slug.'_sort_button '.$show_item.'" ><span class="inner_sort_button">';
 					$sort_loop .= 		"<span>".esc_html(trim($term->name))."</span>";
 					$sort_loop .= 		"<small class='avia-term-count'> ".$term_count[$term->term_id]." </small></span>";
-					$sort_loop .= 	"</a>";
+					$sort_loop .= 	'</a>';
 				}
 				
 				$allowed_terms = json_encode($allowed_terms);
 				$output .= "<div class='av-sort-by-term {$hide} ' data-av-allowed-sort='{$allowed_terms}' >";
 				$output .= '<a href="#" data-filter="all_sort" class="all_sort_button active_sort">'.$first_item_html.'</a>';
 				$output .= $sort_loop;
-				$output .= "</div></div>";
+				$output .= '</div></div>';
 			}
 			
 			return $output;
@@ -312,9 +313,9 @@ if ( ! class_exists( 'avia_masonry' ) )
 			
 			extract( $this->screen_options ); //return $av_font_classes, $av_title_font_classes, $av_display_classes and $av_column_classes
 			
-			$output 	= "";
-			$items		= "";
-			$size 		= strpos($this->atts['size'], 'fixed') !== false ? 'fixed' : "flex";
+			$output 	= '';
+			$items		= '';
+			$size 		= strpos($this->atts['size'], 'fixed') !== false ? 'fixed' : 'flex';
 			$auto 		= strpos($this->atts['size'], 'masonry') !== false ? true : false;
 			$manually	= strpos($this->atts['size'], 'manually') !== false ? true : false;
 			$defaults 	= array(
@@ -328,7 +329,7 @@ if ( ! class_exists( 'avia_masonry' ) )
 								'data'			=> '', 
 								'attachment'	=> array(), 
 								'attachment_overlay' => array(),
-								'bg'			=> "", 
+								'bg'			=> '', 
 								'before_content' =>'', // if set replaces the whole bg part 
 								'text_before'	=>'', 
 								'text_after'	=>'', 
@@ -336,7 +337,7 @@ if ( ! class_exists( 'avia_masonry' ) )
 							);
 			
 			
-			$style = "";
+			$style = '';
 
 			if( !empty( $this->atts['color'] ) )
 			{
@@ -344,14 +345,14 @@ if ( ! class_exists( 'avia_masonry' ) )
 				$style  = AviaHelper::style_string( $style );
 			}
 			
-			$orientation = $this->atts['size'] == "fixed" ? $this->atts['orientation'] : ""; 
+			$orientation = $this->atts['size'] == 'fixed' ? $this->atts['orientation'] : ''; 
 			
             $custom_class = isset( $this->atts['custom_class'] ) ? $this->atts['custom_class'] : '';
 			$id_el = ! empty( $this->atts['id'] ) ? $this->atts['id'] : 'av-masonry-' . self::$element;
 			
 			$output .= "<div id='{$id_el}' class='av-masonry {$custom_class} noHover av-{$size}-size av-{$this->atts['gap']}-gap av-hover-overlay-{$this->atts['overlay_fx']} av-masonry-animation-{$this->atts['animation']} av-masonry-col-{$this->atts['columns']} av-caption-{$this->atts['caption_display']} av-caption-style-{$this->atts['caption_styling']} {$this->atts['container_class']} {$orientation} {$av_display_classes} {$av_column_classes}' {$style} >";
 			
-			$output .= $this->atts['sort'] != "no" ? $this->sort_buttons() : "";
+			$output .= $this->atts['sort'] != 'no' ? $this->sort_buttons() : '';
 			
 			$output .= "<div class='av-masonry-container isotope av-js-disabled ' >";
 			$all_sorts  = array();
@@ -362,9 +363,9 @@ if ( ! class_exists( 'avia_masonry' ) )
 				
 				extract( array_merge( $defaults, $entry ) );
 				
-				$img_html		= "";
-				$img_style		= "";
-				if($this->atts['sort'] != "no")
+				$img_html		= '';
+				$img_style		= '';
+				if($this->atts['sort'] != 'no')
 				{
 					$sort_array		= $this->sort_array($entry['ID']);
 				}
@@ -387,7 +388,7 @@ if ( ! class_exists( 'avia_masonry' ) )
 						}
 						
 						if($size == 'fixed') $img_style = 'style="background-image: url('.$attachment[0].');"';
-						$class_string .= " av-masonry-item-with-image";
+						$class_string .= ' av-masonry-item-with-image';
 					}
 					else 
 					{
@@ -405,7 +406,7 @@ if ( ! class_exists( 'avia_masonry' ) )
 				}
 				else
 				{
-					$class_string .= " av-masonry-item-no-image";
+					$class_string .= ' av-masonry-item-no-image';
 				}
 				
 				
@@ -421,7 +422,7 @@ if ( ! class_exists( 'avia_masonry' ) )
 					}
 				}
 				
-				$linktitle = "";
+				$linktitle = '';
 				
                 if($post_type == 'attachment' && strpos($html_tags[0], 'a href=') !== false)
                 {
@@ -473,9 +474,9 @@ if ( ! class_exists( 'avia_masonry' ) )
                         $markup = avia_markup_helper(array('context' => 'entry_content','echo'=>false, 'id'=>$entry['ID'], 'custom_markup'=>$this->atts['custom_markup']));
 						$items .=	"<div class='av-masonry-entry-content entry-content' {$markup}>{$content}</div>";
 					}
-					$items .=	$text_after."</div></div></figcaption>";
+					$items .=	$text_after . '</div></div></figcaption>';
 				}
-				$items .= 		"</figure>";
+				$items .= 		'</figure>';
 				$items .= 	"</{$html_tags[1]}><!--end av-masonry entry-->";					
 			}
 			
@@ -493,7 +494,7 @@ if ( ! class_exists( 'avia_masonry' ) )
 			$items = "<div class='av-masonry-entry isotope-item av-masonry-item-no-image {$all_sort_string}'></div>".$items;
 			
 			$output .= $items;
-			$output .= 	"</div>";
+			$output .= 	'</div>';
 			
 			
 			//append pagination
@@ -501,12 +502,12 @@ if ( ! class_exists( 'avia_masonry' ) )
 			{
 				$output .= "<div class='av-masonry-pagination av-masonry-pagination-{$this->atts['paginate']}'>{$avia_pagination}</div>";
 			}
-			else if($this->atts['paginate'] == "load_more" && $this->entries->max_num_pages > 1 )
+			else if($this->atts['paginate'] == 'load_more' && $this->entries->max_num_pages > 1 )
 			{
 				$output .= $this->load_more_button();
 			}
 			
-			$output .= "</div>";
+			$output .= '</div>';
 			
 			return $output;
 		}
@@ -522,7 +523,7 @@ if ( ! class_exists( 'avia_masonry' ) )
 			$data_string  = AviaHelper::create_data_string( $this->atts );
 			$data_string .= " data-avno='" . wp_create_nonce( 'av-masonry-nonce' ) . "'";
 			
-			$output  = "";
+			$output  = '';
 			$output .= 		"<a class='av-masonry-pagination av-masonry-load-more' href='#load-more' {$data_string}>" . __( 'Load more', 'avia_framework' ) . "</a>";
 			
 			return $output;
@@ -602,136 +603,160 @@ if ( ! class_exists( 'avia_masonry' ) )
 		{
 			$this->loop = array();
 			if(empty($this->entries) || empty($this->entries->posts)) return;
-			$tagTax = "post_tag"; 
+			$tagTax = 'post_tag'; 
 			$date_format = get_option('date_format');
 			
 			
-			foreach($this->entries->posts as $key => $entry)
+			foreach( $this->entries->posts as $key => $entry )
 			{ 	
-				$overlay_img = $custom_url			= false;
-				$img_size	 						= 'masonry';
-				$author = apply_filters('avf_author_name', get_the_author_meta('display_name', $entry->post_author), $entry->post_author);
-                		
-				$this->loop[$key]['text_before']	= "";
-				$this->loop[$key]['text_after']		= "";
-				$this->loop[$key]['ID'] = $id		= $entry->ID;
-				$this->loop[$key]['post_type'] 		= $entry->post_type;
-				$this->loop[$key]['thumb_ID'] 		= get_post_thumbnail_id($id);
-				$this->loop[$key]['the_title'] 		= get_the_title($id);
-				$this->loop[$key]['url']			= get_permalink($id);
-				$this->loop[$key]['date'] 			= "<span class='av-masonry-date meta-color updated'>".get_the_time($date_format, $id)."</span>";
-				$this->loop[$key]['author'] 		= "<span class='av-masonry-author meta-color vcard author'><span class='fn'>". __('by','avia_framework') .' '. $author."</span></span>";
-				$this->loop[$key]['class'] 			= get_post_class("av-masonry-entry isotope-item", $id); 
-				$this->loop[$key]['content']		= strip_tags( $entry->post_excerpt );
-                $this->loop[$key]['description']	= !empty($entry->post_content) ? $entry->post_content : $entry->post_excerpt;
+				$overlay_img = $custom_url = false;
+				$img_size = 'masonry';
+				$author = apply_filters( 'avf_author_name', get_the_author_meta( 'display_name', $entry->post_author ), $entry->post_author );
+
+				$this->loop[ $key ]['text_before'] = '';
+				$this->loop[ $key ]['text_after'] = '';
+				$this->loop[ $key ]['ID'] = $id = $entry->ID;
+				$this->loop[ $key ]['post_type'] = $entry->post_type;
+				$this->loop[ $key ]['thumb_ID'] = get_post_thumbnail_id( $id );
+				$this->loop[ $key ]['the_title'] = get_the_title( $id );
+				$this->loop[ $key ]['url'] = get_permalink( $id );
+				$this->loop[ $key ]['date'] = "<span class='av-masonry-date meta-color updated'>" . get_the_time( $date_format, $id ) . '</span>';
+				$this->loop[ $key ]['author'] = "<span class='av-masonry-author meta-color vcard author'><span class='fn'>" . __( 'by', 'avia_framework' ) . ' ' . $author . '</span></span>';
+				$this->loop[ $key ]['class'] = get_post_class( 'av-masonry-entry isotope-item', $id );
 				
-				if(empty($this->loop[$key]['content']))
+				$loop_excerpt = strip_tags( $entry->post_excerpt );
+				$loop_content = ! empty( $entry->post_content ) ? $entry->post_content : $entry->post_excerpt;
+				
+				/**
+				 * @since 4.7.1.1
+				 * @param string $loop_excerpt
+				 * @param WP_Post $entry
+				 * @param array $this->entries
+				 * @param int $key
+				 */
+				$this->loop[ $key ]['content'] = apply_filters( 'avf_masonry_loop_entry_content', $loop_excerpt, $entry, $this->entries, $key );
+				
+				/**
+				 * @since 4.7.1.1
+				 * @param string $loop_content
+				 * @param WP_Post $entry
+				 * @param array $this->entries
+				 * @param int $key
+				 */
+				$this->loop[ $key ]['description'] = apply_filters( 'avf_masonry_loop_entry_description', $loop_content, $entry, $this->entries, $key );
+				
+				if( empty( $this->loop[ $key ]['content'] ) )
 				{
-					if($ajax)
+					if( $ajax )
 					{
-						$entry->post_content = preg_replace("!\[.*?\]!", "", $entry->post_content);
+						$entry->post_content = preg_replace( "!\[.*?\]!", '', $entry->post_content );
 					}
 					
-					$this->loop[$key]['content'] 	= avia_backend_truncate($entry->post_content, apply_filters( 'avf_masonry_excerpt_length' , 60) , apply_filters( 'avf_masonry_excerpt_delimiter' , " "), "…", true, '');
+					$this->loop[ $key ]['content'] 	= avia_backend_truncate( $entry->post_content, apply_filters( 'avf_masonry_excerpt_length', 60 ), apply_filters( 'avf_masonry_excerpt_delimiter', ' ' ), '…', true, '' );
 				}
 				
-				$this->loop[$key]['content'] = nl2br( trim($this->loop[$key]['content']) );
+				$this->loop[ $key ]['content'] = nl2br( trim( $this->loop[ $key ]['content'] ) );
 				
 				//post type specific
-				switch($entry->post_type)
+				switch( $entry->post_type )
 				{
 					case 'post': 
 					
-					$post_format 		= get_post_format($id) ? get_post_format($id) : 'standard';
-					$this->loop[$key]	= apply_filters( 'post-format-'.$post_format, $this->loop[$key] );
-					$this->loop[$key]['text_after'] .= $this->loop[$key]['date'];
-					$this->loop[$key]['text_after'] .= '<span class="av-masonry-text-sep text-sep-author">/</span>';
-					$this->loop[$key]['text_after'] .= $this->loop[$key]['author'];
+						$post_format 		= get_post_format($id) ? get_post_format( $id ) : 'standard';
+						$this->loop[ $key ]	= apply_filters( 'post-format-' . $post_format, $this->loop[ $key ] );
+						$this->loop[ $key ]['text_after'] .= $this->loop[ $key ]['date'];
+						$this->loop[ $key ]['text_after'] .= '<span class="av-masonry-text-sep text-sep-author">/</span>';
+						$this->loop[ $key ]['text_after'] .= $this->loop[ $key ]['author'];
 					
-						switch($post_format)
+						switch( $post_format )
 						{
 							case 'quote' :
 							case 'link' :
 							case 'image' :
 							case 'gallery' :
-								if(!$this->loop[$key]['thumb_ID']) 
+								if( ! $this->loop[ $key ]['thumb_ID'] ) 
 								{
-									$this->loop[$key]['text_before'] = av_icon_display($post_format);
+									$this->loop[ $key ]['text_before'] = av_icon_display($post_format);
 								}
-							break;
+								break;
 							
 							case 'audio' :
 							case 'video' :
-								if(!$this->loop[$key]['thumb_ID']) 
+								if(!$this->loop[ $key ]['thumb_ID']) 
 								{
-									$this->loop[$key]['text_before'] = av_icon_display($post_format);
+									$this->loop[ $key ]['text_before'] = av_icon_display($post_format);
 								}
 								else
 								{
-									$this->loop[$key]['text_before'] = av_icon_display($post_format, 'av-masonry-media');
+									$this->loop[ $key ]['text_before'] = av_icon_display($post_format, 'av-masonry-media');
 								}
-							break;
+								break;
 						}
-					
-					
-					
-					break;
+
+						break;
 					
 					case 'portfolio':
 					
-					//set portfolio breadcrumb navigation
-					if($this->atts['set_breadcrumb'] && is_page()) $_SESSION["avia_{$entry->post_type}"] = get_the_ID();
-					
-					//check if the user has set up a custom link
-					if(!post_password_required($id)){
-						$custom_link = get_post_meta( $id ,'_portfolio_custom_link', true) != "" ? get_post_meta( $id ,'_portfolio_custom_link_url', true) : false;
-						if($custom_link) $this->loop[$key]['url'] = $custom_link;
-					}
-					break;
+						//set portfolio breadcrumb navigation
+						if( $this->atts['set_breadcrumb'] && is_page() ) 
+						{
+							$_SESSION["avia_{$entry->post_type}"] = get_the_ID();
+						}
+
+						//check if the user has set up a custom link
+						if( ! post_password_required( $id ) )
+						{
+							$custom_link = get_post_meta( $id ,'_portfolio_custom_link', true) != '' ? get_post_meta( $id ,'_portfolio_custom_link_url', true) : false;
+							if( $custom_link ) 
+							{
+								$this->loop[ $key ]['url'] = $custom_link;
+							}
+						}
+						
+						break;
 					
 					
 					case 'attachment':
 					
-					$custom_url = get_post_meta( $id, 'av-custom-link', true );
-					$this->loop[$key]['thumb_ID'] = $id;
-					$this->loop[$key]['content']		= $entry->post_excerpt;
-					
-					if($custom_url)
-					{
-						$this->loop[$key]['url'] = $custom_url;
-					}
-					else
-					{
-						$this->loop[$key]['url'] = wp_get_attachment_image_src($id, apply_filters('avf_avia_builder_masonry_lightbox_img_size','large'));
-						$this->loop[$key]['url'] = reset($this->loop[$key]['url']);
-					}
+						$custom_url = get_post_meta( $id, 'av-custom-link', true );
+						$this->loop[ $key ]['thumb_ID'] = $id;
+						$this->loop[ $key ]['content'] = $entry->post_excerpt;
 
-					
-					break; 
+						if( $custom_url )
+						{
+							$this->loop[ $key ]['url'] = $custom_url;
+						}
+						else
+						{
+							$this->loop[ $key ]['url'] = wp_get_attachment_image_src( $id, apply_filters( 'avf_avia_builder_masonry_lightbox_img_size', 'large' ) );
+							$this->loop[ $key ]['url'] = is_array( $this->loop[ $key ]['url'] ) ? reset( $this->loop[ $key ]['url'] ) : '';
+						}
+
+						break; 
 					
 					case 'product':
-					//check if woocommerce is enabled in the first place so we can use woocommerce functions
-					if(function_exists('avia_woocommerce_enabled') && avia_woocommerce_enabled())
-					{
-						$tagTax 		= "product_tag"; 
-						$product 		= function_exists('wc_get_product') ? wc_get_product($id) : get_product( $id );
-						$overlay_img 	= avia_woocommerce_gallery_first_thumbnail($id, $img_size, true);
+						//check if woocommerce is enabled in the first place so we can use woocommerce functions
+						if(function_exists('avia_woocommerce_enabled') && avia_woocommerce_enabled())
+						{
+							$tagTax 		= 'product_tag'; 
+							$product 		= function_exists('wc_get_product') ? wc_get_product($id) : get_product( $id );
+							$overlay_img 	= avia_woocommerce_gallery_first_thumbnail($id, $img_size, true);
 
-						$this->loop[$key]['text_after'] .= '<span class="av-masonry-price price">'.$product->get_price_html()."</span>";
-						if($product->is_on_sale( )) $this->loop[$key]['text_after'] .= '<span class="onsale">'.__( 'Sale!', 'avia_framework' ).'</span>';
-					}
-					break; 
+							$this->loop[ $key ]['text_after'] .= '<span class="av-masonry-price price">'.$product->get_price_html()."</span>";
+							if($product->is_on_sale( )) $this->loop[ $key ]['text_after'] .= '<span class="onsale">'.__( 'Sale!', 'avia_framework' ).'</span>';
+						}
+						break; 
 				}
 				
 				
 				//check if post is password protected
-				if(post_password_required($id))
+				if( post_password_required( $id ) )
 				{
-					$this->loop[$key]['content'] 		= "";
-					$this->loop[$key]['class'][]		= "entry-protected";
-					$this->loop[$key]['thumb_ID'] 		= "";
-					$this->loop[$key]['text_before'] 	= av_icon_display('closed');
-					$this->loop[$key]['text_after']		= $this->loop[$key]['date'];
+					$this->loop[ $key ]['content'] 		= '';
+					$this->loop[ $key ]['class'][]		= 'entry-protected';
+					$this->loop[ $key ]['thumb_ID'] 		= '';
+					$this->loop[ $key ]['text_before'] 	= av_icon_display('closed');
+					$this->loop[ $key ]['text_after']		= $this->loop[ $key ]['date'];
 				}
 				
 				
@@ -739,28 +764,31 @@ if ( ! class_exists( 'avia_masonry' ) )
 				//set the html tags. depending on the link settings use either an a tag or a div tag
 				if(!empty($this->atts['container_links']) || !empty($custom_url))
 				{
-					$this->loop[$key]['html_tags'] = array('a href="'.$this->loop[$key]['url'].'"','a'); //opening and closing tag for the masonry container
+					$this->loop[ $key ]['html_tags'] = array('a href="'.$this->loop[ $key ]['url'].'"','a'); //opening and closing tag for the masonry container
 				}
 				else
 				{
-					$this->loop[$key]['html_tags'] = array('div','div');
+					$this->loop[ $key ]['html_tags'] = array( 'div', 'div' );
 				}
 				
 				
 				//get post tags
-				$this->loop[$key]['tags']		= wp_get_post_terms($id, $tagTax, array( 'fields' => 'slugs' ));
+				$this->loop[ $key ]['tags'] = wp_get_post_terms( $id, $tagTax, array( 'fields' => 'slugs' ) );
 				
 				//check if the image got landscape as well as portrait class applied. in that case use a bigger image size
-				if(strlen($this->ratio_check_by_tag($this->loop[$key]['tags'])) > 20) $img_size = 'extra_large';
+				if( strlen( $this->ratio_check_by_tag( $this->loop[ $key ]['tags'] ) ) > 20 ) 
+				{
+					$img_size = 'extra_large';
+				}
 				
 				//get attachment data
-				$this->loop[$key]['attachment'] = !empty($this->loop[$key]['thumb_ID']) ? wp_get_attachment_image_src($this->loop[$key]['thumb_ID'], $img_size) : "";
+				$this->loop[ $key ]['attachment'] = ! empty( $this->loop[ $key ]['thumb_ID'] ) ? wp_get_attachment_image_src( $this->loop[ $key ]['thumb_ID'], $img_size ) : '';
 				
 				//get overlay attachment in case the overlay is set
-				$this->loop[$key]['attachment_overlay'] = !empty($overlay_img) ? wp_get_attachment_image_src($overlay_img, $img_size) : "";
+				$this->loop[ $key ]['attachment_overlay'] = ! empty( $overlay_img ) ? wp_get_attachment_image_src( $overlay_img, $img_size ) : '';
 				
 				//apply filter for other post types, in case we want to use them and display additional/different information
-				$this->loop[$key] = apply_filters('avf_masonry_loop_prepare', $this->loop[$key], $this->entries);
+				$this->loop[ $key ] = apply_filters( 'avf_masonry_loop_prepare', $this->loop[ $key ], $this->entries );
 			}
 		}
 		
@@ -787,10 +815,21 @@ if ( ! class_exists( 'avia_masonry' ) )
 				$terms = array();
 				$avialable_terms = array();
 				
-				if( ! empty($params['categories'] ) )
+				if( ! empty( $params['categories'] ) )
 				{
 					//get the portfolio categories
-					$terms 	= explode(',', $params['categories']);
+					$terms = explode( ',', $params['categories'] );
+					
+					/**
+					 * Allows to translate id's to filter sort buttons correctly
+					 * 
+					 * @used_by    config-wpml\config.php	avia_translate_object_ids()			10 
+					 * @since 4.6.4
+					 * @param array $terms 
+					 * @param string $params['taxonomy']
+					 * @return array
+					 */
+					$terms = apply_filters( 'avf_alb_taxonomy_values', $terms, $params['taxonomy'] );
 				}
 
 				$page = get_query_var( 'paged' ) ? get_query_var( 'paged' ) : get_query_var( 'page' );
@@ -807,7 +846,7 @@ if ( ! class_exists( 'avia_masonry' ) )
 				 * To display private posts you need to set 'hide_empty' to false, 
 				 * otherwise a category with ONLY private posts will not be returned !!
 				 * 
-				 * You also need to add post_status "private" to the query params with filter avia_masonry_entries_query.
+				 * You also need to add post_status 'private' to the query params with filter avia_masonry_entries_query.
 				 * 
 				 * @since 4.4.2
 				 * @added_by Günter
@@ -820,58 +859,63 @@ if ( ! class_exists( 'avia_masonry' ) )
 				$term_args = apply_filters( 'avf_masonry_term_args', $term_args, 'query_entries', $params, $ajax );
 				
 				//if we find no terms for the taxonomy fetch all taxonomy terms
-				if(empty($terms[0]) || is_null($terms[0]) || $terms[0] === "null")
+				if( empty( $terms[0] ) || is_null( $terms[0] ) || $terms[0] === 'null' )
 				{
 					$allTax = AviaHelper::get_terms( $term_args );
 
 					$terms = array();
 					foreach( $allTax as $tax )
 					{
-						if( is_object($tax) )
+						if( is_object( $tax ) )
 						{
 							$terms[] = $tax->term_id;
 						}
 					}
 				}
 				
-				if(!empty($params['taxonomy']))
+				if( ! empty( $params['taxonomy'] ) )
 				{
 					$allTax = AviaHelper::get_terms( $term_args );
 					
 					foreach( $allTax as $tax )
 					{
-						if( is_object($tax) )
+						if( is_object( $tax ) )
 						{
 							$avialable_terms[] = $tax->term_id;
 						}
 					}
 				}
 				
-				
 				//check if any of the terms passed are valid. if not all existing terms are used
 				$valid_terms = array();
-				foreach($terms as $term)
+				foreach( $terms as $term )
 				{
-					if(in_array($term, $avialable_terms))
+					if( in_array( $term, $avialable_terms ) )
 					{
 						$valid_terms[] = $term;
 					}
 				}
 				
-				if(!empty($valid_terms))
+				if( ! empty( $valid_terms ) )
 				{
 					$terms = $valid_terms;
-					$this->atts['categories'] = implode(",", $terms);
+					$this->atts['categories'] = implode( ',', $terms );
 				}
 				else
 				{
 					$terms = $avialable_terms;
-					$this->atts['categories'] = implode(",", $terms);
+					$this->atts['categories'] = implode( ',', $terms );
 				}
 				
-				if(empty($params['post_type'])) $params['post_type'] = get_post_types();
-				if(is_string($params['post_type'])) $params['post_type'] = explode(',', $params['post_type']);
-
+				if( empty( $params['post_type'] ) ) 
+				{
+					$params['post_type'] = get_post_types();
+				}
+				
+				if( is_string( $params['post_type'] ) ) 
+				{
+					$params['post_type'] = explode( ',', $params['post_type'] );
+				}
 
 				//wordpress 4.4 offset fix. only necessary for ajax loading, therefore we ignore the page param
 				if( $params['offset'] == 0 )

@@ -86,4 +86,38 @@ class LS_Config {
 			}
 		}
 	}
+
+
+	public static function isActivatedSite() {
+
+		$activated 	= get_option( 'layerslider-authorized-site', false );
+		$code 		= trim( get_option( 'layerslider-purchase-code', '' ) );
+
+
+		if( empty( $code ) || ! $activated ) {
+			return false;
+		}
+
+		if( get_option( 'layerslider-activated_by_the7', false ) ) {
+			delete_option( 'layerslider-authorized-site' );
+			delete_option( 'layerslider-purchase-code' );
+			return false;
+		}
+
+
+		// Test for code length
+		if( strlen( $code ) < 36 ) {
+			return false;
+		}
+
+
+		// Test for pattern
+		preg_match( '/\w{8}-\w{4}-\w{4}-\w{4}-\w{12}/', $code, $matches );
+		if( empty( $matches ) ) {
+			return false;
+		}
+
+
+		return true;
+	}
 }

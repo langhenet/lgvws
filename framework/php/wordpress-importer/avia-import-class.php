@@ -1,4 +1,10 @@
 <?php
+if ( ! defined( 'AVIA_FW' ) )	{	exit( 'No direct script access allowed' );	}
+
+if( ! class_exists( 'avia_wp_import' ) )
+{
+	
+
 class avia_wp_import extends WP_Import
 {
 	var $preStringOption; 
@@ -135,7 +141,7 @@ class avia_wp_import extends WP_Import
 
 		$new_fonts 		= unserialize(base64_decode($new_fonts));
 		$merged_fonts 	= array_merge( $new_fonts , $fonts_old );
-		$files_to_copy  = array("config.json", "FONTNAME.svg", "FONTNAME.ttf", "FONTNAME.eot", "FONTNAME.woff");	
+		$files_to_copy  = array( 'config.json', 'FONTNAME.svg', 'FONTNAME.ttf', 'FONTNAME.eot', 'FONTNAME.woff', 'FONTNAME.woff2' );	
 		update_option($key, $merged_fonts);
 		
 		
@@ -194,40 +200,230 @@ class avia_wp_import extends WP_Import
 	/**
 	 *  Extracts the default values from the option_page_data array in case no database savings were done yet
 	 *  The functions calls itself recursive with a subset of elements if groups are encountered within that array
+	 * 
+	 * @param array $elements
+	 * @param string $page
+	 * @param string $subpages
+	 * @return array
 	 */
-	public function extract_default_values($elements, $page, $subpages)
+	public function extract_default_values( $elements, $page, $subpages )
 	{
 	
 		$values = array();
-		foreach($elements as $element)
+		
+		foreach( $elements as $element )
 		{
-				if($element['type'] == 'group')
-				{	
-					$iterations =  count($element['std']);
-					
-					for($i = 0; $i<$iterations; $i++)
-					{
-						$values[$element['id']][$i] = $this->extract_default_values($element['std'][$i], $page, $subpages);
-					}
-				}
-				else if(isset($element['id']))
+			if( isset( $element['type'] ) && $element['type'] == 'group' )
+			{	
+				if( ! is_array( $element['std'] ) )
 				{
-					if(!isset($element['std'])) $element['std'] = "";
-					
-					if($element['type'] == 'select' && !is_array($element['subtype']))
-					{	
-						if(!isset($element['taxonomy'])) $element['taxonomy'] = 'category';
-						$values[$element['id']] = $this->getSelectValues($element['subtype'], $element['std'], $element['taxonomy']);
-					}
-					else
+					//	Fallback situation in case theme option std value is not an array
+					$values[ $element['id'] ][0] = array();
+				}
+				else
+				{
+					$iterations = count( $element['std'] );
+
+					for( $i = 0; $i < $iterations; $i++ )
 					{
-						$values[$element['id']] = $element['std'];
+						$values[ $element['id'] ][ $i ] = $this->extract_default_values( $element['std'][ $i ], $page, $subpages );
 					}
 				}
-			
+			}
+			else if( isset( $element['id'] ) )
+			{
+				if( ! isset($element['std'] ) ) 
+				{
+					$element['std'] = '';
+				}
+
+				if( $element['type'] == 'select' && ! is_array( $element['subtype'] ) )
+				{	
+					if( ! isset( $element['taxonomy'] ) ) 
+					{
+						$element['taxonomy'] = 'category';
+					}
+
+					$values[ $element['id'] ] = $this->getSelectValues( $element['subtype'], $element['std'], $element['taxonomy'] );
+				}
+				else
+				{
+					$values[ $element['id'] ] = $element['std'];
+				}
+			}
 		}
 		
 		return $values;
+	}
+	
+	/**
+	 * Filters the imported options:
+	 * 
+	 * If filter_xxx is used the original options are kept and only options set in filter_xxx are copied.
+	 * If skip_xxx is used the imported option values are replaced by the old ones.
+	 * 
+	 * Filter has priority to skip.
+	 * 
+	 * If no filter the original array is returned.
+	 * 
+	 * 
+	 * $filter = array(
+	 *			filter_tabs		=> parent:slug,parent:slug
+	 *			filter_values	=> parent:option_name,parent:option_name
+	 *			skip_tabs		=> parent:slug,parent:slug
+	 *			skip_values		=> parent:option_name,parent:option_name
+	 *		)
+	 * 
+	 * @since 4.6.4
+	 * @param array $database_option
+	 * @param array $imported_options
+	 * @param array $filter
+	 * @return array
+	 */
+	public function filter_imported_options( array $database_option, array $imported_options, array $filter ) 
+	{
+		global $avia;
+		
+		if( empty( $filter ) )
+		{
+			return $database_option;
+		}
+		
+		$filter_keys = array( 'filter_tabs', 'filter_values', 'skip_tabs', 'skip_values' );
+		
+		$filter_stat = false;
+		
+		foreach( $filter_keys as $key ) 
+		{
+			if( isset( $filter[ $key ] ) && trim( $filter[ $key ] ) != '' )
+			{
+				$filter_stat = false !== strpos( $key, 'filter' ) ? 'filter' : 'skip';
+				break;
+			}
+		}
+		
+		if( false === $filter_stat )
+		{
+			return $database_option;
+		}
+		
+		//	Cleanup array
+		foreach( $filter_keys as $key ) 
+		{
+			if( isset( $filter[ $key ] ) && trim( $filter[ $key ] ) == '' )
+			{
+				unset( $filter[ $key ] );
+			}
+		}
+		
+		$avia_options = is_array( $avia->options ) ? $avia->options : array();
+		if( 'filter' == $filter_stat )
+		{
+			$new_options = $avia_options;
+		}
+		else
+		{
+			$new_options = $database_option;
+		}
+		
+		foreach( $filter_keys as $operation ) 
+		{
+			if( ! isset( $filter[ $operation ] ) )
+			{
+				continue;
+			}
+			
+			$sources = explode( ',', $filter[ $operation ] );
+			
+			foreach( $sources as $source ) 
+			{
+				if( false === strpos( $source, ':' ) )
+				{
+					$source = ':' . $source;
+				}
+
+				$source = explode( ':', $source, 2 );
+
+				$parent = trim( $source[0] );
+				
+				if( false !== strpos( $operation, 'value' ) )
+				{
+					$id = trim( $source[1] );
+					
+					$default = $this->get_std_value( $parent, $id );
+					
+					if( false !== strpos( $operation, 'filter' ) )
+					{
+						$new_options[ $parent ][ $id ] = isset( $database_option[ $parent ][ $id ] ) ? $database_option[ $parent ][ $id ] : $default;
+					}
+					else
+					{
+						$new_options[ $parent ][ $id ] = isset( $avia_options[ $parent ][ $id ] ) ? $avia_options[ $parent ][ $id ] : $default;
+					}
+					continue;
+				}
+
+				if( ! isset( $imported_options[ $parent ] ) || ! is_array( $imported_options[ $parent ] ) )
+				{
+					continue;
+				}
+			
+				$subpage = trim( $source[1] );
+				
+				foreach( $imported_options[ $parent ] as $element ) 
+				{
+					if( isset( $element['id'] ) && isset( $element['slug'] ) && $element['slug'] == $subpage )
+					{
+						$id = $element['id'];
+						$default = $this->get_std_value( $parent, $id );
+						
+						if( false !== strpos( $operation, 'filter' ) )
+						{
+							$new_options[ $parent ][ $id ] = isset( $database_option[ $parent ][ $id ] ) ? $database_option[ $parent ][ $id ] : $default;
+						}
+						else
+						{
+							$new_options[ $parent ][ $id ] = isset( $avia_options[ $parent ][ $id ] ) ? $avia_options[ $parent ][ $id ] : $default;
+						}
+					}
+				}
+			}
+		}
+		
+		return $new_options;
+	}
+			
+	/**
+	 * Get the std value for an option as fallback in case element is missing
+	 * 
+	 * @since 4.6.4
+	 * @param string $parent
+	 * @param string $id
+	 * @return string
+	 */
+	protected function get_std_value( $parent, $id )
+	{
+		global $avia;
+		
+		if( ! isset( $avia->subpages[ $parent ] ) || ! is_array( $avia->subpages[ $parent ] ) )
+		{
+			return '';
+		}
+		
+		$subpages = $avia->subpages[ $parent ];
+		
+		foreach( $avia->option_page_data as $key => $element ) 
+		{
+			if( isset( $element['slug'] ) && in_array( $element['slug'], $subpages ) )
+			{
+				if( isset( $element['id'] ) && $element['id'] == $id )
+				{
+					return (isset( $element['std'] ) ) ? $element['std'] : '';
+				}
+			}
+		}
+				
+		return '';
 	}
 	
 	function getSelectValues($type, $name, $taxonomy)
@@ -467,5 +663,5 @@ class avia_wp_import extends WP_Import
 }
 
 
-
+}	//	end class_exists
 

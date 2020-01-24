@@ -161,12 +161,12 @@ if ( ! class_exists( 'avia_update_notifier' ) )
                         echo '</strong>';
                         echo '<br/>';
 
-                        echo '<a target="_blank" href="'.$themeforesturl.'" title="' . __('Download Update From Themeforest.net', 'avia_framework') . '">'. __('Download Update From Themeforest.net', 'avia_framework') . '</a>';
+                        echo '<a target="_blank" href="'.$themeforesturl.'" title="' . __('Download Update From Themeforest.net', 'avia_framework') . '" rel="noopener noreferrer">'. __('Download Update From Themeforest.net', 'avia_framework') . '</a>';
                         echo $saparator;
 
                         if(!empty($changelogurl))
                         {
-                            echo '<a target="_blank" href="'.$changelogurl.'" title="' . __('View Changelog on http://kriesi.at', 'avia_framework') . '">'. __('View Changelog', 'avia_framework') . '</a>';
+                            echo '<a target="_blank" href="'.$changelogurl.'" title="' . __('View Changelog on http://kriesi.at', 'avia_framework') . '" rel="noopener noreferrer">'. __('View Changelog', 'avia_framework') . '</a>';
                             echo $saparator;
                         }
 

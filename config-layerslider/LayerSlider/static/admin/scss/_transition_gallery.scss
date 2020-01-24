@@ -5,28 +5,35 @@
 			display: none;
 		}
 
-		#transitionmenu {
-			margin-top: 60px;
+		#ls-transitions-list {
+			top: 60px;
 		}
 	}
 
-	header {
+	#transitiongallery-header {
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+	}
 
-		#tryorigami {
-			margin-top: 60px;
-			width: 100%;
-			height: 250px;
-			background-image: url(../img/origami-bg.png);
-			text-align: center;
-			border-radius: 5px;
-			cursor: pointer;
 
-			img {
-				height: 100%;
-			}
+	#tryorigami {
+		width: 100%;
+		height: 160px;
+		background-image: url(../img/origami-bg.png);
+		text-align: center;
+		border-radius: 5px;
+		cursor: pointer;
+
+		img {
+			height: 100%;
 		}
+	}
+
 
 	#transitionmenu {
+
 		margin-top: 20px;
 		line-height: 40px;
 		font-size: 14px;
@@ -36,7 +43,7 @@
 		color: white;
 
  			&.buildermenu {
-				margin-top: 60px;
+				margin: 0;
 			}
 
 			span, i {
@@ -44,6 +51,7 @@
 			}
 
 			ul {
+				margin: 0;
 				list-style: none;
 				height: inherit;
 				line-height: inherit;
@@ -102,9 +110,16 @@
 				float: right;
 			}
 		}
-	}
+
 
 	#ls-transitions-list {
+
+		position: absolute;
+		top: 240px;
+		right: 0;
+		bottom: 0;
+		left: 0;
+		overflow: auto;
 
 		section {
 			display: none;
@@ -115,11 +130,12 @@
 			}
 
 			h4 {
-				margin-top: 0;
+				margin: 10px 0 10px 0;
 				text-transform: uppercase;
 				color: #00a0d2;
 				font-size: 16px !important;
 			}
+
 
 			small {
 				display: inline-block;
@@ -128,7 +144,6 @@
 
 			.ls-description {
 				padding: 0 20px !important;
-				text-align: justify;
 			}
 
 			.button-hero {
@@ -149,9 +164,6 @@
 				}
 			}
 
-			div {
-				text-align: justify;
-			}
 
 			.tr-item,
 			.separated {

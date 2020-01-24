@@ -29,6 +29,12 @@ if(isset($slides['properties']['props']['sliderStyle'])) {
 	$sliderStyleAttr[] = $slides['properties']['props']['sliderStyle'];
 }
 
+// Gutenberg Margin Options
+if( ! empty( $embed['marginTop'] ) ) { $sliderStyleAttr[] = 'margin-top: '.layerslider_check_unit( $embed['marginTop'] ).';'; }
+if( ! empty( $embed['marginRight'] ) ) { $sliderStyleAttr[] = 'margin-right: '.layerslider_check_unit( $embed['marginRight'] ).';'; }
+if( ! empty( $embed['marginBottom'] ) ) { $sliderStyleAttr[] = 'margin-bottom: '.layerslider_check_unit( $embed['marginBottom'] ).';'; }
+if( ! empty( $embed['marginLeft'] ) ) { $sliderStyleAttr[] = 'margin-left: '.layerslider_check_unit( $embed['marginLeft'] ).';'; }
+
 // Before slider content hook
 if(has_action('layerslider_before_slider_content')) {
 	do_action('layerslider_before_slider_content');
@@ -44,8 +50,12 @@ if( ! empty( $slides['properties']['props']['sliderclass'] ) ) {
 	$customClasses = ' '.$slides['properties']['props']['sliderclass'];
 }
 
+if( ! empty( $embed['className'] ) ) {
+	$customClasses .= ' '.$embed['className'];
+}
+
 $useSrcset = true;
-if( isset($slides['properties']['props']['useSrcset']) && $slides['properties']['props']['useSrcset'] === false ) {
+if( isset($slides['properties']['attrs']['useSrcset']) && $slides['properties']['attrs']['useSrcset'] === false ) {
 	$useSrcset = false;
 }
 
@@ -131,6 +141,7 @@ if(!empty($slider['slides']) && is_array($slider['slides'])) {
 		// Add slide background
 		if( ! empty($slide['props']['background'])) {
 			$lsBG = '';
+			$alt = '';
 
 			if( ! empty($slide['props']['backgroundId'])) {
 				$lsBG = wp_get_attachment_image($slide['props']['backgroundId'], 'full', false, array('class' => 'ls-bg'));
@@ -156,6 +167,7 @@ if(!empty($slider['slides']) && is_array($slider['slides'])) {
 
 				if( $enhancedLazyLoad ) {
 					$lsBG = str_replace(' src="', ' data-src="', $lsBG);
+					$lsBG = str_replace(' srcset="', ' data-srcset="', $lsBG);
 				}
 
 				$lsMarkup[] = $lsBG;
@@ -180,6 +192,7 @@ if(!empty($slider['slides']) && is_array($slider['slides'])) {
 
 				if( ! empty( $lsTN ) && $enhancedLazyLoad ) {
 					$lsTN = str_replace(' src="', ' data-src="', $lsTN);
+					$lsTN = str_replace(' srcset="', ' data-srcset="', $lsTN);
 				}
 
 				$lsMarkup[] = ! empty( $lsTN ) ? $lsTN : '<img src="'.$slide['props']['thumbnail'].'" class="ls-tn" alt="Slide thumbnail" />';
@@ -200,6 +213,10 @@ if(!empty($slider['slides']) && is_array($slider['slides'])) {
 
 				if( empty( $layer['props']['url'] ) ) {
 					$innerAttributes =& $layerAttributes;
+				}
+
+				if( empty( $layer['props']['styles'] ) ) {
+					$layer['props']['styles'] = array();
 				}
 
 				// WPML support
@@ -224,10 +241,15 @@ if(!empty($slider['slides']) && is_array($slider['slides'])) {
 						// Don't try to modify the URL if it's auto-generated
 						if( empty( $layer['props']['linkId'] ) && $layer['props']['url'] !== '[post-url]' ) {
 
-							// Carry over the 'lang' URI param if it's set and the URL is non-relative, non-external
-							if( ! empty( $_GET['lang'] ) && ( strpos($layer['props']['url'], 'http') !== 0 || strpos( $layer['props']['url'], $_SERVER['SERVER_NAME'] ) !== false ) ) {
-								if(strpos($layer['props']['url'], '?') !== false) { $layer['props']['url'] .= '&amp;lang=' . ICL_LANGUAGE_CODE; }
-									else { $layer['props']['url'] .= '?lang=' . ICL_LANGUAGE_CODE; }
+							// Don't try to modify the URL if it starts with a hash tag.
+							$firstChar = function_exists('mb_substr') ? mb_substr( $layer['props']['url'], 0, 1 ) : substr( $layer['props']['url'], 0, 1 );
+							if( $firstChar !== '#' ) {
+
+								// Carry over the 'lang' URI param if it's set and the URL is non-relative, non-external
+								if( ! empty( $_GET['lang'] ) && ( strpos($layer['props']['url'], 'http') !== 0 || strpos( $layer['props']['url'], $_SERVER['SERVER_NAME'] ) !== false ) ) {
+									if(strpos($layer['props']['url'], '?') !== false) { $layer['props']['url'] .= '&amp;lang=' . ICL_LANGUAGE_CODE; }
+										else { $layer['props']['url'] .= '?lang=' . ICL_LANGUAGE_CODE; }
+								}
 							}
 						}
 					}
@@ -313,6 +335,7 @@ if(!empty($slider['slides']) && is_array($slider['slides'])) {
 
 					if( ! empty( $layerIMG ) && $enhancedLazyLoad ) {
 						$layerIMG = str_replace(' src="', ' data-src="', $layerIMG);
+						$layerIMG = str_replace(' srcset="', ' data-srcset="', $layerIMG);
 					}
 
 					$type = ! empty($layerIMG) ? $layerIMG : '<'.$layer['props']['type'].'>';
@@ -386,9 +409,25 @@ if(!empty($slider['slides']) && is_array($slider['slides'])) {
 					$innerAttributes['style'] .= preg_replace('/\s\s+/', ' ', $layer['props']['style']);
 				}
 
-				if(!empty($layer['props']['styles'])) {
-					$innerAttributes['style'] .= ls_array_to_attr($layer['props']['styles'], 'css');
+				if( ! empty( $layer['props']['layerBackground']) ) {
+
+					if( ! empty( $layer['props']['layerBackgroundId'] ) ) {
+
+						$layerBG = wp_get_attachment_image_src( $layer['props']['layerBackgroundId'], 'full', false );
+						$layerBG = ! empty( $layerBG[0] ) ? $layerBG[0]: '';
+
+					} elseif( $layer['props']['layerBackground'] === '[image-url]' ) {
+						$layerBG = $postContent->getWithFormat( $layer['props']['layerBackground'] );
+
+					} else {
+						$layerBG = do_shortcode( $slide['props']['layerBackground'] );
+					}
+
+					$layer['props']['styles']['background-image'] = 'url("'.$layerBG.'")';
 				}
+
+
+				$innerAttributes['style'] .= ls_array_to_attr($layer['props']['styles'], 'css');
 
 				// Text / HTML layer
 				if($layer['props']['media'] != 'post' || ($first != '<' && $last != '>')) {

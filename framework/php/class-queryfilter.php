@@ -192,9 +192,15 @@ if( ! class_exists( 'avia_queryfilter' ) && current_theme_supports( 'avia_queryf
 			}
 			else
 			{
-				
-				$large_image = wp_get_attachment_image_src( get_post_thumbnail_id(get_the_ID()), 'extra_large' );
-				$prepend_image = '<div class="avia-post-format-image"><a href="'.$large_image[0].'">'.$prepend_image."</a></div>";
+				$large_image = wp_get_attachment_image_src( get_post_thumbnail_id( get_the_ID() ), 'extra_large' );
+				if( is_array( $large_image ) )
+				{
+					$prepend_image = '<div class="avia-post-format-image"><a href="' . $large_image[0] . '">' . $prepend_image . '</a></div>';
+				}
+				else
+				{
+					$prepend_image = '<div class="avia-post-format-image">' . $prepend_image . '</div>';
+				}
 			}
 			
 	

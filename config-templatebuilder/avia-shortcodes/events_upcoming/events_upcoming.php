@@ -30,11 +30,12 @@ if ( ! class_exists( 'avia_sc_upcoming_events' ) )
 		 */
 		function shortcode_insert_button()
 		{
-			$this->config['self_closing']	=	'yes';
+			$this->config['version']		= '1.0';
+			$this->config['self_closing']	= 'yes';
 			
 			$this->config['name']		= __( 'Upcoming Events', 'avia_framework' );
 			$this->config['tab']		= __( 'Plugin Additions', 'avia_framework' );
-			$this->config['icon']		= AviaBuilder::$path['imagesURL']."sc-blog.png";
+			$this->config['icon']		= AviaBuilder::$path['imagesURL'] . 'sc-blog.png';
 			$this->config['order']		= 30;
 			$this->config['target']		= 'avia-target-insert';
 			$this->config['shortcode'] 	= 'av_upcoming_events';
@@ -43,6 +44,7 @@ if ( ! class_exists( 'avia_sc_upcoming_events' ) )
 			$this->config['disabling_allowed'] = true;
 			$this->config['id_name']	= 'id';
 			$this->config['id_show']	= 'yes';
+			$this->config['alb_desc_id']	= 'alb_description';
 		}
 		
 		/**
@@ -51,7 +53,7 @@ if ( ! class_exists( 'avia_sc_upcoming_events' ) )
 		function extra_assets()
 		{
 			//load css
-			wp_enqueue_style( 'avia-module-events-upcoming' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/events_upcoming/events_upcoming.css' , array('avia-layout'), false );
+			wp_enqueue_style( 'avia-module-events-upcoming', AviaBuilder::$path['pluginUrlRoot'] . 'avia-shortcodes/events_upcoming/events_upcoming.css', array( 'avia-layout' ), false );
 		}
 
 		/**
@@ -67,57 +69,142 @@ if ( ! class_exists( 'avia_sc_upcoming_events' ) )
 			$this->elements = array(
 
 				array(
-						'type'			=> 'tab_container', 
-						'nodescription'	=> true
-						),
+						'type' 	=> 'tab_container', 
+						'nodescription' => true
+					),
 						
 				array(
-						'type'			=> 'tab',
-						'name'			=> __( 'Content' , 'avia_framework' ),
-						'nodescription'	=> true
+						'type' 	=> 'tab',
+						'name'  => __( 'Content', 'avia_framework' ),
+						'nodescription' => true
+					),
+						array(	
+								'type'			=> 'template',
+								'template_id'	=> $this->popup_key( 'content_upcoming' )
+							),
+				
+				array(
+						'type' 	=> 'tab_close',
+						'nodescription' => true
+					),
+
+				array(
+						'type' 	=> 'tab',
+						'name'  => __( 'Styling', 'avia_framework' ),
+						'nodescription' => true
+					),
+				
+					array(	
+								'type'			=> 'template',
+								'template_id'	=> $this->popup_key( 'styling_upcoming' )
+							),
+					
+				array(
+						'type' 	=> 'tab_close',
+						'nodescription' => true
 					),
 				
 				array(
-						'name'		=> __( 'Which Entries?', 'avia_framework' ),
-						'desc'		=> __( 'Select which entries should be displayed by selecting a taxonomy. If none are selected all events are shown.', 'avia_framework' ),
-						'id'		=> 'categories',
-						'type'		=> 'select',
-						'taxonomy'	=> Tribe__Events__Main::TAXONOMY,
-						'subtype'	=> 'cat',
-						'multiple'	=> 6
-					),
-
-				array(
-						"name" 	=> __("Entry Number", 'avia_framework' ),
-						"desc" 	=> __("How many items should be displayed?", 'avia_framework' ),
-						"id" 	=> "items",
-						"type" 	=> "select",
-						"std" 	=> "3",
-						"subtype" => AviaHtmlHelper::number_array(1,100,1, array('All'=>'-1'))),
-
-				array(
-						"name" 	=> __("Pagination", 'avia_framework' ),
-						"desc" 	=> __("Should a pagination be displayed?", 'avia_framework' ),
-						"id" 	=> "paginate",
-						"type" 	=> "select",
-						"std" 	=> "no",
-						"subtype" => array(
-											__( 'yes', 'avia_framework' )	=> 'yes',
-											__( 'no', 'avia_framework' )	=> 'no'
-										)
+						'type' 	=> 'tab',
+						'name'  => __( 'Advanced', 'avia_framework' ),
+						'nodescription' => true
 					),
 				
+					array(
+							'type' 	=> 'toggle_container',
+							'nodescription' => true
+						),
+				
+						array(	
+								'type'			=> 'template',
+								'template_id'	=> 'screen_options_toggle'
+							),
+				
+						array(	
+								'type'			=> 'template',
+								'template_id'	=> 'developer_options_toggle',
+								'args'			=> array( 'sc' => $this )
+							),
+				
+					array(
+							'type' 	=> 'toggle_container_close',
+							'nodescription' => true
+						),
+				
 				array(
-						'type'			=> 'close_div',
-						'nodescription'	=> true
+						'type' 	=> 'tab_close',
+						'nodescription' => true
 					),
 
 				array(
-						'type'			=> 'close_div',
-						'nodescription'	=> true
-					),
+						'type' 	=> 'tab_container_close',
+						'nodescription' => true
+					)
+
+				
+				);
+		}
+		
+		/**
+		 * Create and register templates for easier maintainance
+		 * 
+		 * @since 4.6.4
+		 */
+		protected function register_dynamic_templates()
+		{
+			
+			/**
+			 * Content Tab
+			 * ===========
+			 */
+			
+			$c = array(
+						
+						array(
+								'name'		=> __( 'Which Entries?', 'avia_framework' ),
+								'desc'		=> __( 'Select which entries should be displayed by selecting a taxonomy. If none are selected all events are shown.', 'avia_framework' ),
+								'id'		=> 'categories',
+								'type'		=> 'select',
+								'taxonomy'	=> Tribe__Events__Main::TAXONOMY,
+								'subtype'	=> 'cat',
+								'multiple'	=> 6
+							),
+
+						array(
+							'name' 	=> __( 'Entry Number', 'avia_framework' ),
+							'desc' 	=> __( 'How many items should be displayed?', 'avia_framework' ),
+							'id' 	=> 'items',
+							'type' 	=> 'select',
+							'std' 	=> '3',
+							'subtype'	=> AviaHtmlHelper::number_array( 1, 100, 1, array( 'All'=>'-1' ) )
+						),
 
 				);
+			
+			AviaPopupTemplates()->register_dynamic_template( $this->popup_key( 'content_upcoming' ), $c );
+			
+			
+			/**
+			 * Styling Tab
+			 * ===========
+			 */
+			
+			$c = array(
+						array(
+							'name' 	=> __( 'Pagination', 'avia_framework' ),
+							'desc' 	=> __( 'Should a pagination be displayed?', 'avia_framework' ),
+							'id' 	=> 'paginate',
+							'type' 	=> 'select',
+							'std' 	=> 'no',
+							'subtype' => array(
+												__( 'Yes', 'avia_framework' )	=> 'yes',
+												__( 'No', 'avia_framework' )	=> 'no'
+											)
+						),
+				);
+			
+			AviaPopupTemplates()->register_dynamic_template( $this->popup_key( 'styling_upcoming' ), $c );
+			
 		}
 
 		/**
@@ -129,11 +216,12 @@ if ( ! class_exists( 'avia_sc_upcoming_events' ) )
 		 * @param array $params this array holds the default values for $content and $args.
 		 * @return $params the return array usually holds an innerHtml key that holds item specific markup.
 		 */
-		function editor_element($params)
+		function editor_element( $params )
 		{
-			$params['innerHtml'] = "<img src='".$this->config['icon']."' title='".$this->config['name']."' />";
-			$params['innerHtml'].= "<div class='avia-element-label'>".$this->config['name']."</div>";
-			$params['content'] 	 = null; //remove to allow content elements
+			
+			$params = parent::editor_element( $params );
+			$params['content'] = null;	//remove to allow content elements
+			
 			return $params;
 		}
 
@@ -147,8 +235,10 @@ if ( ! class_exists( 'avia_sc_upcoming_events' ) )
 		 * @param string $shortcodename the shortcode found, when == callback name
 		 * @return string $output returns the modified html string
 		 */
-		function shortcode_handler( $atts, $content = "", $shortcodename = "", $meta = "" )
+		function shortcode_handler( $atts, $content = '', $shortcodename = '', $meta = '' )
 		{
+			extract( AviaHelper::av_mobile_sizes( $atts ) ); //return $av_font_classes, $av_title_font_classes and $av_display_classes 
+
 			$atts =  shortcode_atts( array(
 						'categories' 	=> '',
 						'items' 		=> '3',
@@ -170,13 +260,13 @@ if ( ! class_exists( 'avia_sc_upcoming_events' ) )
 				global $post;
 				
 				$default_id = $post->ID;
-				$output .= "<div {$meta['custom_el_id']} class='av-upcoming-events {$meta['el_class']}'>";
+				$output .= "<div {$meta['custom_el_id']} class='av-upcoming-events {$av_display_classes} {$meta['el_class']}'>";
 				
 				foreach( $entries as $index => $entry )
 				{	
-					$class  = "av-upcoming-event-entry";
+					$class  = 'av-upcoming-event-entry';
 					$image  = get_the_post_thumbnail( $entry->ID, 'square', array( 'class' => 'av-upcoming-event-image' ) );
-					$class .= ! empty( $image ) ? " av-upcoming-event-with-image" : " av-upcoming-event-without-image";
+					$class .= ! empty( $image ) ? ' av-upcoming-event-with-image' : ' av-upcoming-event-without-image';
 					$title  = get_the_title( $entry->ID );
 					$link	= get_permalink( $entry->ID );
 					
@@ -205,7 +295,7 @@ if ( ! class_exists( 'avia_sc_upcoming_events' ) )
 					}
 					if( $price && $venue )	
 					{
-						$event .=				" - ";	
+						$event .=				' - ';	
 					}
 					if( $venue )	
 					{
@@ -229,7 +319,7 @@ if ( ! class_exists( 'avia_sc_upcoming_events' ) )
 					$output .= apply_filters( 'avf_single_event_upcoming_html', $event, $entries, $index );
 				}
 				
-				if( $atts['paginate'] == "yes" && $avia_pagination = avia_pagination( $posts->max_num_pages, 'nav' ) )
+				if( $atts['paginate'] == 'yes' && $avia_pagination = avia_pagination( $posts->max_num_pages, 'nav' ) )
 				{
 					$output .= "<div class='pagination-wrap pagination-" . Tribe__Events__Main::POSTTYPE . "'>{$avia_pagination}</div>";
 				}
@@ -280,7 +370,7 @@ if ( ! class_exists( 'avia_sc_upcoming_events' ) )
 						);
 
 			//if we find categories perform complex query
-			if( isset( $terms[0] ) && ! empty( $terms[0] ) && ! is_null( $terms[0] ) && $terms[0] != "null" )
+			if( isset( $terms[0] ) && ! empty( $terms[0] ) && ! is_null( $terms[0] ) && $terms[0] != 'null' )
 			{
 				$query['tax_query'] = array( 	
 										array( 	'taxonomy' 	=> Tribe__Events__Main::TAXONOMY,

@@ -113,12 +113,13 @@
             //store only a single el?
             if(typeof e != "undefined" && e.currentTarget.className == "avia-save-element")
 			{
-				this.template_val = $.trim($(e.currentTarget).parent('div').next('.avia_inner_shortcode').find('textarea').val());
+				this.template_val = $.trim($(e.currentTarget).parent('div').next('.avia_inner_shortcode').children('textarea').val());
 			}
 			else
 			{
             	this.template_val = $.trim($('#content.wp-editor-area').val());
             }
+			
             return this.template_val;
         },
         
@@ -269,14 +270,14 @@
         
          
         try_save: function(values, event)
-        {   	        
+        {   	    
             var obj              = this,
                 name             = values['avia-builder-template'],
                 disallowed_chars = name.match(/[^a-zA-Z0-9-_ ]/),
                 error            = false,
                 save_msg_wrap    = this.savebox.modal.find('.avia-template-save-msg').text(avia_template_save_L10n.save_msg),
                 footer           = this.savebox.modal.find('.avia-modal-inner-footer');
-            
+
             this.savebox.modal.find('.avia-template-save-error').removeClass('avia-template-save-error');
             
             if(name.length < 3)
@@ -290,7 +291,7 @@
                 this.savebox.modal.find('.avia-template-save-chars').addClass('avia-template-save-error');
                 error = true;
             }
-            
+			
             if(!error)
             {
                 $.ajax({

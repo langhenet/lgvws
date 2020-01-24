@@ -67,7 +67,7 @@ if( ! class_exists( 'Avia_Relevanssi' ) )
 		 * @param array $defaults
 		 * @return string
 		 */
-		public function handler_init_ajax_search( $function_name, array $search_query, array $search_parameters, array $defaults )
+		public function handler_init_ajax_search( $function_name, $search_query, $search_parameters, array $defaults )
 		{
 			return 'avia_ajax_relevanssi_search';
 		}

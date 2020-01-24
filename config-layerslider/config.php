@@ -158,6 +158,17 @@ if( ! class_exists( 'Avia_Config_LayerSlider' ) )
 			{
 				update_option( "{$this->theme_nice_name}_layerslider_state", 'activated' );
 			}
+			else if( $this->original_plugin_folder_exists() )
+			{
+				update_option( "{$this->theme_nice_name}_layerslider_state", 'deactivated' );
+			}
+			else
+			{
+				if( '' != get_option( "{$this->theme_nice_name}_layerslider_state", '' ) )
+				{
+					update_option( "{$this->theme_nice_name}_layerslider_state", '' );
+				}
+			}
 		}
 		
 		
@@ -603,15 +614,10 @@ if( ! class_exists( 'Avia_Config_LayerSlider' ) )
 			/**
 			 * Is original plugin activated, then show notificaions
 			 */
-			if( 'activated' == get_option( "{$this->theme_nice_name}_layerslider_state", '' ) )
+			if( 'activated' == get_option( "{$this->theme_nice_name}_layerslider_state", '' ) && $this->original_plugin_folder_exists() )
 			{
 				return $plugins;
 			}
-
-			/**
-			 * Path to Enfold LayerSlider WP main PHP files - ensure Windows comp with drives
-			 */
-			$layerslider = str_replace( '\\', '/', get_template_directory() . '/config-layerslider/LayerSlider/layerslider.php' );
 
 			/**
 			 * Supress hiding update notification
@@ -621,7 +627,19 @@ if( ! class_exists( 'Avia_Config_LayerSlider' ) )
 			 */
 			if( 'no' == apply_filters( 'avf_show_layerslider_update_notification', 'no' ) ) 
 			{
-				unset( $plugins->response[ $layerslider ] );
+				/**
+				 * To be independent of case sensitive directories we loop through the plugins and search for string
+				 */
+				$layerslider = '/config-layerslider/layerslider/layerslider.php';
+				
+				foreach( $plugins->response as $plugin => $value ) 
+				{
+					$remove = strtolower( $plugin );
+					if( false !== strpos( $remove, $layerslider ) )
+					{
+						unset( $plugins->response[ $plugin ] );
+					}
+				}
 			}
 
 			return $plugins;

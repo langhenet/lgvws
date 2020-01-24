@@ -294,11 +294,13 @@ if( ! function_exists( 'av_disable_unused_assets' ) )
 if( ! function_exists( 'av_disable_button_in_backend' ) )
 {
 	/**
-	* Disable button in backend if the user has manually set them to be disabled
-	*
-	* @since 4.3
-	* @added_by Kriesi
-	*/
+	 * Disable button in backend if the user has manually set them to be disabled
+	 *
+	 * @since 4.3
+	 * @added_by Kriesi
+	 * @param array
+	 * @return array
+	 */
 	function av_disable_button_in_backend( $shortcode ) 
 	{
 		$key = 'av_alb_disable_'.$shortcode['shortcode'];
@@ -308,13 +310,14 @@ if( ! function_exists( 'av_disable_button_in_backend' ) )
 		{
 			$shortcode['disabled'] = array(
 				'condition' => true, 
-				'text'   	=> __( 'This element is disabled in your theme options. You can enable it in Enfold &raquo; Performance', 'avia_framework' ));
+				'text'   	=> __( 'This element is disabled in your theme options. You can enable it in Enfold &raquo; Performance', 'avia_framework' )
+				);
 		}
 		
 		return $shortcode;
 	}
 	
-	if( avia_get_option('disable_alb_elements') == "manually" )
+	if( avia_get_option( 'disable_alb_elements' ) == 'manually' )
 	{
 		add_filter( 'avf_shortcode_insert_button_backend', 'av_disable_button_in_backend', 10, 1 );
 	}

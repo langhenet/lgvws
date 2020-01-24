@@ -1,10 +1,20 @@
+var importModalWindowTimeline = null,
+	importModalWindowTransition = null,
+	importModalThumbnailsTransition = null,
+
+	draggedSliderItem = null,
+	targetSliderItem = null,
+
+	sliderDragGroupingTimeout = null,
+	sliderGroupRenameTimeout = null,
+
+	$lastOpenedGroup,
+
+	shuffleContainers = []
+	activeShuffleContainerIndex = 0;
+
+
 jQuery(function($) {
-
-
-	var importModalWindowTimeline = null,
-		importModalWindowTransition = null,
-		importModalThumbnailsTransition = null;
-
 
 	// Tabs
 	$('.km-tabs').kmTabs();
@@ -18,45 +28,126 @@ jQuery(function($) {
 
 	$('.ls-sliders-grid').on('contextmenu', '.preview', function( e ) {
 		e.preventDefault();
-		$(this).parent().find('.slider-actions').click();
+		$(this).parent().find('.slider-actions-button').click();
+
+	}).on('click', '.slider-item .checkbox', function() {
+
+		$( this ).closest('.slider-item').toggleClass('ls-selected');
+		checkSliderSelection();
+
+	}).on('click', '.slider-item .preview', function( event ) {
+
+		if( event.ctrlKey || event.metaKey ) {
+
+			event.preventDefault();
+
+			$( this ).closest('.slider-item').find('.checkbox').click();
+		}
+
+
+	}).on('click', '.slider-actions-button', function() {
+		$(this).closest('.slider-item').addClass('ls-opened');
+
+
+	}).on('click', '.slider-item.group-item', function( e ) {
+		e.preventDefault();
+
+		var $this 		= $( this ),
+			groupName 	= $.trim( $this.find('.name').html() ).replace(/"/g, '&quot;');
+
+		$lastOpenedGroup = $this;
+
+		kmw.modal.open({
+			into: '.ls-sliders-grid',
+			title: '<input value="'+groupName+'"><a href="#" class="button button-primary ls-remove-group-button" data-help="'+LS_l10n.SLRemoveGroupTooltip+'" data-help-delay="100">'+LS_l10n.SLRemoveGroupButton+'</a>',
+			content: $this.next().children(),
+			maxWidth: 1380,
+			minWidth: 600,
+			modalClasses: 'ls-slider-group-modal-window',
+			animationIn: 'scale',
+			overlaySettings: {
+				animationIn: 'fade'
+			}
+		});
+
+
+
+		setTimeout( function() {
+			removeSliderFromGroupDraggable();
+		}, 200);
+
 	});
 
-	$('.ls-sliders-grid').on('click', '.slider-actions', function() {
 
-		var $this 		= $(this),
-			$item 		= $this.closest('.slider-item'),
-			$wrapper 	= $item.children(),
-			$sheet 		= $item.find('.slider-actions-sheet');
+	$( document ).on('input', '.ls-slider-group-modal-window .kmw-modal-title input', function() {
 
-			$item.addClass('ls-opened');
-			$sheet.removeClass('ls-hidden');
-			$('.ls-hover', $item).hide();
-			TweenLite.fromTo($sheet[0], 0.3, { x: 0 }, {
-				y: 0
+		$this = $( this );
+
+		clearTimeout( sliderGroupRenameTimeout );
+		sliderGroupRenameTimeout = setTimeout( function() {
+
+			$.get( ajaxurl, {
+				action: 'ls_rename_slider_group',
+				groupId: $lastOpenedGroup.data('id'),
+				name: $this.val()
 			});
+
+		}, 300 );
+
+
+		$lastOpenedGroup.find('.name').text( $this.val() );
 	});
+
+	$( document ).on('click', '.ls-slider-group-modal-window .ls-remove-group-button', function( e) {
+
+		e.preventDefault();
+		kmUI.popover.close();
+
+
+		setTimeout( function() {
+
+			if( confirm( LS_l10n.SLRemoveGroupConfirm ) ) {
+
+				$.get( ajaxurl, {
+					action: 'ls_delete_slider_group',
+					groupId: $lastOpenedGroup.data('id'),
+				});
+
+				var $sliders = $('.ls-slider-group-modal-window .slider-item');
+
+				// Destroy previous draggable instance (if any)
+				if( $sliders.hasClass('ui-draggable') ) {
+					$sliders.draggable('destroy');
+				}
+
+				// Destroy previous droppable instance (if any)
+				if( $sliders.hasClass('ui-droppable') ) {
+					$sliders.droppable('destroy');
+				}
+
+				$sliders.insertAfter('.ls-sliders-grid .ls-grid-buttons');
+
+				setTimeout( function() {
+					addSliderToGroupDraggable();
+					addSliderToGroupDroppable();
+
+					createSliderGroupDroppable();
+				}, 300 );
+
+
+				$lastOpenedGroup.next().remove();
+				$lastOpenedGroup.remove();
+
+				kmw.modal.close();
+			}
+
+		}, 300 );
+	});
+
 
 	$('.ls-sliders-grid').on('mouseleave', '.slider-item', function() {
+		$(this).closest('.slider-item').removeClass('ls-opened').removeClass('ls-export-options-open');
 
-		var $this 		= $(this),
-			$item 		= $this.closest('.slider-item'),
-			$sheet		= $('.slider-actions-sheet', $item ),
-			$options 	= $('.ls-export-options', $item );
-
-			if( $item.hasClass('ls-opened') ) {
-
-				$item.removeClass('ls-opened').removeClass('ls-export-options-open');
-				$sheet.removeClass('ls-hidden');
-				$('.ls-hover', $item).show();
-
-				TweenLite.to($sheet[0], 0.4, { y: -150 });
-				TweenLite.to($options[0], 0.4, {
-					y: -150,
-					onComplete: function() {
-						$options.hide();
-					}
-				});
-			}
 
 	// Add slider
 	}).on('click', '#ls-add-slider-button', function(e) {
@@ -71,26 +162,17 @@ jQuery(function($) {
 		}
 
 		$sheet.find('input').focus();
-		TweenLite.set( $sheet, { x: 240 });
+		TweenLite.set( $sheet, { x: 235 });
 		TweenLite.to( [ $button[0], $sheet[0] ], 0.5, {
-			x: '-=240'
+			x: '-=235'
 		});
 
 	// Export options
 	}).on('click', '.ls-export-options-button', function( e ) {
 		e.preventDefault();
-
-		var $item 		= $(this).closest('.slider-item'),
-			$sheet 		= $('.slider-actions-sheet', $item),
-			$options 	= $('.ls-export-options', $item);
-
-
-		$item.addClass('ls-export-options-open');
-		$options.show();
-
-		TweenLite.fromTo($sheet[0], 0.5, { x: 0 }, { x: -240 });
-		TweenLite.fromTo($options[0], 0.5, { x: 240, y: 0 }, { x: 0 });
+		$(this).closest('.slider-item').addClass('ls-export-options-open');
 	});
+
 
 
 	$('.ls-sliders-list').on('click', '#ls-add-slider-button', function(e) {
@@ -111,7 +193,7 @@ jQuery(function($) {
 		$('<div>', { 'class' : 'ls-overlay dim'}).prependTo('body');
 
 
-	}).on('click', '.slider-actions', function() {
+	}).on('click', '.slider-actions-button', function() {
 
 		var $this = $(this);
 		setTimeout(function() {
@@ -154,18 +236,32 @@ jQuery(function($) {
 	// Upload
 	}).on('click', '#ls-import-button', function(e) {
 		e.preventDefault();
-		kmUI.modal.open('#tmpl-upload-sliders', { width: 700, height: 500 });
+
+		kmw.modal.open({
+			content: $('#tmpl-upload-sliders').text(),
+			minWidth: 400,
+			maxWidth: 700
+		});
+
 
 	// Embed
 	}).on('click', 'a.embed', function(e) {
 		e.preventDefault();
 
 		var $this 	= $(this),
-			$modal 	= kmUI.modal.open('#tmpl-embed-slider', { width: 900, height: 600 }),
+			$modal 	= kmw.modal.open({
+				content: $('#tmpl-embed-slider').text(),
+				minWidth: 400,
+				maxWidth: 980
+			}),
 			id 		= $this.data('id'),
 			slug 	= $this.data('slug') || id;
 
+
+
 		$modal.find('input.shortcode').val('[layerslider id="'+slug+'"]');
+
+		$('.km-accordion').kmAccordion();
 
 	// HTML export
 	}).on('click', 'a.ls-html-export', function( e ) {
@@ -206,6 +302,68 @@ jQuery(function($) {
 	});
 
 
+
+	// Drag and drop import
+	$( document ).on('dragover.ls', '.slider-item.import-sliders', function( e ) {
+		e.preventDefault();
+		$( this ).addClass('ls-dragover')
+
+	}).on('dragleave.ls drop.ls', '.slider-item.import-sliders', function( e ) {
+		e.preventDefault();
+		$( this ).removeClass('ls-dragover')
+	}).on('drop.ls', '.slider-item.import-sliders', function( event ) {
+
+		var oe 		= event.originalEvent,
+			files 	= event.originalEvent.dataTransfer.files,
+			$this 	= $( this ),
+			$form 	= $('#tmpl-quick-import-form');
+
+
+		// Prevent uploading empty or multiple file selection
+		if( files.length === 0 ||  files.length > 1 ) {
+			return false;
+		}
+
+		// Prevent uploading files other than ZIP packages
+		if( files[0].name.toLowerCase().indexOf('.zip') === -1 ) {
+			return false;
+		}
+
+
+		if( ! $form.length ) {
+			$form = $( $('#tmpl-quick-import').text() ).prependTo('body');
+		}
+
+		$this.addClass('importing');
+
+		$form.find('input[type="file"]')[0].files = files;
+		$form.submit();
+	});
+
+	// Import window file input
+	$( document ).on( 'change', '#ls-upload-modal-window .file input', function() {
+
+		var file = this.files[0],
+			$input = $(this),
+			$parent = $input.parent(),
+			$span = $input.prev();
+
+		if( !$input.data( 'original-text' ) ){
+			$input.data( 'original-text', $span.text() );
+		}
+
+		if( file ) {
+			$span.text( file.name );
+			$parent.addClass( 'file-chosen' );
+		} else {
+			$span.text( $input.data( 'original-text' ) );
+			$parent.removeClass( 'file-chosen' );
+		}
+	});
+
+
+
+
 	// Import sample slider
 	$( '#ls-import-samples-button' ).on( 'click', function( event ) {
 
@@ -231,45 +389,54 @@ jQuery(function($) {
 
 			// Append the template & setup the live logo
 			$modal = jQuery( jQuery('#tmpl-import-sliders').text() ).hide().prependTo('body');
-			lsLogo.append( '#ls-import-modal-window .layerslider-logo', true );
 
 			// Update last store view date
 			if( $modal.hasClass('has-updates') ) {
 				jQuery.get( window.ajaxurl, { action: 'ls_store_opened' });
 			}
 
+			// Hide all template items temporarily for faster animations
+			jQuery( '#ls-import-modal-window .items' ).hide();
+
 
 			// Setup Shuffle. Use setTimeout to avoid timing issues.
 			setTimeout(function(){
 
 				// Init Shuffle
-				var	Shuffle = window.shuffle,
-					element = jQuery( '#ls-import-modal-window .inner .items' )[0];
-					shuffle = new Shuffle(element, {
+				jQuery( '#ls-import-modal-window .inner .items' ).each( function() {
+
+					shuffleContainers.push( new Shuffle( this, {
 						itemSelector: '.item',
 						speed: 400,
 						easing:'ease-in-out',
-						delimeter: ','
-					}),
-					$comingSoon = jQuery( '.coming-soon' );
-
-				// Setup category switcher sidebar.
-				jQuery( '#ls-import-modal-window' ).on( 'click', '.inner nav li', function(){
-
-					// Highlight and filter new category
-					jQuery(this).addClass('active').siblings().removeClass('active');
-					shuffle.filter( jQuery(this).data( 'group' ) );
-
-					// Display the Coming Soon tile if the category
-					// has no entries at all.
-					var $tiles = jQuery( '.shuffle .shuffle-item--visible' );
-					$comingSoon[ $tiles.length ? 'removeClass' : 'addClass' ]('visible');
+						delimeter: ',',
+						filterMode: Shuffle.FilterMode.ALL
+					}) );
 				});
 
 			}, 100 );
 
-			// Hide all template items temporarily for faster animations
-			jQuery( '#ls-import-modal-window .items' ).hide();
+
+
+			// Initialize Looking for more? slider
+			setTimeout( function() {
+				jQuery('#popups-looking-for-more').layerSlider({
+					keybNav: false,
+					touchNav: false,
+					skin: 'v6',
+					navPrevNext: false,
+					hoverPrevNext: false,
+					navStartStop: false,
+					navButtons: false,
+					showCircleTimer: false,
+					useSrcset: false,
+					skinsPath: pluginPath + 'layerslider/skins/'
+				});
+
+				jQuery('#open-webshopworks-popups').on('click', function() {
+					jQuery('#ls-import-modal-window .source-filter li:last').click();
+				});
+			}, 1200 );
 
 			importModalWindowTimeline = new TimelineMax({
 				onStart: function(){
@@ -327,7 +494,7 @@ jQuery(function($) {
 			importModalWindowTimeline.add( importModalThumbnailsTransition, 0.75 );
 
 			importModalWindowTimeline.add( function(){
-				shuffle.update();
+				shuffleContainers[0].update();
 			}, 0.25 );
 		}
 
@@ -354,6 +521,64 @@ jQuery(function($) {
 		importModalWindowTimeline.play();
 	});
 
+
+
+	// Template Store: Content chooser
+	jQuery( document ).on('click', '#ls-import-modal-window .content-filter li, #ls-import-modal-window .source-filter li', function() {
+
+		activeShuffleContainerIndex = jQuery( this ).data('index');
+
+		jQuery('#ls-import-modal-window .inner')
+			.removeClass('active')
+			.eq( activeShuffleContainerIndex )
+			.addClass('active')
+			.find('.items')
+			.show();
+
+		// Display the Coming Soon tile if the category
+		// has no entries at all.
+		var $tiles = jQuery( '.shuffle:visible .shuffle-item--visible' );
+		jQuery( '.coming-soon' )[ $tiles.length ? 'removeClass' : 'addClass' ]('visible');
+
+		setTimeout( function() {
+
+			jQuery.each( shuffleContainers, function( index, item ) {
+				item.update();
+			});
+
+		}, 50 );
+	});
+
+
+
+	// Template Store: Slider filters
+	jQuery( document ).on( 'click', '#ls-import-modal-window .shuffle-filters li', function(){
+
+		// Highlight selected category
+		jQuery(this).addClass('active').siblings().removeClass('active');
+
+		// Collect selected categories
+		var categories = [];
+		jQuery('#ls-import-modal-window .shuffle-filters:visible li.active').each( function() {
+
+			var category = jQuery(this).data( 'group' );
+
+			if( category ) {
+				categories.push( category );
+			}
+		});
+
+
+		// Filter sliders
+		shuffleContainers[ activeShuffleContainerIndex ].filter( categories );
+
+		// Display the Coming Soon tile if the category
+		// has no entries at all.
+		var $tiles = jQuery( '.shuffle:visible .shuffle-item--visible' );
+		jQuery( '.coming-soon' )[ $tiles.length ? 'removeClass' : 'addClass' ]('visible');
+	});
+
+
 	$( document ).on( 'click', '#ls-import-modal-window > header b', function(){
 		$( '#ls-import-samples-button' ).data( 'lsModalTimeline' ).reverse();
 	});
@@ -379,8 +604,7 @@ jQuery(function($) {
 
 		e.preventDefault();
 
-		kmUI.modal.close();
-		kmUI.overlay.close();
+		kmw.modal.close();
 
 		setTimeout(function() {
 			$('#ls-import-samples-button').click();
@@ -441,7 +665,7 @@ jQuery(function($) {
 				data = $.parseJSON(data);
 
 				// Success
-				if(data && ! data.errCode ) {
+				if( data && ! data.errCode ) {
 
 					// Apply activated state to GUI
 					$form.closest('.ls-box').addClass('active');
@@ -453,8 +677,22 @@ jQuery(function($) {
 					// work without refreshing the page.
 					window.lsSiteActivation = true;
 
+				// HTML-based error message (if any)
+				} else if( typeof data.messageHTML !== "undefined" ) {
+
+					kmw.modal.open({
+						title: data.titleHTML ? data.titleHTML : LS_l10n.activationErrorTitle,
+						content: '<div id="tmpl-activation-error-modal-window">'+data.messageHTML+'</div>',
+						maxWidth: 600,
+						minWidth: 400,
+						animationIn: 'scale',
+						overlaySettings: {
+							animationIn: 'fade'
+						}
+					});
+
 				// Alert message (if any)
-				} else if(typeof data.message !== "undefined") {
+				} else if( typeof data.message !== "undefined" ) {
 					alert(data.message);
 				}
 
@@ -506,8 +744,7 @@ jQuery(function($) {
 
 		document.location.hash = '';
 
-		kmUI.overlay.close();
-		kmUI.modal.close();
+		kmw.modal.close();
 
 		var $box 	= $('.ls-product-banner.ls-auto-update'),
 			$window = $(window),
@@ -542,7 +779,7 @@ jQuery(function($) {
 		lsShowActivationBox();
 	});
 
-	$( document ).on('click', '#tmpl-activation-modal-window .button-activation', function( e ) {
+	$( document ).on('click', '#activation-modal-window .button-activation', function( e ) {
 
 		e.preventDefault();
 
@@ -555,9 +792,10 @@ jQuery(function($) {
 
 		} else {
 
-			kmUI.overlay.close();
-			kmUI.modal.close( function() {
-				lsShowActivationBox( true );
+			kmw.modal.close( false, {
+				onClose: function() {
+					lsShowActivationBox( true );
+				}
 			});
 		}
 	});
@@ -595,14 +833,17 @@ jQuery(function($) {
 	});
 
 	// Importing demo sliders
-	$( document ).on('click', '#ls-import-modal-window .item-import', function( event ) {
+	$( document ).on('click', '#ls-import-modal-window .item-import a', function( event ) {
 		event.preventDefault();
 
-		var $item 	= jQuery(this),
-			$figure = $item.closest('figure'),
-			handle 	= $figure.data('handle'),
-			bundled = !! $figure.data('bundled'),
-			action 	= bundled ? 'ls_import_bundled' : 'ls_import_online';
+		var $item 		= jQuery(this),
+			$figure 	= $item.closest('figure'),
+			name 		= $figure.data('name'),
+			handle 		= $figure.data('handle'),
+			collection 	= $figure.data('collection'),
+			bundled 	= !! $figure.data('bundled'),
+			action 		= bundled ? 'ls_import_bundled' : 'ls_import_online';
+
 
 		// Premium notice
 		if( $figure.data('premium') && ! window.lsSiteActivation ) {
@@ -614,24 +855,31 @@ jQuery(function($) {
 
 			return;
 
+		// Version warning
 		} else if( $figure.data('version-warning') ) {
-			kmUI.modal.open({
+
+			kmw.modal.open({
 				into: '#ls-import-modal-window',
 				title: LS_l10n.TSVersionWarningTitle,
-				content: LS_l10n.TSVersionWarningContent,
-				width: 700,
-				height: 200,
-				overlayAnimate: 'fade'
+				content: LS_l10n.TSVersionWarningContent
 			});
 			return;
 		}
 
-		kmUI.modal.open( '#tmpl-importing', {
+		kmw.modal.open({
+			content: '#tmpl-importing',
 			into: '#ls-import-modal-window',
-			width: 300,
-			height: 300,
-			close: false
+			minWidth: 380,
+			maxWidth: 380,
+			closeButton: false,
+			closeOnEscape: false,
+			animationIn: 'scale',
+			overlaySettings: {
+				closeOnClick: false,
+				animationIn: 'fade'
+			}
 		});
+
 		lsLogo.append( '#ls-importing-modal-window .layerslider-logo', true );
 
 		jQuery.ajax({
@@ -639,6 +887,8 @@ jQuery(function($) {
 			data: {
 				action: action,
 				slider: handle,
+				name: name,
+				collection: collection,
 				security: window.lsImportNonce
 			},
 
@@ -646,19 +896,19 @@ jQuery(function($) {
 
 				setTimeout( function( ) {
 
-					var $modal = jQuery('#ls-import-modal-window .km-ui-modal-window');
+					var $modal = jQuery('#ls-importing-modal-window').closest('.kmw-modal');
 
-					TweenLite.to( $modal[0], 1, {
-						width: 500,
-						height: 400,
-						marginLeft: -290,
-						marginTop: -240,
+					TweenLite.to( $modal[0], 0.5, {
+						minWidth: 580,
+						maxWidth: 580,
+						height: 446,
+						maxHeight: 480,
 
 						onComplete: function() {
 							$('<div class="ls-import-notice">'+LS_l10n.SLImportNotice+'</div>')
 							.hide()
-							.appendTo( $modal )
-							.fadeIn( 500 );
+							.appendTo( $modal.find('.kmw-modal-content') )
+							.fadeIn( 250 );
 						}
 					});
 				}, 1000*60 );
@@ -673,32 +923,58 @@ jQuery(function($) {
 
 				} else {
 
-					setTimeout(function() {
-						alert( data.message ? data.message : LS_l10n.SLImportError);
-						setTimeout(function() {
-							kmUI.modal.close();
-							kmUI.overlay.close();
-						}, 1000);
-					}, 600);
+					kmw.modal.close();
 
 					if( data.reload ) {
 						window.location.reload( true );
+						return;
 					}
+
+					if( data.errCode && data.errCode == 'ERR_WW_POPUPS_PURCHASE_NOT_FOUND') {
+
+
+							lsDisplayActivationWindow({
+								into: '#ls-import-modal-window',
+								title: LS_l10n.purchaseWWPopups,
+								content: '#tmpl-purchase-webshopworks-popups',
+								minHeight: 680,
+								maxHeight: 680
+							});
+
+
+						return;
+					}
+
+					setTimeout(function() {
+						kmw.modal.open({
+							into: '#ls-import-modal-window',
+							title: data.title || 'Import Error',
+							content: data.message || LS_l10n.SLImportError,
+							animationIn: 'scale',
+							overlaySettings: {
+								animationIn: 'fade'
+							}
+
+						});
+
+					}, 600);
 				}
 			},
 			error: function(jqXHR, textStatus, errorThrown) {
 				setTimeout(function() {
-					kmUI.modal.close();
-							kmUI.overlay.close();
+
+					kmw.modal.close();
+
 					alert(LS_l10n.SLImportHTTPError.replace('%s', errorThrown) );
+
 					setTimeout(function() {
-						kmUI.modal.close();
-						kmUI.overlay.close();
+						kmw.modal.close();
 					}, 1000);
+
 				}, 600);
 			},
 			complete: function() {
-				$item.css('color', '#0073aa');
+
 			}
 		});
 	});
@@ -720,119 +996,329 @@ jQuery(function($) {
 		}
 	});
 
-	if( ! window.lsGDPRConsent ) {
 
-		setTimeout(function() {
-			lsDisplayGDPRConsent();
-		}, 500 );
-	}
+
+
+	var addSliderToGroupDraggable = function() {
+
+		$('.ls-sliders-grid > .slider-item').draggable({
+			scope: 'add-to-group',
+			cancel: '.group-item, .hero',
+			handle: '.preview',
+			distance: 5,
+			helper: 'clone',
+			revert: 'invalid',
+			revertDuration: 300,
+			start: function( event, ui ) {
+
+				draggedSliderItem = event.target;
+				$( draggedSliderItem ).addClass('dragging-original');
+			},
+
+			stop: function( event, ui ) {
+				$( event.target ).removeClass('dragging-original');
+			}
+		});
+	};
+
+
+	var addSliderToGroupDroppable = function() {
+
+		$('.ls-sliders-grid .group-item').droppable({
+			scope: 'add-to-group',
+			accept: '.slider-item',
+			tolerance: 'pointer',
+			hoverClass: 'slider-dropping',
+			over: function( event, ui ) {
+
+				ui.helper.find('.preview').addClass('slider-dropping');
+			},
+
+			out: function( event, ui ) {
+				ui.helper.find('.preview').removeClass('slider-dropping');
+			},
+
+
+			drop: function( event, ui ) {
+
+				addSliderToGroup( event.target, draggedSliderItem );
+			}
+		});
+	};
+
+
+
+	var removeSliderFromGroupDraggable = function() {
+
+		$('.ls-sliders-grid .kmw-modal-inner .slider-item').draggable({
+			scope: 'remove-from-group',
+			handle: '.preview',
+			appendTo: '.ls-sliders-grid',
+			distance: 5,
+			helper: 'clone',
+			zIndex: 9999999,
+			revert: 'invalid',
+			revertDuration: 300,
+			start: function( event, ui ) {
+				draggedSliderItem = event.target;
+				$( draggedSliderItem ).addClass('dragging-original');
+				$('#ls-group-remove-area').addClass('active');
+			},
+
+			stop: function( event, ui ) {
+				$( draggedSliderItem ).removeClass('dragging-original');
+				$('#ls-group-remove-area').removeClass('active');
+			}
+		});
+	};
+
+
+	var removeSliderFromGroupDroppable = function() {
+
+		$('#ls-group-remove-area .ls-drop-area').droppable({
+			scope: 'remove-from-group',
+			accept: '.slider-item',
+			tolerance: 'pointer',
+
+			over: function( event, ui ) {
+				ui.draggable.addClass('over-drag-area');
+				ui.helper.find('.preview').addClass('cursor-default');
+				$( event.target ).addClass('over');
+			},
+
+			out: function( event, ui ) {
+				ui.draggable.removeClass('over-drag-area');
+				ui.helper.find('.preview').removeClass('cursor-default');
+				$( event.target ).removeClass('over');
+			},
+
+			drop: function( event, ui ) {
+
+				$( event.target ).removeClass('over');
+				ui.draggable.removeClass('over-drag-area');
+
+				removeSliderFromGroup(
+					$lastOpenedGroup,
+					ui.draggable
+				);
+			}
+		});
+	};
+
+
+
+	var createSliderGroupLastEvent;
+
+	var createSliderGroupDroppable = function() {
+
+		$('.ls-sliders-grid .slider-item:not(.hero,.group-item)').droppable({
+			scope: 'add-to-group',
+			accept: '.slider-item',
+			tolerance: 'pointer',
+			hoverClass: 'slider-dropping',
+
+			over: function( event, ui ) {
+
+				var f = function(){
+					targetSliderItem = event.target;
+					$( event.target ).addClass('create-group');
+					ui.helper.find('.preview').addClass('slider-dropping');
+					createSliderGroupLastEvent = 'over';
+				};
+
+				if( createSliderGroupLastEvent == 'over' ){
+					setTimeout( function(){
+						f();
+					}, 0 );
+				} else {
+					f();
+				}
+			},
+
+			out: function( event, ui ) {
+
+				var f = function(){
+					targetSliderItem = null;
+					$('.slider-item').removeClass('create-group');
+					ui.helper.find('.preview').removeClass('slider-dropping');
+					createSliderGroupLastEvent = 'out';
+				};
+
+				if( createSliderGroupLastEvent == 'out' ){
+
+					setTimeout( function(){
+						f();
+					}, 0 );
+				} else {
+					f();
+				}
+			},
+
+			deactivate: function( event, ui ) {
+				clearTimeout( sliderDragGroupingTimeout );
+				$('.slider-item').removeClass('create-group');
+				ui.helper.find('.preview').removeClass('slider-dropping');
+			},
+
+			drop: function( event, ui ) {
+
+				if( targetSliderItem ) {
+
+					var $template 	= $( $('#tmpl-slider-group-item').text() ),
+						$markup 	= $template.insertAfter( targetSliderItem ),
+						$group 		= $markup.filter('.group-item');
+
+					addSliderToGroup( $group, targetSliderItem, true );
+					addSliderToGroup( $group, draggedSliderItem, true );
+
+					$( targetSliderItem ).hide();
+					$( draggedSliderItem ).hide();
+
+					addSliderToGroupDroppable();
+
+					$.getJSON( ajaxurl, {
+						action: 'ls_create_slider_group',
+						items: [
+							$( targetSliderItem ).data('id'),
+							$( draggedSliderItem ).data('id')
+						]
+
+					}, function( data ) {
+						$group.data('id', data.groupId );
+					});
+				}
+			}
+		});
+	};
+
+
+
+
+
+
+	var addSliderToGroup = function( groupElement, sliderElement, withoutXHR ) {
+
+		var $group 			= $( groupElement ),
+			$groupItems 	= $group.find('.items'),
+			$slider 		= $( sliderElement ),
+			$sliderPreview 	= $slider.find('.preview'),
+			$groupItem 		= $( $('#tmpl-slider-group-placeholder').text() );
+
+		// XHR request to add slider to group
+		if( ! withoutXHR ) {
+			$.get( ajaxurl, {
+				action: 'ls_add_slider_to_group',
+				sliderId: $slider.data('id'),
+				groupId: $group.data('id')
+			});
+		}
+
+
+		// Add slider to group on UI
+		if( ! $sliderPreview.find('.no-preview').length ) {
+			$groupItem.find('.preview').css('background-image', $sliderPreview.css('background-image') );
+			$groupItem.find('.preview').empty();
+		}
+
+		// Destroy previous draggable instance (if any)
+		if( $slider.hasClass('ui-draggable') ) {
+			$slider.draggable('destroy');
+		}
+
+		// Destroy previous droppable instance (if any)
+		if( $slider.hasClass('ui-droppable') ) {
+			$slider.droppable('destroy');
+		}
+
+		$slider.clone( true, true )
+			.removeClass('dragging-original')
+			.removeClass('create-group')
+			.appendTo( $group.next().children() );
+
+		$groupItem.appendTo( $groupItems );
+		setTimeout( function() {
+			$groupItem.removeClass('scale0');
+		}, 100 );
+
+		// Remove the original element
+		$slider.remove();
+	};
+
+
+
+	var removeSliderFromGroup = function( groupElement, sliderElement, withoutXHR ) {
+
+		var $group 			= $( groupElement ),
+			$groupItems 	= $group.find('.items'),
+			$slider 		= $( sliderElement ),
+			$sliderPreview 	= $slider.find('.preview'),
+			$siblings 		= $slider.siblings();
+
+		// XHR request to add slider to group
+		if( ! withoutXHR ) {
+			$.get( ajaxurl, {
+				action: 'ls_remove_slider_from_group',
+				sliderId: $slider.data('id'),
+				groupId: $group.data('id')
+			});
+		}
+
+		// Remove from preview items
+		$groupItems.children().eq( $slider.index() ).remove();
+
+		// Destroy previous draggable instance (if any)
+		if( $slider.hasClass('ui-draggable') ) {
+			$slider.draggable('destroy');
+		}
+
+		// Destroy previous droppable instance (if any)
+		if( $slider.hasClass('ui-droppable') ) {
+			$slider.droppable('destroy');
+		}
+
+		// Remove slider from group
+		$slider.insertAfter('.ls-sliders-grid .ls-grid-buttons');
+
+		setTimeout( function() {
+			addSliderToGroupDraggable();
+			addSliderToGroupDroppable();
+
+			createSliderGroupDroppable();
+		}, 300 );
+
+
+		// Handle auto-group deletion in case of removing
+		// the last element.
+		if( $siblings.length < 1 ) {
+
+			$group.next().remove();
+			$group.remove();
+
+			kmw.modal.close();
+		}
+	};
+
+
+
+	var checkSliderSelection = function() {
+
+		$selected = $('.ls-sliders-grid .slider-item.ls-selected' );
+
+		if( $selected.length ) {
+			$('.ls-sliders-grid').addClass('ls-has-selection');
+		} else {
+			$('.ls-sliders-grid').removeClass('ls-has-selection');
+		}
+	};
+
+
+	// Group draggable & droppable
+	addSliderToGroupDraggable();
+	addSliderToGroupDroppable();
+
+	createSliderGroupDroppable();
+
+	removeSliderFromGroupDraggable();
+	removeSliderFromGroupDroppable();
 
 });
-
-
-var lsDisplayGDPRConsent = function() {
-
-	// Init & step 1
-	kmUI.modal.open({
-		into: 'body',
-		title: '',
-		content: $('#tmpl-ls-gdpr-consent').text(),
-		width: 700,
-		height: 700,
-		close: false,
-		overlayAnimate: 'fade'
-	});
-
-	var $modalWindow 	= $('._tmpl-gdpr-modal-window'),
-		$modalH1 		= $('header h1', $modalWindow),
-		$nextButton 	= $('.button-next', $modalWindow);
-
-	$modalWindow.find(':checkbox').customCheckbox();
-	$modalH1.text( $('#ls-gdpr-step-1 h1').text() );
-
-
-	// Step 2
-	$nextButton.one('click', function() {
-
-
-		$modalH1.fadeOut(500, function() {
-			$modalH1.text( $('#ls-gdpr-step-2 h1').text() ).fadeIn(500);
-		});
-
-		$('#ls-gdpr-step-1').css('transform', 'translateX(-740px)');
-		$('#ls-gdpr-step-2').css('transform', 'translateX(0px)');
-		$('#ls-gdpr-step-3').css('transform', 'translateX(740px)');
-		$('#ls-gdpr-step-4').css('transform', 'translateX(1480px)');
-
-		// Step 3
-		$nextButton.off().one('click', function() {
-
-			$modalH1.fadeOut(500, function() {
-				$modalH1.text( $('#ls-gdpr-step-3 h1').text() );
-			}).fadeIn(500);
-
-			$('#ls-gdpr-step-1').css('transform', 'translateX(-1480px)');
-			$('#ls-gdpr-step-2').css('transform', 'translateX(-740px)');
-			$('#ls-gdpr-step-3').css('transform', 'translateX(0px)');
-			$('#ls-gdpr-step-4').css('transform', 'translateX(740px)');
-
-			// Do ajax
-			$nextButton.one('click', function() {
-
-				kmUI.modal.close();
-				kmUI.overlay.close();
-
-				$.post( ajaxurl, $('#tmpl-gdpr-modal-window form').serialize() );
-			});
-		});
-	});
-};
-
-var addLSOverlay = function() {
-
-	var $overlay = jQuery('<div class="ls-overlay"></div>').prependTo('body');
-
-	TweenLite.fromTo( $overlay[0], 0.4, {
-		autoCSS: false,
-		css: {
-			y: -jQuery( window ).height()
-		}
-	},{
-		autoCSS: false,
-		ease: Quart.easeInOut,
-		css: {
-			y: 0
-		}
-	});
-
-	setTimeout(function() {
-
-		jQuery( '.ls-overlay' ).one( 'click', function() {
-
-			// TweenLite.fromTo( this, 0.4, {
-			// 	autoCSS: false,
-			// 	css: {
-			// 		y: 0
-			// 	}
-			// },{
-			// 	autoCSS: false,
-			// 	ease: Quart.easeInOut,
-			// 	css: {
-			// 		y: -jQuery( window ).height()
-			// 	},
-			// 	onComplete: function(){
-			// 		jQuery('.ls-overlay,.ls-modal').remove();
-			// 		jQuery('body').css('overflow', 'auto');
-			// 	}
-			// });
-
-			jQuery('.ls-overlay,.ls-modal').remove();
-			jQuery('body').css('overflow', 'auto');
-		});
-
-		jQuery( '.ls-modal b' ).one( 'click', function() {
-			jQuery( '.ls-overlay' ).click();
-		});
-
-	}, 300);
-};

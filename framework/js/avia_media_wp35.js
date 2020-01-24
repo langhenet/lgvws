@@ -136,6 +136,7 @@
 
         //config file upload
         $("body").on('av_config_file_insert', $.AviaElementBehavior.config_file_insert);
+		$("body").on('av_alb_templates_file_insert', $.AviaElementBehavior.alb_templates_file_insert);
 	});
 
 
@@ -443,7 +444,63 @@ EXTRA FUNCTIONS, NOT NECESSARY FOR THE DEFAULT UPLOAD
 		});
 	};
 
-
+	$.AviaElementBehavior.alb_templates_file_insert = function( event, selection, options )
+	{
+		// clean the options field, we dont need to save a value
+        options.input_target.val("");
+		
+		if(selection.subtype !== 'plain')
+        {
+            $('body').avia_alert({the_class:'error', text:'Please upload a valid config file.<br/>You can create the file by clicking on the "Export Layout Builder Templates" button'});
+            return;
+        }
+		
+		var loader = options.input_target.parents('.avia_control').eq(0).find('.avia_upload_loading');
+		
+		 // send request to server to extract the zip file, re arrange the content and save a config file
+		$.ajax({
+			type: "POST",
+			url: ajaxurl,
+			dataType: 'json',
+			cache: false,
+			data:
+			{
+				action: 'avia_ajax_import_alb_templates_file',
+				values: selection,
+				avia_request: true,
+				avia_id: options.target,
+				_wpnonce: $('input[name=avia-nonce]').val()
+			},
+			beforeSend: function()
+			{
+				loader.css({opacity:0, display:"block", visibility:'visible'}).animate({opacity:1});
+			},
+			error: function()
+			{
+				$('body').avia_alert({the_class:'error', text:'Couldn\'t import the templates because the server didn’t respond.<br/>Please reload the page, then try again'});
+			},
+			success: function(response)
+			{
+				if( ( 'undefined' == typeof response ) || ( 'undefined' == typeof response.success ) )
+				{
+					$('body').avia_alert({the_class:'error', text:'Couldn\'t import the templates because the server returned an invalid respond' });
+				}
+				else if( response.success )
+				{
+					$('body').avia_alert({text:response.msg});
+				}
+				else
+				{
+					$('body').avia_alert({the_class:'error', text:response.msg });
+				}
+			},
+			complete: function(response)
+			{
+				loader.fadeOut();
+			}
+		});
+		
+	};
 
     $.AviaElementBehavior.config_file_insert = function(event, selection, options)
     {
@@ -456,54 +513,90 @@ EXTRA FUNCTIONS, NOT NECESSARY FOR THE DEFAULT UPLOAD
             return;
         }
 		
-
 		var loader = options.input_target.parents('.avia_control').eq(0).find('.avia_upload_loading');
+		var filter_keys = [ 'filter_tabs', 'filter_values', 'skip_tabs', 'skip_values' ];
+		var filter = {};
+		var found = false;
 		
+		/*
+		 * It is possible to use an upload button and add filters hardcoded using filter_keys when defining the element.
+		 * If a single filterkey exists we do not check for input fields
+		 */
+		$.each( filter_keys, function( index, value ){
+					if( 'undefined' != typeof options[value] )
+					{
+						filter[value] = options[value];
+						found = true;
+					}
+				});
+		
+		if( ! found )
+		{
+			var container = options.input_target.closest('#avia_upload');
+
+			if( container.find('input#upload_filter_checkbox:checked').length > 0)
+			{
+				if( container.find('input#upload_keep_quick_css:checked').length > 0)
+				{
+					filter.skip_values = 'avia:quick_css';
+				}
+				
+				var selectedValues = container.find('select#upload_filter_tabs').val();
+
+				//	jQuery > 3.0 returns 0
+				if( null != selectedValues && selectedValues.length > 0 )
+				{
+					filter.filter_tabs = selectedValues.join(',');
+				}
+			}
+		}
 		
         // send request to server to extract the zip file, re arrange the content and save a config file
-        $.ajax({
-            type: "POST",
-            url: ajaxurl,
-            data:
-            {
-                action: 'avia_ajax_import_config_file',
-                values: selection,
-                avia_request: true,
-                _wpnonce: $('input[name=avia-nonce]').val()
-            },
-            beforeSend: function()
-            {
-                loader.css({opacity:0, display:"block", visibility:'visible'}).animate({opacity:1});
-            },
-            error: function()
-            {
-                $('body').avia_alert({the_class:'error', text:'Couldn\'t import the config because the server didn’t respond.<br/>Please reload the page, then try again'});
-            },
-            success: function(response)
-            {
-                if(response.match(/avia_config_file_imported/))
-                {
+		$.ajax({
+			type: "POST",
+			url: ajaxurl,
+			data:
+			{
+				action: 'avia_ajax_import_config_file',
+				values: selection,
+				avia_filter: filter,
+				avia_request: true,
+				avia_id: options.target,
+				_wpnonce: $('input[name=avia-nonce]').val()
+			},
+			beforeSend: function()
+			{
+				loader.css({opacity:0, display:"block", visibility:'visible'}).animate({opacity:1});
+			},
+			error: function()
+			{
+				$('body').avia_alert({the_class:'error', text:'Couldn\'t import the config because the server didn’t respond.<br/>Please reload the page, then try again'});
+			},
+			success: function(response)
+			{
+				if(response.match(/avia_config_file_imported/))
+				{
 					$('body').avia_alert({text: 'Alright!<br/>Import worked out, no problems whatsoever. <br/>The page will now be reloaded to reflect the changes'}, function()
-								{
-									// window.location.hash = "#goto_importexport";
-									window.location.hash = "";
-						 			window.location.reload(true);
-								});
-                }
-                else
-                {
-                    $('body').avia_alert({the_class:'error', show:6500 , text:'Couldn\'t import the font file.<br/>The script returned the following error: '+"<br/><br/>"+response});
-                }
+							{
+								// window.location.hash = "#goto_importexport";
+								window.location.hash = "";
+								window.location.reload(true);
+							});
+				}
+				else
+				{
+					$('body').avia_alert({the_class:'error', show:6500 , text:'Couldn\'t import the theme settings file.<br/>The script returned the following error: '+"<br/><br/>"+response});
+				}
 
-                if(typeof console != 'undefined') console.log(response);
+				if(typeof console != 'undefined') console.log(response);
 
-            },
-            complete: function(response)
-            {
-                loader.fadeOut();
-            }
-        });
-    };
+			},
+			complete: function(response)
+			{
+				loader.fadeOut();
+			}
+		});
+	};
 
 
 })(jQuery);	 

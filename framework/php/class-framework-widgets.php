@@ -279,11 +279,13 @@ if ( ! class_exists( 'avia_fb_likebox' ) )
 					$banner_bg = 'style="background-image:url(' . $fb_banner . ');"';
 				}
 				
+				$link_title = avia_targeted_link_rel( '<a href="' . $url . '" target="_blank" title="' . esc_html( $page_title ) . '">' . esc_html( $page_title ) . '</a>' );
+				
 				echo '<div class="av_facebook_widget_main_wrap" ' . $banner_bg . '>';
 			
 				echo	'<div class="av_facebook_widget_page_title_container">';
 				echo		'<span class="av_facebook_widget_title">';
-				echo			'<a href="'.$url.'" target="_blank" title="' . esc_html( $page_title ) . '">' . esc_html( $page_title )."</a>";
+				echo			$link_title;
 				echo		'</span>';
 				echo		'<span class="av_facebook_widget_content">';
 				echo			esc_html( $content );
@@ -317,7 +319,7 @@ if ( ! class_exists( 'avia_fb_likebox' ) )
 				
 				$btn_text = ( 'confirm_link' == $fb_link ) ? $confirm_button : $page_link_text;
 				$icon = "<span class='av_facebook_widget_icon' " . av_icon_string('facebook') . "></span>";
-				echo	'<a href="'.$url.'" target="_blank" class="av_facebook_widget_button av_facebook_widget_' . $fb_link . '"' . $data . '>' .$icon . esc_html( $btn_text ) . '</a>';
+				echo	avia_targeted_link_rel( '<a href="' . $url . '" target="_blank" class="av_facebook_widget_button av_facebook_widget_' . $fb_link . '"' . $data . '>' .$icon . esc_html( $btn_text ) . '</a>' );
 				
 				if( ! empty( $fb_link ) )
 				{
@@ -1265,9 +1267,17 @@ if (!class_exists('avia_partner_widget'))
 			$image_url2 = empty($instance['image_url2']) ? '<span class="avia_parnter_empty"><span>'.__('Advertise here','avia_framework').'</span></span>' : '<img class="rounded" src="'.$instance['image_url2'].'" title="'.$title.'" alt="'.$title.'"/>';
 			$ref_url2 = empty($instance['ref_url2']) ? '#' : apply_filters('widget_comments_title', $instance['ref_url2']);
 
-			if ( !empty( $title ) ) { echo $before_title . $title . $after_title; };
-			echo '<a target="_blank" href="'.$ref_url.'" class="preloading_background  avia_partner1 link_list_item'.$kriesiaddwidget.' '.$firsttitle.'" >'.$image_url.'</a>';
-			if($this->add_cont == 2) echo '<a target="_blank" href="'.$ref_url2.'" class="preloading_background avia_partner2 link_list_item'.$kriesiaddwidget.' '.$firsttitle.'" >'.$image_url2.'</a>';
+			if ( ! empty( $title ) ) 
+			{ 
+				echo $before_title . $title . $after_title; 
+			}
+			
+			echo avia_targeted_link_rel( '<a target="_blank" href="' . $ref_url . '" class="preloading_background  avia_partner1 link_list_item' . $kriesiaddwidget . ' ' . $firsttitle . '" >' . $image_url . '</a>' );
+			
+			if( $this->add_cont == 2 ) 
+			{
+				echo avia_targeted_link_rel( '<a target="_blank" href="' . $ref_url2 . '" class="preloading_background avia_partner2 link_list_item' . $kriesiaddwidget . ' ' . $firsttitle . '" >' . $image_url2 . '</a>' );
+			}
 			echo $after_widget;
 
 			if($title == '')
@@ -1927,7 +1937,7 @@ if( ! class_exists('avia_google_maps') )
 			{
 				if( current_user_can( 'edit_posts' ) )
 				{
-					echo '<p style="font-weight: 700;color: red;">' . __( 'Widget Google Maps is disabled with theme option.', 'avia_framework' ) . '</p>';
+					echo '<p style="font-weight: 700;color: red;">' . __( 'Widget Google Maps is disabled in theme options &quot;Google Services&quot;.', 'avia_framework' ) . '</p>';
 					echo '<p style="font-weight: 400;color: red;">' . __( '(Visible to admins only.)', 'avia_framework' ) . '</p>';
 				}
 				
@@ -2014,7 +2024,7 @@ if( ! class_exists('avia_google_maps') )
 					}
 					 
 					$url = av_google_maps::api_destination_url( $adress1, $adress2 );
-					$html_overlay = '<a class="av_gmaps_page_only av_text_confirm_link' . $button_class . '" href="' . $url . '" target="_blank">';
+					$html_overlay = avia_targeted_link_rel( '<a class="av_gmaps_page_only av_text_confirm_link' . $button_class . '" href="' . $url . '" target="_blank">' );
 					$text_overlay = esc_html( $page_link_text );
 				}
 				
@@ -2944,7 +2954,7 @@ if( ! class_exists('avia_instagram_widget') )
 						}
 
 						echo '<div class="' . $liclass . '">';
-						echo '<a href="https:' . esc_url( $item['link'] ) . '" target="' . esc_attr( $targeting ) . '"  class="' . $aclass . ' ' . $imgclass . '" title="' . esc_attr( $item['description'] ) . '" style="background-image:url(' . esc_url( $item[ $size ] ) . ');">';
+						echo '<a href="' . esc_url( $item['link'] ) . '" target="' . esc_attr( $targeting ) . '"  class="' . $aclass . ' ' . $imgclass . '" title="' . esc_attr( $item['description'] ) . '" style="background-image:url(' . esc_url( $item[ $size ] ) . ');">';
 						echo '</a></div>';
 
 						if( $rowcount % $columns == 0 || $last_id == $item['id'] || ( $itemcount >= $number ) )
@@ -3416,7 +3426,10 @@ if( ! class_exists('avia_instagram_widget') )
 			$ref_dirs = array();
 			foreach( $this->cache['instances'] as $key => $instance_info ) 
 			{
-				$ref_dirs[] = $instance_info['upload_folder'];
+				if( isset( $instance_info['upload_folder'] ) )
+				{
+					$ref_dirs[] = $instance_info['upload_folder'];
+				}
 			}
 
 			$remove_dirs = array_diff( $cache_dirs, $ref_dirs );
@@ -4125,7 +4138,7 @@ if (!class_exists('avia_auto_toc'))
                 <input class="checkbox" id="<?php echo $this->get_field_id('indent'); ?>" name="<?php echo $this->get_field_name('indent'); ?>" type="checkbox" <?php checked( $indent ); ?> />
                 <label for="<?php echo $this->get_field_id('indent'); ?>"><?php _e('Hierarchy Indentation', 'avia_framework'); ?></label>
             </br>
-                <input class="checkbox" id="<?php echo $this->get_field_id('smoothscroll'); ?>" name="<?php echo $this->get_field_name('smoothscroll'); ?>" type="checkbox" <?php checked( $indent ); ?> />
+                <input class="checkbox" id="<?php echo $this->get_field_id('smoothscroll'); ?>" name="<?php echo $this->get_field_name('smoothscroll'); ?>" type="checkbox" <?php checked( $smoothscroll ); ?> />
                 <label for="<?php echo $this->get_field_id('smoothscroll'); ?>"><?php _e('Enable Smooth Scrolling', 'avia_framework'); ?></label>
             </p>
 

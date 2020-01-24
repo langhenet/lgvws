@@ -92,10 +92,17 @@ $avia_base_data = apply_filters( 'avia_filter_base_data', $avia_base_data );
  *  should be used to save and retrieve database entries
  * ------------------------------------------------------
  */
- 
+
+/**
+ * This fixes a problem with WP CLI
+ * 
+ * https://kriesi.at/support/topic/enfold-produces-php-notices-in-wp-cli/
+ * https://kriesi.at/support/topic/trying-to-get-property-of-non-object-5/#post-1164870
+ */
+global $avia;
+
 $avia = AviaSuperobject( $avia_base_data );
-$avia->init();
+
 
 
 // ------------------------------------------------------------------------
-

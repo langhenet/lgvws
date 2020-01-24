@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {  exit;  }    // Exit if accessed directly
 
 if( ! class_exists( 'woocommerce' ) )
 {
-	add_shortcode('av_product_info', 'avia_please_install_woo');
+	add_shortcode( 'av_product_info', 'avia_please_install_woo' );
 	return;
 }
 
@@ -22,18 +22,18 @@ if ( ! class_exists( 'avia_sc_produc_info' ) )
 		 */
 		function shortcode_insert_button()
 		{
-			$this->config['self_closing']	=	'yes';
+			$this->config['self_closing']	= 'yes';
 			
-			$this->config['name']		= __('Product Info', 'avia_framework' );
-			$this->config['tab']		= __('Plugin Additions', 'avia_framework' );
-			$this->config['icon']		= AviaBuilder::$path['imagesURL']."sc-table.png";
+			$this->config['name']		= __( 'Product Info', 'avia_framework' );
+			$this->config['tab']		= __( 'Plugin Additions', 'avia_framework' );
+			$this->config['icon']		= AviaBuilder::$path['imagesURL'] . 'sc-table.png';
 			$this->config['order']		= 9;
 			$this->config['target']		= 'avia-target-insert';
 			$this->config['shortcode'] 	= 'av_product_info';
-			$this->config['tooltip'] 	= __('Display the product information for the current product', 'avia_framework' );
+			$this->config['tooltip'] 	= __( 'Display the product information for the current product', 'avia_framework' );
 			$this->config['drag-level'] = 3;
-			$this->config['tinyMCE'] 	= array('disable' => "true");
-			$this->config['posttype'] 	= array('product',__('This element can only be used on single product pages','avia_framework'));
+			$this->config['tinyMCE'] 	= array( 'disable' => 'true' );
+			$this->config['posttype'] 	= array( 'product', __( 'This element can only be used on single product pages', 'avia_framework') );
 		}
 
 
@@ -46,14 +46,13 @@ if ( ! class_exists( 'avia_sc_produc_info' ) )
 		 * @param array $params this array holds the default values for $content and $args.
 		 * @return $params the return array usually holds an innerHtml key that holds item specific markup.
 		 */
-		function editor_element($params)
+		function editor_element( $params )
 		{
-			$params['innerHtml'] = "<img src='".$this->config['icon']."' title='".$this->config['name']."' />";
-			$params['innerHtml'].= "<div class='avia-element-label'>".$this->config['name']."</div>";
+			$params = parent::editor_element( $params );
 			
-			$params['innerHtml'].= "<div class='avia-flex-element'>"; 
-			$params['innerHtml'].= 		__( 'Display an overview of the attributes defined for this product.', 'avia_framework' );
-			$params['innerHtml'].= "</div>";
+			$params['innerHtml'] .= "<div class='avia-flex-element'>"; 
+			$params['innerHtml'] .= 		__( 'Display an overview of the attributes defined for this product.', 'avia_framework' );
+			$params['innerHtml'] .= '</div>';
 			
 			return $params;
 		}
@@ -68,9 +67,9 @@ if ( ! class_exists( 'avia_sc_produc_info' ) )
 		 * @param string $shortcodename the shortcode found, when == callback name
 		 * @return string $output returns the modified html string
 		 */
-		function shortcode_handler( $atts, $content = "", $shortcodename = "", $meta = "" )
+		function shortcode_handler( $atts, $content = '', $shortcodename = '', $meta = '' )
 		{
-			$output = "";
+			$output = '';
 			if( ! isset( $meta['el_class'] ) )
 			{
 				$meta['el_class'] = '';
@@ -84,13 +83,13 @@ if ( ! class_exists( 'avia_sc_produc_info' ) )
 			}
 			
 			// $product = wc_get_product();
-			$output .= "<div class='av-woo-product-info ".$meta['el_class']."'>";
+			$output .= "<div class='av-woo-product-info {$meta['el_class']}'>";
 			ob_start();
 			
 			function_exists( 'wc_display_product_attributes' ) ? wc_display_product_attributes( $product ) : $product->list_attributes();
 			
 			$output .= ob_get_clean();
-			$output .= "</div>";
+			$output .= '</div>';
 			
 			
 			return $output;

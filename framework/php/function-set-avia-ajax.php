@@ -319,16 +319,22 @@ function avia_ajax_helper_set_nested_value(array &$array, $index, $value)
 
 /**
  * This function resets the whole admin backend, the page is reloaded on success by javascript.
+ * 
+ * @since 4.6.4: added filter parameters
  */
-if(!function_exists('avia_ajax_reset_options_page'))
+if( ! function_exists( 'avia_ajax_reset_options_page' ) )
 {
 	function avia_ajax_reset_options_page()
 	{
 		//check if user is allowed to reset and if its his intention with a nonce check
-		if(function_exists('check_ajax_referer')) { check_ajax_referer('avia_nonce_reset_backend'); }
+		if( function_exists( 'check_ajax_referer' ) ) 
+		{ 
+			check_ajax_referer('avia_nonce_reset_backend'); 
+		}
 		
 		global $avia, $wpdb;
-		$slugs = array($avia->option_prefix, $avia->option_prefix.'_dynamic_elements', $avia->option_prefix.'_dynamic_pages');
+		
+		$slugs = array( $avia->option_prefix, $avia->option_prefix.'_dynamic_elements', $avia->option_prefix.'_dynamic_pages' );
 		
 		//get all option keys of the framework
 		/*
@@ -340,25 +346,89 @@ if(!function_exists('avia_ajax_reset_options_page'))
 					}
 				}
 		*/
+		
+		$button_id = isset( $_POST['avia_id'] ) ? $_POST['avia_id'] : '';
+		$filter = ! empty( $_POST['avia_filter'] ) ? (array) $_POST['avia_filter'] : array();
+				
+		/**
+		 * Modify the filter array to filter or skip settings
+		 * 
+		 * @since 4.6.4
+		 * @param.array $filter
+		 * @param string $button_id
+		 * @return array
+		 */
+		$filter = apply_filters( 'avf_settings_reset_options_filter_array', $filter, $button_id );
 
-		//iterate over all option keys and delete them
-		foreach($slugs as $key )
+		if( empty( $filter ) )
 		{
-			delete_option($key);
+			//iterate over all option keys and delete them
+			foreach( $slugs as $key )
+			{
+				delete_option( $key );
+			}
+		}
+		else
+		{
+			$avia_import = avia_ajax_load_importer_classes();
+			
+			if( $avia_import instanceof avia_wp_import )
+			{
+				$default_options = array();
+				$default_import = array();
+				
+				/**
+				 * Create default import array so we can reuse existing code
+				 */
+				foreach( $avia->subpages as $parent => $slugs ) 
+				{
+					$default_options[ $parent ] = array();
+					$default_import[ $parent ] = array();
+					
+					foreach( $slugs as $slug )
+					{
+						foreach( $avia->option_page_data as $element ) 
+						{
+							if( ! isset( $element['slug'] ) || ( $element['slug'] != $slug ) )
+							{
+								continue;
+							}
+							
+							if( ! isset( $element['id'] ) )
+							{
+								continue;
+							}
+							
+							//	Skip non existing options
+							if( ! isset( $avia->options[ $parent ][ $element['id'] ] ) )
+							{
+								continue;
+							}
+							
+							$default_import[ $parent ][ $element['id'] ] = $element;
+							$default_options[ $parent ][ $element['id'] ] = isset( $element['std'] ) ? $element['std'] : '';
+						}
+					}
+				}
+				
+				$default_options = $avia_import->filter_imported_options( $default_options, $default_import, $filter );
+				
+				update_option( $avia->option_prefix, $default_options );
+			}
 		}
 		
 		//flush rewrite rules for custom post types
-		update_option('avia_rewrite_flush', 1);
+		update_option( 'avia_rewrite_flush', 1 );
 		
 		//hook in case user wants to execute code afterwards
-		do_action('avia_ajax_reset_options_page');
+		do_action( 'avia_ajax_reset_options_page' );
 		
 		//end php execution and return avia_reset to the javascript
-		die('avia_reset');
+		die( 'avia_reset' );
 	}
 	
 	//hook into wordpress admin.php
-	add_action('wp_ajax_avia_ajax_reset_options_page', 'avia_ajax_reset_options_page');
+	add_action( 'wp_ajax_avia_ajax_reset_options_page', 'avia_ajax_reset_options_page' );
 }
 
 
@@ -453,10 +523,10 @@ if(!function_exists('avia_ajax_get_image_color'))
 		#backend single post/page/portfolio item: add multiple preview pictures. get a preview picture via ajax request and display it
 		$colorString = "";
 		$attachment_id = (int) $_POST['attachment_id'];
-		if($attachment_id != 0)
+		if( $attachment_id != 0 )
 		{
-			$src = wp_get_attachment_image_src($attachment_id, array(5500,5500));
-			$src = $src[0];
+			$src = wp_get_attachment_image_src( $attachment_id, array( 5500, 5500 ) );
+			$src = is_array( $src ) ? $src[0] : '';
 		}
 		else
 		{
@@ -653,7 +723,7 @@ if(!function_exists('avia_ajax_create_dynamic_options'))
 	}
 	
 	//hook into wordpress admin.php
-	add_action('wp_ajax_avia_ajax_create_dynamic_options', 'avia_ajax_create_dynamic_options');
+//	add_action('wp_ajax_avia_ajax_create_dynamic_options', 'avia_ajax_create_dynamic_options');
 }
 
 
@@ -706,14 +776,17 @@ if(!function_exists('avia_ajax_delete_dynamic_element'))
 
 
 
-if(!function_exists('avia_ajax_verify_input'))
+if( ! function_exists( 'avia_ajax_verify_input' ) )
 {
 	function avia_ajax_verify_input()
 	{
 		header( "Content-Type: application/json" );
 		
 		//check if user is allowed to save and if its his intention with a nonce check
-		if(function_exists('check_ajax_referer')) { check_ajax_referer('avia_nonce_save_backend'); }
+		if( function_exists( 'check_ajax_referer' ) ) 
+		{ 
+			check_ajax_referer( 'avia_nonce_save_backend' ); 
+		}
 		
 		$response['success'] = true;
 		$response['html'] = '';
@@ -722,18 +795,18 @@ if(!function_exists('avia_ajax_verify_input'))
 		$callback = "";
 		
 		global $avia;
-		foreach($avia->option_page_data as $option)
+		foreach( $avia->option_page_data as $option )
 		{
-			if(isset($option['id']) && $option['id'] == $_POST['key'] && isset($option['ajax']))
+			if( isset($option['id'] ) && $option['id'] == $_POST['key'] && isset( $option['ajax'] ) )
 			{
 				$callback = $option['ajax'];
 				break;
 			}
 		}
 		
-		if(function_exists($callback))
+		if( function_exists( $callback ) )
 		{
-			$js_callback_value = isset($_POST['js_value']) ? $_POST['js_value'] : null;
+			$js_callback_value = isset( $_POST['js_value'] ) ? $_POST['js_value'] : null;
 			$result = $callback( $_POST['value'] , true, $js_callback_value );
 			
 			if( ! is_array( $result ) )
@@ -756,80 +829,198 @@ if(!function_exists('avia_ajax_verify_input'))
 
 
 
+/**
+ * This function imports the config file
+ */
+if( ! function_exists( 'avia_import_config_file' ) )
+{
+    add_action( 'wp_ajax_avia_ajax_import_alb_templates_file', 'avia_ajax_import_alb_templates_file' );
+	
+    function avia_ajax_import_alb_templates_file()
+    {
+		header( "Content-Type: application/json" );
+		
+		 //check if referer is ok
+        if( function_exists( 'check_ajax_referer' ) ) 
+		{ 
+			check_ajax_referer( 'avia_nonce_save_backend' );
+		}
+		
+		$response['success'] = false;
+		
+		
+		//check if capability is ok
+        $cap = apply_filters( 'avf_file_upload_capability', 'update_plugins' );
+        if( ! current_user_can( $cap ) )
+        {
+			$response['msg'] = __( "Using this feature is reserved for Super Admins. You unfortunately don't have the necessary permissions.", 'avia_framework' );
+			echo json_encode( $response );
+			exit;
+		}
 
+		$button_id = isset( $_POST['avia_id'] ) ? $_POST['avia_id'] : '';
+        $attachment = isset( $_POST['values'] ) ? $_POST['values'] : false;
+		
+		if( false === $attachment || ! is_array( $attachment ) )
+		{
+			$response['msg'] = __( 'Illegal call to import Layout Builder Template file.', 'avia_framework' );
+			echo json_encode( $response );
+			exit;
+		}
+		
+        $path = realpath( get_attached_file( $attachment['id'] ) );
+        $templates = @file_get_contents( $path );
+
+		if( $templates )
+        {
+			$builder_template = Avia_Builder()->get_AviaSaveBuilderTemplate();
+			
+			try
+			{
+				$response['msg'] = $builder_template->import_saved_templates( $templates );
+				$response['success'] = true;
+			} 
+			catch( Exception $ex ) 
+			{
+				$response['msg'] = $ex->getMessage();
+			}
+			
+		}
+		
+		echo json_encode( $response );
+		exit;
+	}
+}
 
 
 
 /**
  * This function imports the config file
  */
-if(!function_exists('avia_import_config_file'))
+if( ! function_exists( 'avia_import_config_file' ) )
 {
-    add_action('wp_ajax_avia_ajax_import_config_file', 'avia_import_config_file');
-    function avia_import_config_file()
+    add_action( 'wp_ajax_avia_ajax_import_config_file', 'avia_ajax_import_config_file' );
+	
+    function avia_ajax_import_config_file()
     {
         global $avia;
 
         //check if referer is ok
-        if(function_exists('check_ajax_referer')) { check_ajax_referer('avia_nonce_save_backend'); }
+        if( function_exists( 'check_ajax_referer' ) ) 
+		{ 
+			check_ajax_referer( 'avia_nonce_save_backend' );
+		}
 
         //check if capability is ok
-        $cap = apply_filters('avf_file_upload_capability', 'update_plugins');
-        if(!current_user_can($cap))
+        $cap = apply_filters( 'avf_file_upload_capability', 'update_plugins' );
+        if( ! current_user_can( $cap ) )
         {
-            exit( "Using this feature is reserved for Super Admins. You unfortunately don't have the necessary permissions." );
+            exit( __( "Using this feature is reserved for Super Admins. You unfortunately don't have the necessary permissions.", 'avia_framework' ) );
         }
 
-        $attachment = $_POST['values'];
-        $path 		= realpath(get_attached_file($attachment['id']));
-        $options 	= @file_get_contents($path);
+		$button_id = isset( $_POST['avia_id'] ) ? $_POST['avia_id'] : '';
+        $attachment = isset( $_POST['values'] ) ? $_POST['values'] : false;
+		
+		if( false === $attachment || ! is_array( $attachment ) )
+		{
+			exit( __( 'Illegal call to import settings file.', 'avia_framework' ) );
+		}
+		
+        $path = realpath( get_attached_file( $attachment['id'] ) );
+        $options = @file_get_contents( $path );
 
-        if($options)
+        if( $options )
         {
-	        @ini_set('max_execution_time', 1500);
-	        
-            if(!class_exists('WP_Import'))
-            {
-                if(!defined('WP_LOAD_IMPORTERS')) define('WP_LOAD_IMPORTERS', true);
-
-                $class_wp_import = AVIA_PHP . 'wordpress-importer/wordpress-importer.php';
-                if(file_exists($class_wp_import))
-                {
-                    require_once($class_wp_import);
-                }
-            }
-
-            if(class_exists('WP_Import'))
-            {
-                $class_avia_import = AVIA_PHP . 'wordpress-importer/avia-import-class.php';
-                if(file_exists($class_avia_import))
-                {
-                    require_once($class_avia_import);
-                    $avia_import = new avia_wp_import();
-                }
-
-                $options = unserialize(base64_decode($options));
-
-                if(is_array($options))
-                {
-                    foreach($avia->option_pages as $page)
-                    {
-                        $database_option[$page['parent']] = $avia_import->extract_default_values($options[$page['parent']], $page, $avia->subpages);
-                    }
-
-                    if(!empty($database_option))
-                    {
-                        update_option($avia->option_prefix, $database_option);
-                    }
-                }
+			$avia_import = avia_ajax_load_importer_classes();
+			
+			if( $avia_import instanceof avia_wp_import )
+			{
+				$options = unserialize( base64_decode( $options ) );
+				$database_option = array();
+				$filter = ! empty( $_POST['avia_filter'] ) ? (array) $_POST['avia_filter'] : array();
 				
-				// currently no deletion. seems counter intuitive atm. also since the file upload button will only show txt files user can switch between settings easily
-                // wp_delete_attachment($attachment['id'], true); 
-            }
-        }
+				/**
+				 * Modify the filter array to filter or skip settings
+				 * 
+				 * @since 4.6.4
+				 * @param.array $filter
+				 * @param string $button_id
+				 * @param.array $options
+				 * @return array
+				 */
+				$filter = apply_filters( 'avf_settings_import_filter_array', $filter, $button_id, $options );
 
-        exit('avia_config_file_imported');
-    }
+				if( is_array( $options ) )
+				{
+					foreach( $avia->option_pages as $page )
+					{
+						$database_option[$page['parent']] = $avia_import->extract_default_values( $options[$page['parent']], $page, $avia->subpages );
+					}
+
+					if( ! empty( $filter ) )
+					{
+						$database_option = $avia_import->filter_imported_options( $database_option, $options, $filter );
+					}
+
+					if( ! empty( $database_option ) )
+					{
+						update_option( $avia->option_prefix, $database_option );
+					}
+				}
+
+				// currently no deletion. seems counter intuitive atm. also since the file upload button will only show txt files user can switch between settings easily
+				// wp_delete_attachment($attachment['id'], true); 
+			}
+			else
+			{
+				exit( __( 'Internal error: Importer class could not be loaded - no settings could be imported.', 'avia_framework' ) );
+			}
+		}
+
+		exit( 'avia_config_file_imported' );
+	}
+}
+
+if( ! function_exists( 'avia_ajax_load_importer_classes' ) )
+{
+	/**
+	 * Loads classes needed for import
+	 * 
+	 * @since 4.6.4
+	 * @return avia_wp_import
+	 */
+	function avia_ajax_load_importer_classes()
+	{
+		$avia_import = false;
+		
+		@ini_set( 'max_execution_time', 1500 );
+
+		if( ! class_exists( 'WP_Import' ) )
+		{
+			if( ! defined( 'WP_LOAD_IMPORTERS' ) ) 
+			{
+				define( 'WP_LOAD_IMPORTERS', true );
+			}
+
+			$class_wp_import = AVIA_PHP . 'wordpress-importer/wordpress-importer.php';
+			if( file_exists( $class_wp_import ) )
+			{
+				require_once( $class_wp_import );
+			}
+		}
+
+		if( class_exists( 'WP_Import' ) )
+		{
+			$class_avia_import = AVIA_PHP . 'wordpress-importer/avia-import-class.php';
+			if( file_exists( $class_avia_import ) )
+			{
+				require_once( $class_avia_import );
+				$avia_import = new avia_wp_import();
+			}
+		}
+			
+		return $avia_import;
+	}
 }
 
 

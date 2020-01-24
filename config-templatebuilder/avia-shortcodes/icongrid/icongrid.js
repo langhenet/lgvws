@@ -12,6 +12,21 @@
 	
 	$.fn.avia_sc_icongrid = function(options)
 	{
+		$('.avia-icongrid-flipbox li').on('touchend', function() {
+					var current = $(this),
+						container = current.closest('.avia-icongrid-flipbox');
+						
+					if( current.hasClass('avia-hover') )
+					{
+						container.find('li').removeClass( 'avia-hover' );
+					}
+					else
+					{
+						container.find('li').removeClass( 'avia-hover' );
+						current.addClass( 'avia-hover' );
+					}
+				});	
+	
 		return this.each(function()
 		{
 			var container = $(this),
@@ -66,7 +81,7 @@
                 methods.buildIconGrid();
             });
 		});
-	}
+	};
 	
 	
 }(jQuery));

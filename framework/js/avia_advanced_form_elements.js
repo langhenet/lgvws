@@ -944,9 +944,10 @@ divs with elements get hidden or shown depending on the value of other elements
 				}
 				
 				//set current state:
-				if(elementToWatch.is(':checkbox'))
+				if( elementToWatch.is( ':checkbox' ) )
 				{	
-					if((elementToWatch.prop('checked') && basicData.required[1]) || (!elementToWatch.prop('checked') && !basicData.required[1]) ) 
+					var notChecked = basicData.required[1] == '{false}' || basicData.required[1] == '';
+					if( ( elementToWatch.prop('checked') && ! notChecked ) || ( ! elementToWatch.prop('checked') && notChecked ) ) 
 					{ 
 						if(container.is('.inactive_visible'))
 						{
@@ -1010,9 +1011,23 @@ divs with elements get hidden or shown depending on the value of other elements
 			var data 		= passed.data.set,
 				elToCheck 	= $(this),
 				elVal		= elToCheck.val(),
-				array_check = false;
+				array_check = false,
+				is_chkbox	= elToCheck.is( ':checkbox' ),
+				chkbox_check = false;
 			
-			if(elToCheck.is(':checkbox')) elVal = "";
+			if( is_chkbox ) 
+			{
+				if( elToCheck.prop( 'checked' ) )
+				{
+					elVal = elVal != '' ? elVal : '{true}';
+					chkbox_check = data.required[1] != '{false}' && data.required[1] != '';
+				}
+				else
+				{
+					elVal = '{false}';
+					chkbox_check = data.required[1] == '{false}' || data.required[1] == '';
+				}
+			}
 			
 			if( data.required[1].indexOf( '{contains_array}' ) !== -1 )
 			{
@@ -1025,14 +1040,15 @@ divs with elements get hidden or shown depending on the value of other elements
 						}
 					});
 			}
-					
-			if(elVal == data.required[1] ||
-				(elVal != "" && data.required[1] == "{true}") || (elVal == "" && data.required[1] == "{false}") ||
-				(elToCheck.is(':checkbox') && (elToCheck.prop('checked') && data.required[1] || !elToCheck.prop('checked') && !data.required[1])) ||
+			
+			
+			if( elVal == data.required[1] ||
+				( ! is_chkbox && ( elVal != "" && data.required[1] == "{true}" ) || ( elVal == "" && data.required[1] == "{false}" ) ) ||
 				(data.required[1].indexOf('{contains}') !== -1 && elVal.indexOf(data.required[1].replace('{contains}','')) !== -1) ||
 				(data.required[1].indexOf('{higher_than}') !== -1 && parseInt(elVal) >= parseInt((data.required[1].replace('{higher_than}','')))) ||
-				array_check
-			)
+				array_check ||
+				chkbox_check
+				)
 			{
 				if(data.el.is('.inactive_visible'))
 				{
@@ -1041,9 +1057,8 @@ divs with elements get hidden or shown depending on the value of other elements
 				}
 				
 				
-				if(data.el.css('display') == 'none')
+				if(data.el.css('display') == 'none' )
 				{
-					
 					if(data.elHeight == 0)
 					{
 						data.elHeight = data.el.css({visibility:"hidden", position:'absolute'}).height();
@@ -1150,13 +1165,12 @@ avia_clone_sets: function to modify sets: add them, remove them and recalculate 
 				currentButton = $(this),
 				loadingIcon = currentButton.prev('.avia_clone_loading'),
 				cloneContainer = currentButton.parents('.avia_set:eq(0)'),
-				parentCloneContainer = currentButton.parents('.avia_set:eq(1)'),
+				parentCloneContainer = currentButton.parents('.avia_set:eq(1)').not('.avia_tab_container'),
 				elementSlug = cloneContainer.attr('id');
-			
-			if(parentCloneContainer.length == 1)
+				
+			if( parentCloneContainer.length == 1 )
 			{
 				var removeString = parentCloneContainer.attr('id');
-				
 				elementSlug = elementSlug.replace(removeString+'-__-','').replace(/-__-\d+/,'');
 			}
 			else
@@ -1307,7 +1321,7 @@ avia_clone_sets: function to modify sets: add them, remove them and recalculate 
 			}
 			
 			//check if we got a parent group
-			var parentGroup = data.currentSet.parents('.avia_set:eq(0)'),
+			var parentGroup = data.currentSet.parents('.avia_set:eq(0)').not('.avia_tab_container'),
 				newId = "",
 				detatch_element,
 				detatch_parent;

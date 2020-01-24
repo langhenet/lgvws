@@ -24,6 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) {  exit;  }    // Exit if accessed directly
  * [av_privacy_google_recaptcha] -> to disable google recaptcha
  * 
  * [av_privacy_accept_button] -> adds an "Accept Cookies" button
+ * [av_privacy_accept_all_button] -> adds an "Accept all cookies and services" button
  * [av_privacy_do_not_accept_button] -> adds a "Do Not Accept Cookies" button
  * [av_privacy_modal_popup_button] -> adds a button to open the modal cookie and privacy popup
  * 
@@ -118,6 +119,7 @@ if( ! class_exists( 'av_privacy_class' ) )
 			add_shortcode( 'av_privacy_custom_cookie', array( $this, 'av_privacy_disable_custom_cookie' ) );
 			
 			add_shortcode( 'av_privacy_accept_button', array( $this, 'av_privacy_accept_button' ) );
+			add_shortcode( 'av_privacy_accept_all_button', array( $this, 'av_privacy_accept_all_button' ) );
 			add_shortcode( 'av_privacy_do_not_accept_button', array( $this, 'av_privacy_do_not_accept_button' ) );
 			add_shortcode( 'av_privacy_modal_popup_button', array( $this, 'av_privacy_modal_popup_button' ) );
 			
@@ -126,12 +128,13 @@ if( ! class_exists( 'av_privacy_class' ) )
 			
 			
 			add_filter( 'avia_header_class_filter', array( $this, 'handler_avia_header_class_filter' ), 10, 1 );
-			add_action( 'wp_footer', array( $this, 'av_cookie_consent_bar' ), 3 );
-			add_action( 'wp_footer', array( $this, 'footer_script' ), 1000 );
+			add_action( 'wp_head', array( $this, 'handler_wp_head_script' ), 1 );
+			add_action( 'wp_footer', array( $this, 'handler_wp_footer_cookie_consent_bar' ), 3 );
+			add_action( 'wp_footer', array( $this, 'handler_wp_footer_script' ), 1000 );
 			
 			add_action( 'init', array( $this, 'handler_wp_init' ), 1 );
 			add_action( 'init', array( $this, 'handler_register_scripts' ), 20 );
-			add_action( 'wp_loaded', array( $this, 'handler_remove_cookies' ), 99999 );
+			add_action( 'wp_loaded', array( $this, 'handler_manage_cookies' ), 999999 );
 			add_action( 'wp_enqueue_scripts', array( $this, 'handler_wp_enqueue_scripts' ), 50 );
 		
 		}
@@ -203,20 +206,18 @@ if( ! class_exists( 'av_privacy_class' ) )
 		}
 		
 		/**
-		 * Tries to remove cookies.
+		 * Manages cookies on PHP side. Also tries to remove cookies.
 		 * Limitation is that cookies only can be removed when exact path is known (path /xy is different from /xy/).
-		 * As we are not able to read a path for a cookie we only can try to remove from /.
+		 * As we are not able to read a path for a cookie we only can try to remove from "/".
+		 * 
+		 * When using caching plugins this function is not executed on page load so we also have to implement some client side logic in js. 
 		 * 
 		 * @since 4.5.7.2
 		 * @added_by Günter
 		 */
-		public function handler_remove_cookies()
+		public function handler_manage_cookies()
 		{
-			if( empty( $_COOKIE ) )
-			{
-				return;
-			}
-			
+
 			/**
 			 * In backend users must accept cookies. For ajax calls we have frontend script to remove not needed cookies
 			 */
@@ -231,12 +232,36 @@ if( ! class_exists( 'av_privacy_class' ) )
 				return;
 			}
 			
+			$cookie_accepted = isset( $_COOKIE['aviaCookieConsent'] );
+			$cookie_allow_hide_bar = isset( $_COOKIE['aviaPrivacyRefuseCookiesHideBar'] );
+			$cookie_essential_enabled = isset( $_COOKIE['aviaPrivacyEssentialCookiesEnabled'] );
+			
+			/**
+			 * Check if we updated 
+			 *		'||v1.0' from <= 4.5.7 to 4.6.2
+			 */
+			if( $cookie_accepted && ! ( $cookie_allow_hide_bar && $cookie_essential_enabled ) )
+			{
+				/**
+				 * If user already accepted cookie we add our essential cookies so user can continue to use site without need to opt in for these explicit
+				 */
+				$cookie_accepted_value = $_COOKIE['aviaCookieConsent'];
+				
+				$sep = strrpos( $cookie_accepted_value, '||v' );
+				
+				if( false === $sep )
+				{
+					setcookie( 'aviaPrivacyRefuseCookiesHideBar', true, time() + YEAR_IN_SECONDS, '/' );
+					setcookie( 'aviaPrivacyEssentialCookiesEnabled', true, time() + YEAR_IN_SECONDS, '/' );
+				}
+			}
+			
 			/**
 			 * if opt in changed to 'needs_opt_in' we must reset cookies and force user to accept cookies again
 			 */
 			$cookie_must_opt_in_setting = isset( $_COOKIE['aviaPrivacyMustOptInSetting'] );
 			$user_must_opt_in = 'needs_opt_in' == $this->get_opt_in_setting();
-			$opt_in_type_not_changed = ! $user_must_opt_in || $user_must_opt_in && $cookie_must_opt_in_setting;
+			$opt_in_type_not_changed = ! $user_must_opt_in || ( $user_must_opt_in && $cookie_must_opt_in_setting );
 			
 			if( $this->user_has_opt_in() && $opt_in_type_not_changed )
 			{
@@ -248,8 +273,7 @@ if( ! class_exists( 'av_privacy_class' ) )
 				return;
 			}
 			
-			$cookie_accepted = isset( $_COOKIE['aviaCookieConsent'] );
-			$cookie_allow_hide_bar = isset( $_COOKIE['aviaPrivacyRefuseCookiesHideBar'] );
+			
 			
 			$keep_cookies = array();
 			if( $opt_in_type_not_changed && $cookie_accepted && $cookie_allow_hide_bar )
@@ -331,7 +355,7 @@ if( ! class_exists( 'av_privacy_class' ) )
 					'no_cookies_found'				=> __( 'No accessable cookies found in domain', 'avia_framework' ),
 					'admin_keep_cookies'			=> $this->get_admin_keep_cookies(),
 					'remove_custom_cookies'			=> $this->get_custom_cookies(),
-					'no_lightbox'					=> __( "We need a lightbox to show the modal popup. Please enable the built in lightbox in Theme Options Tab or include your own modal window plugin.\n\nYou need to connect this plugin in JavaScript with callback wrapper functions - see avia_cookie_consent_modal_callback in file enfold\js\avia-snippet-cookieconsent.js ", 'avia_framework' ),
+					'no_lightbox'					=> __( 'We need a lightbox to show the modal popup. Please enable the built in lightbox in Theme Options Tab or include your own modal window plugin.\n\nYou need to connect this plugin in JavaScript with callback wrapper functions - see avia_cookie_consent_modal_callback in file enfold\js\avia-snippet-cookieconsent.js ', 'avia_framework' ),
 				) );
 			
 			wp_localize_script( 'avia-cookie-js', 'AviaPrivacyCookieAdditionalData', $args );
@@ -340,25 +364,35 @@ if( ! class_exists( 'av_privacy_class' ) )
 		/**
 		 * Returns the request state for the cookie consent message bar option
 		 * (not the real state in frontend - could be hidden because user already accepted cookies)
+		 * With 4.6.3 option was split in 2 other options:
+		 *	- cookie_consent
+		 *	- cookie_consent_no_bar  was removed
+		 *	- cookie_message_bar_only
+		 * With 4.6.4 added theme support avia_gdpr_permanent_hide_message_bar
 		 * 
 		 * @since 4.5.7.2
 		 * @added_by Günter
-		 * @return string			'no_cookie_consent' | 'show_bar' | 'hide_bar'
+		 * @return string			'disabled' | 'show_bar' | 'hide_bar' | 'message_bar'
 		 */
 		public function get_cookie_consent_message_bar_option()
 		{
-			$value = avia_get_option( 'cookie_consent' );
-			switch( $value )
+			if( 'cookie_consent' != avia_get_option( 'cookie_consent' ) )
 			{
-				case 'cookie_consent':
-					return 'show_bar';
-				case 'cookie__consent_no_bar':
-					return 'hide_bar';
-				case 'message_bar':
-					return $value;
-				default:
-					return 'disabled';
+				return 'disabled';
 			}
+			
+			$val = avia_get_option( 'cookie_message_bar_only', '' );
+			if( false !== stripos( $val, 'cookie_message_bar_only' ) )
+			{
+				return 'message_bar';
+			}
+			
+			if( current_theme_supports( 'avia_gdpr_permanent_hide_message_bar' ) )
+			{
+				return 'hide_bar';
+			}
+			
+			return 'show_bar';
 		}
 		
 		/**
@@ -366,11 +400,14 @@ if( ! class_exists( 'av_privacy_class' ) )
 		 * 
 		 * @since 4.5.7.2
 		 * @added_by Günter
-		 * @return string			'' | 'needs_opt_in'
+		 * @return string			'' | 'can_opt_out' | 'needs_opt_in'
 		 */
 		public function get_opt_in_setting()
 		{
-			return avia_get_option( 'cookie_default_settings' ) != 'needs_opt_in' ? '' : 'needs_opt_in';
+			$value = avia_get_option( 'cookie_default_settings' );
+			$value = in_array( $value, array( 'can_opt_out', 'needs_opt_in', '' ) ) ? $value : '';
+			
+			return $value;
 		}
 
 		/**
@@ -414,6 +451,52 @@ if( ! class_exists( 'av_privacy_class' ) )
 				
 				$cookies = avia_get_option( 'custom_cookies', array() );
 				
+				$analytics = avia_get_option( 'analytics', '' );
+				$match = array();
+				preg_match( "!UA-[0-9]+-[0-9]+!", $analytics, $match );
+				
+				/**
+				 * Alows to hide checkboxes on other cookies tab in modal popup
+				 * 
+				 * @since 4.6.4
+				 * @param boolean
+				 * @return boolean
+				 */
+				$show_analytics = apply_filters( 'avf_add_google_analytics_cookies_to_custom_cookies', true );
+				
+				if( ! empty( $match ) && isset( $match[0] ) && true === $show_analytics ) 
+				{
+					/**
+					 * Add Google Analytic Cookies to default
+					 */
+					$cookies[] = array(
+								'cookie_name'			=> '_ga',
+								'cookie_path'			=> '/',
+								'cookie_content'		=> __( 'Google Analytics Cookie', 'avia_framework' ),
+								'cookie_info_desc'		=> __( 'Stores information needed by Google Analytics', 'avia_framework' ),
+								'cookie_compare_action'	=> '',
+								'avia_cookie_name'		=> 'aviaPrivacyGoogleTrackingDisabled'
+							);
+				
+					$cookies[] = array(
+								'cookie_name'			=> '_gid',
+								'cookie_path'			=> '/',
+								'cookie_content'		=> __( 'Google Analytics Cookie', 'avia_framework' ),
+								'cookie_info_desc'		=> __( 'Stores information needed by Google Analytics', 'avia_framework' ),
+								'cookie_compare_action'	=> '',
+								'avia_cookie_name'		=> 'aviaPrivacyGoogleTrackingDisabled'
+							);
+				
+					$cookies[] = array(
+								'cookie_name'			=> '_gat_',
+								'cookie_path'			=> '/',
+								'cookie_content'		=> __( 'Google Analytics Cookie', 'avia_framework' ),
+								'cookie_info_desc'		=> __( 'Stores information needed by Google Analytics', 'avia_framework' ),
+								'cookie_compare_action'	=> 'starts_with',
+								'avia_cookie_name'		=> 'aviaPrivacyGoogleTrackingDisabled'
+							);
+				}
+				
 				/**
 				 * @since 4.5.7.2
 				 * @param array $cookies
@@ -431,7 +514,8 @@ if( ! class_exists( 'av_privacy_class' ) )
 					$custom_cookies[] = $cookie['cookie_name'];
 					
 					$this->custom_cookies[ $key ] = $cookie;
-					$this->custom_cookies[ $key ]['avia_cookie_name'] = "aviaPrivacyCustomCookie{$cookie['cookie_name']}Disabled";
+					$avia_name = isset( $cookie['avia_cookie_name'] ) && ! empty( $cookie['avia_cookie_name'] ) ? $cookie['avia_cookie_name'] : "aviaPrivacyCustomCookie{$cookie['cookie_name']}Disabled";
+					$this->custom_cookies[ $key ]['avia_cookie_name'] = $avia_name;
 				}
 			}
 			
@@ -461,6 +545,7 @@ if( ! class_exists( 'av_privacy_class' ) )
 						'aviaPrivacyGoogleTrackingDisabled'		=> __( 'Do not allow Google Analytics', 'avia_framework' ),
 						'aviaPrivacyGoogleWebfontsDisabled'		=> __( 'Do not allow Google Webfonts', 'avia_framework' ),
 						'aviaPrivacyGoogleMapsDisabled'			=> __( 'Do not allow Google Maps', 'avia_framework' ),
+						'aviaPrivacyGoogleReCaptchaDisabled'	=> __( 'Do not allow Google reCaptcha', 'avia_framework' ),
 						'aviaPrivacyMustOptInSetting'			=> __( 'Settings are for users that must opt in for cookies and services', 'avia_framework' ),
 						'PHPSESSID'								=> __( 'Keeps track of your session', 'avia_framework' ),
 						'XDEBUG_SESSION'						=> __( 'PHP Debugger session cookie', 'avia_framework' ),
@@ -542,12 +627,26 @@ if( ! class_exists( 'av_privacy_class' ) )
 			$extra_class .= 'unchecked' == $default ? " av-cookie-default-{$default}" : ' av-cookie-default-checked';
 			$checked = 'unchecked' == $default ? '' : 'checked="checked"';
 			
+			$disabled = '';
+			$message = '';
+			
+			if( 'disabled' == $this->get_cookie_consent_message_bar_option() )
+			{
+				$extra_class .= ' av-cookie-sc-disabled';
+				$disabled = 'disabled="disabled"';
+				$message .= __( 'Please enable cookie consent messages in backend to use this feature.', 'avia_framework' );
+			}
+			
 			$output .=	'<div class="av-switch-' . $cookie . ' av-toggle-switch av-cookie-disable-external-toggle ' . $extra_class . '">';
 			$output .=		'<label>';
-			$output .=			'<input type="checkbox" ' . $checked . ' id="' . $cookie . '" class="' . $cookie . ' " name="' . $cookie . '">';
+			$output .=			'<input type="checkbox" ' . $checked . ' id="' . $cookie . '" class="' . $cookie . ' " name="' . $cookie . '" ' . $disabled . '>';
 			$output .=			'<span class="toggle-track"></span>';
 			$output .=			'<span class="toggle-label-content">' . $content . '</span>';
 			$output .=		'</label>';
+			if( ! empty( $message ) )
+			{
+				$output .=	"<p><strong>{$message}</strong></p>";
+			}
 			$output .=	'</div>';
 			
 			return $output;
@@ -566,8 +665,9 @@ if( ! class_exists( 'av_privacy_class' ) )
 			$default = __( 'Check to enable permanent hiding of message bar and refuse all cookies if you do not opt in. We need 2 cookies to store this setting. Otherwise you will be prompted again when opening a new browser window or new a tab.', 'avia_framework' );
 			$content = ! empty( $content ) ?  $content : $default;
 			$cookie  = 'aviaPrivacyRefuseCookiesHideBar';
+			$default = 'needs_opt_in' == $this->get_opt_in_setting() && current_theme_supports( 'avia_privacy_basic_cookies_unchecked' ) ? 'unchecked' : 'checked';
 			
-			return $this->av_privacy_toggle( $cookie , $content, 'checked', 'checked' );
+			return $this->av_privacy_toggle( $cookie , $content, 'checked', $default );
 		}
 		
 		/**
@@ -583,8 +683,9 @@ if( ! class_exists( 'av_privacy_class' ) )
 		{
 			$content = ! empty( $content ) ?  $content : __( 'Click to enable/disable essential site cookies.', 'avia_framework' );
 			$cookie  = 'aviaPrivacyEssentialCookiesEnabled';
+			$default = 'needs_opt_in' == $this->get_opt_in_setting() && current_theme_supports( 'avia_privacy_basic_cookies_unchecked' ) ? 'unchecked' : 'checked';
 			
-			return $this->av_privacy_toggle( $cookie , $content, 'checked', 'checked' );
+			return $this->av_privacy_toggle( $cookie , $content, 'checked', $default );
 		}
 
 		/**
@@ -600,10 +701,14 @@ if( ! class_exists( 'av_privacy_class' ) )
 		public function av_privacy_disable_google_tracking( $atts = array(), $content = '', $shortcodename = '' )
 		{	
 			$content = ! empty( $content ) ?  $content : __( 'Click to enable/disable Google Analytics tracking.', 'avia_framework' );
-			$cookie  = "aviaPrivacyGoogleTrackingDisabled";
+			$cookie  = 'aviaPrivacyGoogleTrackingDisabled';
 			$default = 'needs_opt_in' == $this->get_opt_in_setting() ? 'unchecked' : 'checked';
+			$browser = 'data-disabled_by_browser="' . esc_attr( __( 'Please enable this feature in your browser settings and reload the page.', 'avia_framework' ) ) . '"';
 			
-			return $this->av_privacy_toggle( $cookie , $content, 'unchecked', $default );
+			$html = $this->av_privacy_toggle( $cookie , $content, 'unchecked', $default );
+			$html = str_replace( '<div class', "<div {$browser} class", $html );
+			
+			return $html;
 		}
 		
 		
@@ -620,7 +725,7 @@ if( ! class_exists( 'av_privacy_class' ) )
 		public function av_privacy_disable_google_webfonts( $atts = array(), $content = '', $shortcodename = '' )
 		{	
 			$content = ! empty( $content ) ?  $content : __( 'Click to enable/disable Google Webfonts.', 'avia_framework' );
-			$cookie  = "aviaPrivacyGoogleWebfontsDisabled";
+			$cookie  = 'aviaPrivacyGoogleWebfontsDisabled';
 			$default = 'needs_opt_in' == $this->get_opt_in_setting() ? 'unchecked' : 'checked';
 			
 			return $this->av_privacy_toggle( $cookie , $content, 'unchecked', $default );
@@ -639,7 +744,7 @@ if( ! class_exists( 'av_privacy_class' ) )
 		public function av_privacy_disable_google_maps( $atts = array(), $content = '', $shortcodename = '' )
 		{	
 			$content = ! empty( $content ) ?  $content : __( 'Click to enable/disable Google Maps.', 'avia_framework' );
-			$cookie  = "aviaPrivacyGoogleMapsDisabled";
+			$cookie  = 'aviaPrivacyGoogleMapsDisabled';
 			$default = 'needs_opt_in' == $this->get_opt_in_setting() ? 'unchecked' : 'checked';
 			
 			return $this->av_privacy_toggle( $cookie , $content, 'unchecked', $default );
@@ -659,7 +764,7 @@ if( ! class_exists( 'av_privacy_class' ) )
 		public function av_privacy_disable_video_embeds( $atts = array(), $content = '', $shortcodename = '' )
 		{	
 			$content = ! empty( $content ) ?  $content : __( 'Click to enable/disable video embeds.', 'avia_framework' );
-			$cookie  = "aviaPrivacyVideoEmbedsDisabled";
+			$cookie  = 'aviaPrivacyVideoEmbedsDisabled';
 			$default = 'needs_opt_in' == $this->get_opt_in_setting() ? 'unchecked' : 'checked';
 			
 			return $this->av_privacy_toggle( $cookie , $content, 'unchecked', $default );
@@ -678,7 +783,7 @@ if( ! class_exists( 'av_privacy_class' ) )
 		public function av_privacy_disable_google_recaptcha( $atts = array(), $content = '', $shortcodename = '' )
 		{
 			$content = ! empty( $content ) ?  $content : __( 'Click to enable/disable Google reCaptcha.', 'avia_framework' );
-			$cookie  = "aviaPrivacyGoogleReCaptchaDisabled";
+			$cookie  = 'aviaPrivacyGoogleReCaptchaDisabled';
 			$default = 'needs_opt_in' == $this->get_opt_in_setting() ? 'unchecked' : 'checked';
 			
 			return $this->av_privacy_toggle( $cookie , $content, 'unchecked', $default );
@@ -717,15 +822,50 @@ if( ! class_exists( 'av_privacy_class' ) )
 				return '';
 			}
 			
-			$default_content = ! empty( $content ) ?  $content : sprintf( __( 'Click to enable/disable %s.', 'avia_framework' ), $atts['cookie_name'] );
-			$msg = ! empty( $found['cookie_content'] ) ?  $found['cookie_content'] : $default_content;
+			$msg = '';
+			
+			if( ! empty( $content ) )
+			{
+				$msg = $content;
+			}
+			else
+			{
+				$desc_cc = $found['cookie_name'];
+				switch( $found['cookie_compare_action'] )
+				{
+					case 'starts_with':
+						$desc_cc .= '*';
+						break;
+					case 'contains':
+						$desc_cc = '*' . $desc_cc . '*';
+						break;
+				}
+					
+				$desc_cc .= ' - ';
+
+				if( ! empty( $found['cookie_info_desc'] ) )
+				{
+					$desc_cc .= $found['cookie_info_desc'];
+				}
+				else if( ! empty( $found['cookie_content'] ) )
+				{
+					$desc_cc .= $found['cookie_content'];
+				}
+				else
+				{
+					$desc_cc .= __( 'Unknown', 'avia_framework' );
+				}
+					
+				$msg = sprintf( __( 'Click to enable/disable %s.', 'avia_framework' ), $desc_cc );
+			}
+			
 			$default = 'needs_opt_in' == $this->get_opt_in_setting() ? 'unchecked' : 'checked';
 			
 			return $this->av_privacy_toggle( $found['avia_cookie_name'] , $msg, 'unchecked', $default );
 		}
 
 		/**
-		 * Shortcode for accept cookie button
+		 * Shortcode to accept selected cookies and services button
 		 * 
 		 * @since 4.5.7.2
 		 * @added_by Günter
@@ -743,13 +883,58 @@ if( ! class_exists( 'av_privacy_class' ) )
 							), $atts, $shortcodename );
 			
 			$out = '';
+			$tag = 'a';
+			
+			if( 'disabled' == $this->get_cookie_consent_message_bar_option() )
+			{
+				$tag = 'div';
+				$content = __( 'Disabled:', 'avia_framework' ) . ' ' . $content;
+			}
 			
 			$content = ! empty( $content ) ? $content : __( 'Accept use of cookies', 'avia_framework' );
 			$class = 'avia-button avia-cookie-consent-button avia-color-theme-color av-extra-cookie-btn avia-cookie-close-bar ' . $atts['class'];
 			$id = ! empty( $atts['id'] ) ? " id='{$atts['id']}'" : '';
 			 
 			$out .=	"<div class='avia-cookie-close-bar-wrap {$atts['wrapper_class']}'>";
-			$out .=		"<a href='#' class='{$class}' $id>{$content}</a>";
+			$out .=		"<{$tag} href='#' class='{$class}' $id>{$content}</{$tag}>";
+			$out .= '</div>';
+			
+			return $out;
+		}
+		
+		/**
+		 * Shortcode to accept all cookies and services button
+		 * 
+		 * @since 4.5.7.2
+		 * @added_by Günter
+		 * @param array $atts
+		 * @param string $content
+		 * @param string $shortcodename
+		 * @return string
+		 */
+		public function av_privacy_accept_all_button( $atts = array(), $content = '', $shortcodename = '' )
+		{	
+			$atts = shortcode_atts( array( 
+								'wrapper_class'	=> '',
+								'id'			=> '',
+								'class'			=> ''
+							), $atts, $shortcodename );
+			
+			$out = '';
+			$tag = 'a';
+			
+			if( 'disabled' == $this->get_cookie_consent_message_bar_option() )
+			{
+				$tag = 'div';
+				$content = __( 'Disabled:', 'avia_framework' ) . ' ' . $content;
+			}
+			
+			$content = ! empty( $content ) ? $content : __( 'Accept use of all cookies and services', 'avia_framework' );
+			$class = 'avia-button avia-cookie-consent-button avia-color-theme-color av-extra-cookie-btn avia-cookie-close-bar avia-cookie-select-all ' . $atts['class'];
+			$id = ! empty( $atts['id'] ) ? " id='{$atts['id']}'" : '';
+			 
+			$out .=	"<div class='avia-cookie-close-bar-wrap {$atts['wrapper_class']}'>";
+			$out .=		"<{$tag} href='#' class='{$class}' $id>{$content}</{$tag}>";
 			$out .= '</div>';
 			
 			return $out;
@@ -774,13 +959,20 @@ if( ! class_exists( 'av_privacy_class' ) )
 							), $atts, $shortcodename );
 			
 			$out = '';
+			$tag = 'a';
 			
 			$content = ! empty( $content ) ? $content : __( 'Do not allow to use cookies', 'avia_framework' );
 			$class = 'avia-button avia-cookie-consent-button avia-color-theme-color-subtle av-extra-cookie-btn avia-cookie-hide-notification ' . $atts['class'];
 			$id = ! empty( $atts['id'] ) ? " id='{$atts['id']}'" : '';
+			
+			if( 'disabled' == $this->get_cookie_consent_message_bar_option() )
+			{
+				$tag = 'div';
+				$content = __( 'Disabled:', 'avia_framework' ) . ' ' . $content;
+			}
 			 
 			$out .=	"<div class='avia-cookie-hide-notification-wrap {$atts['wrapper_class']}'>";
-			$out .=		"<a href='#' class='{$class}' $id>{$content}</a>";
+			$out .=		"<{$tag} href='#' class='{$class}' $id>{$content}</{$tag}>";
 			$out .= '</div>';
 			
 			return $out;
@@ -805,13 +997,20 @@ if( ! class_exists( 'av_privacy_class' ) )
 							), $atts, $shortcodename );
 			
 			$out = '';
+			$tag = 'a';
 			
 			$content = ! empty( $content ) ? $content : __( 'Learn more about our privacy policy', 'avia_framework' );
 			$class = 'avia-button avia-cookie-consent-button av-extra-cookie-btn avia-cookie-info-btn ' . $atts['class'];
 			$id = ! empty( $atts['id'] ) ? " id='{$atts['id']}'" : '';
 			
+			if( 'disabled' == $this->get_cookie_consent_message_bar_option() )
+			{
+				$tag = 'div';
+				$content = __( 'Disabled:', 'avia_framework' ) . ' ' . $content;
+			}
+			
 			$out .=	"<div class='av-privacy-popup-button-wrap {$atts['wrapper_class']}'>";
-			$out .=		"<a href='#' class='{$class}' $id>{$content}</a>";
+			$out .=		"<{$tag} href='#' class='{$class}' $id>{$content}</{$tag}>";
 			$out .= '</div>';
 			
 			return $out;
@@ -887,6 +1086,72 @@ if( ! class_exists( 'av_privacy_class' ) )
 			
 			return $out;
 		}
+		
+		/**
+		 * Add a script that removes the class av-cookies-user-silent-accept if local browser session has the cookie set
+		 * that user refused cookies. This is a fallback for enfold\js\avia-snippet-cookieconsent.js
+		 * 
+		 * As FF throws an error when cookies are disabled we have to add this workaround.
+		 * 
+		 * @since 4.6.4
+		 */
+		public function handler_wp_head_script()
+		{
+			$option = $this->get_cookie_consent_message_bar_option();
+			if( 'disabled' == $option )
+			{
+				return;
+			}
+			
+			$output  = '';
+			$output .= "
+				<script type='text/javascript'>
+
+				function avia_cookie_check_sessionStorage()
+				{
+					//	FF throws error when all cookies blocked !!
+					var sessionBlocked = false;
+					try
+					{
+						var test = sessionStorage.getItem( 'aviaCookieRefused' ) != null;
+					}
+					catch(e)
+					{
+						sessionBlocked = true;
+					}
+					
+					var aviaCookieRefused = ! sessionBlocked ? sessionStorage.getItem( 'aviaCookieRefused' ) : null;
+					
+					var html = document.getElementsByTagName('html')[0];
+
+					/**
+					 * Set a class to avoid calls to sessionStorage
+					 */
+					if( sessionBlocked || aviaCookieRefused )
+					{
+						if( html.className.indexOf('av-cookies-session-refused') < 0 )
+						{
+							html.className += ' av-cookies-session-refused';
+						}
+					}
+					
+					if( sessionBlocked || aviaCookieRefused || document.cookie.match(/aviaCookieConsent/) )
+					{
+						if( html.className.indexOf('av-cookies-user-silent-accept') >= 0 )
+						{
+							 html.className = html.className.replace(/\bav-cookies-user-silent-accept\b/g, '');
+						}
+					}
+				}
+
+				avia_cookie_check_sessionStorage();
+
+			</script>
+			";
+			
+			echo $output;
+			
+		}
 
 		/**
 		 * Javascript that gets appended to pages that got a privacy shortcode toggle
@@ -895,7 +1160,7 @@ if( ! class_exists( 'av_privacy_class' ) )
 		 * @added_by Kriesi
 		 * @return void
 		 */
-		public function footer_script()
+		public function handler_wp_footer_script()
 		{
 			if( empty( $this->toggles ) ) 
 			{
@@ -953,7 +1218,9 @@ if( ! class_exists( 'av_privacy_class' ) )
 							this.checked = check;
 						});
 						
-						if( cookie_check && ! document.cookie.match(/aviaCookieConsent/) || sessionStorage.getItem( 'aviaCookieRefused' ) )
+						var silent_accept_cookie = jQuery('html').hasClass('av-cookies-user-silent-accept');
+						
+						if( ! silent_accept_cookie && cookie_check && ! document.cookie.match(/aviaCookieConsent/) || sessionStorage.getItem( 'aviaCookieRefused' ) )
 						{
 							return;
 						}
@@ -988,7 +1255,7 @@ if( ! class_exists( 'av_privacy_class' ) )
 				$output .= " av_privacy_cookie_setter('{$toggles}'); ";
 			}
 			
-			$output .= "</script>";
+			$output .= '</script>';
 			
 			$output = preg_replace( '/\r|\n|\t/', '', $output );
 			echo $output;
@@ -1262,7 +1529,7 @@ if( ! class_exists( 'av_privacy_class' ) )
 		 * @since 4.3
 		 * @since 4.5.7.2 modified by Günter - moved from functions-enfold.php
 		 */
-		public function av_cookie_consent_bar()
+		public function handler_wp_footer_cookie_consent_bar()
 		{
 			$option = $this->get_cookie_consent_message_bar_option();
 			if( 'disabled' == $option )
@@ -1352,7 +1619,7 @@ if( ! class_exists( 'av_privacy_class' ) )
 				$linksource = avia_get_option( 'cookie_linksource' );
 				$cookie_contents .= $linktext;
 
-				$link .= "<a class='avia_cookie_infolink' href='{$linksource}' target='_blank'>{$linktext}</a>";
+				$link .= avia_targeted_link_rel( "<a class='avia_cookie_infolink' href='{$linksource}' target='_blank'>{$linktext}</a>" );
 			}
 
 			$cookie_contents .= $buttontext;	//	this is for backwards comp only prior 4.3
@@ -1361,17 +1628,56 @@ if( ! class_exists( 'av_privacy_class' ) )
 			{
 				$cookie_contents .= $button['msg_bar_button_label'];
 			}
+			
+			/**
+			 * Allow to customize md5 value to check if content has changed.
+			 * Can be useful on multisite installs within same domain 
+			 * https://kriesi.at/support/topic/cookie-consent-value-of-the-cookie-md5-multisite/
+			 * 
+			 * @since 4.6.4
+			 * @param string $cookie_contents
+			 * @param string $message
+			 * @param array $buttons
+			 * @return string
+			 */
+			$cookie_contents = apply_filters( 'avf_cookie_consent_for_md5', $cookie_contents, $message, $buttons );
 
-			//	allows to invalidate cookie setting for hiding when anything changes in message bar text
-			$cookie_contents = md5( $cookie_contents );
+			/**
+			 * allows to invalidate cookie setting for hiding when anything changes in message bar text.
+			 * @since 4.6.2 we add '||v1.0' to allow upgrading already accepted cookies from 4.5.7 to new needed structure need-opt-in
+			 */
+			$cookie_contents = md5( $cookie_contents ) . '||v1.0';
 			$data = "data-contents='{$cookie_contents}'";
 			
-			$output .=	"<div class='avia-cookie-consent cookiebar-hidden {$container_class} avia-cookiemessage-{$position}' {$data} {$style}>";
+			//	Avoid that screen reader prioritize cookie container and ignore page content
+			$screen_reader = " aria-hidden='true' ";
+			
+			if( '' != avia_get_option( 'cookie_auto_reload' ) )
+			{
+				$reload  =	'<div class="av-cookie-auto-reload-container">';
+				$reload .=		'<h2>' . __( 'Reloading the page', 'avia_framework' ) . '</h2>';
+				$reload .=		'<p>';
+				$reload .=			__( 'To reflect your cookie selections we need to reload the page.', 'avia_framework' );
+				$reload .=		'</p>';
+				$reload .=	'</div>';
+				
+				/**
+				 * @since 4.6.3
+				 * @param string $reload 
+				 * return string
+				 */
+				$reload = apply_filters( 'avf_auto_reload_message', $reload );
+				
+				$output .=	'<div class="avia-privacy-reload-tooltip-link-container">';
+				$output .=		'<a class="avia-privacy-reload-tooltip-link" aria-hidden="true" href="#" rel="nofollow" data-avia-privacy-reload-tooltip="' . esc_attr( $reload ) . '"></a>';
+				$output .=	'</div>';
+			}
+
+			$output .=	"<div class='avia-cookie-consent cookiebar-hidden {$container_class} avia-cookiemessage-{$position}' {$screen_reader} {$data} {$style}>";
 			$output .=		'<div class="container">';
 			$output .=			"<p class='avia_cookie_text'>{$message}</p>";
 			$output .=			$link;
 			
-
 			$i = 0;
 			$extra_info = '';
 			$settings_button = false;
@@ -1400,7 +1706,7 @@ if( ! class_exists( 'av_privacy_class' ) )
 				
 				$output .= $this->msg_bar_button_html( $button, $i, $class );
 			}
-
+			
 			$output .=		'</div>';
 			$output .=	'</div>';
 			
@@ -1411,7 +1717,7 @@ if( ! class_exists( 'av_privacy_class' ) )
 
 			if( avia_get_option( 'cookie_info_custom_content' ) == 'cookie_info_custom_content' )
 			{
-				$heading  = str_replace( "'", "&apos;", avia_get_option( 'cookie_info_content_heading', $heading ) );
+				$heading  = str_replace( "'", '&apos;', avia_get_option( 'cookie_info_content_heading', $heading ) );
 				$contents = avia_get_option( 'cookie_info_content', array() );
 			}
 			
@@ -1470,10 +1776,10 @@ if( ! class_exists( 'av_privacy_class' ) )
 			$content  = '';
 			foreach( $contents as $content_block )
 			{
-				$tablabel = str_replace( "'", "&apos;", $content_block['label'] );
-				$content .= "[av_tab title='{$tablabel}' icon_select='no' icon='ue81f' font='entypo-fontello']";
+				$tablabel = str_replace( "'", '&apos;', $content_block['label'] );
+				$content .= "[av_tab title='{$tablabel}' icon_select='no' icon='ue81f' font='entypo-fontello' skip_markup='yes']";
 				$content .= $content_block['content'];
-				$content .= "[/av_tab]";
+				$content .= '[/av_tab]';
 			}
 			
 			$sc_content = '';
@@ -1482,16 +1788,27 @@ if( ! class_exists( 'av_privacy_class' ) )
 			$sc_content .= "[av_hr class='custom' height='50' shadow='no-shadow' position='left' custom_border='av-border-thin' custom_width='100%' custom_border_color='' custom_margin_top='0px' custom_margin_bottom='0px' icon_select='no' custom_icon_color='' icon='ue808' font='entypo-fontello' av_uid='av-jhe1dyat' admin_preview_bg='rgb(255, 255, 255)']";
 			$sc_content .= '<br />';
 			$sc_content .= "[av_tab_container position='sidebar_tab sidebar_tab_left' boxed='noborder_tabs' initial='1' av_uid='av-jhds1skt']";
-			$sc_content .= '<br />';
+//			$sc_content .= '<br />';
 			$sc_content .= $content;
-			$sc_content .= '<br />';
-			$sc_content .= "[/av_tab_container]";
+//			$sc_content .= '<br />';
+			$sc_content .= '[/av_tab_container]';
 			
-			$sc_content = do_shortcode( $sc_content );
+			$sc_content = do_shortcode( shortcode_unautop( $sc_content ) );
 			
 			$sc_content .= '<div class="avia-cookie-consent-modal-buttons-wrap">';
 			
 			$buttons = avia_get_option( 'modal_popup_window_buttons', array() );
+			if( ! empty( $buttons ) )
+			{
+				//	if no button, then we have an empty label as first button - remove all buttons with empty label
+				foreach( $buttons as $index => $button )
+				{
+					if( empty( $button['modal_popup_button_label'] ) )
+					{
+						unset( $buttons[ $index ] );
+					}
+				}
+			}
 			
 			$class = 'avia-cookie-consent-modal-button';
 			foreach( $buttons as $button )
@@ -1514,7 +1831,15 @@ if( ! class_exists( 'av_privacy_class' ) )
 			
 			$show_close = count( $buttons ) > 0 ? 'avia-hide-popup-close' : '';
 			
-			$output .= "<div id='av-consent-extra-info' class='av-inline-modal main_color {$show_close}'>{$sc_content}</div>";
+			/**
+			 * Allows to supress creation of modal window HTML if not needed.
+			 * 
+			 * @since 4.6.4
+			 */
+			if( ! current_theme_supports( 'avia_supress_cookie_modal_html_creation' ) )
+			{
+				$output .= "<div id='av-consent-extra-info' class='av-inline-modal main_color {$show_close}'>{$sc_content}</div>";
+			}
 			
 			$badge = avia_get_option( 'cookie_consent_badge' );
 			if( '' != $badge )
@@ -1525,7 +1850,8 @@ if( ! class_exists( 'av_privacy_class' ) )
 				$output .=	'</div>';
 			}
 			
-			$output .= '</div>';
+			
+			$output = '<div class="avia-cookie-consent-wrap" aria-hidden="true">' . $output .  '</div>';
 			
 			echo $output;
 		}
@@ -1558,6 +1884,12 @@ if( ! class_exists( 'av_privacy_class' ) )
 				case 'info_modal':
 					$btn_class .= ' avia-cookie-info-btn ';
 					break;
+				case 'link':
+					$btn_class .= ' avia-cookie-link-btn ';
+					break;
+				case 'select_all':
+					$btn_class = ' avia-cookie-close-bar avia-cookie-select-all ' . $class;
+					break;
 				case '':
 				default:
 					$btn_class = ' avia-cookie-close-bar ' . $class;
@@ -1570,7 +1902,7 @@ if( ! class_exists( 'av_privacy_class' ) )
 		}
 
 		/**
-		 * Add an additional class to identify that user has to accept cookies (forced opt in for EU DSGVO)
+		 * Add an additional class to identify that user has to accept cookies (forced opt in for EU DSGVO) and other frontend behaviour
 		 * 
 		 * @since 4.5.7.2
 		 * @added_by Günter
@@ -1579,21 +1911,36 @@ if( ! class_exists( 'av_privacy_class' ) )
 		 */
 		public function handler_avia_header_class_filter( $classes )
 		{
-			if( 'disabled' == $this->get_cookie_consent_message_bar_option() )
+			switch( $this->get_cookie_consent_message_bar_option() )
 			{
-				$classes .= ' av-cookies-no-cookie-consent';
+				case 'message_bar':
+					$classes .= ' av-cookies-consent-message-bar-only';
+					return $classes;
+				case 'hide_bar':
+					$classes .= ' av-cookies-consent-hide-message-bar';
+					break;
+				case 'show_bar':
+					$classes .= ' av-cookies-consent-show-message-bar';
+					break;
+				case 'disabled':
+				default:
+					$classes .= ' av-cookies-no-cookie-consent';
+					return $classes;
 			}
-			else if( 'message_bar' == $this->get_cookie_consent_message_bar_option() )
+			
+			$classes .= ' av-cookies-cookie-consent-enabled';
+			
+			switch( $this->get_opt_in_setting() )
 			{
-				$classes .= ' av-cookies-consent-message-bar-only';
-			}
-			else if( 'needs_opt_in' == $this->get_opt_in_setting() )
-			{
-				$classes .= ' av-cookies-needs-opt-in';
-			}
-			else
-			{
-				$classes .= ' av-cookies-can-opt-out';
+				case 'needs_opt_in':
+					$classes .= ' av-cookies-needs-opt-in av-cookies-user-needs-accept-button';
+					break;
+				case 'can_opt_out':
+					$classes .= ' av-cookies-can-opt-out av-cookies-user-needs-accept-button';
+					break;
+				default:
+					$classes .= ' av-cookies-can-opt-out av-cookies-user-silent-accept';
+					break;
 			}
 			
 			if( 'page_load' == avia_get_option( 'modal_popup_window_action' ) )
@@ -1601,6 +1948,23 @@ if( ! class_exists( 'av_privacy_class' ) )
 				$classes .= ' avia-cookie-consent-modal-show-immediately';
 			}
 			
+			switch( avia_get_option( 'cookie_auto_reload' ) )
+			{
+				case 'reload_accept':
+					$classes .= ' avia-cookie-reload-accept';
+					break;
+				case 'reload_no_accept':
+					$classes .= ' avia-cookie-reload-no-accept';
+					break;
+				case 'reload_both':
+					$classes .= ' avia-cookie-reload-no-accept avia-cookie-reload-accept';
+					break;
+			}
+			
+			if( ! current_theme_supports( 'avia_privacy_ignore_browser_settings' ) )
+			{
+				$classes .= ' avia-cookie-check-browser-settings';
+			}
 			
 			return $classes;
 		}
@@ -1621,7 +1985,7 @@ if( ! class_exists( 'av_privacy_class' ) )
 						'content'	=> __( 'We may request cookies to be set on your device. We use cookies to let us know when you visit our websites, how you interact with us, to enrich your user experience, and to customize your relationship with our website. <br><br>Click on the different category headings to find out more. You can also change some of your preferences. Note that blocking some types of cookies may impact your experience on our websites and the services we are able to offer.', 'avia_framework' )
 					);
 			
-			$c = '';
+			$c = '<p>';
 			$c .= __( 'These cookies are strictly necessary to provide you with services available through our website and to use some of its features.', 'avia_framework' );
 			$c .= '<br /><br />';
 			$c .= __( 'Because these cookies are strictly necessary to deliver the website, refuseing them will have impact how our site functions. You always can block or delete cookies by changing your browser settings and force blocking all cookies on this website. But this will always prompt you to accept/refuse cookies when revisiting our site.', 'avia_framework' );
@@ -1629,7 +1993,7 @@ if( ! class_exists( 'av_privacy_class' ) )
 			$c .= __( 'We fully respect if you want to refuse cookies but to avoid asking you again and again kindly allow us to store a cookie for that. You are free to opt out any time or opt in for other cookies to get a better experience. If you refuse cookies we will remove all set cookies in our domain.', 'avia_framework' );
 			$c .= '<br /><br />';
 			$c .= __( 'We provide you with a list of stored cookies on your computer in our domain so you can check what we stored. Due to security reasons we are not able to show or modify cookies from other domains. You can check these in your browser security settings.', 'avia_framework' );
-			$c .= '<br /><br />';
+			$c .= '</p>';
 			$c .= '[av_privacy_allow_cookies]';
 			$c .= '<br /><br />';
 			$c .= '[av_privacy_accept_essential_cookies]';
@@ -1639,14 +2003,25 @@ if( ! class_exists( 'av_privacy_class' ) )
 						'content'	=> $c
 					);
 
-			$analtics_check = ( 'filter' == $filter_options ) ? avia_get_option( 'analytics' ) : 'yes';			
-			if( ! empty( $analtics_check ) )
+			$analytics_check = true;
+			if( 'filter' == $filter_options )
 			{
-				$c = '';
+				$analytics = avia_get_option( 'analytics' );
+				$match = array();
+				preg_match( "!UA-[0-9]+-[0-9]+!", $analytics, $match );
+				if( empty( $match ) )
+				{
+					$analytics_check = false;
+				}
+			}
+			
+			if( $analytics_check )
+			{
+				$c = '<p>';
 				$c .= __( 'These cookies collect information that is used either in aggregate form to help us understand how our website is being used or how effective our marketing campaigns are, or to help us customize our website and application for you in order to enhance your experience.', 'avia_framework' );
 				$c .= '<br><br>';
-				$c .= __( 'If you do not want that we track your visist to our site you can disable tracking in your browser here:', 'avia_framework' );
-				$c .= '<br>';
+				$c .= __( 'If you do not want that we track your visit to our site you can disable tracking in your browser here:', 'avia_framework' );
+				$c .= '</p>';
 				$c .= __( ' [av_privacy_google_tracking]', 'avia_framework' );
 						
 				$contents[] = array(	
@@ -1655,24 +2030,25 @@ if( ! class_exists( 'av_privacy_class' ) )
 					);
 			}
 			
-			$c = '';
-			$c .= __( 'We also use different external services like Google Webfonts, Google Maps,  and external Video providers.', 'avia_framework' ) . ' ';
+			$c = '<p>';
+			$c .= __( 'We also use different external services like Google Webfonts, Google Maps, and external Video providers.', 'avia_framework' ) . ' ';
 			$c .= __( 'Since these providers may collect personal data like your IP address we allow you to block them here. Please be aware that this might heavily reduce the functionality and appearance of our site.', 'avia_framework' ) . ' ';
 			$c .= __( 'Changes will take effect once you reload the page.', 'avia_framework' );
-			$c .= '<br><br>';
+			$c .= '<br /><br />';
 			$c .= __( 'Google Webfont Settings:', 'avia_framework' );
-			$c .= '<br>';
+			$c .= '</p>';
 			$c .= '[av_privacy_google_webfonts]';
-			$c .= '<br><br>';
+			$c .= '<p>';
 			$c .= __( 'Google Map Settings:', 'avia_framework' );
-			$c .= '<br>';
+			$c .= '</p>';
 			$c .= '[av_privacy_google_maps]';
+			$c .= '<p>';
 			$c .= __( 'Google reCaptcha Settings:', 'avia_framework' );
-			$c .= '<br>';
+			$c .= '</p>';
 			$c .= '[av_privacy_google_recaptcha]';
-			$c .= '<br><br>';
+			$c .= '<p>';
 			$c .= __( 'Vimeo and Youtube video embeds:', 'avia_framework' );
-			$c .= '<br>';
+			$c .= '</p>';
 			$c .= '[av_privacy_video_embeds]';
 			
 			
@@ -1684,14 +2060,16 @@ if( ! class_exists( 'av_privacy_class' ) )
 			$custom_cookies = $this->get_custom_cookies();
 			if( ! empty( $custom_cookies ) )
 			{
-				$c = '';
+				$c = '<p>';
 				$c .= __( 'The following cookies are also needed - You can choose if you want to allow them:', 'avia_framework' );
-				$c .= '<br><br>';
+				$c .= '</p>';
+				
+				$desc_cc = '';
 				
 				foreach( $custom_cookies as $custom_cookie ) 
 				{
 					$c .= "[av_privacy_custom_cookie cookie_name='{$custom_cookie['cookie_name']}']";
-					$c .= '<br><br>';
+					$c .= '<br /><br />';
 				}
 				
 				$contents[] = array(	
@@ -1711,19 +2089,20 @@ if( ! class_exists( 'av_privacy_class' ) )
 
 			}
 			
-/*
-			$c = '';
-			$c .= __( 'The following cookies are currently in use. Due to browser security we are only able to show cookies of your domain.', 'avia_framework' );
-			$c .= '<br>';
-			$c .= __( 'For other domain cookies please check your browser settings or use a debug tool. Due to browser security we cannot access all information needed to remove a cookie so we might not be able to remove all cookies.', 'avia_framework' );
-			$c .= '<br>';
-			$c .= '[av_privacy_cookie_info]';
-			
-			$contents[] = array(	
-						'label'		=> __( 'Stored Site Cookies', 'avia_framework' ), 
-						'content'	=> $c
-					);
-*/
+			if( current_theme_supports( 'avia_privacy_show_cookie_info' ) )
+			{
+				$c = '<p>';
+				$c .= __( 'The following cookies are currently in use. Due to browser security we are only able to show cookies of your domain.', 'avia_framework' );
+				$c .= '<br />';
+				$c .= __( 'For other domain cookies please check your browser settings or use a debug tool. Due to browser security we cannot access all information needed to remove a cookie so we might not be able to remove all cookies.', 'avia_framework' );
+				$c .= '</p>';
+				$c .= '[av_privacy_cookie_info]';
+
+				$contents[] = array(	
+							'label'		=> __( 'Stored Site Cookies', 'avia_framework' ), 
+							'content'	=> $c
+						);
+			}
 
 			return $contents;
 		}

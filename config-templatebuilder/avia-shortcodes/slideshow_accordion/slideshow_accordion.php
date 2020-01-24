@@ -11,88 +11,464 @@ if ( ! class_exists( 'avia_sc_slider_accordion' ) )
 {
 	class avia_sc_slider_accordion extends aviaShortcodeTemplate
 	{
-			static $slide_count = 0;
-	
-			/**
-			 * Create the config array for the shortcode button
-			 */
-			function shortcode_insert_button()
-			{
-				$this->config['self_closing']	=	'no';
-				
-				$this->config['name']			= __( 'Accordion Slider', 'avia_framework' );
-				$this->config['tab']			= __( 'Media Elements', 'avia_framework' );
-				$this->config['icon']			= AviaBuilder::$path['imagesURL']."sc-accordion-slider.png";
-				$this->config['order']			= 20;
-				$this->config['target']			= 'avia-target-insert';
-				$this->config['shortcode'] 		= 'av_slideshow_accordion';
-				$this->config['shortcode_nested'] = array('av_slide_accordion');
-				$this->config['tooltip'] 	    = __( 'Display an accordion slider with images or post entries', 'avia_framework' );
-				$this->config['drag-level'] 	= 3;
-				$this->config['preview'] 		= false;
-				$this->config['disabling_allowed'] = true;
-				$this->config['id_name']		= 'id';
-				$this->config['id_show']		= 'yes';
-			}
-			
-			function extra_assets()
-			{
-				//load css
-				wp_enqueue_style( 'avia-module-slideshow-accordion' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/slideshow_accordion/slideshow_accordion.css' , array('avia-layout'), false );
-				
-					//load js
-				wp_enqueue_script( 'avia-module-slideshow-accordion' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/slideshow_accordion/slideshow_accordion.js' , array('avia-shortcodes'), false, true );
+		static $slide_count = 0;
 
-			
-			}
+		/**
+		 * Create the config array for the shortcode button
+		 */
+		function shortcode_insert_button()
+		{
+			$this->config['version']		= '1.0';
+			$this->config['self_closing']	= 'no';
 
-			/**
-			 * Popup Elements
-			 *
-			 * If this function is defined in a child class the element automatically gets an edit button, that, when pressed
-			 * opens a modal window that allows to edit the element properties
-			 *
-			 * @return void
-			 */
-			function popup_elements()
-			{
-				$this->elements = array(
-					
-					array(
-							"type" 	=> "tab_container", 'nodescription' => true
-						),
+			$this->config['name']			= __( 'Accordion Slider', 'avia_framework' );
+			$this->config['tab']			= __( 'Media Elements', 'avia_framework' );
+			$this->config['icon']			= AviaBuilder::$path['imagesURL'] . 'sc-accordion-slider.png';
+			$this->config['order']			= 20;
+			$this->config['target']			= 'avia-target-insert';
+			$this->config['shortcode'] 		= 'av_slideshow_accordion';
+			$this->config['shortcode_nested'] = array('av_slide_accordion');
+			$this->config['tooltip'] 	    = __( 'Display an accordion slider with images or post entries', 'avia_framework' );
+			$this->config['drag-level'] 	= 3;
+			$this->config['preview'] 		= false;
+			$this->config['disabling_allowed'] = true;
+			$this->config['id_name']		= 'id';
+			$this->config['id_show']		= 'yes';
+		}
+			
+		function extra_assets()
+		{
+			//load css
+			wp_enqueue_style( 'avia-module-slideshow-accordion', AviaBuilder::$path['pluginUrlRoot'] . 'avia-shortcodes/slideshow_accordion/slideshow_accordion.css', array( 'avia-layout' ), false );
+
+				//load js
+			wp_enqueue_script( 'avia-module-slideshow-accordion', AviaBuilder::$path['pluginUrlRoot'] . 'avia-shortcodes/slideshow_accordion/slideshow_accordion.js', array( 'avia-shortcodes' ), false, true );
+
+		}
+
+		/**
+		 * Popup Elements
+		 *
+		 * If this function is defined in a child class the element automatically gets an edit button, that, when pressed
+		 * opens a modal window that allows to edit the element properties
+		 *
+		 * @return void
+		 */
+		function popup_elements()
+		{
+			$this->elements = array(
+				
+				array(
+						'type' 	=> 'tab_container', 
+						'nodescription' => true
+					),
 						
+				array(
+						'type' 	=> 'tab',
+						'name'  => __( 'Content', 'avia_framework' ),
+						'nodescription' => true
+					),
+				
 					array(
-							"type" 	=> "tab",
-							"name"  => __("Slide Content" , 'avia_framework'),
+							'type'			=> 'template',
+							'template_id'	=> 'toggle_container',
+							'templates_include'	=> array( 
+													$this->popup_key( 'content_entries' ),
+													$this->popup_key( 'content_filter' ),
+													$this->popup_key( 'content_caption' )
+												),
 							'nodescription' => true
 						),
-					
-					
-					array(	
-							"name" 	=> __("Which type of slider is this?",'avia_framework' ),
-							"desc" 	=> __("Slides can either be generated based on images you choose or on recent post entries", 'avia_framework' ),
-							"id" 	=> "slide_type",
-							"type" 	=> "select",
-							"std" 	=> "image-based",
-							"subtype" => array(   __('Image based Slider','avia_framework' )	=>'image-based',
-							                      __('Entry based Slider','avia_framework' )	=>'entry-based',
-							                      )
-					    ),
-					
-					array(
-						"name" 	=> __("Which Entries?", 'avia_framework' ),
-						"desc" 	=> __("Select which entries should be displayed by selecting a taxonomy", 'avia_framework' ),
-						"id" 	=> "link",
-						"fetchTMPL"	=> true,
-						"type" 	=> "linkpicker",
-						"required"=> array('slide_type','is_empty_or','entry-based'),
-						"subtype"  => array( __('Display Entries from:',  'avia_framework' )=>'taxonomy'),
-						"multiple"	=> 6,
-						"std" 	=> "category"
+				
+				array(
+						'type' 	=> 'tab_close',
+						'nodescription' => true
 					),
+				
+				array(
+						'type' 	=> 'tab',
+						'name'  => __( 'Styling', 'avia_framework' ),
+						'nodescription' => true
+					),
+				
+					array(
+							'type'			=> 'template',
+							'template_id'	=> 'toggle_container',
+							'templates_include'	=> array( 
+													$this->popup_key( 'styling_alignment' ),
+													$this->popup_key( 'styling_fonts' ),
+													$this->popup_key( 'styling_size' ),
+												),
+							'nodescription' => true
+						),
+				
+				array(
+						'type' 	=> 'tab_close',
+						'nodescription' => true
+					),
+				
+				array(
+						'type' 	=> 'tab',
+						'name'  => __( 'Advanced', 'avia_framework' ),
+						'nodescription' => true
+					),
+				
+					array(
+							'type' 	=> 'toggle_container',
+							'nodescription' => true
+						),
+				
+						array(
+								'type'			=> 'template',
+								'template_id'	=> $this->popup_key( 'advanced_animation' ),
+								'nodescription' => true
+							),
+				
+						array(
+								'type'			=> 'template',
+								'template_id'	=> $this->popup_key( 'advanced_heading' ),
+								'nodescription' => true
+							),
+				
+						array(	
+								'type'			=> 'template',
+								'template_id'	=> 'screen_options_toggle'
+							),
+				
+						array(	
+								'type'			=> 'template',
+								'template_id'	=> 'developer_options_toggle',
+								'args'			=> array( 'sc' => $this )
+							),
+				
+					array(
+							'type' 	=> 'toggle_container_close',
+							'nodescription' => true
+						),
+				
+				array(
+						'type' 	=> 'tab_close',
+						'nodescription' => true
+					),
+
+				array(
+						'type' 	=> 'tab_container_close',
+						'nodescription' => true
+					)
 					
+
+
+				);
+
+		}
+		
+		/**
+		 * Create and register templates for easier maintainance
+		 * 
+		 * @since 4.6.4
+		 */
+		protected function register_dynamic_templates()
+		{
+			$this->register_modal_group_templates();
+			
+			/**
+			 * Content Tab
+			 * ===========
+			 */
+			
+			$c = array(
+						array(	
+							'name' 	=> __( 'Which type of slider is this?', 'avia_framework' ),
+							'desc' 	=> __( 'Slides can either be generated based on images you choose or on recent post entries', 'avia_framework' ),
+							'id' 	=> 'slide_type',
+							'type' 	=> 'select',
+							'std' 	=> 'image-based',
+							'subtype'	=> array(   
+												__( 'Image based Slider', 'avia_framework' )	=> 'image-based',
+												__( 'Entry based Slider', 'avia_framework' )	=> 'entry-based',
+											)
+						),
+				
+						array(
+							'name' 	=> __( 'Which Entries?', 'avia_framework' ),
+							'desc' 	=> __( 'Select which entries should be displayed by selecting a taxonomy', 'avia_framework' ),
+							'id' 	=> 'link',
+							'type' 	=> 'linkpicker',
+							'fetchTMPL'	=> true,
+							'required'	=> array( 'slide_type', 'is_empty_or', 'entry-based' ),
+							'subtype'	=> array( __( 'Display Entries from:', 'avia_framework' ) => 'taxonomy' ),
+							'multiple'	=> 6,
+							'std' 	=> 'category'
+					),
+				
 					array(	
+							'type'			=> 'modal_group', 
+							'id'			=> 'content',
+							'container_class'	=> 'avia-element-fullwidth avia-multi-img',
+							'modal_title'	=> __( 'Edit Form Element', 'avia_framework' ),
+							'add_label'		=> __( 'Add single image', 'avia_framework' ),
+							'std'			=> array(),
+							'required'		=> array( 'slide_type', 'equals', 'image-based' ),
+							'creator'		=> array(
+													'name'		=> __( 'Add Images', 'avia_framework' ),
+													'desc'		=> __( 'Here you can add new Images to the slideshow.', 'avia_framework' ),
+													'id'		=> 'id',
+													'type'		=> 'multi_image',
+													'title'		=> __( 'Add multiple Images', 'avia_framework' ),
+													'button'	=> __( 'Insert Images', 'avia_framework' ),
+													'std'		=> ''
+												),
+							'subelements'	=> $this->create_modal()
+					)
+				
+				);
+			
+			$template = array(
+							array(	
+								'type'			=> 'template',
+								'template_id'	=> 'toggle',
+								'title'			=> __( 'Select Entries', 'avia_framework' ),
+								'content'		=> $c 
+							),
+				);
+			
+			AviaPopupTemplates()->register_dynamic_template( $this->popup_key( 'content_entries' ), $template );
+			
+			$c = array(
+						array(	
+							'type'			=> 'template',
+							'template_id' 	=> 'wc_options_non_products',
+						),
+
+						array(	
+							'type'					=> 'template',
+							'template_id'			=> 'date_query',
+							'template_required'		=> array( 
+															0	=> array( 'slide_type', 'is_empty_or', 'entry-based' )
+														)
+						),
+						
+						array(
+							'name' 	=> __( 'Number of entries', 'avia_framework' ),
+							'desc' 	=> __( 'How many entries should be displayed?', 'avia_framework' ),
+							'id' 	=> 'items',
+							'type' 	=> 'select',
+							'std' 	=> '5',
+							'required'	=> array( 'slide_type', 'is_empty_or', 'entry-based' ),
+							'subtype'	=> AviaHtmlHelper::number_array( 1, 12, 1 )
+						),
+					
+						array(
+							'name' 	=> __( 'Offset Number', 'avia_framework' ),
+							'desc' 	=> __( 'The offset determines where the query begins pulling entries. Useful if you want to remove a certain number of entries because you already query them with another element.', 'avia_framework' ),
+							'id' 	=> 'offset',
+							'type' 	=> 'select',
+							'std' 	=> '0',
+							'required'=> array('slide_type','is_empty_or','entry-based'),
+							'subtype' => AviaHtmlHelper::number_array( 1, 100, 1, array( __( 'Deactivate offset', 'avia_framework' ) => '0', __( 'Do not allow duplicate posts on the entire page (set offset automatically)', 'avia_framework' ) => 'no_duplicates' ) )
+						)
+				
+				);
+			
+			$template = array(
+							array(	
+								'type'			=> 'template',
+								'template_id'	=> 'toggle',
+								'title'			=> __( 'Filter', 'avia_framework' ),
+								'content'		=> $c 
+							),
+				);
+			
+			AviaPopupTemplates()->register_dynamic_template( $this->popup_key( 'content_filter' ), $template );
+			
+			$c = array(
+						array(	
+							'name' 	=> __( 'Slide Title', 'avia_framework' ),
+							'desc' 	=> __( 'Display the entry title by default?', 'avia_framework' ),
+							'id' 	=> 'title',
+							'type' 	=> 'select',
+							'std' 	=> 'true',
+							'subtype'	=> array(	
+												__( 'Yes - display everywhere', 'avia_framework' )		=> 'active',
+												__( 'Yes - display, but remove title on mobile devices', 'avia_framework' )	=> 'no-mobile',
+												__( 'Display only on active slides', 'avia_framework' )	=> 'on-hover',
+												__( 'No, never display title', 'avia_framework' )		=> 'inactive'
+											)
+						),	
+					
+						array(	
+							'name' 	=> __( 'Display Excerpt?', 'avia_framework' ),
+							'desc' 	=> __( 'Check if excerpt/caption of the slide should also be displayed', 'avia_framework' ),
+							'id' 	=> 'excerpt',
+							'required'	=> array( 'title', 'not', 'inactive' ),
+							'std' 	=> '',
+							'type' 	=> 'checkbox'
+						),
+				
+				);
+			
+			$template = array(
+							array(	
+								'type'			=> 'template',
+								'template_id'	=> 'toggle',
+								'title'			=> __( 'Caption', 'avia_framework' ),
+								'content'		=> $c 
+							),
+				);
+			
+			AviaPopupTemplates()->register_dynamic_template( $this->popup_key( 'content_caption' ), $template );
+			
+			/**
+			 * Styling Tab
+			 * ===========
+			 */
+			
+			$c = array(
+						array(	
+							'name' 	=> __( 'Alignment', 'avia_framework' ),
+							'desc' 	=> __( 'Change the alignment of title and excerpt here', 'avia_framework' ),
+							'id' 	=> 'accordion_align',
+							'type' 	=> 'select',
+							'std' 	=> 'true',
+							'subtype'	=> array(	
+												__( 'Default', 'avia_framework' )	=> '',
+												__( 'Centered', 'avia_framework' )	=> 'av-accordion-text-center',
+											)
+						),
+				
+				);
+			
+			$template = array(
+							array(	
+								'type'			=> 'template',
+								'template_id'	=> 'toggle',
+								'title'			=> __( 'Alignment', 'avia_framework' ),
+								'content'		=> $c 
+							),
+				);
+			
+			AviaPopupTemplates()->register_dynamic_template( $this->popup_key( 'styling_alignment' ), $template );
+			
+			$c = array(
+						array(
+							'name'			=> __( 'Caption Font Sizes', 'avia_framework' ),
+							'desc'			=> __( 'Select a custom font size for the caption titles.', 'avia_framework' ),
+							'type'			=> 'template',
+							'template_id'	=> 'font_sizes_icon_switcher',
+							'required'		=> array( 'title', 'not', 'inactive' ),
+							'subtype'		=> array(
+												'default'	=> AviaHtmlHelper::number_array( 10, 40, 1, array( __( 'Use Default', 'avia_framework' ) => '' ), 'px' ),
+												'medium'	=> AviaHtmlHelper::number_array( 10, 40, 1, array( __( 'Use Default', 'avia_framework' ) => '', __( 'Hidden', 'avia_framework' ) => 'hidden' ), 'px' ),
+												'small'		=> AviaHtmlHelper::number_array( 10, 40, 1, array( __( 'Use Default', 'avia_framework' ) => '', __( 'Hidden', 'avia_framework' ) => 'hidden' ), 'px' ),
+												'mini'		=> AviaHtmlHelper::number_array( 10, 40, 1, array( __( 'Use Default', 'avia_framework' ) => '', __( 'Hidden', 'avia_framework' ) => 'hidden' ), 'px' )
+											),
+							'id_sizes'		=> array(
+												'default'	=> 'custom_title_size',
+												'medium'	=> 'av-medium-font-size-title',
+												'small'		=> 'av-small-font-size-title',
+												'mini'		=> 'av-mini-font-size-title'
+											)
+						),
+				
+						array(
+							'name'			=> __( 'Excerpt Font Sizes', 'avia_framework' ),
+							'desc'			=> __( 'Select a custom font size for the excerpt.', 'avia_framework' ),
+							'type'			=> 'template',
+							'template_id'	=> 'font_sizes_icon_switcher',
+							'required'		=> array( 'excerpt', 'not', '' ),
+							'subtype'		=> array(
+												'default'	=> AviaHtmlHelper::number_array( 10, 40, 1, array( __( 'Use Default', 'avia_framework' ) => '' ), 'px' ),
+												'medium'	=> AviaHtmlHelper::number_array( 10, 40, 1, array( __( 'Use Default', 'avia_framework' ) => '', __( 'Hidden', 'avia_framework' ) => 'hidden' ), 'px' ),
+												'small'		=> AviaHtmlHelper::number_array( 10, 40, 1, array( __( 'Use Default', 'avia_framework' ) => '', __( 'Hidden', 'avia_framework' ) => 'hidden' ), 'px' ),
+												'mini'		=> AviaHtmlHelper::number_array( 10, 40, 1, array( __( 'Use Default', 'avia_framework' ) => '', __( 'Hidden', 'avia_framework' ) => 'hidden' ), 'px' )
+											),
+							'id_sizes'		=> array(
+												'default'	=> 'custom_excerpt_size',
+												'medium'	=> 'av-medium-font-size',
+												'small'		=> 'av-small-font-size',
+												'mini'		=> 'av-mini-font-size'
+											)
+						)
+				
+				);
+			
+			$template = array(
+							array(	
+								'type'			=> 'template',
+								'template_id'	=> 'toggle',
+								'title'			=> __( 'Fonts', 'avia_framework' ),
+								'content'		=> $c 
+							),
+				);
+			
+			AviaPopupTemplates()->register_dynamic_template( $this->popup_key( 'styling_fonts' ), $template );
+			
+			$c = array(
+						array(	
+							'name' 	=> __( 'Accordion Image Size', 'avia_framework' ),
+							'desc' 	=> __( 'Choose image and Video size for your slideshow.', 'avia_framework' ),
+							'id' 	=> 'size',
+							'type' 	=> 'select',
+							'std' 	=> 'featured',
+							'subtype'	=>  AviaHelper::get_registered_image_sizes( 500, false, true )		
+						)
+				
+				);
+			
+			$template = array(
+							array(	
+								'type'			=> 'template',
+								'template_id'	=> 'toggle',
+								'title'			=> __( 'General Styling', 'avia_framework' ),
+								'content'		=> $c 
+							),
+				);
+			
+			AviaPopupTemplates()->register_dynamic_template( $this->popup_key( 'styling_size' ), $template );
+			
+			/**
+			 * Advanced Tab
+			 * ===========
+			 */
+			
+			$c = array(
+						array(	
+							'name' 	=> __( 'Autorotation active?', 'avia_framework' ),
+							'desc' 	=> __( 'Check if the slideshow should rotate by default', 'avia_framework' ),
+							'id' 	=> 'autoplay',
+							'type' 	=> 'select',
+							'std' 	=> 'false',
+							'subtype'	=> array( 
+												__( 'Yes', 'avia_framework' )	=> 'true',
+												__( 'No', 'avia_framework' )	=> 'false'
+											)
+						),	
+			
+						array(	
+							'name' 	=> __( 'Slideshow autorotation duration', 'avia_framework' ),
+							'desc' 	=> __( 'Images will be shown the selected amount of seconds.', 'avia_framework' ),
+							'id' 	=> 'interval',
+							'type' 	=> 'select',
+							'std' 	=> '5',
+							'required'	=> array( 'autoplay', 'contains', 'true' ),
+							'subtype'	=> array( '3'=>'3', '4'=>'4', '5'=>'5', '6'=>'6', '7'=>'7', '8'=>'8', '9'=>'9', '10'=>'10', '15'=>'15', '20'=>'20', '30'=>'30', '40'=>'40', '60'=>'60', '100'=>'100' )
+						)
+					
+				);
+			
+			$template = array(
+							array(	
+								'type'			=> 'template',
+								'template_id'	=> 'toggle',
+								'title'			=> __( 'Animation', 'avia_framework' ),
+								'content'		=> $c 
+							),
+				);
+			
+			AviaPopupTemplates()->register_dynamic_template( $this->popup_key( 'advanced_animation' ), $template );
+			
+			$c = array(
+						array(	
 							'type'				=> 'template',
 							'template_id'		=> 'heading_tag',
 							'required'			=> array( 'slide_type', 'is_empty_or', 'entry-based' ),
@@ -100,443 +476,374 @@ if ( ! class_exists( 'avia_sc_slider_accordion' ) )
 							'context'			=> __CLASS__
 						),
 					
-					array(	
-							'type'			=> 'template',
-							'template_id' 	=> 'wc_options_non_products',
-						),
-
-					
-					array(	
-							'type'					=> 'template',
-							'template_id'			=> 'date_query',
-							'template_required'		=> array( 
-															0	=> array( 'slide_type', 'is_empty_or', 'entry-based' )
-														)
-						),
-					
-					array(
-							"name" 	=> __("Number of entries", 'avia_framework' ),
-							"desc" 	=> __("How many entries should be displayed?", 'avia_framework' ),
-							"id" 	=> "items",
-							"type" 	=> "select",
-							"std" 	=> "5",
-							"required"=> array('slide_type','is_empty_or','entry-based'),
-							"subtype" => AviaHtmlHelper::number_array(1,12,1)),
-					
-					array(
-                        "name" 	=> __("Offset Number", 'avia_framework' ),
-                        "desc" 	=> __("The offset determines where the query begins pulling entries. Useful if you want to remove a certain number of entries because you already query them with another element.", 'avia_framework' ),
-                        "id" 	=> "offset",
-                        "type" 	=> "select",
-                        "std" 	=> "0",
-						"required"=> array('slide_type','is_empty_or','entry-based'),
-                        "subtype" => AviaHtmlHelper::number_array(1,100,1, array(__('Deactivate offset','avia_framework')=>'0', __('Do not allow duplicate posts on the entire page (set offset automatically)', 'avia_framework' ) =>'no_duplicates'))),
-					
-					
-					array(	
-							"type" 			=> "modal_group", 
-							"id" 			=> "content",
-							'container_class' =>"avia-element-fullwidth avia-multi-img",
-							"modal_title" 	=> __("Edit Form Element", 'avia_framework' ),
-							"add_label"		=>  __("Add single image", 'avia_framework' ),
-							"std"			=> array(),
-							"required"=> array('slide_type','equals','image-based'),
-							'creator'		=>array(
-								
-										"name" => __("Add Images", 'avia_framework' ),
-										"desc" => __("Here you can add new Images to the slideshow.", 'avia_framework' ),
-										"id" 	=> "id",
-										"type" 	=> "multi_image",
-										"title" => __("Add multiple Images",'avia_framework' ),
-										"button" => __("Insert Images",'avia_framework' ),
-										"std" 	=> ""
-										),
-															
-							'subelements' 	=> array(
-									
-									array(	
-									"name" 	=> __("Choose another Image",'avia_framework' ),
-									"desc" 	=> __("Either upload a new, or choose an existing image from your media library",'avia_framework' ),
-									"id" 	=> "id",
-									"fetch" => "id",
-									"type" 	=> "image",
-									"title" => __("Change Image",'avia_framework' ),
-									"button" => __("Change Image",'avia_framework' ),
-									"std" 	=> ""),
-
-									array(	
-									"name" 	=> __("Caption Title", 'avia_framework' ),
-									"desc" 	=> __("Enter a caption title for the slide here", 'avia_framework' ) ,
-									"id" 	=> "title",
-									"std" 	=> "",
-									"type" 	=> "input"),
-								
-									array(	
-											'type'				=> 'template',
-											'template_id'		=> 'heading_tag',
-											'theme_default'		=> 'h3',
-											'context'			=> __CLASS__
-										),
-									
-									 array(	
-									"name" 	=> __("Caption Text", 'avia_framework' ),
-									"desc" 	=> __("Enter some additional caption text", 'avia_framework' ) ,
-									"id" 	=> "content",
-									"type" 	=> "textarea",
-									"std" 	=> "",
-									),
-									
-									array(	
-									"name" 	=> __("Image Link?", 'avia_framework' ),
-									"desc" 	=> __("Where should the Image link to?", 'avia_framework' ),
-									"id" 	=> "link",
-									"type" 	=> "linkpicker",
-									"fetchTMPL"	=> true,
-									"subtype" => array(	
-														__('Open Image in Lightbox', 'avia_framework' ) =>'lightbox',
-														__('Set Manually', 'avia_framework' ) =>'manually',
-														__('Single Entry', 'avia_framework' ) => 'single',
-														__('Taxonomy Overview Page',  'avia_framework' ) => 'taxonomy',
-														),
-									"std" 	=> ""),
-							
-									array(	
-									"name" 	=> __("Open Link in new Window?", 'avia_framework' ),
-									"desc" 	=> __("Select here if you want to open the linked page in a new window", 'avia_framework' ),
-									"id" 	=> "link_target",
-									"type" 	=> "select",
-									"std" 	=> "",
-									"required"=> array('link','not_empty_and','lightbox'),
-									"subtype" => AviaHtmlHelper::linking_options()),
-								)   
-										
-					),
-							
-					array(	
-							"name" 	=> __("Accordion Image Size", 'avia_framework' ),
-							"desc" 	=> __("Choose image and Video size for your slideshow.", 'avia_framework' ),
-							"id" 	=> "size",
-							"type" 	=> "select",
-							"std" 	=> "featured",
-							"subtype" =>  AviaHelper::get_registered_image_sizes(500, false, true)		
-							),
-					
-					
-					
-							
-					array(	
-						"name" 	=> __("Autorotation active?",'avia_framework' ),
-						"desc" 	=> __("Check if the slideshow should rotate by default",'avia_framework' ),
-						"id" 	=> "autoplay",
-						"type" 	=> "select",
-						"std" 	=> "false",
-						"subtype" => array(__('Yes','avia_framework' ) =>'true',__('No','avia_framework' ) =>'false')),	
-			
-					array(	
-						"name" 	=> __("Slideshow autorotation duration",'avia_framework' ),
-						"desc" 	=> __("Images will be shown the selected amount of seconds.",'avia_framework' ),
-						"id" 	=> "interval",
-						"type" 	=> "select",
-						"std" 	=> "5",
-						"required"=> array('autoplay','contains','true'),
-						"subtype" => 
-						array('3'=>'3','4'=>'4','5'=>'5','6'=>'6','7'=>'7','8'=>'8','9'=>'9','10'=>'10','15'=>'15','20'=>'20','30'=>'30','40'=>'40','60'=>'60','100'=>'100')),
-					
-					array(
-							"type" 	=> "close_div",
-							'nodescription' => true
-						),
-					
-					array(
-						"type" 	=> "tab",
-						"name"	=> __("Slide Caption",'avia_framework' ),
-						'nodescription' => true
-					),
-					
-					
-					array(	
-						"name" 	=> __("Slide Title",'avia_framework' ),
-						"desc" 	=> __("Display the entry title by default?",'avia_framework' ),
-						"id" 	=> "title",
-						"type" 	=> "select",
-						"std" 	=> "true",
-						"subtype" => array(	__('Yes - display everywhere','avia_framework' ) =>'active',
-											__('Yes - display, but remove title on mobile devices','avia_framework' ) =>'no-mobile',
-											__('Display only on active slides' ) =>'on-hover',
-											__('No, never display title','avia_framework' ) =>'inactive')),	
-					
-					array(	
-							"name" 	=> __("Display Excerpt?", 'avia_framework' ),
-							"desc" 	=> __("Check if excerpt/caption of the slide should also be displayed", 'avia_framework' ) ."</small>" ,
-							"id" 	=> "excerpt",
-							"required"=> array('title','not','inactive'),
-							"std" 	=> "",
-							"type" 	=> "checkbox"),
-					
-					array(	
-						"name" 	=> __("Alignment",'avia_framework' ),
-						"desc" 	=> __("Change the alignment of title and excerpt here",'avia_framework' ),
-						"id" 	=> "accordion_align",
-						"type" 	=> "select",
-						"std" 	=> "true",
-						"subtype" => array(	__('Default' ) =>'',
-											__('Centered','avia_framework' ) =>'av-accordion-text-center',
-					)),
-					
-					array(	
-							"name" 	=> __("Title Font Size", 'avia_framework' ),
-							"desc" 	=> __("Select a custom font size. Leave empty to use the default", 'avia_framework' ),
-							"id" 	=> "custom_title_size",
-							"type" 	=> "select",
-							"required"=> array('title','not','inactive'),
-							"std" 	=> "",
-							"subtype" => AviaHtmlHelper::number_array(10,40,1, array( __("Default Size", 'avia_framework' )=>''), 'px'),
-						),
-					
-					array(	
-							"name" 	=> __("Excerpt Font Size", 'avia_framework' ),
-							"desc" 	=> __("Select a custom font size. Leave empty to use the default", 'avia_framework' ),
-							"id" 	=> "custom_excerpt_size",
-							"type" 	=> "select",
-							"required"=> array('excerpt','not',''),
-							"std" 	=> "",
-							"subtype" => AviaHtmlHelper::number_array(10,40,1, array( __("Default Size", 'avia_framework' )=>''), 'px'),
-						),
-					
-					
-					array(
-							"type" 	=> "close_div",
-							'nodescription' => true
-						),
-					
-					array(
-							"type" 	=> "tab",
-							"name"	=> __("Screen Options",'avia_framework' ),
-							'nodescription' => true
-						),
-					
-						array(	
-								'type'			=> 'template',
-								'template_id'	=> 'screen_options_visibility'
-							),
-
-						array(
-								"name"		=> __( "Caption Title Font Size", 'avia_framework' ),
-								"desc"		=> __( "Set the font size for the element title, based on the device screensize.", 'avia_framework' ),
-								"type"		=> "heading",
-								"description_class" => "av-builder-note av-neutral",
-							),
-					
-						array(	
-								'type'			=> 'template',
-								'template_id'	=> 'font_sizes_title'
-							),
-										
-						array(
-								"name" 	=> __("Caption Content Font Size",'avia_framework' ),
-								"desc" 	=> __("Set the font size for the element content, based on the device screensize.", 'avia_framework' ),
-								"type" 	=> "heading",
-								"description_class" => "av-builder-note av-neutral",
-							),
-					
-						array(	
-								'type'			=> 'template',
-								'template_id'	=> 'font_sizes_content'
-							),
-					
-					array(
-							"type" 	=> "close_div",
-							'nodescription' => true
-						),
-					
-					array(
-						"type" 	=> "close_div",
-						'nodescription' => true
-						),
-		
-					
+				
 				);
-
-			}
 			
-			/**
-			 * Editor Element - this function defines the visual appearance of an element on the AviaBuilder Canvas
-			 * Most common usage is to define some markup in the $params['innerHtml'] which is then inserted into the drag and drop container
-			 * Less often used: $params['data'] to add data attributes, $params['class'] to modify the className
-			 *
-			 *
-			 * @param array $params this array holds the default values for $content and $args. 
-			 * @return $params the return array usually holds an innerHtml key that holds item specific markup.
-			 */
-			function editor_element($params)
-			{	
-				$params['innerHtml'] = "<img src='".$this->config['icon']."' title='".$this->config['name']."' />";
-				$params['innerHtml'].= "<div class='avia-element-label'>".$this->config['name']."</div>";
-				
-				$params['innerHtml'].= "<div class='avia-flex-element'>"; 
-				$params['innerHtml'].= 		__('This element will stretch across the whole screen by default.','avia_framework')."<br/>";
-				$params['innerHtml'].= 		__('If you put it inside a color section or column it will only take up the available space','avia_framework');
-				$params['innerHtml'].= "	<div class='avia-flex-element-2nd'>".__('Currently:','avia_framework');
-				$params['innerHtml'].= "	<span class='avia-flex-element-stretched'>&laquo; ".__('Stretch fullwidth','avia_framework')." &raquo;</span>";
-				$params['innerHtml'].= "	<span class='avia-flex-element-content'>| ".__('Adjust to content width','avia_framework')." |</span>";
-				$params['innerHtml'].= "</div></div>";
-				
-				return $params;
-			}
+			$template = array(
+							array(	
+								'type'			=> 'template',
+								'template_id'	=> 'toggle',
+								'title'			=> __( 'Heading Tag', 'avia_framework' ),
+								'content'		=> $c 
+							),
+				);
 			
+			AviaPopupTemplates()->register_dynamic_template( $this->popup_key( 'advanced_heading' ), $template );
 			
-			
-			
-			/**
-			 * Editor Sub Element - this function defines the visual appearance of an element that is displayed within a modal window and on click opens its own modal window
-			 * Works in the same way as Editor Element
-			 * @param array $params this array holds the default values for $content and $args. 
-			 * @return $params the return array usually holds an innerHtml key that holds item specific markup.
-			 */
-			function editor_sub_element($params)
-			{	
-				$img_template 		= $this->update_template("img_fakeArg", "{{img_fakeArg}}");
-				$template 			= $this->update_template("title", "{{title}}");
-				$content 			= $this->update_template("content", "{{content}}");
-				$thumbnail = isset($params['args']['id']) ? wp_get_attachment_image($params['args']['id']) : "";
-				
+		}
 		
-				$params['innerHtml']  = "";
-				$params['innerHtml'] .= "<div class='avia_title_container'>";
-				$params['innerHtml'] .= "		<span class='avia_slideshow_image' {$img_template} >{$thumbnail}</span>";
-				$params['innerHtml'] .= "		<div class='avia_slideshow_content'>";
-				$params['innerHtml'] .= "			<h4 class='avia_title_container_inner' {$template} >".$params['args']['title']."</h4>";
-				$params['innerHtml'] .= "			<p class='avia_content_container' {$content}>".stripslashes($params['content'])."</p>";
-				$params['innerHtml'] .= "		</div>";
-				$params['innerHtml'] .= "</div>";
+		/**
+		 * Creates the modal popup for a single entry
+		 * 
+		 * @since 4.6.4
+		 * @return array
+		 */
+		protected function create_modal()
+		{
+			$elements = array(
+				
+				array(
+						'type' 	=> 'tab_container', 
+						'nodescription' => true
+					),
+						
+				array(
+						'type' 	=> 'tab',
+						'name'  => __( 'Content', 'avia_framework' ),
+						'nodescription' => true
+					),
+				
+					array(
+							'type'			=> 'template',
+							'template_id'	=> 'toggle_container',
+							'templates_include'	=> array( 
+													$this->popup_key( 'modal_content_image' ),
+													$this->popup_key( 'modal_content_caption' ),
+												),
+							'nodescription' => true
+						),
+				
+				array(
+						'type' 	=> 'tab_close',
+						'nodescription' => true
+					),
+				
+				array(
+						'type' 	=> 'tab',
+						'name'  => __( 'Advanced', 'avia_framework' ),
+						'nodescription' => true
+					),
+				
+					array(
+							'type'			=> 'template',
+							'template_id'	=> 'toggle_container',
+							'templates_include'	=> array( 
+													$this->popup_key( 'modal_advanced_heading' ),
+													$this->popup_key( 'modal_advanced_link' )
+												),
+							'nodescription' => true
+						),
+				
+				array(
+						'type' 	=> 'tab_close',
+						'nodescription' => true
+					),
+
+				array(
+						'type' 	=> 'tab_container_close',
+						'nodescription' => true
+					)
+				
+				);
+			
+			return $elements;
+		}
+		
+		/**
+		 * Register all templates for the modal group popup
+		 * 
+		 * @since 4.6.4
+		 */
+		protected function register_modal_group_templates()
+		{
+			/**
+			 * Content Tab
+			 * ===========
+			 */
+			$c = array(
+						array(	
+							'name' 	=> __( 'Choose another Image', 'avia_framework' ),
+							'desc' 	=> __( 'Either upload a new, or choose an existing image from your media library', 'avia_framework' ),
+							'id' 	=> 'id',
+							'fetch' => 'id',
+							'type' 	=> 'image',
+							'title'		=> __( 'Change Image', 'avia_framework' ),
+							'button'	=> __( 'Change Image', 'avia_framework' ),
+							'std' 	=> ''
+						),
 				
 				
-				
-				return $params;
-			}
+					);
+			
+			$template = array(
+							array(	
+								'type'			=> 'template',
+								'template_id'	=> 'toggle',
+								'title'			=> __( 'Image', 'avia_framework' ),
+								'content'		=> $c 
+							),
+					);
+			
+			AviaPopupTemplates()->register_dynamic_template( $this->popup_key( 'modal_content_image' ), $template );
 			
 			
+			$c = array(
+						array(	
+							'name' 	=> __( 'Caption Title', 'avia_framework' ),
+							'desc' 	=> __( 'Enter a caption title for the slide here', 'avia_framework' ),
+							'id' 	=> 'title',
+							'std' 	=> '',
+							'type' 	=> 'input'
+						),
+				
+						array(	
+							'name' 	=> __( 'Caption Text', 'avia_framework' ),
+							'desc' 	=> __( 'Enter some additional caption text', 'avia_framework' ),
+							'id' 	=> 'content',
+							'type' 	=> 'textarea',
+							'std' 	=> '',
+						),
+				
+					);
+			
+			$template = array(
+							array(	
+								'type'			=> 'template',
+								'template_id'	=> 'toggle',
+								'title'			=> __( 'Image Caption', 'avia_framework' ),
+								'content'		=> $c 
+							),
+					);
+			
+			AviaPopupTemplates()->register_dynamic_template( $this->popup_key( 'modal_content_caption' ), $template );
 			
 			/**
-			 * Frontend Shortcode Handler
-			 *
-			 * @param array $atts array of attributes
-			 * @param string $content text within enclosing form of shortcode element 
-			 * @param string $shortcodename the shortcode found, when == callback name
-			 * @return string $output returns the modified html string 
+			 * Advanced Tab
+			 * ===========
 			 */
-			function shortcode_handler( $atts, $content = "", $shortcodename = "", $meta = "" )
+			
+			$c = array(
+						array(	
+							'type'				=> 'template',
+							'template_id'		=> 'heading_tag',
+							'theme_default'		=> 'h3',
+							'context'			=> __CLASS__
+						),
+				
+					);
+			
+			$template = array(
+							array(	
+								'type'			=> 'template',
+								'template_id'	=> 'toggle',
+								'title'			=> __( 'Heading Tag', 'avia_framework' ),
+								'content'		=> $c 
+							),
+					);
+			
+			AviaPopupTemplates()->register_dynamic_template( $this->popup_key( 'modal_advanced_heading' ), $template );
+			
+			$c = array(
+						array(	
+							'type'			=> 'template',
+							'template_id'	=> 'linkpicker_toggle',
+							'name'			=> __( 'Image Link?', 'avia_framework' ),
+							'desc'			=> __( 'Where should the Image link to?', 'avia_framework' ),
+							'subtypes'		=> array( 'lightbox', 'manually', 'single', 'taxonomy' ),
+							'link_required'	=> array( 'link', 'not_empty_and', 'lightbox' ),
+							'target_id'		=> 'link_target'
+						)
+				
+					);
+			
+			AviaPopupTemplates()->register_dynamic_template( $this->popup_key( 'modal_advanced_link' ), $c );
+			
+		}
+		
+			
+		/**
+		 * Editor Element - this function defines the visual appearance of an element on the AviaBuilder Canvas
+		 * Most common usage is to define some markup in the $params['innerHtml'] which is then inserted into the drag and drop container
+		 * Less often used: $params['data'] to add data attributes, $params['class'] to modify the className
+		 *
+		 *
+		 * @param array $params this array holds the default values for $content and $args. 
+		 * @return $params the return array usually holds an innerHtml key that holds item specific markup.
+		 */
+		function editor_element( $params )
+		{	
+			
+			$params = parent::editor_element( $params );
+			$params['innerHtml'] .=	AviaPopupTemplates()->get_html_template( 'alb_element_fullwidth_stretch' );
+
+			return $params;
+		}
+			
+			
+		/**
+		 * Editor Sub Element - this function defines the visual appearance of an element that is displayed within a modal window and on click opens its own modal window
+		 * Works in the same way as Editor Element
+		 * @param array $params this array holds the default values for $content and $args. 
+		 * @return $params the return array usually holds an innerHtml key that holds item specific markup.
+		 */
+		function editor_sub_element( $params )
+		{	
+			/**
+			 * Fix a bug in 4.7 and 4.7.1 renaming option id (no longer backwards comp.) - can be removed in a future version again
+			 */
+			if( isset( $params['args']['linktarget'] ) )
 			{
-				extract( AviaHelper::av_mobile_sizes( $atts ) ); //return $av_font_classes, $av_title_font_classes and $av_display_classes 
-				
-				$meta = aviaShortcodeTemplate::set_frontend_developer_heading_tag( $atts, $meta );
-				
-				$atts = shortcode_atts( array(
-								'slide_type'			=> 'image-based',
-								'link'					=> '',
-								'wc_prod_visible'		=> '',
-								'prod_order_by'			=> '',
-								'prod_order'			=> '',
-								'date_filter'			=> '',	
-								'date_filter_start'		=> '',
-								'date_filter_end'		=> '',
-								'date_filter_format'	=> 'yy/mm/dd',		//	'yy/mm/dd' | 'dd-mm-yy'	| yyyymmdd
-								'size'					=> '',
-								'items'					=> '',
-								'autoplay'				=> 'false',
-								'title'					=> 'active',
-								'excerpt'				=> '',
-								'interval'				=> 5,
-								'offset'				=> 0,
-								'custom_title_size'		=> '',
-								'custom_excerpt_size'	=> '',
-								'accordion_align'		=> '',
-
-								'av-desktop-hide'	=> '',
-								'av-medium-hide'	=> '',
-								'av-small-hide'		=> '',
-								'av-mini-hide'		=> '',
-
-								'av-medium-font-size-title'	=> '',
-								'av-small-font-size-title'	=> '',
-								'av-mini-font-size-title'	=> '',
-
-								'av-medium-font-size'	=> '',
-								'av-small-font-size'	=> '',
-								'av-mini-font-size'		=> '',
-
-								'handle'		=> $shortcodename,
-								'content'		=> ShortcodeHelper::shortcode2array( $content, 1 ),
-
-								'heading_tag'	=> $meta['heading_tag'],
-								'heading_class'	=> $meta['heading_class']
-
-						), $atts, $this->config['shortcode'] );
-
-				extract( $atts );
-				
-				$output  	= "";
-			    $class = "";
-			    
-			    
-				$skipSecond = false;
-				avia_sc_slider_accordion::$slide_count++;
-				
-				$params['class'] = "avia-accordion-slider-wrap main_color avia-shadow {$av_display_classes} {$meta['el_class']} {$class} ";
-				$params['open_structure'] = false;
-
-				$params['custom_markup'] = $atts['custom_markup'] = $meta['custom_markup'];
-				
-				//we dont need a closing structure if the element is the first one or if a previous fullwidth element was displayed before
-				if($meta['index'] == 0) $params['close'] = false;
-				if(!empty($meta['siblings']['prev']['tag']) && in_array($meta['siblings']['prev']['tag'], AviaBuilder::$full_el_no_section )) $params['close'] = false;
-				
-				if($meta['index'] > 0) $params['class'] .= " slider-not-first";
-				
-				$params['id'] = AviaHelper::save_string( $meta['custom_id_val'], '-', 'accordion_slider_' . avia_sc_slider_accordion::$slide_count );
-				$atts['el_id'] = ! empty( $meta['custom_el_id'] ) ? $meta['custom_el_id'] : ' id="accordion_slider_' . avia_sc_slider_accordion::$slide_count . '" ';
-				$atts['class'] = $meta['custom_class'];
-				if( ShortcodeHelper::is_top_level() ) 
-				{
-					$atts['el_id'] = '';
-					$atts['class'] = '';
-				}
-				
-				$slider  = new aviaccordion( $atts );
-				$slide_html = $slider->html();
-				
-				
-				//if the element is nested within a section or a column dont create the section shortcode around it
-				if( ! ShortcodeHelper::is_top_level() ) 
-				{
-					return $slide_html;
-				}
-				
-				$output .=  avia_new_section( $params );
-				$output .= 	$slide_html;
-				$output .= "</div>"; //close section
-				
-				
-				//if the next tag is a section dont create a new section from this shortcode
-				if(!empty($meta['siblings']['next']['tag']) && in_array($meta['siblings']['next']['tag'],  AviaBuilder::$full_el ))
-				{
-				    $skipSecond = true;
-				}
-
-				//if there is no next element dont create a new section.
-				if(empty($meta['siblings']['next']['tag']))
-				{
-				    $skipSecond = true;
-				}
-				
-				if( empty( $skipSecond ) ) 
-				{
-					$output .= avia_new_section(array('close'=>false, 'id' => "after_full_slider_".avia_sc_slider_full::$slide_count));
-				}
-				
-				return $output;
-
+				$params['args']['link_target'] = $params['args']['linktarget'];
 			}
+			
+			$img_template 		= $this->update_template( 'img_fakeArg', '{{img_fakeArg}}' );
+			$template 			= $this->update_template( 'title', '{{title}}' );
+			$content 			= $this->update_template( 'content', '{{content}}' );
+			$thumbnail = isset( $params['args']['id'] ) ? wp_get_attachment_image( $params['args']['id'] ) : '';
+
+
+			$params['innerHtml']  = '';
+			$params['innerHtml'] .=	"<div class='avia_title_container'>";
+			$params['innerHtml'] .=		"<span class='avia_slideshow_image' {$img_template} >{$thumbnail}</span>";
+			$params['innerHtml'] .=		"<div class='avia_slideshow_content'>";
+			$params['innerHtml'] .=			"<h4 class='avia_title_container_inner' {$template} >{$params['args']['title']}</h4>";
+			$params['innerHtml'] .=			"<p class='avia_content_container' {$content}>" . stripslashes($params['content']) . '</p>';
+			$params['innerHtml'] .=		'</div>';
+			$params['innerHtml'] .= '</div>';
+
+			return $params;
+		}
+			
+		/**
+		 * Frontend Shortcode Handler
+		 *
+		 * @param array $atts array of attributes
+		 * @param string $content text within enclosing form of shortcode element 
+		 * @param string $shortcodename the shortcode found, when == callback name
+		 * @return string $output returns the modified html string 
+		 */
+		function shortcode_handler( $atts, $content = '', $shortcodename = '', $meta = '' )
+		{
+			extract( AviaHelper::av_mobile_sizes( $atts ) ); //return $av_font_classes, $av_title_font_classes and $av_display_classes 
+
+			$meta = aviaShortcodeTemplate::set_frontend_developer_heading_tag( $atts, $meta );
+
+			$atts = shortcode_atts( array(
+							'slide_type'			=> 'image-based',
+							'link'					=> '',
+							'wc_prod_visible'		=> '',
+							'prod_order_by'			=> '',
+							'prod_order'			=> '',
+							'date_filter'			=> '',	
+							'date_filter_start'		=> '',
+							'date_filter_end'		=> '',
+							'date_filter_format'	=> 'yy/mm/dd',		//	'yy/mm/dd' | 'dd-mm-yy'	| yyyymmdd
+							'size'					=> '',
+							'items'					=> '',
+							'autoplay'				=> 'false',
+							'title'					=> 'active',
+							'excerpt'				=> '',
+							'interval'				=> 5,
+							'offset'				=> 0,
+							'custom_title_size'		=> '',
+							'custom_excerpt_size'	=> '',
+							'accordion_align'		=> '',
+
+							'av-desktop-hide'	=> '',
+							'av-medium-hide'	=> '',
+							'av-small-hide'		=> '',
+							'av-mini-hide'		=> '',
+
+							'av-medium-font-size-title'	=> '',
+							'av-small-font-size-title'	=> '',
+							'av-mini-font-size-title'	=> '',
+
+							'av-medium-font-size'	=> '',
+							'av-small-font-size'	=> '',
+							'av-mini-font-size'		=> '',
+
+							'handle'		=> $shortcodename,
+							'content'		=> ShortcodeHelper::shortcode2array( $content, 1 ),
+
+							'heading_tag'	=> $meta['heading_tag'],
+							'heading_class'	=> $meta['heading_class']
+
+					), $atts, $this->config['shortcode'] );
+
+			extract( $atts );
+				
+			$output  	= '';
+			$class = '';
+
+
+			$skipSecond = false;
+			avia_sc_slider_accordion::$slide_count++;
+
+			$params['class'] = "avia-accordion-slider-wrap main_color avia-shadow {$av_display_classes} {$meta['el_class']} {$class} ";
+			$params['open_structure'] = false;
+
+			$params['custom_markup'] = $atts['custom_markup'] = $meta['custom_markup'];
+
+			//we dont need a closing structure if the element is the first one or if a previous fullwidth element was displayed before
+			if($meta['index'] == 0) $params['close'] = false;
+			if(!empty($meta['siblings']['prev']['tag']) && in_array($meta['siblings']['prev']['tag'], AviaBuilder::$full_el_no_section )) $params['close'] = false;
+
+			if($meta['index'] > 0) $params['class'] .= ' slider-not-first';
+
+			$params['id'] = AviaHelper::save_string( $meta['custom_id_val'], '-', 'accordion_slider_' . avia_sc_slider_accordion::$slide_count );
+			$atts['el_id'] = ! empty( $meta['custom_el_id'] ) ? $meta['custom_el_id'] : ' id="accordion_slider_' . avia_sc_slider_accordion::$slide_count . '" ';
+			$atts['class'] = $meta['custom_class'];
+			if( ShortcodeHelper::is_top_level() ) 
+			{
+				$atts['el_id'] = '';
+				$atts['class'] = '';
+			}
+
+			$slider  = new aviaccordion( $atts );
+			$slide_html = $slider->html();
+
+
+			//if the element is nested within a section or a column dont create the section shortcode around it
+			if( ! ShortcodeHelper::is_top_level() ) 
+			{
+				return $slide_html;
+			}
+
+			$output .=  avia_new_section( $params );
+			$output .= 	$slide_html;
+			$output .= '</div>'; //close section
+
+
+			//if the next tag is a section dont create a new section from this shortcode
+			if(!empty($meta['siblings']['next']['tag']) && in_array($meta['siblings']['next']['tag'],  AviaBuilder::$full_el ))
+			{
+				$skipSecond = true;
+			}
+
+			//if there is no next element dont create a new section.
+			if(empty($meta['siblings']['next']['tag']))
+			{
+				$skipSecond = true;
+			}
+
+			if( empty( $skipSecond ) ) 
+			{
+				$output .= avia_new_section(array('close'=>false, 'id' => 'after_full_slider_'.avia_sc_slider_full::$slide_count));
+			}
+
+			return $output;
+
+		}
 			
 	}
 }
@@ -664,7 +971,7 @@ if ( ! class_exists( 'aviaccordion' ) )
 		
 		function get_slides()
 		{	
-			if($this->config['slide_type'] == "image-based")
+			if($this->config['slide_type'] == 'image-based')
 			{
 				$this->get_image_based_slides();
 			}
@@ -678,9 +985,9 @@ if ( ! class_exists( 'aviaccordion' ) )
 				foreach($this->slides as $key => $slide)
 				{
 					$this->slides[$key]->av_attachment 	= wp_get_attachment_image( get_post_thumbnail_id($slide->ID) , $this->config['size'], false, array('class' => 'aviaccordion-image') );
-					$this->slides[$key]->av_permalink	= get_post_meta( $slide->ID ,'_portfolio_custom_link', true ) != "" ? get_post_meta( $slide->ID ,'_portfolio_custom_link_url', true ) : get_permalink( $slide->ID );
-					$this->slides[$key]->av_target		= "";
-					$this->slides[$key]->post_excerpt	= !empty($slide->post_excerpt) ? $slide->post_excerpt : avia_backend_truncate($slide->post_content, apply_filters( 'avf_aviaccordion_excerpt_length' , 120) , apply_filters( 'avf_aviaccordion_excerpt_delimiter' , " "), "…", true, '');
+					$this->slides[$key]->av_permalink	= get_post_meta( $slide->ID ,'_portfolio_custom_link', true ) != '' ? get_post_meta( $slide->ID ,'_portfolio_custom_link_url', true ) : get_permalink( $slide->ID );
+					$this->slides[$key]->av_target		= '';
+					$this->slides[$key]->post_excerpt	= !empty($slide->post_excerpt) ? $slide->post_excerpt : avia_backend_truncate( $slide->post_content, apply_filters( 'avf_aviaccordion_excerpt_length', 120 ), apply_filters( 'avf_aviaccordion_excerpt_delimiter', ' ' ), '…', true, '' );
 					$this->slides[$key]->heading_tag	= $dev_tags['heading_tag'];
 					$this->slides[$key]->heading_class	= $dev_tags['heading_class'];
 				}
@@ -689,21 +996,29 @@ if ( ! class_exists( 'aviaccordion' ) )
 		
 		function get_image_based_slides()
 		{
-			foreach($this->config['content'] as $key => $slide)
+			foreach( $this->config['content'] as $key => $slide )
 			{
 				if( ! isset( $slide['attr']['link'] ) ) 
 				{
-					$slide['attr']['link'] = "lightbox";
+					$slide['attr']['link'] = 'lightbox';
+				}
+				
+				/**
+				 * Fix a bug in 4.7 and 4.7.1 renaming option id (no longer backwards comp.) - can be removed in a future version again
+				 */
+				if( isset( $slide['attr']['linktarget'] ) )
+				{
+					$slide['attr']['link_target'] = $slide['attr']['linktarget'];
 				}
 				
 				$dev_tags = aviaShortcodeTemplate::set_frontend_developer_heading_tag( $slide['attr'] );
 				
 				$this->slides[$key] = new stdClass();
-				$this->slides[$key]->post_title		= isset($slide['attr']['title']) ? $slide['attr']['title'] : "";
+				$this->slides[$key]->post_title		= isset( $slide['attr']['title'] ) ? $slide['attr']['title'] : '';
 				$this->slides[$key]->post_excerpt	= $slide['content'];
-				$this->slides[$key]->av_attachment	= wp_get_attachment_image( $slide['attr']['id'] , $this->config['size'] , false, array('class' => 'aviaccordion-image'));
-				$this->slides[$key]->av_permalink	= isset($slide['attr']['link']) ? AviaHelper::get_url($slide['attr']['link'], $slide['attr']['id']) : "";
-				$this->slides[$key]->av_target		= empty($slide['attr']['link_target']) ? "" : "target='".$slide['attr']['link_target']."'" ;
+				$this->slides[$key]->av_attachment	= wp_get_attachment_image( $slide['attr']['id'], $this->config['size'], false, array( 'class' => 'aviaccordion-image' ) );
+				$this->slides[$key]->av_permalink	= isset( $slide['attr']['link'] ) ? AviaHelper::get_url($slide['attr']['link'], $slide['attr']['id']) : '';
+				$this->slides[$key]->av_target		= empty( $slide['attr']['link_target'] ) ? '' : "target='{$slide['attr']['link_target']}'" ;
 				$this->slides[$key]->heading_tag	= $dev_tags['heading_tag'];
 				$this->slides[$key]->heading_class	= $dev_tags['heading_class'];
 			}
@@ -712,12 +1027,12 @@ if ( ! class_exists( 'aviaccordion' ) )
 		
 		function extract_terms()
 		{
-			if(isset($this->config['link']))
+			if( isset( $this->config['link'] ) )
 			{
-				$this->config['link'] = explode(',', $this->config['link'], 2 );
+				$this->config['link'] = explode( ',', $this->config['link'], 2 );
 				$this->config['taxonomy'] = $this->config['link'][0];
 
-				if(isset($this->config['link'][1]))
+				if( isset( $this->config['link'][1] ) )
 				{
 					$this->config['categories'] = $this->config['link'][1];
 				}
@@ -728,27 +1043,33 @@ if ( ! class_exists( 'aviaccordion' ) )
 			}
 		}
 		
-		function query_entries($params = array(), $return = false)
+		function query_entries( $params = array(), $return = false )
 		{
 			global $avia_config;
 
-			if(empty($params)) $params = $this->config;
+			if( empty( $params ) ) 
+			{
+				$params = $this->config;
+			}
 		
-			if(empty($params['custom_query']))
+			if( empty( $params['custom_query'] ) )
             {
 				$query = array();
 				
-				if(!empty($params['categories']))
+				if( ! empty( $params['categories'] ) )
 				{
 					//get the portfolio categories
-					$terms 	= explode(',', $params['categories']);
+					$terms 	= explode( ',', $params['categories'] );
 				}
 
 				$page = get_query_var( 'paged' ) ? get_query_var( 'paged' ) : get_query_var( 'page' );
-				if(!$page || $params['paginate'] == 'no') $page = 1;
+				if( ! $page || $params['paginate'] == 'no' ) 
+				{
+					$page = 1;
+				}
 
 				//if we find no terms for the taxonomy fetch all taxonomy terms
-				if(empty($terms[0]) || is_null($terms[0]) || $terms[0] === "null")
+				if(empty($terms[0]) || is_null($terms[0]) || $terms[0] === 'null')
 				{
 					$term_args = array( 
 								'taxonomy'		=> $params['taxonomy'],
@@ -758,7 +1079,7 @@ if ( ! class_exists( 'aviaccordion' ) )
 					 * To display private posts you need to set 'hide_empty' to false, 
 					 * otherwise a category with ONLY private posts will not be returned !!
 					 * 
-					 * You also need to add post_status "private" to the query params with filter avf_accordion_entries_query.
+					 * You also need to add post_status 'private' to the query params with filter avf_accordion_entries_query.
 					 * 
 					 * @since 4.4.2
 					 * @added_by Günter
@@ -777,14 +1098,24 @@ if ( ! class_exists( 'aviaccordion' ) )
 					}
 				}
 				
-				if($params['offset'] == 'no_duplicates')
+				if( $params['offset'] == 'no_duplicates' )
                 {
                     $params['offset'] = 0;
-                    if(empty($params['ignore_duplicate_rule'])) $no_duplicates = true;
+                    if( empty( $params['ignore_duplicate_rule'] ) ) 
+					{
+						$no_duplicates = true;
+					}
                 }
 							
-				if(empty($params['post_type'])) $params['post_type'] = get_post_types();
-				if(is_string($params['post_type'])) $params['post_type'] = explode(',', $params['post_type']);
+				if( empty( $params['post_type'] ) ) 
+				{
+					$params['post_type'] = get_post_types();
+				}
+				
+				if( is_string( $params['post_type'] ) ) 
+				{
+					$params['post_type'] = explode( ',', $params['post_type'] );
+				}
 									
 				$orderby = 'date';
 				$order = 'DESC';
@@ -858,14 +1189,14 @@ if ( ! class_exists( 'aviaccordion' ) )
 			 * @param array $params
 			 * @return array
 			 */
-			$query   = apply_filters( 'avf_accordion_entries_query', $query, $params );
+			$query = apply_filters( 'avf_accordion_entries_query', $query, $params );
 			
 			$result = new WP_Query( $query );
 			$entries = $result->posts;
 			
-			if(!empty($entries) && empty($params['ignore_duplicate_rule']))
+			if( ( $result->post_count > 0 ) && empty( $params['ignore_duplicate_rule'] ) )
 			{
-				foreach($entries as $entry)
+				foreach( $entries as $entry )
 	            {
 					 $avia_config['posts_on_current_page'][] = $entry->ID;
 	            }
@@ -907,7 +1238,7 @@ if ( ! class_exists( 'aviaccordion' ) )
 			}
 			
 			$left 	  	   = 100 / $slideCount;
-			$overlay_class = "aviaccordion-title-".$this->config['title'];
+			$overlay_class = 'aviaccordion-title-' . $this->config['title'];
 			$accordion_align = $this->config['accordion_align'];
 			
 			
@@ -923,7 +1254,7 @@ if ( ! class_exists( 'aviaccordion' ) )
 			
 				$counter  = $key + 1;
 				$left_pos = $left * $key;
-				$slide_id = isset($slide->ID) ? $slide->ID : "";
+				$slide_id = isset($slide->ID) ? $slide->ID : '';
 				
 				$data  = "data-av-left='{$left_pos}'";
 				$style = "style='left:{$left_pos}%'";
@@ -935,14 +1266,14 @@ if ( ! class_exists( 'aviaccordion' ) )
 				$output .= "<div class='aviaccordion-preview  {$accordion_align}' style='width:".(ceil($left) +0.1)."%'>";
 				
 			
-				if($this->config['title'] !== "inactive" && (!empty($slide->post_title) || !empty($slide->post_excerpt)))
+				if($this->config['title'] !== 'inactive' && (!empty($slide->post_title) || !empty($slide->post_excerpt)))
 				{
 					$markup_title = avia_markup_helper(array('context' => 'entry_title','echo'=>false, 'id'=>$slide_id, 'custom_markup'=>$this->config['custom_markup']));
 					$markup_content = avia_markup_helper(array('context' => 'entry_content','echo'=>false, 'id'=>$slide_id, 'custom_markup'=>$this->config['custom_markup']));
 					
 					
-					$title_style = !empty( $this->config['custom_title_size'] ) ? "style='font-size:".$this->config['custom_title_size']."px'" : "";
-					$excerpt_style = !empty( $this->config['custom_excerpt_size'] ) ? "style='font-size:".$this->config['custom_excerpt_size']."px'" : "";
+					$title_style = !empty( $this->config['custom_title_size'] ) ? "style='font-size:".$this->config['custom_title_size']."px'" : '';
+					$excerpt_style = !empty( $this->config['custom_excerpt_size'] ) ? "style='font-size:".$this->config['custom_excerpt_size']."px'" : '';
 					
 					$default_heading = ! empty( $slide->heading_tag ) ? $slide->heading_tag :'h3';
 					$args = array(
@@ -962,50 +1293,25 @@ if ( ! class_exists( 'aviaccordion' ) )
 					$css = ! empty( $args['extra_class'] ) ? $args['extra_class'] :$slide->heading_class;
 
 					$output .= "<div class='aviaccordion-preview-title-pos'><div class='aviaccordion-preview-title-wrap'><div class='aviaccordion-preview-title'>";
-					$output .= !empty($slide->post_title) ? "<{$heading} class='aviaccordion-title {$css} {$av_title_font_classes}' {$markup_title} {$title_style}>{$slide->post_title}</{$heading}>" : "";
-					$output .= !empty($slide->post_excerpt) && !empty($this->config['excerpt']) ? "<div class='aviaccordion-excerpt {$av_font_classes}' {$excerpt_style} {$markup_content}>".wpautop($slide->post_excerpt)."</div>" : "";
-					$output .= "</div></div></div>";
+					$output .= !empty($slide->post_title) ? "<{$heading} class='aviaccordion-title {$css} {$av_title_font_classes}' {$markup_title} {$title_style}>{$slide->post_title}</{$heading}>" : '';
+					$output .= !empty($slide->post_excerpt) && !empty($this->config['excerpt']) ? "<div class='aviaccordion-excerpt {$av_font_classes}' {$excerpt_style} {$markup_content}>".wpautop($slide->post_excerpt)."</div>" : '';
+					$output .= '</div></div></div>';
 				}
-				$output .= "</div>";
+				$output .= '</div>';
 				$output .= $slide->av_attachment;
-				$output .= "</a>";
-				$output .= "</li>";
+				$output .= '</a>';
+				$output .= '</li>';
 			}
 			
 			
-			$output .= 		"</ul>";
+			$output .= 		'</ul>';
 			$output .= 		"<div class='aviaccordion-spacer' style='padding-bottom:".$this->config['default-height']."%'></div>";
-			$output .= "</div>";
+			$output .= '</div>';
 			
 			return $output;
 		}
 	}
 	
-	
-	
-	
-	
-	
-	
-	
-	
+
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

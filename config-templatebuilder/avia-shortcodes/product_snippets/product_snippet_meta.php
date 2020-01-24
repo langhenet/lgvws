@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {  exit;  }    // Exit if accessed directly
 
 if( ! class_exists( 'woocommerce' ) )
 {
-	add_shortcode('avia_sc_product_meta', 'avia_please_install_woo');
+	add_shortcode( 'avia_sc_product_meta', 'avia_please_install_woo' );
 	return;
 }
 
@@ -22,18 +22,18 @@ if ( ! class_exists( 'avia_sc_product_meta' ) )
 		 */
 		function shortcode_insert_button()
 		{
-			$this->config['self_closing']	=	'yes';
+			$this->config['self_closing']	= 'yes';
 			
-			$this->config['name']		= __('Product Meta Info', 'avia_framework' );
-			$this->config['tab']		= __('Plugin Additions', 'avia_framework' );
-			$this->config['icon']		= AviaBuilder::$path['imagesURL']."sc-contentslider.png";
+			$this->config['name']		= __( 'Product Meta Info', 'avia_framework' );
+			$this->config['tab']		= __( 'Plugin Additions', 'avia_framework' );
+			$this->config['icon']		= AviaBuilder::$path['imagesURL'] . 'sc-contentslider.png';
 			$this->config['order']		= 9;
 			$this->config['target']		= 'avia-target-insert';
 			$this->config['shortcode'] 	= 'av_product_meta';
-			$this->config['tooltip'] 	= __('Display the product meta for the current product', 'avia_framework' );
+			$this->config['tooltip'] 	= __( 'Display the product meta for the current product', 'avia_framework' );
 			$this->config['drag-level'] = 3;
-			$this->config['tinyMCE'] 	= array('disable' => "true");
-			$this->config['posttype'] 	= array('product',__('This element can only be used on single product pages','avia_framework'));
+			$this->config['tinyMCE'] 	= array( 'disable' => 'true' );
+			$this->config['posttype'] 	= array( 'product', __( 'This element can only be used on single product pages', 'avia_framework' ) );
 		}
 
 
@@ -46,14 +46,13 @@ if ( ! class_exists( 'avia_sc_product_meta' ) )
 		 * @param array $params this array holds the default values for $content and $args.
 		 * @return $params the return array usually holds an innerHtml key that holds item specific markup.
 		 */
-		function editor_element($params)
+		function editor_element( $params )
 		{
-			$params['innerHtml'] = "<img src='".$this->config['icon']."' title='".$this->config['name']."' />";
-			$params['innerHtml'].= "<div class='avia-element-label'>".$this->config['name']."</div>";
+			$params = parent::editor_element( $params );
 			
-			$params['innerHtml'].= "<div class='avia-flex-element'>"; 
-			$params['innerHtml'].= 		__( 'Display the product meta info such as categories, tags and sku.', 'avia_framework' );
-			$params['innerHtml'].= "</div>";
+			$params['innerHtml'] .= "<div class='avia-flex-element'>"; 
+			$params['innerHtml'] .= 		__( 'Display the product meta info such as categories, tags and sku.', 'avia_framework' );
+			$params['innerHtml'] .= '</div>';
 			
 			return $params;
 		}
@@ -68,9 +67,9 @@ if ( ! class_exists( 'avia_sc_product_meta' ) )
 		 * @param string $shortcodename the shortcode found, when == callback name
 		 * @return string $output returns the modified html string
 		 */
-		function shortcode_handler( $atts, $content = "", $shortcodename = "", $meta = "" )
+		function shortcode_handler( $atts, $content = '', $shortcodename = '', $meta = '' )
 		{
-			$output = "";
+			$output = '';
 			if( ! isset( $meta['el_class'] ) )
 			{
 				$meta['el_class'] = '';
@@ -83,22 +82,23 @@ if ( ! class_exists( 'avia_sc_product_meta' ) )
 				return '';
 			}
 			
-			$output .= "<div class='product_meta ".$meta['el_class']."'>";
+			$output .= "<div class='product_meta {$meta['el_class']}'>";
 
-				ob_start();
-				if ( wc_product_sku_enabled() && ( $product->get_sku() || $product->is_type( 'variable' ) ) ) : 
+			ob_start();
+				
+				if ( wc_product_sku_enabled() && ( $product->get_sku() || $product->is_type( 'variable' ) ) )
+				{
+					$sku = $product->get_sku() ? $product->get_sku() : __( 'N/A', 'avia_framework' );
+					$output .= '<span class="sku_wrapper">' . __( 'SKU:', 'avia_framework' ) . '<span class="sku"> ' . $sku . '</span></span>';
+				}
+				
+			$output .= ob_get_clean();
 
-					$sku = $product->get_sku() ? $product->get_sku() : __( 'N/A', 'woocommerce' );
-					$output .= '<span class="sku_wrapper">'. __( 'SKU:', 'woocommerce' ) .'<span class="sku"> '.  $sku.'</span></span>';
+			$output .=wc_get_product_category_list( $product->get_id(), ', ', '<span class="posted_in">' . _n( 'Category:', 'Categories:', count( $product->get_category_ids() ), 'woocommerce' ) . ' ', '</span>' );
 
-				endif;
-				$output .= ob_get_clean();
+			$output .= wc_get_product_tag_list( $product->get_id(), ', ', '<span class="tagged_as">' . _n( 'Tag:', 'Tags:', count( $product->get_tag_ids() ), 'woocommerce' ) . ' ', '</span>' );
 
-				$output .= wc_get_product_category_list( $product->get_id(), ', ', '<span class="posted_in">' . _n( 'Category:', 'Categories:', count( $product->get_category_ids() ), 'woocommerce' ) . ' ', '</span>' );
-
-				$output .= wc_get_product_tag_list( $product->get_id(), ', ', '<span class="tagged_as">' . _n( 'Tag:', 'Tags:', count( $product->get_tag_ids() ), 'woocommerce' ) . ' ', '</span>' );
-
-			$output .= "</div>";
+			$output .= '</div>';
 			
 			return $output;
 		}

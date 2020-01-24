@@ -122,8 +122,7 @@
    				}
    				
    				output += '</div></div>';
-   			
-   			
+
    			//set specific modal class
    			if(this.options.modal_class) 
    			{
@@ -290,7 +289,7 @@
    		
    		execute_callback: function()
    		{	
-   			var value_array 	= this.get_final_values();
+   			var value_array 	= this.get_final_values();		
    			var close_allowed 	= this.options['on_save'].call(this.options.scope, value_array, this.options.save_param);
    			
    			if(close_allowed !== false)
@@ -609,6 +608,184 @@
 				
 			});
 	};
+	
+
+	$.AviaModal.register_callback.modal_load_toggles = function()
+	{	
+		var scope			= this.modal,
+			tabcontainer	= scope.find('.avia-modal-toggle-container').addClass('avia-modal-toggle-ready'),
+			active 			= "active-modal-toggles",
+			svg_arrow		= '<svg class="avia-modal-toggle-arrow" width="24px" height="24px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true" focusable="false"><g><path fill="none" d="M0,0h24v24H0V0z"></path></g><g><path d="M7.41,8.59L12,13.17l4.59-4.58L18,10l-6,6l-6-6L7.41,8.59z"></path></g></svg>';
+			
+			tabcontainer.each(function(i){
+				
+				var current_container 	= $(this),
+					all_closed	 		= current_container.data('toggles-closed'),
+					tabs				= current_container.find('.avia-modal-toggle-container-inner'),
+					initial_is_open		= false;
+				
+				all_closed = 'string' == typeof( all_closed ) &&  $.inArray( all_closed, ['yes', 'no'] ) >= 0 ? all_closed : 'no';
+				if( all_closed == 'yes' )
+				{
+					initial_is_open = true;
+				}
+				
+				tabs.each(function(i)
+				{
+					var current 	= $(this),
+						tab_title 	= current.data('toggle-name'),
+						tab_desc 	= current.data('toggle-desc'),
+						tab_content = current.find('.avia-form-element-container').not( '.avia-hidden' ),
+						title_link  = $("<a class='avia-modal-toggle-title' href='#'>"+svg_arrow+tab_title+"<span>"+tab_desc+"</span></a>").insertBefore(current),
+						modal		= current.closest( '.avia-modal' );
+					
+					
+					if( ! initial_is_open && tab_content.length > 0 )
+					{
+						tabs.css({display:"none"});
+						title_link.addClass( active );
+						current.css({display:"block"});
+						initial_is_open = true;
+					}
+						
+					title_link.on( 'click', function(e)
+					{
+						var clicked = $(this),
+							no_show = clicked.hasClass(active) ? true :false;
+
+						//hide prev
+						current_container.find('a').removeClass(active);
+						tabs.css({display:"none"});
+
+						if(!no_show){
+							//show current
+							clicked.addClass(active);
+							current.css({display:"block"});
+						}
+
+						//prevent default
+						return false;
+					});	
+					
+					modal.on( 'change', function( e )
+					{	
+							var is_visible = true;
+							var visibles = current.find( '.avia-form-element-container' ).not( '.avia-hidden' );
+							var wrap = current.closest( '.avia-modal-toggle-visibility-wrap' );
+
+							//	check if element is hidden by a highest parent element
+							visibles.each(function(i)
+							{
+								var cur = $(this);
+								var parent = cur.parent();
+								while( ! parent.hasClass( 'avia-modal-toggle-container-inner' ) )
+								{
+									if( parent.hasClass( 'avia-form-element-container' ) )
+									{
+										is_visible = ! parent.hasClass( 'avia-hidden' );
+									}
+
+									parent = parent.parent();
+								}
+
+								if( is_visible )
+								{
+									return false;
+								}
+							});
+
+							if( is_visible && visibles.length == 0 )
+							{
+								is_visible = false;
+							}
+
+							if( ! is_visible )
+							{
+								wrap.addClass( 'avia-hidden' );
+							}
+							else
+							{
+								wrap.removeClass( 'avia-hidden' );
+							}
+						});
+						
+					setTimeout( function(){ modal.trigger( 'change' ); }, 300 );
+					
+				});
+				
+				
+			});
+			
+	};
+	
+	
+	$.AviaModal.register_callback.modal_load_iconswitcher = function()
+	{	
+		var scope			= this.modal,
+			tabcontainer	= scope.find('.avia-modal-iconswitcher-container').addClass('avia-modal-switcher-ready'),
+			active 			= "active-modal-icon-switcher";
+			
+
+			tabcontainer.each(function(i){
+				
+				var current_container 	= $(this),
+					title_container		= null,
+					tabs				= current_container.find('.avia-modal-iconswitcher-container-inner'),
+					titles				= $('<div class="avia-modal-iconswitcher-titles"></div>'),
+					desc				= current_container.find('.avia-iconswitcher-name-description');
+					if( desc.length == 0 )
+					{
+						title_container = titles.prependTo(current_container);
+					}
+					else
+					{
+						title_container = titles.insertAfter( desc );
+					}
+				
+				
+				tabs.each(function(i)
+				{
+					var current 	= $(this),
+						tab_title 	= current.data('switcher-name'),
+						tab_icon 	= current.data('switcher-icon'),
+						title_link  = $("<a class='avia-modal-iconswitcher-title' href='#'><span><img src='"+tab_icon+"' /></span><strong>"+tab_title+"</strong></a>").appendTo(title_container);
+						
+						if(i === 0)
+						{
+							tabs.css({display:"none"});
+							title_link.addClass(active);
+							current.css({display:"block"});
+							
+						}
+						
+						title_link.on('click', function(e)
+						{
+							var clicked = $(this);
+							
+							//hide prev
+							current_container.find('a').removeClass(active);
+							tabs.css({display:"none"});
+							
+							//show current
+							clicked.addClass(active);
+							current.css({display:"block"});
+							
+							
+							//prevent default
+							return false;
+						});	
+					
+				});
+				
+				
+			});
+			
+			
+			
+			
+	};
+	
+	
 	
 	
 	$.AviaModal.register_callback.modal_load_mailchimp = function()

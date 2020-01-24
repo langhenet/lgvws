@@ -107,7 +107,7 @@ if( ! class_exists( 'Avia_Gutenberg' ) )
 		/**
 		 * Flag if WP classic editor (WP 5.0) can replace the block editor
 		 * Based on theme option enable_wp_classic_editor
-		 * Defaults to no-replace.
+		 * Defaults to disable.
 		 * 
 		 * @since 4.5.2
 		 * @var string			'enable' | 'disable'
@@ -250,6 +250,8 @@ if( ! class_exists( 'Avia_Gutenberg' ) )
 				add_filter( 'use_block_editor_for_post', array( $this, 'handler_wp_use_block_editor_for_post'), 9999, 2 );
 				add_filter( 'use_block_editor_for_post_type', array( $this, 'handler_wp_use_block_editor_for_post_type'), 9999, 2 );
 			}
+			
+			add_action( 'wp_enqueue_scripts', array( $this, 'handler_wp_enqueue_scripts' ), 10 );
 		
 		}	
 
@@ -284,6 +286,8 @@ if( ! class_exists( 'Avia_Gutenberg' ) )
 			{
 				$this->fix_wp50_broken_url();
 			}
+			
+			wp_register_script( 'avia_blocks_front_script', $template_url . '/config-gutenberg/js/avia_blocks_front.js', array( 'jquery' ), $vn, true );
 		}
 
 		/**
@@ -329,6 +333,40 @@ if( ! class_exists( 'Avia_Gutenberg' ) )
 			wp_localize_script( 'avia_gutenberg_script', Avia_Gutenberg::AJAX_JS_VAR, $var );
 		}
 		
+		/**
+		 * @since 4.6.4
+		 */
+		public function handler_wp_enqueue_scripts()
+		{
+			if( 'block' == $this->selected_editor() )
+			{
+				wp_enqueue_script( 'avia_blocks_front_script' );
+			}
+		}
+
+		
+		/**
+		 * Returns theme option setting
+		 * 
+		 * @since 4.6.4
+		 * @return string		'classic' | 'block'
+		 */
+		public function selected_editor()
+		{
+			return 'enable' == $this->wp_enable_classic_editor ? 'classic' : 'block';
+		}
+		
+		/**
+		 * Returns theme option setting
+		 * 
+		 * @since 4.6.4
+		 * @return string				'theme_styles' | 'default'
+		 */
+		public function block_editor_theme_support()
+		{
+			return '' == avia_get_option( 'block_editor_theme_support', '' ) ? 'theme_styles' : 'default';
+		}
+
 		/**
 		 * Returns which editor is requested on the current edit page
 		 * (does not return a valid value on update page)
@@ -1311,7 +1349,7 @@ if( ! class_exists( 'Avia_Gutenberg' ) )
 				/**
 				 * Standard WP filter
 				 */
-				$title_placeholder = apply_filters( 'enter_title_here', __( 'Enter title here', 'avia_framework' ), $post );
+				$title_placeholder = apply_filters( 'enter_title_here', __( 'Add title', 'avia_framework' ), $post );
 				
 				$output .=		'<div id="titlewrap">';
 				$output .=			'<label class="screen-reader-text" id="title-prompt-text" for="title">' . $title_placeholder . '</label>';

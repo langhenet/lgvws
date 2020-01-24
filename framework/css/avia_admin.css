@@ -212,6 +212,10 @@ background: transparent;
 cursor: pointer;
 }
 
+.avia_sidebar_content .avia_section_header.hidden{
+	display: none !important;
+}
+
 #avia_options_page .avia_active_nav{
 background-color: #fff;
 color:#111;
@@ -348,6 +352,25 @@ margin-bottom:30px;
 border-top:1px solid #fff;
 }
 
+#avia_options_page .avia_set.avia_tab_container .avia_set{
+width: 94%;
+border: 0px solid #E2EAED;
+margin-left: 0px;
+margin-bottom: 30px;
+border-bottom: 1px solid #E1E1E1;
+}
+
+#wpwrap #avia_options_page .avia_set.avia_tab_container .avia_set .avia_section.av_3columns.av_col_1{
+	padding-left: 0px;
+}
+
+#wpwrap #avia_options_page .avia_set.avia_tab_container .avia_set .avia_section input{
+	padding: 0 13px;
+}
+
+
+
+
 #avia_options_page .avia_sidebar_active .avia_set .avia_set .avia_section{
 width:87%;
 }
@@ -478,7 +501,10 @@ border-left:1px solid #E2EAED;
 
 /*import*/
 
-.avia_file_upload .avia_control{position: relative;}
+.avia_file_upload .avia_control,
+.avia_reset_selected_button .avia_control{
+	position: relative;
+}
 
 div .avia_upload_loading {
 right: 22px;
@@ -511,19 +537,23 @@ right:auto;
 
 
 #wpwrap div .avia_import_parent_button{
-background-color: #3897C2;
+/*background-color: #3897C2;
 border: 1px solid #2078A0;
-text-shadow: 1px -1px 0 #2078A0;
+text-shadow: 1px -1px 0 #2078A0;*/
 }
 
 #wpwrap div .avia_import_parent_button:hover{
-background-color: #53BBEB;
-border: 1px solid #4D9EC3;
+/*background-color: #53BBEB;
+border: 1px solid #4D9EC3;*/
 }
 
 #wpwrap #avia_importexport .avia_button{ width: 200px; text-align: center;}
 #wpwrap #avia_importexport .avia_import_loading{left: 256px;}
 
+#wpwrap #avia_upload .avia_alb_templates_export_button{
+	text-align: center;
+	line-height: 2em;
+}
 
 
 
@@ -1043,6 +1073,7 @@ position: relative;
 z-index: 10;
 opacity: 0;
 cursor: pointer;
+max-width: 100%;
 }
 
 #wpwrap .avia_style_wrap .avia_select_unify{
@@ -1796,11 +1827,22 @@ width:48%;
 margin-bottom:2%;
 }
 
-#wpwrap #wpcontent .avia_tab_container .avia_heading{width: 94%;
+#wpwrap #wpcontent .avia_tab_container .avia_heading{
+	width: 94%;
 padding: 3%;
 border: 1px solid #E1E1E1;
 background: #F8F8F8;
 margin-bottom: 15px;
+
+}
+
+#wpwrap #wpcontent .avia_heading.avia_heading_boxed{
+width: 96%;
+padding: 3%;
+border: 1px solid #E1E1E1;
+background: #F8F8F8;
+margin: 0 auto;
+float: none;	
 }
 
 
@@ -2492,12 +2534,6 @@ min-height: 171px;
 
 
 
-
-
-
-
-
-
 /*3.5 media frame image only*/
 .av-media-frame-image-only .media-frame-menu{display:none;}
 .av-media-frame-image-only .media-frame-content, .av-media-frame-image-only .media-frame-title, .av-media-frame-image-only .media-frame-router, .av-media-frame-image-only .media-frame-toolbar{left:0;}
@@ -2505,8 +2541,9 @@ min-height: 171px;
 .av-media-frame-image-only .media-sidebar .attachment-display-settings > *{display:none;}
 .av-media-frame-image-only .media-sidebar .attachment-display-settings > label:last-child{display:block;}
 
-
-
+/*5.3 media frame image only changed layout*/
+.av-media-frame-image-only.avia-wp-53 .media-frame-menu-heading{display:none;}
+.av-media-frame-image-only.avia-wp-53 .attachment-display-settings > span:last-child{display:block;}
 
 
 /*added with enfold 4.3: plugin check*/
@@ -2594,3 +2631,15 @@ body .wp-block{
 	max-width: 1400px;
 }
 
+
+
+/*enfold 4.6.3*/
+#wpwrap #avia_options_page div .avia_visual_set.avia_boxed_visual_group {
+    padding: 1px;
+    background: #f8f8f8;
+    width: 97%;
+    margin: 15px auto;
+    float: none;
+    overflow: hidden;
+    border: 1px solid #e1e1e1;
+}

@@ -25,7 +25,7 @@
 							<input type="hidden" name="background">
 							<div class="ls-image ls-upload ls-bulk-upload ls-slide-image not-set" data-l10n-set="<?php _e('Click to set', 'LayerSlider') ?>" data-l10n-change="<?php _e('Click to change', 'LayerSlider') ?>" data-help="<?php echo $lsDefaults['slides']['image']['tooltip'] ?>">
 								<div><img src="<?php echo LS_ROOT_URL.'/static/admin/img/blank.gif' ?>" alt=""></div>
-								<a href="#" class="aviary"></a>
+								<a href="#" class="pixie"></a>
 								<a href="#" class="dashicons dashicons-dismiss"></a>
 							</div>
 							<span class="indent">
@@ -56,7 +56,7 @@
 						<input type="hidden" name="thumbnail">
 						<div class="ls-image ls-upload ls-slide-thumbnail not-set" data-l10n-set="<?php _e('Click to set', 'LayerSlider') ?>" data-l10n-change="<?php _e('Click to change', 'LayerSlider') ?>" data-help="<?php echo $lsDefaults['slides']['thumbnail']['tooltip'] ?>">
 							<div><img src="<?php echo LS_ROOT_URL.'/static/admin/img/blank.gif' ?>" alt=""></div>
-							<a href="#" class="aviary"></a>
+							<a href="#" class="pixie"></a>
 							<a href="#" class="dashicons dashicons-dismiss"></a>
 						</div>
 						<span class="indent">
@@ -272,15 +272,16 @@
  -->		</tbody>
 	</table>
 
-	<div id="ls-more-slide-options" class="button">
-		<div>
-			<strong>
-				<?php _e('Show More Options', 'LayerSlider') ?>
-				<small><?php _e('Linking, Ken Burns, Parallax', 'LayerSlider') ?></small>
-			</strong>
-			<strong><?php _e('Show Less Options', 'LayerSlider') ?></strong>
+	<div class="ls-center">
+		<div id="ls-more-slide-options" class="button">
+			<div>
+				<strong>
+					<?php _e('Show More Options', 'LayerSlider') ?>
+					<small><?php _e('Linking, Ken Burns, Parallax', 'LayerSlider') ?></small>
+				</strong>
+				<strong><?php _e('Show Less Options', 'LayerSlider') ?></strong>
+			</div>
 		</div>
-
 	</div>
 
 	<table id="ls-preview-table">
@@ -504,6 +505,25 @@
 					</div>
 				</td>
 				<td class="ls-layers-settings">
+
+					<div id="ls-popout-desc">
+						<table>
+							<tr>
+								<td>
+									<i class="dashicons dashicons-external"></i>
+								</td>
+								<td class="ls-popout-desc-text">
+									<?php _e('Nothing to see here. <br> We popped out. ;)', 'LayerSlider'); ?>
+								</td>
+							</tr>
+							<tr>
+								<td colspan="2">
+									<button class="button"><?php _e('Restore editor', 'LayerSlider') ?></button>
+								</td>
+							</tr>
+						</table>
+					</div>
+
 					<div id="ls-layers-settings-popout" data-km-ui-resize="600,950,1300">
 
 						<div id="ls-layers-settings-popout-handler"
@@ -513,7 +533,7 @@
 							data-km-ui-popover-distance="20"
 							data-km-ui-popover-theme="red">
 							<?php _e('Layer editor', 'LayerSlider') ?>
-							<b id="menu-set-putback">
+							<b id="ls-close-popout-editor">
 								<i class="dashicons dashicons-external"></i>
 								<?php _e('Put back', 'LayerSlider') ?>
 							</b>
@@ -533,10 +553,10 @@
 								<a href="#" class="active"><?php _e('Content', 'LayerSlider') ?></a>
 								<a href="#"><?php _e('Transitions', 'LayerSlider') ?></a>
 								<a href="#"><?php _e('Link & Attributes', 'LayerSlider') ?></a>
-								<a href="#"><?php _e('Styles', 'LayerSlider') ?></a>
-								<b id="menu-set-float">
+								<a href="#" class="ls-layer-style-tab"><?php _e('Styles', 'LayerSlider') ?></a>
+								<b id="ls-open-popout-editor">
 									<i class="dashicons dashicons-external"></i>
-									<?php _e('Pop out editor', 'LayerSlider') ?>
+									<?php _e('Popout editor', 'LayerSlider') ?>
 								</b>
 							</div>
 							<div class="ls-sublayer-pages">

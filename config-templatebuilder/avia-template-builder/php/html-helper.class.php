@@ -17,7 +17,7 @@ if ( ! class_exists( 'AviaHtmlHelper' ) )
 		static $imageCount      = 0; //count all image elements to assign the right attachment id
 		static $cache      		= array(); //cache for entries that are already fetched
 		
-		static function render_metabox($element)
+		static public function render_metabox($element)
 		{
 			//query the metadata of the current post and check if a key is set, if not set the default value to the standard value, otherwise to the key value
 			if(!isset(self::$metaData[$element['current_post']]))
@@ -34,20 +34,25 @@ if ( ! class_exists( 'AviaHtmlHelper' ) )
 		}
 		
 		
-		
-		static function render_multiple_elements($elements, $parent_class = false)
+		/**
+		 * 
+		 * @param array $elements
+		 * @param string $parent_class
+		 * @return string
+		 */
+		static public function render_multiple_elements( $elements, $parent_class = false )
 		{
-			$output = "";
+			$output = '';
 			
-			foreach ($elements as $element)
+			foreach( $elements as $element )
 			{
-				$output .= self::render_element($element, $parent_class);
+				$output .= self::render_element( $element, $parent_class );
 			}
 			
 			return $output;
 		}
 		
-		static function ajax_modify_id($element)
+		static public function ajax_modify_id($element)
 		{
 			// check if its an ajax request. if so prepend a string to ensure that the ids are unique. 
 			// If there are multiple modal windows called prepend the string multiple times
@@ -112,7 +117,8 @@ if ( ! class_exists( 'AviaHtmlHelper' ) )
 			self::$elementValues[$element['id']] = $element['std']; //save the values into a unique array in case we need it for dependencies
 			
 			//create default data und class string and checks the dependencies of an object
-			extract(self::check_dependencies($element));
+			$dependency = self::check_dependencies( $element );
+			extract( $dependency );
 			
 			
 			// check if its an ajax request. if so prepend a string to ensure that the ids are unique. 
@@ -120,11 +126,11 @@ if ( ! class_exists( 'AviaHtmlHelper' ) )
 			$element = self::ajax_modify_id($element);
 			
 			
-			$id_string 		 = empty($element['id']) ? "" : "id='".$element['id']."-form-container'";
-			$class_string 	.= empty($element['container_class']) ? "" : $element['container_class']; 
-			$description_class = empty($element['description_class']) ? "" : $element['description_class']; 
+			$id_string 		 = empty($element['id']) ? '' : "id='".$element['id']."-form-container'";
+			$class_string 	.= empty($element['container_class']) ? '' : $element['container_class']; 
+			$description_class = empty($element['description_class']) ? '' : $element['description_class']; 
 			
-			$target_string = "";
+			$target_string = '';
 			if(!empty($element['target']))
 			{
 				$data['target-element'] = $element['target'][0];
@@ -138,7 +144,7 @@ if ( ! class_exists( 'AviaHtmlHelper' ) )
 
 			if(empty($element['nodescription']) )
 			{
-			$output .= "<div class='avia_clearfix avia-form-element-container ".$class_string." avia-element-".$element['type']."' ".$id_string." ".$data_string." ".$target_string.">";
+				$output .= "<div class='avia_clearfix avia-form-element-container ".$class_string." avia-element-".$element['type']."' ".$id_string." ".$data_string." ".$target_string.">";
 			
 				if( !empty($element['name']) ||!empty($element['desc']))  
 				{
@@ -164,7 +170,7 @@ if ( ! class_exists( 'AviaHtmlHelper' ) )
 				
 				if( method_exists( __CLASS__, $element['type'] ) )
 				{
-					$output .= call_user_func(array('self', $element['type']), $element, $parent_class);
+					$output .= call_user_func( array( 'self', $element['type'] ), $element, $parent_class, $dependency );
 				}
 				
 				if(!empty($element['fetchTMPL']))
@@ -183,7 +189,7 @@ if ( ! class_exists( 'AviaHtmlHelper' ) )
 				//$output .= self::{$element['type']}($element, $parent_class);
 				if( method_exists( __CLASS__, $element['type'] ) )
 				{
-					$output .= call_user_func(array('self', $element['type']), $element, $parent_class);
+					$output .= call_user_func( array('self', $element['type'] ), $element, $parent_class, $dependency );
 				}
 			}
 			
@@ -211,9 +217,9 @@ if ( ! class_exists( 'AviaHtmlHelper' ) )
 		* element will only be displayed if the element with id "content" has exactly the value "Hello World"
 		* 
 		*/
-		static function check_dependencies($element)
+		static public function check_dependencies($element)
 		{	
-			$params = array('data_string' => "", 'class_string' => "");
+			$params = array('data_string' => '', 'class_string' => '');
 		
 			if(!empty($element['required']))
 			{
@@ -280,12 +286,12 @@ if ( ! class_exists( 'AviaHtmlHelper' ) )
          * @return string $output the string returned contains the html code generated within the method
          */
          
-		static function modal_group($element, $parent_class)
+		static public function modal_group($element, $parent_class)
 		{
 			$iterations = count($element['std']);
-			$class = isset($element['class']) ? $element['class'] : "";
+			$class = isset($element['class']) ? $element['class'] : '';
 			
-			$output = "";
+			$output = '';
 			$output .= "<div class='avia-modal-group-wrapper {$class}' >";
 			
 			if(!empty($element['creator'])) $output .= self::render_element($element['creator']);
@@ -307,7 +313,7 @@ if ( ! class_exists( 'AviaHtmlHelper' ) )
 			
 			
 			//since adding the clone event we display only custom labels and not only the "+" symbol
-			//$label_class = isset($element['add_label']) ? "avia-custom-label" : "";
+			//$label_class = isset($element['add_label']) ? "avia-custom-label" : '';
 			$label_class = "avia-custom-label";
 			
 			
@@ -342,9 +348,9 @@ if ( ! class_exists( 'AviaHtmlHelper' ) )
 		 * @param int|false					$i					false, if we need a new empty template to clone if user clicks "Add New"
 		 * @return string
 		 */
-		static function modal_group_sub($element, $parent_class, $i = false)
+		static public function modal_group_sub($element, $parent_class, $i = false)
 		{
-			$output = "";
+			$output = '';
 			
 			$args = array();
 			$content = null;
@@ -389,7 +395,7 @@ if ( ! class_exists( 'AviaHtmlHelper' ) )
 			
 			$defaults = array('class'=>'', 'innerHtml'=>'');
 			$params = array_merge($defaults, $params);
-			$params = $parent_class->editor_sub_element($params);
+			$params = $parent_class->editor_sub_element( $params );
 			extract($params);
 			
 			$data['modal_title'] 		= $element['modal_title'];
@@ -435,36 +441,224 @@ if ( ! class_exists( 'AviaHtmlHelper' ) )
          * @param array $element the array holds data like type, value, id, class, description which are necessary to render the whole option-section
          * @return string $output the string returned contains the html code generated within the method
          */
-		static function heading( $element )
+		static public function heading( $element )
 		{	
 			return;
 		}
 		
 		/**
-         * Tab Container Elements 
-         */
+		 * Returns a single </div> tag
+		 * 
+		 * @since < 4.0
+		 * @param array $element
+		 * @return string
+		 */
+		static public function close_div( $element )
+		{	
+			$output = '</div>';
+			return $output;
+		}
          
-		static function tab_container( $element )
+		/**
+		 * Starts a tab container
+		 * 
+		 * @since < 4.0
+		 * @param array $element
+		 * @return string
+		 */
+		static public function tab_container( $element )
 		{	
 			$output = "<div class='avia-modal-tab-container'>";
 			return $output;
 		}
 		
-		static function tab( $element )
+		/**
+		 * Wrapper for better readability
+		 * 
+		 * @since 4.6.4
+		 * @param array $element
+		 * @return string
+		 */
+		static public function tab_container_close( $element )
+		{
+			return AviaHtmlHelper::close_div( $element );
+		}
+		
+		/**
+		 * Defines a single tab
+		 * 
+		 * @since < 4.0
+		 * @param array $element
+		 * @return string
+		 */
+		static public function tab( $element )
 		{	
-			$output  = "<div class='avia-modal-tab-container-inner' data-tab-name='".$element['name']."'>";
+			$output = '';
+			
+			$output  .= "<div class='avia-modal-tab-container-inner' data-tab-name='{$element['name']}'>";
 			return $output;
 		}
 		
-		static function close_div( $element )
-		{	
-			$output = "</div>";
-			return $output;
+		/**
+		 * Wrapper for better readability
+		 * 
+		 * @since 4.6.4
+		 * @param array $element
+		 * @return string
+		 */
+		static public function tab_close( $element )
+		{
+			return AviaHtmlHelper::close_div( $element );
 		}
 		
 		
+		/**
+		 * Starts a Toggle Container Element
+		 * 
+		 * @since 4.6.4
+		 * @param array $element
+		 * @return string
+		 */
+		static public function toggle_container( $element )
+		{	
+			$all_closed = empty( $element['all_closed'] ) ? 'no' : 'yes';
+			$output = "<div class='avia-modal-toggle-container' data-toggles-closed='{$all_closed}'>";
+			
+			return $output;
+		}
+		
+		/**
+		 * Wrapper for better readability
+		 * 
+		 * @since 4.6.4
+		 * @param array $element
+		 * @return string
+		 */
+		static public function toggle_container_close( $element )
+		{
+			return AviaHtmlHelper::close_div( $element );
+		}
+		
+		/**
+		 * Defines a single toggle element
+		 * 
+		 * @since 4.6.4
+		 * @param array $element
+		 * @return string
+		 */
+		static public function toggle( $element )
+		{	
+			$output = '';
+			
+			$class = ! empty( $element['container_class'] ) ? $element['container_class'] : '';
+			
+			$output  .=	"<div class='avia-modal-toggle-visibility-wrap {$class}'>";
+			$output  .=		"<div class='avia-modal-toggle-container-inner' data-toggle-name='{$element['name']}' data-toggle-desc='{$element['desc']}'>";
+			$output  .=			'<div class="avia-toggle-description avia-name-description av-builder-note av-neutral">';
+			$output  .=				"<strong>{$element['name']}</strong>";
+			$output  .=				"<div>{$element['desc']}</div>";
+			$output  .=			'</div>';
+			
+			return $output;
+		}
+		
+		/**
+		 * Wrapper also for better readability
+		 * 
+		 * @since 4.6.4
+		 * @param array $element
+		 * @return string
+		 */
+		static public function toggle_close( $element )
+		{
+			$output = '';
+			
+			$output .=		AviaHtmlHelper::close_div( $element );
+			$output .=	AviaHtmlHelper::close_div( $element );
+			return $output;
+		}
+		
+		/**
+		 * Switcher Container Element
+		 * 
+		 * @since 4.6.4
+		 * @param array $element
+		 * @param string $parent_class
+		 * @param array $dependency
+		 * @return string
+		 */
+		static public function icon_switcher_container( $element, $parent_class, $dependency )
+		{	
+			$data_string = '';
+			$class_string = '';
+			
+			if( isset( $element['nodescription'] ) && ( false !== $element['nodescription'] ) )
+			{
+				extract( $dependency );
+			}
+			
+			$output = "<div class='avia-modal-iconswitcher-container avia-form-element-container {$class_string}' {$data_string}>";
+			
+			if( empty( $element['name'] ) && empty( $element['desc'] ) )
+			{
+				return $output;
+			}
+			
+			$output .= '<div class="avia-name-description avia-iconswitcher-name-description">';
+			
+			if( ! empty( $element['name'] ) )
+			{
+				$output .= '<strong>' . esc_html( $element['name'] ) . '</strong>';
+			}
+			if( ! empty( $element['desc'] ) )
+			{
+				$output .= '<div>' . esc_html( $element['desc'] ) . '</div>';
+			}
+			
+			$output .= '</div>';
+			
+			return $output;
+		}
+		
+		/**
+		 * Wrapper for better readability
+		 * 
+		 * @since 4.6.4
+		 * @param array $element
+		 * @return string
+		 */
+		static public function icon_switcher_container_close( $element )
+		{
+			return AviaHtmlHelper::close_div( $element );
+		}
 		
 		
+		/**
+		 * 
+		 * 
+		 * @since 4.6.4
+		 * @param array $element
+		 * @return string
+		 */
+		static public function icon_switcher( $element )
+		{	
+			$output = '';
+			$output .= "<div class='avia-modal-iconswitcher-container-inner' data-switcher-name='{$element['name']}' data-switcher-icon='" . AVIA_BASE_URL . "config-templatebuilder/avia-template-builder/images/iconswitcher/{$element['icon']}.png'>";
+			
+			return $output;
+		}
+		
+		/**
+		 * Wrapper for better readability
+		 * 
+		 * @since 4.6.4
+		 * @param array $element
+		 * @return string
+		 */
+		static public function icon_switcher_close( $element )
+		{
+			return AviaHtmlHelper::close_div( $element );
+		}
 		
 		
 		/**
@@ -473,7 +667,7 @@ if ( ! class_exists( 'AviaHtmlHelper' ) )
          * @param array $element the array holds data like type, value, id, class, description which are necessary to render the whole option-section
          * @return string $output the string returned contains the html code generated within the method
          */
-		static function hr( $element )
+		static public function hr( $element )
 		{	
 			$output = "<div class='avia-builder-hr'></div>";
 			return $output;
@@ -485,7 +679,7 @@ if ( ! class_exists( 'AviaHtmlHelper' ) )
          * @param array $element the array holds data like type, value, id, class, description which are necessary to render the whole option-section
          * @return string $output the string returned contains the html code generated within the method
          */
-		static function condition( $element )
+		static public function condition( $element )
 		{	
 			//array('option' => 'header_position', 'compare' => "equal_or_empty", "value"=>"header_top")
 			
@@ -496,7 +690,7 @@ if ( ! class_exists( 'AviaHtmlHelper' ) )
 			else
 			{
 				$key = $element['condition']['element'];
-				$option = isset($element['shortcode_data'][$key]) ? $element['shortcode_data'][$key] : "";
+				$option = isset($element['shortcode_data'][$key]) ? $element['shortcode_data'][$key] : '';
 			}
 			
 			$value  	= $element['condition']['value'];
@@ -507,7 +701,7 @@ if ( ! class_exists( 'AviaHtmlHelper' ) )
 			switch($element['condition']['compare'])
 			{
 				case "equals" : if($option === $value) $result = true; break;
-				case "equal_or_empty" : if($option === $value || $option == "") $result = true; break;
+				case "equal_or_empty" : if($option === $value || $option == '') $result = true; break;
 				case "contains" : if(strpos($option, $value) === false) $result = true; break;
 				case "not" : if($option !== $value) $result = true; break;
 			}
@@ -515,14 +709,14 @@ if ( ! class_exists( 'AviaHtmlHelper' ) )
 			
 			if($result) 
 			{	
-				$class = "av_option_visible"; $overlay = "";
+				$class = "av_option_visible"; $overlay = '';
 			}
 			
 			$output = "<div class='avia-conditional-elements {$class}'><div class='av_conditional_overlay'></div>{$overlay}";
 			return $output;
 		}
 		
-		static function condition_end( $element )
+		static public function condition_end( $element )
 		{	
 			$output = "</div>";
 			return $output;
@@ -536,10 +730,10 @@ if ( ! class_exists( 'AviaHtmlHelper' ) )
          * @param array $element the array holds data like type, value, id, class, description which are necessary to render the whole option-section
          * @return string $output the string returned contains the html code generated within the method
          */
-		static function tiny_mce($element)
+		static public function tiny_mce($element)
 		{
 			//tinymce only allows ids in the range of [a-z] so we need to filter them. 
-			$element['id']  = preg_replace('![^a-zA-Z_]!', "", $element['id']);
+			$element['id']  = preg_replace('![^a-zA-Z_]!', '', $element['id']);
 			
 			
 			/* monitor this: seems only ajax elements need the replacement */
@@ -572,7 +766,7 @@ if ( ! class_exists( 'AviaHtmlHelper' ) )
          * @param array $element the array holds data like type, value, id, class, description which are necessary to render the whole option-section
          * @return string $output the string returned contains the html code generated within the method
          */
-		static function input($element)
+		static public function input($element)
 		{
 			$output = '<input type="text" class="'.$element['class'].'" value="'.nl2br($element['std']).'" id="'.$element['id'].'" name="'.$element['id'].'"/>';
 			return $output;
@@ -586,12 +780,12 @@ if ( ! class_exists( 'AviaHtmlHelper' ) )
          * @param array $element the array holds data like type, value, id, class, description which are necessary to render the whole option-section
          * @return string $output the string returned contains the html code generated within the method
          */
-		static function multi_input($element)
+		static public function multi_input($element)
 		{
-			$output = "";
+			$output = '';
 			$count = 0;
 			$element['std'] = explode(",", $element['std'] );
-			$value = "";
+			$value = '';
 			$checked = count(array_unique($element['std'], SORT_STRING));
 			
 			
@@ -600,9 +794,9 @@ if ( ! class_exists( 'AviaHtmlHelper' ) )
 			{
 				$output .= "<div class='av-multi-input-cell'>";
 				$value   = isset($element['std'][$count]) ? $element['std'][$count] : $value;
-				$disable = ($checked === 1 && $count !== 0 && !empty($element['sync'])) ? 'disabled' : "";
+				$disable = ($checked === 1 && $count !== 0 && !empty($element['sync'])) ? 'disabled' : '';
 				
-				$output .= !empty($label) ? "<div class='av-multi-input-label'>{$label}</div>" : "";
+				$output .= !empty($label) ? "<div class='av-multi-input-label'>{$label}</div>" : '';
 				$output .= '<input '.$disable.' type="text" class="'.$element['class'].'" value="'.nl2br($value).'" id="'.$element['id'].'_'.$multi.'" name="'.$element['id'].'"/>';
 				$output .= "</div>";
 				
@@ -612,7 +806,7 @@ if ( ! class_exists( 'AviaHtmlHelper' ) )
 			
 			if(isset($element['sync']))
 			{
-				$checked = $checked === 1 ? "checked='checked'" : "";
+				$checked = $checked === 1 ? "checked='checked'" : '';
 				$label	 = __('Apply the same value to all?','avia_framework');
 				$output .= "<label class='av-multi-input-label-sync'>";
 				$output .= '<input '.$checked.' type="checkbox" class="'.$element['class'].'_sync" value="true" id="'.$element['id'].'_sync" name="'.$element['id'].'_sync"/>';
@@ -630,7 +824,7 @@ if ( ! class_exists( 'AviaHtmlHelper' ) )
          * @param array $element the array holds data like type, value, id, class, description which are necessary to render the whole option-section
          * @return string $output the string returned contains the html code generated within the method
          */
-		static function hidden( $element )
+		static public function hidden( $element )
 		{			
 			$output  = '<input type="hidden" value="'.$element['std'].'" id="'.$element['id'].'" name="'.$element['id'].'"/>';
 			return $output;
@@ -643,11 +837,11 @@ if ( ! class_exists( 'AviaHtmlHelper' ) )
          * @return string $output the string returned contains the html code generated within the method
          * @todo: fix: checkboxes at metaboxes currently dont work
          */
-  		static function checkbox( $element )
+  		static public function checkbox( $element )
 		{	
 			
-			$checked = "";
-			if( $element['std'] != "" ) { $checked = 'checked = "checked"'; }
+			$checked = '';
+			if( $element['std'] != '' ) { $checked = 'checked = "checked"'; }
 	
 			$output   = '<input '.$checked.' type="checkbox" class="'.$element['class'].'" ';
 			$output  .= 'value="'.$element['id'].'" id="'.$element['id'].'" name="'.$element['id'].'"/>';
@@ -661,7 +855,7 @@ if ( ! class_exists( 'AviaHtmlHelper' ) )
          * @param array $element the array holds data like type, value, id, class, description which are necessary to render the whole option-section
          * @return string $output the string returned contains the html code generated within the method
          */
-		static function textarea( $element )
+		static public function textarea( $element )
 		{	
 			$output  = '<textarea rows="5" cols="30" class="'.$element['class'].'" id="'.$element['id'].'" name="'.$element['id'].'">';
 			$output .= rtrim($element['std']).'</textarea>';
@@ -675,9 +869,9 @@ if ( ! class_exists( 'AviaHtmlHelper' ) )
          * @param array $element the array holds data like type, value, id, class, description which are necessary to render the whole option-section
          * @return string $output the string returned contains the html code generated within the method
          */
-		static function iconfont( $element )
+		static public function iconfont( $element )
 		{	
-			$output = "";
+			$output = '';
 			
 			if(!empty($element['chars']) && is_array($element['chars']))
 			{
@@ -694,7 +888,7 @@ if ( ! class_exists( 'AviaHtmlHelper' ) )
 			$output .= "<div class='avia_icon_select_container avia-attach-element-container'>";
 		
 			$run = 0;
-			$active_font = "";
+			$active_font = '';
 			foreach($chars as $font => $charset)
 			{
 				$run ++;
@@ -712,7 +906,7 @@ if ( ! class_exists( 'AviaHtmlHelper' ) )
 				{	
 					$char = avia_font_manager::try_decode_icon($char);
 					$charcode_prefix 	= "Charcode: \\";
-					$active_char 		= "";
+					$active_char 		= '';
 					
 					if($char == $standard && !empty($std_font) && $std_font == $font)
 					{
@@ -729,7 +923,7 @@ if ( ! class_exists( 'AviaHtmlHelper' ) )
 			
 			//fake character value needed for backend editor
 			$element['id'] = $element['id']."_fakeArg";
-			$element['std'] = empty($standard) ? "" : $standard;
+			$element['std'] = empty($standard) ? '' : $standard;
 			$output .= self::hidden($element);
 			
 			//font value needed for backend and editor
@@ -754,9 +948,9 @@ if ( ! class_exists( 'AviaHtmlHelper' ) )
          * @param array $element the array holds data like type, value, id, class, description which are necessary to render the whole option-section
          * @return string $output the string returned contains the html code generated within the method
          */
-		static function colorpicker($element)
+		static public function colorpicker($element)
 		{
-			$data = "";
+			$data = '';
 			if( !empty( $element['rgba'] )) $data = "data-av-rgba='1'";
 			
 			$output = '<input type="text" class="av-colorpicker '.$element['class'].'" value="'.$element['std'].'" id="'.$element['id'].'" name="'.$element['id'].'" '.$data.' />';
@@ -823,12 +1017,17 @@ if ( ! class_exists( 'AviaHtmlHelper' ) )
 		/**
          * 
          * The linkpicker method renders a linkpicker element that allows you to select a link to a post type or taxonomy type of your choice
-         * @param array $element the array holds data like type, value, id, class, description which are necessary to render the whole option-section
-         * @return string $output the string returned contains the html code generated within the method
+		 * 
+		 * Supported:	
+		 *			'' | 'manually' | 'single' | 'taxonomy' | 'lightbox'
+		 * 
+		 * @since < 4.0
+		 * @param array $element		the array holds data like type, value, id, class, description which are necessary to render the whole option-section
+         * @return string $output		the string returned contains the html code generated within the method
          *
          * @todo: currently only one linkpicker per modal window possible
          */
-		static function linkpicker($element)
+		static public function linkpicker($element)
 		{	
 			//fallback for previous default input link elements: convert a https://kriesi.at value to a manually entry
 			if(strpos($element['std'], 'http://') === 0) $element['std'] = 'manually,'.$element['std'];
@@ -957,7 +1156,7 @@ if ( ! class_exists( 'AviaHtmlHelper' ) )
          * @param array $element the array holds data like type, value, id, class, description which are necessary to render the whole option-section
          * @return string $output the string returned contains the html code generated within the method
          */
-		static function image($element)
+		static public function image($element)
 		{
 			if(empty($element['data']))
 			{
@@ -1000,20 +1199,20 @@ if ( ! class_exists( 'AviaHtmlHelper' ) )
 			$attachmentid 	= !empty($attachmentids[self::$imageCount]) ? $attachmentids[self::$imageCount] : '';
 			
 			$attachmentsizes = ! empty( $element['shortcode_data']['attachment_size'] ) ? explode( ',', $element['shortcode_data']['attachment_size'] ) : array();	
-			$attachmentsize = ! empty( $attachmentsizes[ self::$imageCount ] ) ? $attachmentsizes[ self::$imageCount ] : "";		
+			$attachmentsize = ! empty( $attachmentsizes[ self::$imageCount ] ) ? $attachmentsizes[ self::$imageCount ] : '';		
 						
 			//get image based on id if possible - use the force_id_fetch param in conjunction with the secondary_img when you need a secondary image based on id and not on url like pattern overlay. size of a secondary image can not be stored. tab section element is a working example
 			if(!empty($attachmentid) && !empty($attachmentsize) && empty($element['force_id_fetch']))
 			{
 				$fake_img 	= wp_get_attachment_image( $attachmentid, $attachmentsize);
 				$url		= wp_get_attachment_image_src( $attachmentid, $attachmentsize);
-				$url		= !empty($url[0]) ? $url[0] : "";
+				$url		= !empty($url[0]) ? $url[0] : '';
 			}
 			else if(isset($fetch) && $fetch == "id")
 			{
 				$fake_img 	= wp_get_attachment_image( $element['std'], 'thumbnail');
 				$url		= wp_get_attachment_image_src( $element['std'], 'thumbnail');
-				$url		= !empty($url[0]) ? $url[0] : "";
+				$url		= !empty($url[0]) ? $url[0] : '';
 			}
 			else
 			{
@@ -1061,7 +1260,7 @@ if ( ! class_exists( 'AviaHtmlHelper' ) )
          * @param array $element the array holds data like type, value, id, class, description which are necessary to render the whole option-section
          * @return string $output the string returned contains the html code generated within the method
          */
-		static function gallery($element)
+		static public function gallery($element)
 		{
 			if(empty($element['data']))
 			{
@@ -1087,7 +1286,7 @@ if ( ! class_exists( 'AviaHtmlHelper' ) )
          * @param array $element the array holds data like type, value, id, class, description which are necessary to render the whole option-section
          * @return string $output the string returned contains the html code generated within the method
          */
-		static function video($element)
+		static public function video($element)
 		{
 			if(empty($element['data']))
 			{
@@ -1154,7 +1353,7 @@ if ( ! class_exists( 'AviaHtmlHelper' ) )
          * @param array $element the array holds data like type, value, id, class, description which are necessary to render the whole option-section
          * @return string $output the string returned contains the html code generated within the method
          */
-		static function multi_image($element)
+		static public function multi_image($element)
 		{
 			if(empty($element['data']))
 			{
@@ -1277,7 +1476,7 @@ if ( ! class_exists( 'AviaHtmlHelper' ) )
 			 */
 			$selected = apply_filters( 'avf_alb_options_select_hierarchical_post_type_id', $selected, $post_type, $new_std, $element );
 			
-			$data_string = "";
+			$data_string = '';
 			if( isset( $element['data'] ) ) 
 			{
 				foreach( $element['data'] as $key => $data )
@@ -1337,8 +1536,13 @@ if ( ! class_exists( 'AviaHtmlHelper' ) )
 		 * @param WP_Post $page
 		 * @return string
 		 */
-		static public function handler_wp_list_pages( $title, WP_Post $page )
+		static public function handler_wp_list_pages( $title, $page )
 		{
+			if( ! $page instanceof WP_Post )
+			{
+				return $title;
+			}
+			
 			if(  ! in_array( $page->post_status, array( 'publish' ) ) )
 			{
 				$title .= ' (' . ucfirst( $page->post_status ) . ')';
@@ -1412,7 +1616,7 @@ if ( ! class_exists( 'AviaHtmlHelper' ) )
 			 */
 			$selected = apply_filters( 'avf_alb_options_select_hierarchical_post_type_id', $selected, $taxonomy, $new_std, $element );
 			
-			$data_string = "";
+			$data_string = '';
 			if( isset( $element['data'] ) ) 
 			{
 				foreach( $element['data'] as $key => $data )
@@ -1471,12 +1675,12 @@ if ( ! class_exists( 'AviaHtmlHelper' ) )
 		{	
 			$select 	= __('Select','avia_framework' );
 			$parents 	= array();
-			$fake_val 	= "";
+			$fake_val 	= '';
 			$entries	= array();
 			
 			if($element['subtype'] == 'cat')
 			{
-				$add_taxonomy = "";
+				$add_taxonomy = '';
 				
 				if(!empty($element['taxonomy'])) $add_taxonomy = "&taxonomy=".$element['taxonomy'];
 			
@@ -1586,7 +1790,7 @@ if ( ! class_exists( 'AviaHtmlHelper' ) )
 				return;
 			}
 			
-			$data_string = "";
+			$data_string = '';
 			if(isset($element['data'])) 
 			{
 				foreach ($element['data'] as $key => $data)
@@ -1595,7 +1799,7 @@ if ( ! class_exists( 'AviaHtmlHelper' ) )
 				}
 			}
 			
-			$multi = $multi_class = "";
+			$multi = $multi_class = '';
 			if(isset($element['multiple'])) 
 			{
 				$multi_class = " avia_multiple_select";
@@ -1603,8 +1807,8 @@ if ( ! class_exists( 'AviaHtmlHelper' ) )
 				$element['std'] = explode(',', $element['std']);
 			}
 			
-			$id_string = empty($element['id']) ? "" : "id='".$element['id']."'";
-			$name_string = empty($element['id']) ? "" : "name='".$element['id']."'";
+			$id_string = empty($element['id']) ? '' : "id='".$element['id']."'";
+			$name_string = empty($element['id']) ? '' : "name='".$element['id']."'";
 			
 			$output = '<select '.$multi.' class="'.$element['class'].'" '. $id_string .' '. $name_string . ' '.$data_string.'> ';
 			
@@ -1656,7 +1860,7 @@ if ( ! class_exists( 'AviaHtmlHelper' ) )
 		 */
 		static protected function create_select_option( $element, $entries, $fake_val, $parents, $level )
 		{	
-			$output = "";
+			$output = '';
 			
 			foreach ($entries as $key => $entry)
 			{
@@ -1682,14 +1886,14 @@ if ( ! class_exists( 'AviaHtmlHelper' ) )
 				if(!empty($title) || (isset($title) && $title === 0))
 				{
 					if(empty($fake_val)) $fake_val = $title;
-					$selected = "";
+					$selected = '';
 					if ($element['std'] == $id || (is_array($element['std']) && in_array($id, $element['std']))) 
 					{ 
 						$selected = "selected='selected'"; 
 						$fake_val = $title;
 					}
 					
-					$indent = "";
+					$indent = '';
 					for($i = 0; $i < $level; $i++)
 					{
 						$indent .= "- ";
@@ -1827,7 +2031,7 @@ if ( ! class_exists( 'AviaHtmlHelper' ) )
 			
 			$subvalues = isset($element['shortcode_data']) ? $element['shortcode_data'] : array();
 			$values = array_merge( $defaults, $subvalues );
-			$visibility = "";
+			$visibility = '';
 			
 			if( ! empty($subvalues['long'] ) || ! empty( $subvalues['lat'] ) ) 
 			{
@@ -1865,15 +2069,15 @@ if ( ! class_exists( 'AviaHtmlHelper' ) )
          * @param array $element the array holds data like type, value, id, class, description which are necessary to render the whole option-section
          * @return string $output the string returned contains the html code generated within the method
          */
-		static function radio( $element )
+		static public function radio( $element )
 		{	
-			$output = "";
+			$output = '';
 
 			$counter = 1;
 			foreach($element['options'] as $key => $radiobutton)
 			{
-				$checked = "";
-				$extra_class = "";
+				$checked = '';
+				$extra_class = '';
 				if( $element['std'] == $key ) { $checked = 'checked = "checked"'; }
 
 				$fields  = '<input '.$checked.' type="radio" class="radio_'.$key.'" ';
@@ -1902,7 +2106,7 @@ if ( ! class_exists( 'AviaHtmlHelper' ) )
 		
 		
 		
-		static function mailchimp_list( $element )
+		static public function mailchimp_list( $element )
 		{
 			$api 		= $element['api'];
 			$new_list 	= array();
@@ -1916,8 +2120,8 @@ if ( ! class_exists( 'AviaHtmlHelper' ) )
 					$list_item['label'] 	= $field->name;
 					$list_item['type'] 		= $field->type;
 					$list_item['value'] 	= $field->default_value;
-					$list_item['disabled'] 	= empty($field->show) ? "true" : "";
-					$list_item['check'] 	= "";
+					$list_item['disabled'] 	= empty($field->show) ? "true" : '';
+					$list_item['check'] 	= '';
 								
 					
 					if($field->required == 1)
@@ -1942,14 +2146,14 @@ if ( ! class_exists( 'AviaHtmlHelper' ) )
 						'id' 		=> "av-button",
 						'label' 	=> __( "Subscribe" , "avia_framework" ),
 						'type'		=> "button",
-						'value' 	=> "",
-						'check' 	=> "",
+						'value' 	=> '',
+						'check' 	=> '',
 					);
 				}
 				
 			}
 			
-			$output  = "";
+			$output  = '';
 			$output  .= self::select( $element );	
 			$output  .= "<script type='text/javascript' > var av_mailchimp_list = ".json_encode($new_list)."; ";
 			$output  .= "</script>";
@@ -1964,7 +2168,7 @@ if ( ! class_exists( 'AviaHtmlHelper' ) )
 		
 		
 		
-		static function table ( $element , $parent)
+		static public function table ( $element , $parent)
 		{
 			$values = !empty($_POST['extracted_shortcode']) ? $_POST['extracted_shortcode'] : false;
 			
@@ -1993,7 +2197,7 @@ if ( ! class_exists( 'AviaHtmlHelper' ) )
 			
 			$params = array('class'=>'', 'parent_class' => $parent);
 			
-			$output  = "";
+			$output  = '';
 			$output .= "<div class='avia-table-builder-wrapper'>";
 			
 			$output .= "	<div class='avia-table-builder-add-buttons'>";
@@ -2024,7 +2228,7 @@ if ( ! class_exists( 'AviaHtmlHelper' ) )
 			return $output;
 		}
 		
-		static function table_row($row, $columns, $params, $element, $prepared = array())
+		static public function table_row($row, $columns, $params, $element, $prepared = array())
 		{
 			$up 	= __('move up', 'avia_framework');
 			$down 	= __('move down', 'avia_framework');
@@ -2034,8 +2238,8 @@ if ( ! class_exists( 'AviaHtmlHelper' ) )
 		
 			$defaults = array('class'=>'', 'content'=>'', 'row_style'=>'');
 			$params = array_merge($defaults, $params);
-			$extraclass = "";
-			$output  = "";
+			$extraclass = '';
+			$output  = '';
 			$output .= "	<div class='avia-table-row  {$params['class']} {$params['row_style']}'>";
 			
 			$output .= "	<div class='avia-table-cell avia-table-cell-style avia-attach-table-row-style avia-noselect'>";
@@ -2064,7 +2268,7 @@ if ( ! class_exists( 'AviaHtmlHelper' ) )
 					
 					if($params['class'] == 'avia-template-row')
 					{
-						$params['content'] = "";
+						$params['content'] = '';
 					}
 					else
 					{
@@ -2116,7 +2320,7 @@ if ( ! class_exists( 'AviaHtmlHelper' ) )
 		}
 		
 		
-		static function display_image($img = "")
+		static public function display_image($img = '')
 		{
 			$final = array();
 			
@@ -2135,14 +2339,14 @@ if ( ! class_exists( 'AviaHtmlHelper' ) )
 				}				
 			}
 		
-			$output = "";
+			$output = '';
 			$hidden = "avia-hidden";
 			
 			$output .= "<div class='avia-builder-prev-img-container-wrap'>";
 			$output .= "<div class='avia-builder-prev-img-container'>";
 			if(!empty($final))
 			{
-				if(count($final) == 1) $hidden = "";
+				if(count($final) == 1) $hidden = '';
 				
 				foreach ( $final as $img ) 
 				{
@@ -2159,7 +2363,7 @@ if ( ! class_exists( 'AviaHtmlHelper' ) )
 		
 		
 		
-		static function number_array($from = 0, $to = 100, $steps = 1, $array = array(), $label = "", $value_prefix = "", $value_postfix = "")
+		static public function number_array($from = 0, $to = 100, $steps = 1, $array = array(), $label = '', $value_prefix = '', $value_postfix = '')
 		{
 			for ($i = $from; $i <= $to; $i += $steps) {
 			    $array[$i.$label] = $value_prefix.$i.$value_postfix;
@@ -2171,7 +2375,7 @@ if ( ! class_exists( 'AviaHtmlHelper' ) )
 
 
 
-		static function linking_options()
+		static public function linking_options()
 		{
 		    if(current_theme_supports('avia_rel_nofollow_for_links'))
 			{
@@ -2199,7 +2403,7 @@ if ( ! class_exists( 'AviaHtmlHelper' ) )
 		 * @param array $args
 		 * @return array
 		 */
-		static function get_registered_post_type_array( $args = array() )
+		static public function get_registered_post_type_array( $args = array() )
 		{
 			$post_types = get_post_types( $args, 'objects' );
 			$post_type_option = array();

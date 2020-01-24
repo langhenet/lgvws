@@ -7,8 +7,7 @@
  *
  * @since 6.3.0
  * @author John Gera
- * @copyright Copyright (c) 2019  John Gera, George Krupa, and Kreatura Media Kft.
- * @license http://codecanyon.net/licenses/faq Envato marketplace licenses
+ * @copyright Copyright (c) 2020  John Gera, George Krupa, and Kreatura Media Kft.
  */
 
 class LS_Revisions {
@@ -34,9 +33,8 @@ class LS_Revisions {
 
 
 	public static function init() {
-		if( get_option('layerslider-authorized-site', false) &&
-			get_option('ls-revisions-enabled', true) ) {
-				self::$active = true;
+		if( LS_Config::isActivatedSite() && get_option('ls-revisions-enabled', true) ) {
+			self::$active = true;
 		}
 
 		$option 		= get_option('ls-revisions-enabled', true);

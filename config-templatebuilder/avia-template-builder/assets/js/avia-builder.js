@@ -85,6 +85,9 @@ function avia_nl2br (str, is_xhtml)
         
         //wrapper arround all the shortcode buttons
         this.shortcode_wrap 	= $('.shortcode_button_wrap');
+		
+		//sort shortcode button dropdown container
+		this.sort_button_wrap	= $('#avia-sort-list-dropdown');
         
         //wether we are in target insert mode or not, if set the var holds an element that gets inserted into the canvas on click
         this.targetInsert		= false;
@@ -174,6 +177,72 @@ function avia_nl2br (str, is_xhtml)
                 e.preventDefault();
 				obj.switch_layout_mode(e);
 			});
+			
+			//bind sort shortcode buttons actions
+			this.sort_button_wrap.on('click', '.avia-sort-list-element', function(e)
+			{
+				e.preventDefault();
+				
+				var current = $(this),
+					init_trigger = obj.sort_button_wrap.data( 'init_sort' ),
+					sort_link = current.find( 'a' ),
+					sorting = sort_link.data( 'sorting' ),
+					sorting_title = sort_link.attr( 'title' ),
+					sort_list_label = obj.sort_button_wrap.find( '.avia-sort-list-label' );
+					
+				if( 'string' == typeof sorting_title )
+				{
+					obj.sort_button_wrap.attr( 'title', sorting_title );
+				}
+				
+				if( sort_link.hasClass( 'sort_active' ) && sorting == init_trigger )
+				{
+					return false;
+				}
+				
+				obj.sort_button_wrap.find( '.avia-sort-list-element a' ).removeClass( 'sort_active' );
+				sort_link.addClass( 'sort_active' );
+				sort_list_label.html(sort_link.html());
+				
+				obj.sort_shortcode_buttons( sorting );
+				
+				if( sorting == init_trigger )
+				{
+					return false;
+				}
+				
+				obj.activate_element_dragging( obj.shortcode_wrap,'' );
+				
+				var senddata = {
+							action: 'avia_alb_shortcode_buttons_order',
+							sorting: sorting,
+							avia_request: true,
+							_ajax_nonce: $('#avia-loader-nonce').val()
+						};
+				
+				$.ajax({
+						type: "POST",
+						url: ajaxurl,
+						dataType: 'json',
+						cache: false,
+						data: senddata,
+						success: function(response, textStatus, jqXHR)
+						{
+							if( response.success == true )
+							{
+								$('#avia-loader-nonce').val( response._ajax_nonce);
+								obj.sort_button_wrap.data( 'init_sort', sorting )
+							}
+						},
+						error: function(errorObj) {
+//									console.log( 'avia_alb_shortcode_buttons_order error: ', errorObj );
+								},
+						complete: function(test) {
+								}
+					});
+			}),
+			
+			this.InitialTriggerSortShortcodeButtons();
 			
 			
 			//add a new element to the AviaBuilder canvas
@@ -354,6 +423,179 @@ function avia_nl2br (str, is_xhtml)
 		},
 		
 		
+		sort_shortcode_buttons: function( sort_order )
+		{
+			var tabs = this.shortcode_wrap.find( '.avia-tab' );
+			
+			tabs.each( function( i ) {
+						var tab = $(this);
+						var buttons = tab.find( 'a' );
+						tab.find( 'a' ).remove();
+
+						buttons.sort( function( e1, e2 ) {
+								var comp_a = '';
+								var comp_b = '';
+								var result = 0;
+								var a = $(e1);
+								var b = $(e2);
+								
+								switch( sort_order )
+								{
+									case 'name_asc':
+										comp_a = a.data( 'sort_name' );
+										if( 'undefined' == typeof comp_a )
+										{
+											result = 1;
+											break;
+										}
+										comp_b = b.data( 'sort_name' );
+										if( 'undefined' == typeof comp_b )
+										{
+											result = 1;
+											break;
+										}
+										
+										if( comp_a < comp_b ) 
+										{
+											result = -1;
+										}
+										else if( comp_a == comp_b )
+										{
+											result = 0;
+										}
+										else
+										{
+											result = 1;
+										}
+										break;
+									case 'name_desc':
+										comp_a = a.data( 'sort_name' );
+										if( 'undefined' == typeof comp_a )
+										{
+											result = 1;
+											break;
+										}
+										comp_b = b.data( 'sort_name' );
+										if( 'undefined' == typeof comp_b )
+										{
+											result = 1;
+											break;
+										}
+										
+										if( comp_a < comp_b ) 
+										{
+											result = 1;
+										}
+										else if( comp_a == comp_b )
+										{
+											result = 0;
+										}
+										else
+										{
+											result = -1;
+										}
+										break;
+									case 'usage':
+										comp_a = a.data( 'sort_usage' );
+										if( 'undefined' == typeof comp_a )
+										{
+											result = 1;
+											break;
+										}
+										comp_b = b.data( 'sort_usage' );
+										if( 'undefined' == typeof comp_b )
+										{
+											result = 1;
+											break;
+										}
+										
+										var comp_a_name = a.data( 'sort_name' );
+										var comp_b_name = b.data( 'sort_name' );
+										
+										if( comp_a < comp_b ) 
+										{
+											result = 1;
+										}
+										else if( comp_a == comp_b )
+										{
+											if( 'undefined' == typeof comp_a_name )
+											{
+												result = 1;
+											}
+											else if( 'undefined' == typeof comp_b_name )
+											{
+												result = -1;
+											}
+											else if( comp_a_name < comp_b_name )
+											{
+												result = -1;
+											}
+											else if( comp_a_name == comp_b_name )
+											{
+												result = 0;
+											}
+											else
+											{
+												result = 1;
+											}
+										}
+										else
+										{
+											result = -1;
+										}
+										break;
+									case 'order':		//	should have uinque values from building the html
+									default:
+										comp_a = a.data( 'sort_order' );
+										if( 'undefined' == typeof comp_a )
+										{
+											result = 1;
+											break;
+										}
+										comp_b = b.data( 'sort_order' );
+										if( 'undefined' == typeof comp_b )
+										{
+											result = 1;
+											break;
+										}
+										
+										if( comp_a < comp_b ) 
+										{
+											result = -1;
+										}
+										else if( comp_a == comp_b )
+										{
+											result = 0;
+										}
+										else
+										{
+											result = 1;
+										}
+										break;
+								}
+								
+								return result;
+							});
+						
+						tab.html( buttons );
+				});
+				
+		},
+		
+		
+		InitialTriggerSortShortcodeButtons: function ()
+		{
+			var trigger = this.sort_button_wrap.data( 'init_sort' );
+			
+			if( 'string' != typeof trigger )
+			{
+				trigger = 'order';
+			}
+			
+			this.sort_button_wrap.find( 'a[data-sorting="' + trigger + '"]').trigger('click');
+		},
+		
+		
 		/*version compare helper function for the drag and drop fix below.*/
 		cmpVersion: function(a, b) {
 		    var i, cmp, len, re = /(\.0)+[^\.]*$/;
@@ -368,6 +610,7 @@ function avia_nl2br (str, is_xhtml)
 		    }
 		    return a.length - b.length;
 		}, 
+		
 		
 		// ------------------------------------------------------------------------------------------------------------
 		// main interface drag and drop implementation

@@ -114,7 +114,6 @@
 
 						//create the footer columns by iterating
 
-						
 				        switch($columns)
 				        {
 				        	case 1: $class = ''; break;
@@ -123,6 +122,7 @@
 				        	case 4: $class = 'av_one_fourth'; break;
 				        	case 5: $class = 'av_one_fifth'; break;
 				        	case 6: $class = 'av_one_sixth'; break;
+							default: $class = ''; break;
 				        }
 				        
 				        $firstCol = "first el_before_{$class}";
@@ -265,7 +265,7 @@
 	?>
 
 
-<a href='#top' title='<?php _e('Scroll to top','avia_framework'); ?>' id='scroll-top-link' aria-hidden='true' <?php echo av_icon_string( 'scrolltop' ); ?>><span class="avia_hidden_link_text"><?php _e('Scroll to top','avia_framework'); ?></span></a>
+<a href='#top' title='<?php _e('Scroll to top','avia_framework'); ?>' id='scroll-top-link' <?php echo av_icon_string( 'scrolltop' ); ?>><span class="avia_hidden_link_text"><?php _e('Scroll to top','avia_framework'); ?></span></a>
 
 <div id="fb-root"></div>
 

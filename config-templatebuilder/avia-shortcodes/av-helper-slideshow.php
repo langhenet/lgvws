@@ -112,12 +112,12 @@ if ( ! class_exists( 'avia_slideshow' ) )
 
 			if($width < 600)
 			{
-				$this->config['class'] .= " avia-small-width-slider";
+				$this->config['class'] .= ' avia-small-width-slider';
 			}
 
 			if($width < 305)
 			{
-				$this->config['class'] .= " avia-super-small-width-slider";
+				$this->config['class'] .= ' avia-super-small-width-slider';
 			}
 
 			//if we got subslides overwrite the id array
@@ -126,7 +126,7 @@ if ( ! class_exists( 'avia_slideshow' ) )
 				$this->extract_subslides($config['content']);
 			}
 			
-			if("aviaTBautoplay_stopper" == $this->config['autoplay_stopper'])
+			if('aviaTBautoplay_stopper' == $this->config['autoplay_stopper'])
 			{
 				$this->config['autoplay_stopper'] = true;
 			}
@@ -228,7 +228,7 @@ if ( ! class_exists( 'avia_slideshow' ) )
 		 */
 		public function set_extra_class( $class )
 		{
-			$this->config['class'] .= " ".$class;
+			$this->config['class'] .= ' '.$class;
 		}
 
 
@@ -238,10 +238,10 @@ if ( ! class_exists( 'avia_slideshow' ) )
 		 */
 		public function html()
 		{
-			$html 		= "";
+			$html 		= '';
 			$counter 	= 0;
-			$style   	= "";
-			$extraClass = "";
+			$style   	= '';
+			$extraClass = '';
 			$cond_play_class = '';
 			avia_slideshow::$slider++;
 			
@@ -253,24 +253,24 @@ if ( ! class_exists( 'avia_slideshow' ) )
 			if(!empty($this->config['scroll_down']))
 			{	
 				$html .= "<a href='#next-section' title='' class='scroll-down-link ".$this->config['control_layout']."' ". av_icon_string( 'scrolldown' ). "></a>";
-				$extraClass .= "av-slider-scroll-down-active";
+				$extraClass .= 'av-slider-scroll-down-active';
 			}
 			
-			if(!empty($this->config['control_layout'])) $extraClass .= " ".$this->config['control_layout'];
+			if(!empty($this->config['control_layout'])) $extraClass .= ' '.$this->config['control_layout'];
 			
 			if( ! empty( $this->config['conditional_play'] ) && $this->need_conditional_load )
 			{
 				$cond_play_class = 'av-show-video-on-click';
 			}
 						
-			$style = "";
+			$style = '';
 			$data = AviaHelper::create_data_string($this->config);
 			$slide_html = empty($this->subslides) ? $this->default_slide() : $this->advanced_slide();
 			
 			if(!empty($this->config['default-height']))
 			{
 				$style = "style='padding-bottom: ".$this->config['default-height']."%;'";
-				$extraClass .= " av-default-height-applied";
+				$extraClass .= ' av-default-height-applied';
 			}
 			
 			
@@ -283,7 +283,7 @@ if ( ! class_exists( 'avia_slideshow' ) )
 
 			
 			$html .= $slide_html;
-			$html .= "</ul>";
+			$html .= '</ul>';
 
 			if($this->slide_count > 1)
 			{
@@ -295,7 +295,7 @@ if ( ! class_exists( 'avia_slideshow' ) )
 			if(!empty($this->config['caption_override'])) $html .= $this->config['caption_override'];
 			
 
-			$html .= "</div>";
+			$html .= '</div>';
 		
 			
 			return $html;
@@ -304,7 +304,7 @@ if ( ! class_exists( 'avia_slideshow' ) )
 		//function that renders the usual slides. use when we didnt use sub-shorcodes to define the images but ids
 		protected function default_slide()
 		{
-			$html = "";
+			$html = '';
 			$counter = 0;
 
             $markup_url = avia_markup_helper(array('context' => 'image_url','echo'=>false, 'custom_markup'=>$this->config['custom_markup']));
@@ -318,20 +318,20 @@ if ( ! class_exists( 'avia_slideshow' ) )
 					$counter ++;
 					$img 	 = wp_get_attachment_image_src($slide->ID, $this->config['size']);
 					$link	 = wp_get_attachment_image_src($slide->ID, $this->config['lightbox_size']);
-					$caption = trim($slide->post_excerpt) ? '<div class="avia-caption capt-bottom capt-left"><div class="avia-inner-caption">'.wptexturize($slide->post_excerpt)."</div></div>": "";
+					$caption = trim($slide->post_excerpt) ? '<div class="avia-caption capt-bottom capt-left"><div class="avia-inner-caption">'.wptexturize($slide->post_excerpt)."</div></div>": '';
 
                     $imgalt = get_post_meta($slide->ID, '_wp_attachment_image_alt', true);
                     $imgalt = !empty($imgalt) ? esc_attr($imgalt) : '';
-                    $imgtitle = trim($slide->post_title) ? esc_attr($slide->post_title) : "";
-                  	if($imgtitle == "-") $imgtitle = "";
-                    $imgdescription = trim($slide->post_content) ? esc_attr($slide->post_content) : "";
+                    $imgtitle = trim($slide->post_title) ? esc_attr($slide->post_title) : '';
+                  	if($imgtitle == '-') $imgtitle = '';
+                    $imgdescription = trim($slide->post_content) ? esc_attr($slide->post_content) : '';
 					
 
 					$tags = apply_filters('avf_slideshow_link_tags', array("a href='".$link[0]."' title='".$imgdescription."'",'a')); // can be filtered and for example be replaced by array('div','div')
 					
 					$html .= "<li class='slide-{$counter} slide-id-".$slide->ID."'>";
 					$html .= "<".$tags[0]." >{$caption}<img src='".$img[0]."' width='".$img[1]."' height='".$img[2]."' title='".$imgtitle."' alt='".$imgalt."' $markup_url  /></ ".$tags[1]." >";
-					$html .= "</li>";
+					$html .= '</li>';
 				}
 				else
 				{
@@ -345,59 +345,65 @@ if ( ! class_exists( 'avia_slideshow' ) )
 		//function that renders the slides. use when we did use sub-shorcodes to define the images
 		protected function advanced_slide()
 		{
-			$html = "";
+			$html = '';
 			$counter = 0;
-			$this->ie8_fallback = "";
+			$this->ie8_fallback = '';
 
 			foreach( $this->id_array as $key => $id )
 			{
 				$dev_tags = aviaShortcodeTemplate::set_frontend_developer_heading_tag( $this->subslides[$key]['attr'] );
 				
-				$meta = array_merge( array( 'content'		=> $this->subslides[$key]['content'],
-											'title'			=>'',
-											'link_apply'	=>'',
+				$meta = array_merge( array( 'content'			=> $this->subslides[$key]['content'],
+											'title'				=> '',
+											'link_apply'		=> '',
 											//direct link from image
-											'link'			=>'',
-											'link_target'	=>'',
+											'link'				=> '',
+											'link_target'		=> '',
 											//button link 1
-											'button_label'	=>'',
-											'button_color'	=>'light',
-											'link1'			=>'',
-											'link_target1'	=>'',											
+											'button_label'		=> '',
+											'button_color'		=> 'light',
+											'link1'				=> '',
+											'link_target1'		=> '',											
 											//button link 2
-											'button_label2'	=>'',
-											'button_color2'	=>'light',
-											'link2'			=>'',
-											'link_target2'	=>'',
+											'button_label2'		=> '',
+											'button_color2'		=> 'light',
+											'link2'				=> '',
+											'link_target2'		=> '',
 											
-											'position'		=>'center center',
-											'caption_pos'	=>'capt-bottom capt-left',
-											'video_cover'	=>'',
-											'video_controls'=>'',
-											'video_mute'	=>'',
-											'video_loop'	=>'',
-											'video_format'	=>'',
-											'video_autoplay'=>'',
-											'video_ratio'	=>'16:9',
-											'video_mobile_disabled'=>'',
-											'video_mobile'	=>'mobile-fallback-image',
-											'mobile_image'	=> '',
-											'fallback_link' => '',
-											'slide_type'	=>'',
-											'custom_markup' => '',
-											'custom_title_size' => '',
-											'custom_content_size' => '',
-											'font_color'	=>'',
-											'custom_title' 	=> '',
-											'custom_content' => '',
-											'overlay_enable' => '',
-			    							'overlay_opacity' => '',
-			    							'overlay_color' => '',
-			    							'overlay_pattern' => '',
-			    							'overlay_custom_pattern' => '',
+											'position'			=> 'center center',
+											'caption_pos'		=> 'capt-bottom capt-left',
+											'video_cover'		=> '',
+											'video_controls'	=> '',
+											'video_mute'		=> '',
+											'video_loop'		=> '',
+											'video_format'		=> '',
+											'video_autoplay'	=> '',
+											'video_ratio'		=> '16:9',
+											'video_mobile_disabled'	=> '',
+											'video_mobile'		=> 'mobile-fallback-image',
+											'mobile_image'		=> '',
+											'fallback_link'		=> '',
+											'slide_type'		=>'',
+											'custom_markup'		=> '',
+											'custom_title_size'	=> '',
+											'custom_content_size'	=> '',
+											'font_color'		=> '',
+											'custom_title'		=> '',
+											'custom_content'	=> '',
+											'overlay_enable'	=> '',
+			    							'overlay_opacity'	=> '',
+			    							'overlay_color'		=> '',
+			    							'overlay_pattern'	=> '',
+			    							'overlay_custom_pattern'	=> '',
 											'preload' => $this->need_conditional_load ? 'none' : ''
 
 										), $this->subslides[$key]['attr'] );
+				
+				//	Autoplay videos must be muted to work on several browsers (e.g. FF, Chrome)
+				if( empty( $meta['video_autoplay'] ) )
+				{
+					$meta['video_mute'] = 'aviaTBaviaTBvideo_mute';
+				}
 				
 				//return $av_font_classes, $av_title_font_classes and $av_display_classes 
 				extract( AviaHelper::av_mobile_sizes( $this->subslides[$key]['attr'] ) ); 
@@ -406,20 +412,20 @@ if ( ! class_exists( 'avia_slideshow' ) )
 				if(isset($this->slides[$id]) || $slide_type == 'video')
 				{
 					$img			= array('');
-					$slide			= "";
+					$slide			= '';
 					$attachment_id	= isset($this->slides[$id]) ? $id : false;
 					$link			= AviaHelper::get_url($link, $attachment_id); 
-					$extra_class 	= "";
-					$linkdescription= "";
-					$linkalt 		= "";
+					$extra_class 	= '';
+					$linkdescription= '';
+					$linkalt 		= '';
 					$this->service  = false;
-					$slider_data	= "";
+					$slider_data	= '';
 					$stretch_height	= false;
-					$final_ratio	= "";
+					$final_ratio	= '';
 					$viewport		= 16/9;
 					
-					$fallback_img_style = "";
-					$fallback_img_class = "";
+					$fallback_img_style = '';
+					$fallback_img_class = '';
 					
 					
             		$markup_url = avia_markup_helper(array('context' => 'image_url','echo'=>false, 'id'=>$attachment_id, 'custom_markup'=>$custom_markup));
@@ -428,10 +434,10 @@ if ( ! class_exists( 'avia_slideshow' ) )
 					{
 						$this->service    = avia_slideshow_video_helper::which_video_service($video);
 						$video 			  = avia_slideshow_video_helper::set_video_slide($video, $this->service, $meta , $this->config); 
-						$video_class	  = !empty( $video_controls ) ? " av-hide-video-controls" : "";
-						$video_class	 .= !empty( $video_mute ) ? " av-mute-video" : "";
-						$video_class	 .= !empty( $video_loop ) ? " av-loop-video" : "";
-						$video_class	 .= !empty( $video_mobile ) ? " av-".$video_mobile : "";
+						$video_class	  = !empty( $video_controls ) ? ' av-hide-video-controls' : '';
+						$video_class	 .= !empty( $video_mute ) ? ' av-mute-video' : '';
+						$video_class	 .= !empty( $video_loop ) ? ' av-loop-video' : '';
+						$video_class	 .= !empty( $video_mobile ) ? ' av-'.$video_mobile : '';
 			
 						$extra_class 	.= " av-video-slide ".$video_cover." av-video-service-".$this->service." ".$video_class;
 						$slider_data 	.= " data-controls='{$video_controls}' data-mute='{$video_mute}' data-loop='{$video_loop}' data-disable-autoplay='{$video_autoplay}' ";	
@@ -450,11 +456,11 @@ if ( ! class_exists( 'avia_slideshow' ) )
 						}
 						
 						//if we dont use a fullscreen slider pass the video ratio to the slider
-						if($this->config['bg_slider'] != "true")
+						if($this->config['bg_slider'] != 'true')
 						{
 							global $avia_config;
-							//if we use the small slideshow only allow the "full" $video_format
-							if($this->config['handle'] == 'av_slideshow') $video_format = "full";
+							//if we use the small slideshow only allow the 'full' $video_format
+							if($this->config['handle'] == 'av_slideshow') $video_format = 'full';
 							
 							
 							//calculate the viewport ratio
@@ -472,18 +478,18 @@ if ( ! class_exists( 'avia_slideshow' ) )
 							
 							switch($video_format)
 							{
-								case "": 
+								case '': 
 									$final_ratio = $viewport; 
 								break;
-								case "stretch": 
+								case 'stretch': 
 									$final_ratio 	 = $viewport; 
 									$stretch_height  = ceil( $viewport / ($video_ratio[0]/$video_ratio[1]) * 100 );
 									$stretch_pos 	 = (($stretch_height - 100) / 2) * -1;
 									$slider_data 	.= " data-video-height='{$stretch_height}'";
 									$slider_data 	.= " data-video-toppos='{$stretch_pos}'";
-									$extra_class 	.= " av-video-stretch";
+									$extra_class 	.= ' av-video-stretch';
 								break;
-								case "full": 
+								case 'full': 
 									// do nothing and apply the entered ratio
 								break;
 							}
@@ -495,25 +501,25 @@ if ( ! class_exists( 'avia_slideshow' ) )
 					else //img slide
 					{
 						$slide 			 = $this->slides[$id];
-						$linktitle 		 = trim($slide->post_title) ? esc_attr($slide->post_title) : "";
-						if($linktitle == "-") $linktitle = "";
-                    	$linkdescription = (trim($slide->post_content) && empty($link)) ? "title='".esc_attr($slide->post_content)."'" : "";
+						$linktitle 		 = trim($slide->post_title) ? esc_attr($slide->post_title) : '';
+						if($linktitle == '-') $linktitle = '';
+                    	$linkdescription = (trim($slide->post_content) && empty($link)) ? "title='".esc_attr($slide->post_content)."'" : '';
                     	$linkalt 		 = get_post_meta($slide->ID, '_wp_attachment_image_alt', true);
                     	$linkalt 		 = !empty($linkalt) ? esc_attr($linkalt) : '';
 						$img   			 = wp_get_attachment_image_src($slide->ID, $this->config['size']);
-						$video			 = "";
+						$video			 = '';
 					}
 					
-					if($this->slide_count === 1) $extra_class .= " av-single-slide";
+					if($this->slide_count === 1) $extra_class .= ' av-single-slide';
 					
-					$blank = (strpos($link_target, '_blank') !== false || $link_target == 'yes') ? ' target="_blank" ' : "";
-					$blank .= strpos($link_target, 'nofollow') !== false ? ' rel="nofollow" ' : "";
+					$blank = (strpos($link_target, '_blank') !== false || $link_target == 'yes') ? ' target="_blank" ' : '';
+					$blank .= strpos($link_target, 'nofollow') !== false ? ' rel="nofollow" ' : '';
 					$tags 			= (!empty($link) && $link_apply == 'image') ? array("a href='{$link}'{$blank}",'a') : array('div','div');
-					$caption  		= "";
-					$button_html 	= "";
+					$caption  		= '';
+					$button_html 	= '';
 					$counter ++;
-					$button_count = "";
-					if(strpos($link_apply, 'button-two') !== false){$button_count = "avia-multi-slideshow-button";}
+					$button_count = '';
+					if(strpos($link_apply, 'button-two') !== false){$button_count = 'avia-multi-slideshow-button';}
 					
 					
 					//if we got a CTA button apply the link to the button istead of the slide
@@ -525,28 +531,28 @@ if ( ! class_exists( 'avia_slideshow' ) )
 					
 					if(strpos($link_apply, 'button-two') !== false)
 					{
-						$button_count .= " avia-slideshow-button-2";
+						$button_count .= ' avia-slideshow-button-2';
 						$button_html .= $this->slideshow_cta_button($link2, $link_target2, $button_color2, $button_label2, $button_count);
 					}
 					
 					
 					//custom caption styles
 					
-					$title_styling 		 = !empty($custom_title_size) ? "font-size:{$custom_title_size}px; " : "";
-					$content_styling 	 = !empty($custom_content_size) ? "font-size:{$custom_content_size}px; " : "";
-					$content_class		 = "";
+					$title_styling 		 = !empty($custom_title_size) ? "font-size:{$custom_title_size}px; " : '';
+					$content_styling 	 = !empty($custom_content_size) ? "font-size:{$custom_content_size}px; " : '';
+					$content_class		 = '';
 					
-					if($font_color == "custom")
+					if($font_color == 'custom')
 					{
-						$title_styling 		.= !empty($custom_title) ? "color:{$custom_title}; " : "";
-						$content_styling 	.= !empty($custom_content) ? "color:{$custom_content}; " : "";
+						$title_styling 		.= !empty($custom_title) ? "color:{$custom_title}; " : '';
+						$content_styling 	.= !empty($custom_content) ? "color:{$custom_content}; " : '';
 					}
 					
 					if($title_styling) $title_styling = " style='{$title_styling}'" ;
 					if($content_styling) 
 					{
 						$content_styling = " style='{$content_styling}'" ;
-						$content_class	 = "av_inherit_color";
+						$content_class	 = 'av_inherit_color';
 					}
 					
 					//check if we got a caption
@@ -576,23 +582,33 @@ if ( ! class_exists( 'avia_slideshow' ) )
 						$title = "<{$heading} {$title_styling} class='avia-caption-title {$css} {$av_title_font_classes}' $markup_name>" . trim( apply_filters( 'avf_slideshow_title', $title ) ) . "</{$heading}>";
 					}
 					
-					if(is_array($content)) $content = implode(' ',$content); //temp fix for trim() expects string warning until I can actually reproduce the problem
-					if(trim($content) != "") $content 	= "<div class='avia-caption-content {$av_font_classes} {$content_class}' {$markup_description} {$content_styling}>".ShortcodeHelper::avia_apply_autop(ShortcodeHelper::avia_remove_autop(trim($content)))."</div>";
-
-					if(trim($title.$content.$button_html) != "")
+					if( is_array( $content ) ) 
 					{
-						if(trim($title) != "" && trim($button_html) != "" && trim($content) == "") $content = "<br/>";
+						$content = implode( ' ', $content ); //temp fix for trim() expects string warning until I can actually reproduce the problem
+					}
+					
+					if( trim($content ) != '' ) 
+					{
+						$content 	= "<div class='avia-caption-content {$av_font_classes} {$content_class}' {$markup_description} {$content_styling}>" . ShortcodeHelper::avia_apply_autop( ShortcodeHelper::avia_remove_autop( trim( $content ) ) ) . '</div>';
+					}
+					
+					if( trim( $title . $content . $button_html ) != '' )
+					{
+						if( trim( $title ) != '' && trim( $button_html ) != '' && trim( $content ) == '') 
+						{
+							$content = '<br/>';
+						}
 
-						if($this->config['handle'] == 'av_slideshow_full' || $this->config['handle'] == 'av_fullscreen')
+						if( $this->config['handle'] == 'av_slideshow_full' || $this->config['handle'] == 'av_fullscreen' )
 						{
 							$caption .= '<div class = "caption_fullwidth av-slideshow-caption '.$caption_pos.'">';
 							$caption .= 	'<div class = "container caption_container">';
 							$caption .= 			'<div class = "slideshow_caption">';
 							$caption .= 				'<div class = "slideshow_inner_caption">';
 							$caption .= 					'<div class = "slideshow_align_caption">';
-							$caption .=						$title;
-							$caption .=						$content;
-							$caption .=						$button_html;
+							$caption .=							$title;
+							$caption .=							$content;
+							$caption .=							$button_html;
 							$caption .= 					'</div>';
 							$caption .= 				'</div>';
 							$caption .= 			'</div>';
@@ -601,25 +617,27 @@ if ( ! class_exists( 'avia_slideshow' ) )
 						}
 						else
 						{
-							$caption = '<div class="avia-caption av-slideshow-caption"><div class="avia-inner-caption">'.$title.$content."</div></div>";
+							$caption = '<div class="avia-caption av-slideshow-caption"><div class="avia-inner-caption">' . $title.$content . '</div></div>';
 						}
 					}
 
-					if(!empty($this->config['perma_caption']) && empty($this->config['caption_override']))
+					if( ! empty( $this->config['perma_caption'] ) && empty( $this->config['caption_override'] ) )
 					{
 						$this->config['caption_override'] = $caption;
 					}
                    	
-                   	if(!empty($this->config['caption_override'])) $caption = "";
-                    
-					
-					if(!empty($img[0]))
+                   	if( ! empty( $this->config['caption_override'] ) ) 
 					{
-						$slider_data .= $this->config['bg_slider'] == "true" ? "style='background-position:{$position};' data-img-url='".$img[0]."'" : "";
+						$caption = '';
+					}
+					
+					if( ! empty( $img[0] ) )
+					{
+						$slider_data .= $this->config['bg_slider'] == 'true' ? "style='background-position:{$position};' data-img-url='{$img[0]}'" : '';
 						
-						if($slider_data )
+						if( $slider_data )
 						{
-							if(empty($this->ie8_fallback))
+							if( empty( $this->ie8_fallback ) )
 							{
 						    	$this->ie8_fallback .= "<!--[if lte IE 8]>";
 								$this->ie8_fallback .= "<style type='text/css'>";
@@ -639,13 +657,13 @@ if ( ! class_exists( 'avia_slideshow' ) )
 
 					$html .= "<li {$slider_data} class='{$extra_class} slide-{$counter} ' >";
 					$html .= "<".$tags[0]." data-rel='slideshow-".avia_slideshow::$slider."' class='avia-slide-wrap {$fallback_img_class}' {$fallback_img_style} {$linkdescription} >{$caption}";
-					if($this->config['bg_slider'] != "true" && empty($video))
+					if($this->config['bg_slider'] != 'true' && empty($video))
 					{
-						$img_style = "";
-						if(!empty($this->config['min_height']) && $this->config['min_height'] != "0px")
+						$img_style = '';
+						if(!empty($this->config['min_height']) && $this->config['min_height'] != '0px')
 						{
 							$percent = 100 / (100/$img[2] * (int) $this->config['min_height'] );
-							$this->config['min_width'] = ceil(($img[1] / $percent)) . "px";
+							$this->config['min_width'] = ceil(($img[1] / $percent)) . 'px';
 							
 							$img_style .= AviaHelper::style_string($this->config, 'min_height', 'min-height');
 							$img_style .= AviaHelper::style_string($this->config, 'min_width', 'min-width');
@@ -662,7 +680,7 @@ if ( ! class_exists( 'avia_slideshow' ) )
 					
 					
 					$html .= "</".$tags[1].">";
-					$html .= "</li>";
+					$html .= '</li>';
 					
 					if( $counter === 1 )
 					{
@@ -681,7 +699,7 @@ if ( ! class_exists( 'avia_slideshow' ) )
 
 			if(!empty($this->ie8_fallback))
 			{
-				$this->ie8_fallback .= "</style> <![endif]-->";
+				$this->ie8_fallback .= '</style> <![endif]-->';
 				add_action('wp_footer', array($this, 'add_ie8_fallback_to_footer'));
 			}
 
@@ -695,15 +713,15 @@ if ( ! class_exists( 'avia_slideshow' ) )
 		
 		protected function slideshow_cta_button($link, $link_target, $button_color, $button_label, $button_count)
 		{
-			$button_html = "";
-			$blank = (strpos($link_target, '_blank') !== false || $link_target == 'yes') ? ' target="_blank" ' : "";
-			$blank .= strpos($link_target, 'nofollow') !== false ? ' rel="nofollow" ' : "";
+			$button_html = '';
+			$blank = (strpos($link_target, '_blank') !== false || $link_target == 'yes') ? ' target="_blank" ' : '';
+			$blank .= strpos($link_target, 'nofollow') !== false ? ' rel="nofollow" ' : '';
 			
 			$link = AviaHelper::get_url($link); 
 			
 			$button_html .= "<a href='{$link}' {$blank} class='avia-slideshow-button avia-button avia-color-{$button_color} {$button_count}' data-duration='800' data-easing='easeInOutQuad'>";
 			$button_html .= $button_label;
-			$button_html .= "</a>";
+			$button_html .= '</a>';
 			return $button_html;
 		}
 
@@ -712,28 +730,28 @@ if ( ! class_exists( 'avia_slideshow' ) )
 		{
 			global $avia_config;
 		
-			$html  = "";
+			$html  = '';
 			$html .= "<div class='avia-slideshow-arrows avia-slideshow-controls'>";
 			$html .= 	"<a href='#prev' class='prev-slide' ".av_icon_string('prev_big').">".__('Previous','avia_framework' )."</a>";
 			$html .= 	"<a href='#next' class='next-slide' ".av_icon_string('next_big').">".__('Next','avia_framework' )."</a>";
-			$html .= "</div>";
+			$html .= '</div>';
 
 			return $html;
 		}
 
 		protected function slide_navigation_dots()
 		{
-			$html   = "";
+			$html   = '';
 			$html  .= "<div class='avia-slideshow-dots avia-slideshow-controls'>";
-			$active = "active";
+			$active = 'active';
 
 			for($i = 1; $i <= $this->slide_count; $i++)
 			{
 				$html .= "<a href='#{$i}' class='goto-slide {$active}' >{$i}</a>";
-				$active = "";
+				$active = '';
 			}
 
-			$html .= "</div>";
+			$html .= '</div>';
 
 			return $html;
 		}
@@ -788,15 +806,15 @@ if ( ! class_exists( 'avia_slideshow' ) )
 			extract($meta);
 			
 			/*check/create overlay*/
-			$overlay = "";
+			$overlay = '';
 			if(!empty($overlay_enable))
 			{
-				$overlay_src = "";
+				$overlay_src = '';
 				$overlay = "opacity: {$overlay_opacity}; ";
 				if(!empty($overlay_color)) $overlay .= "background-color: {$overlay_color}; ";
 				if(!empty($overlay_pattern))
 				{
-					if($overlay_pattern == "custom")
+					if($overlay_pattern == 'custom')
 					{
 						$overlay_src = $overlay_custom_pattern;
 					}
@@ -850,16 +868,21 @@ if ( !class_exists( 'avia_slideshow_video_helper' ) )
 		
 		/**
 		 * Define extern services that need to be confirmed by user
+		 * 
 		 * @var array 
 		 */
 		static protected $extern_services = array( 'youtube', 'vimeo' );
 		
 		
-		static function set_video_slide($video_url, $service = false, $meta = false, $config = false)
+		static function set_video_slide( $video_url, $service = false, $meta = false, $config = false )
 		{
-			$video = "";
+			$video = '';
 			$origin_url = $video_url;
-			if(empty($service)) $service = self::which_video_service($video_url);
+			
+			if( empty( $service ) ) 
+			{
+				$service = self::which_video_service( $video_url );
+			}
 			
 			$uid 		= 'player_'.get_the_ID().'_'.mt_rand().'_'.mt_rand();
 			$controls 	= empty($meta['video_controls']) ? 1 : 0;
@@ -869,7 +892,7 @@ if ( !class_exists( 'avia_slideshow_video_helper' ) )
 			$atts['muted'] = empty($meta['video_mute']) ? 0 : 1;
 			
 			//was previously only used for mobile,now for everything
-			$fallback_img = !empty($meta['mobile_image']) ? $meta['mobile_image'] : "";
+			$fallback_img = !empty($meta['mobile_image']) ? $meta['mobile_image'] : '';
 			
 			if(is_numeric($fallback_img)) 
 			{
@@ -879,11 +902,18 @@ if ( !class_exists( 'avia_slideshow_video_helper' ) )
 			
 			switch( $service )
 			{
-				case "html5": $video = "<div class='av-click-overlay'></div>".avia_html5_video_embed($video_url,  $fallback_img , $types = array('webm' => 'type="video/webm"', 'mp4' => 'type="video/mp4"', 'ogv' => 'type="video/ogg"'), $atts); break;
-				case "iframe":$video = $video_url; break;
-				case "youtube":
+				case 'html5': 
+					$types = array( 'webm' => 'type="video/webm"', 'mp4' => 'type="video/mp4"', 'ogv' => 'type="video/ogg"' );
+					$video = "<div class='av-click-overlay'></div>" . avia_html5_video_embed( $video_url,  $fallback_img, $types, $atts ); 
+					break;
+				
+				case 'iframe':
+					$video = $video_url; 
+					break;
+				
+				case 'youtube':
 					
-					$explode_at = strpos($video_url, 'youtu.be/') !== false ? "/" : "v=";
+					$explode_at = strpos($video_url, 'youtu.be/') !== false ? '/' : 'v=';
 					$video_url	= explode($explode_at, trim($video_url));
 					$video_url	= end($video_url);
 					$video_id	= $video_url;
@@ -916,7 +946,7 @@ if ( !class_exists( 'avia_slideshow_video_helper' ) )
 					$video 	= "<div class='av-click-overlay'></div><div class='mejs-mediaelement'><div height='1600' width='900' class='av_youtube_frame' id='{$uid}' {$data} data-original_url='{$origin_url}' ></div></div>";
 					
 				break;
-				case "vimeo":
+				case 'vimeo':
 			
 					$color		= ltrim( avia_get_option('colorset-main_color-primary'), '#');				
 					$autopause  = empty($meta['video_section_bg']) ? 1 : 0; //pause if another vimeo video plays?
@@ -953,25 +983,25 @@ if ( !class_exists( 'avia_slideshow_video_helper' ) )
 		//get the video service based on the url string fo the video
 		static function which_video_service( $video_url )
 		{
-			$service = "";
+			$service = '';
 			
 			if(avia_backend_is_file($video_url, 'html5video'))
 			{
-				$service = "html5";
+				$service = 'html5';
 			}
 			else if(strpos($video_url,'<iframe') !== false)
 			{
-				$service = "iframe";
+				$service = 'iframe';
 			}
 			else
 			{
 				if(strpos($video_url, 'youtube.com/watch') !== false || strpos($video_url, 'youtu.be/') !== false)
 				{
-					$service = "youtube";
+					$service = 'youtube';
 				}
 				else if(strpos($video_url, 'vimeo.com') !== false)
 				{
-					$service = "vimeo";
+					$service = 'vimeo';
 				}
 			}
 			

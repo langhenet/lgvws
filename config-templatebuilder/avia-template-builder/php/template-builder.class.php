@@ -4,13 +4,14 @@
 */
 
 // Don't load directly
-if ( !defined('ABSPATH') ) { die('-1'); }
+if ( ! defined('ABSPATH') ) { die('-1'); }
 
-if ( !class_exists( 'AviaBuilder' ) ) {
+if ( ! class_exists( 'AviaBuilder' ) ) 
+{
 
 	class AviaBuilder
 	{
-		const VERSION = '0.9.5';
+		const VERSION = '4.7.1.1';
 		
 		/**
 		 * Holds the instance of this class
@@ -24,11 +25,11 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 		 *
 		 * @var string			'safe' | 'debug' 
 		 */
-		public static $mode = "";
+		public static $mode = '';
 		
 		public static $path = array();
 		public static $resources_to_load = array();
-		public static $default_iconfont = "";
+		public static $default_iconfont = '';
 		public static $full_el = array();
 		public static $full_el_no_section = array();
 		
@@ -126,12 +127,20 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 		 */
 		public $shortcode_buttons;
 		
-		
+		/**
+		 * Contains usage count for each shortcode in blog
+		 *		shortcode  =>  count
+		 * 
+		 * @var array
+		 * @since 4.6.4 
+		 */
+		protected $shortcode_usage_blog;
+
 		/**
 		 *
 		 * @var AviaSaveBuilderTemplate
 		 */
-		public $builderTemplate;
+		protected $builderTemplate;
 		
 		/**
 		 *
@@ -259,6 +268,7 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 			$this->paths = array();
 			$this->shortcode_class = array();
 			$this->shortcode = array();
+			$this->shortcode_usage_blog = array();
 			$this->shortcode_parents = array();
 			$this->shortcode_parser = null;
 			$this->posts_shortcode_parser_state = '';
@@ -303,12 +313,13 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 																						)
 																					));
 		
-			add_action('load-post.php', array(&$this, 'admin_init') , 5 );
-			add_action('load-post-new.php', array(&$this, 'admin_init') , 5 );
+			add_action('load-post.php', array( $this, 'admin_init') , 5 );
+			add_action('load-post-new.php', array( $this, 'admin_init') , 5 );
 			
-			add_action('init', array(&$this, 'loadLibraries') , 5 ); 
-			add_action('init', array(&$this, 'init') , 10 );
-			add_action('wp', array(&$this, 'frontend_asset_check') , 5 );
+			add_action( 'admin_init', array( $this, 'handler_admin_init' ), 1 );
+			add_action( 'init', array( $this, 'loadLibraries' ), 5 ); 
+			add_action( 'init', array( $this, 'init' ), 10 );
+			add_action( 'wp', array( $this, 'frontend_asset_check' ), 5 );
 			
 			add_action( 'wp_head', array( $this, 'handler_wp_head'), 99999999 );
 			add_action( 'get_sidebar', array( $this, 'handler_get_sidebar'), 1, 1 );
@@ -336,6 +347,7 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 			unset( $this->paths );
 			unset( $this->shortcode_class );
 			unset( $this->shortcode );
+			unset( $this->shortcode_usage_blog );
 			unset( $this->shortcode_parents );
 			unset( $this->shortcode_parser );
 			unset( $this->element_manager );
@@ -348,6 +360,18 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 			unset( $this->may_be_disabled_automatically );
 			unset( $this->disabled_assets );
 		}
+		
+		/**
+		 * @since 4.6.4
+		 */
+		public function handler_admin_init() 
+		{
+			if( isset( $_REQUEST['avia_export'] ) && isset( $_REQUEST['avia_generate_alb_templates_file'] ) ) 
+			{
+				$this->get_AviaSaveBuilderTemplate();
+			}
+		}
+		
 		
 		/**
 		 * Flag that wp_head has been executed (hooks with very low priority so other plugins may perform a precompile
@@ -526,8 +550,14 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 		 **/
 		protected function addAdminFilters() 
 		{
-			//lock drag and drop?
-			$this->disable_drag_drop = apply_filters('avf_allow_drag_drop', false);
+			/**
+			 * lock drag and drop?
+			 * 
+			 * @used_by			functions-enfold.php	avia_disable_alb_drag_drop()		30
+			 * @param boolean
+			 * @return boolean
+			 */
+			$this->disable_drag_drop = apply_filters( 'avf_allow_drag_drop', false );
 			
 			// add_filter('tiny_mce_before_init', array($this, 'tiny_mce_helper')); // remove span tags from tinymce - currently disabled, doesnt seem to be necessary
 			add_filter( 'admin_body_class', array( $this, 'admin_body_class' ) );
@@ -546,9 +576,9 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 			add_filter( 'avf_before_save_alb_post_data', array( $this, 'handler_before_save_alb_post_data' ), 10, 2 );	//	hook to balance shortcode for non ALB pages
 		    			
 			//custom ajax actions
-			add_action('wp_ajax_avia_ajax_text_to_interface', array($this,'text_to_interface'));
-			add_action('wp_ajax_avia_ajax_text_to_preview', array($this,'text_to_preview'));
-			
+			add_action( 'wp_ajax_avia_ajax_text_to_interface', array( $this, 'text_to_interface' ) );
+			add_action( 'wp_ajax_avia_ajax_text_to_preview', array( $this, 'text_to_preview' ) );
+			add_action( 'wp_ajax_avia_alb_shortcode_buttons_order', array( $this, 'handler_alb_shortcode_buttons_order' ), 10 );
 		}
 
 		
@@ -570,7 +600,7 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 		 **/
 		public function load_shortcode_assets()
 		{
-			$output = "";
+			$output = '';
 			$output .= avia_font_manager::load_font();
 			
 			/* if the builder is decoupled from the theme then make sure to only load iconfonts if they are actually necessary. in enfolds case it is
@@ -596,7 +626,8 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 		 **/
 		public function admin_scripts_styles()
 		{
-			$ver = AviaBuilder::VERSION;
+			global $wp_version;
+			$ver = $wp_version . "-" . AviaBuilder::VERSION;
 			
 			#js
 			wp_enqueue_script('avia_builder_js', $this->paths['assetsURL'].'js/avia-builder.js', array('jquery','jquery-ui-core', 'jquery-ui-sortable', 'jquery-ui-droppable','jquery-ui-datepicker','wp-color-picker','media-editor','post'), $ver, true );
@@ -607,8 +638,8 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 
 			
 			#css
-			wp_enqueue_style( 'avia-modal-style' , $this->paths['assetsURL'].'css/avia-modal.css');
-			wp_enqueue_style( 'avia-builder-style' , $this->paths['assetsURL'].'css/avia-builder.css');
+			wp_enqueue_style( 'avia-modal-style' , $this->paths['assetsURL'].'css/avia-modal.css', false, $ver);
+			wp_enqueue_style( 'avia-builder-style' , $this->paths['assetsURL'].'css/avia-builder.css', false, $ver);
 			wp_enqueue_style( 'wp-color-picker' );
 			
 			/**
@@ -634,9 +665,9 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 		}
 		
 		
-		public function load_preview_css( $icon_font = "", $css = "" )
+		public function load_preview_css( $icon_font = '', $css = '' )
 		{
-			$output				= "";
+			$output				= '';
 			$template_url 		= get_template_directory_uri();
 			$child_theme_url 	= get_stylesheet_directory_uri();
 			$avia_dyn_stylesheet_url = false;
@@ -676,7 +707,7 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 	        
 	        foreach($google_fonts as $font)
 	        {
-	        	$font_weight = "";
+	        	$font_weight = '';
 
 				if(strpos($font, ":") !== false)
 				{
@@ -765,12 +796,27 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 		/**
 		 *safe mode or debugging
 		 **/
-		public function setMode($status = "")
+		public function setMode($status = '')
 	 	{
 			AviaBuilder::$mode = apply_filters('avia_builder_mode', $status);
 		}
 		
-		
+		/**
+		 * Creates and returns instance of AviaSaveBuilderTemplate
+		 * 
+		 * @since 4.6.4
+		 * @return AviaSaveBuilderTemplate
+		 */
+		public function get_AviaSaveBuilderTemplate()
+		{
+			if( ! $this->builderTemplate instanceof AviaSaveBuilderTemplate )
+			{
+				$this->builderTemplate = new AviaSaveBuilderTemplate( $this );
+			}
+			
+			return $this->builderTemplate;
+		}
+				
 		/**
 		 * Returns the instance of ShortcodeParser
 		 * 
@@ -890,6 +936,9 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 		
 		/**
 		 * Returns option settings
+		 * Reduced in 4.6.4 to a single option for all developer input fields and only 2 options:
+		 *		- hide input fields but entered input 
+		 *		- show input fields
 		 * 
 		 * @since 4.5.7.2
 		 * @param string $setting
@@ -897,54 +946,54 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 		 */
 		public function get_developer_settings( $setting = '' )
 		{
+			$option_value = avia_get_option( 'alb_developer_options', '' );
+			
+			if( $option_value == "alb_developer_options")
+			{
+				$option_value = 'hide';
+			}
+			else
+			{
+				$option_value = "show";
+			}
+			
+			
 			$value = '';
 			
 			switch( $setting )
 			{
 				case 'custom_css':
-					$value = avia_get_option( 'developer_options', 'deactivate' );
-					if( '' == $value )
-					{
-						$value = 'hide';
-					}
-					
-					/**
-					 * Backwards compatibility - woll be removed in a future version
-					 * 
-					 * @since 4.6.1
-					 */
-					if( current_theme_supports( 'avia_template_builder_custom_css' ) )
-					{
-						$value = 'developer_options';
-					}
+					$value = 'show' == $option_value ? 'developer_options' : $option_value;
 					break;
 				case 'custom_id':
-					$value = avia_get_option( 'developer_id_attribute', 'deactivate' );
-					
-					/**
-					 * Backwards compatibility - woll be removed in a future version
-					 * 
-					 * @since 4.6.1
-					 */
-					if( current_theme_supports( 'avia_template_builder_custom_tab_toogle_id' ) )
-					{
-						$value = 'developer_id_attribute';
-					}
+					$value = 'show' == $option_value ? 'developer_id_attribute' : $option_value;
 					break;
 				case 'heading_tags':
-					$value = avia_get_option( 'developer_seo_heading_tags', 'deactivate' );
+					$value = 'show' == $option_value ? 'developer_seo_heading_tags' : $option_value;
+					break;
+				case 'aria_label':
+					$value = 'show' == $option_value ? 'developer_aria_label' : $option_value;
+					break;
+				case 'alb_desc_id':
+					$value = 'show' == $option_value ? 'developer_alb_desc_id' : $option_value;
 					break;
 				default:
 					$value = false;
 			}
 			
+			
 			/**
+			 * In 4.6.4 option  Do not show, ignore ... has been removed 
+			 * You can use this filter to implement a fallback to the old solution.
+			 * https://github.com/KriesiMedia/enfold-library/blob/master/actions%20and%20filters/ALB%20Elements/Editing%20ALB%20elements/avf_alb_get_developer_settings.php
+			 * 
 			 * @since 4.5.7.2
 			 * @param string|false $value
 			 * @param string $setting
+			 * @param string $option_value		added 4.6.4
 			 * @return string|false
 			 */
-			return apply_filters( 'avf_alb_get_developer_settings', $value, $setting );
+			return apply_filters( 'avf_alb_get_developer_settings', $value, $setting, $option_value );
 		}
 
 		/**
@@ -1187,6 +1236,116 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 		{
 			$this->revision_id = $post_id;
 		}
+		
+		/**
+		 * Store information in user meta data
+		 * 
+		 * @since 4.6.4 
+		 * @param string $info
+		 * @param mixed $value
+		 * @return boolean
+		 */
+		public function set_backend_user_info( $info = '', $value = '' )
+		{
+			if( ! is_user_logged_in() )
+			{
+				return false;
+			}
+			
+			$user_id = get_current_user_id(); 
+			
+			$meta = get_user_meta( $user_id, 'avia_alb_meta', true );
+			if( ! is_array( $meta ) )
+			{
+				$meta = array();
+			}
+			
+			$result = true;
+			
+			switch( $info )
+			{
+				case 'sc_sort_order':
+					$meta[ $info ] = $value;
+					break;
+				default:
+					$result = false;
+					break;
+			}
+			
+			if( $result )
+			{
+				update_user_meta( $user_id, 'avia_alb_meta', $meta );
+			}
+			
+			return $result;
+		}
+
+		/**
+		 * Returns user info stored in user meta
+		 * 
+		 * @since 4.6.4
+		 * @param string $info		'sc_sort_order'
+		 * @return mixed|false
+		 */
+		public function get_backend_user_info( $info = '' )
+		{
+			if( ! is_user_logged_in() )
+			{
+				return false;
+			}
+			
+			$user_id = get_current_user_id(); 
+			
+			$meta = get_user_meta( $user_id, 'avia_alb_meta', true );
+			
+			$result = false;
+			switch( $info )
+			{
+				case 'sc_sort_order':
+					return isset( $meta[ $info ] ) ? $meta[ $info ] : false;
+				default:
+					break;
+			}
+			
+			return $result;
+		}
+		
+		/**
+		 * Callback to store user selection of sort order for alb shortcodes in editor
+		 *  
+		 * @since 4.6.4
+		 */
+		public function handler_alb_shortcode_buttons_order()
+		{
+			header( "Content-Type: application/json" );
+			
+			$return = check_ajax_referer( 'avia_nonce_loader', '_ajax_nonce', false );
+			if( ! current_user_can( 'edit_posts' ) )
+			{
+				$return = false;
+			}
+				
+				// response output
+			$response = array( '_ajax_nonce' => wp_create_nonce( 'avia_nonce_loader' ) );
+			
+			/**
+			 * Return error and allow to resend data
+			 */
+			if( false === $return )
+			{
+				$response['success'] = false;
+				$response['expired_nonce'] = true;
+				echo json_encode( $response );
+				exit;
+			}
+			
+			$sorting = isset( $_REQUEST['sorting'] ) ? $_REQUEST['sorting'] : 'order';
+			$this->set_backend_user_info( 'sc_sort_order', $sorting );
+			
+			$response['success'] = true;
+			echo json_encode( $response );
+			exit;
+		}
 
 		/**
 		 *set fullwidth elements that need to interact with section shortcode
@@ -1210,7 +1369,7 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 			new MetaBoxBuilder($this->paths['configPath']);
 
 			// save button
-			$this->builderTemplate = new AviaSaveBuilderTemplate($this);
+			$this->get_AviaSaveBuilderTemplate();
 			
 			//activate helper function hooks
 			AviaHelper::backend();
@@ -1785,7 +1944,7 @@ if ( !class_exists( 'AviaBuilder' ) ) {
     		//fetch the config array
     		include($this->paths['configPath']."meta.php");
     		
-    		$slug = "";
+    		$slug = '';
     		$pages = array();
     		//check to which pages the avia builder is applied
     		foreach($elements as $element)
@@ -1827,8 +1986,8 @@ if ( !class_exists( 'AviaBuilder' ) ) {
             $status         = $this->get_alb_builder_status( $post_ID );
             $params 		= apply_filters('avf_builder_button_params', 
             			    	array(	'disabled'		=>false, 
-           				    			'note' 			=> "", 
-           				    			'noteclass'		=> "",
+           				    			'note' 			=> '', 
+           				    			'noteclass'		=> '',
                			    			'button_class'	=>'',
                			    			'visual_label'  => __( 'Advanced Layout Editor', 'avia_framework' ),
                			    			'default_label' => __( 'Default Editor', 'avia_framework' )
@@ -1838,8 +1997,8 @@ if ( !class_exists( 'AviaBuilder' ) ) {
             
             if($params['disabled']) { $status = false; }
             $active_builder = $status == "active" ? $params['default_label'] : $params['visual_label'];		
-            $editor_class   = $status == "active" ? "class='avia-hidden-editor'" : "";
-            $button_class   = $status == "active" ? "avia-builder-active" : "";
+            $editor_class   = $status == "active" ? "class='avia-hidden-editor'" : '';
+            $button_class   = $status == "active" ? "avia-builder-active" : '';
                 
             
             
@@ -1874,11 +2033,11 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 		/**
 		 * function called by the metabox class that creates the interface in your wordpress backend
 		 **/
-		public function visual_editor($element)
+		public function visual_editor( $element )
 		{
 			$output = '';
 			$tabs_output = '';
-			$title  = '';
+			$title = '';
 			$i = 0;
 			
 			/**
@@ -1899,45 +2058,63 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 			
 			$output .= '<div class="avia-builder-main-wrap ' . $fix_class . '">';
 					
-			$this->shortcode_buttons = apply_filters('avia_show_shortcode_button', array());	
+			/**
+			 * 
+			 * @used_by  aviaShortcodeTemplate::add_backend_button		10
+			 * 
+			 * @since <4.0
+			 * @param array
+			 * @return array
+			 */
+			$this->shortcode_buttons = apply_filters( 'avia_show_shortcode_button', array() );	
 			
-			
-			if(!empty($this->shortcode_buttons) && $this->disable_drag_drop == false)
+			if( ! empty( $this->shortcode_buttons ) && $this->disable_drag_drop == false )
 			{
-				$this->tabs = isset($element['tab_order']) ? array_flip($element['tab_order']) : array();
-				foreach($this->tabs as &$empty_tabs) $empty_tabs = array();
+				$this->tabs = isset( $element['tab_order'] ) ? array_flip( $element['tab_order'] ) : array();
 				
-				
-				foreach ($this->shortcode_buttons as $shortcode)
+				foreach( $this->tabs as &$empty_tabs ) 
 				{
-					if(empty($shortcode['tinyMCE']['tiny_only']))
+					$empty_tabs = array();
+				}
+				
+				foreach( $this->shortcode_buttons as $shortcode )
+				{
+					if( empty( $shortcode['tinyMCE']['tiny_only'] ) )
 					{
-						if(!isset($shortcode['tab'])) $shortcode['tab'] = __("Custom Elements",'avia_framework' );
+						if( ! isset($shortcode['tab'] ) ) 
+						{
+							$shortcode['tab'] = __( 'Custom Elements', 'avia_framework' );
+						}
 						
-						$this->tabs[$shortcode['tab']][] = $shortcode;
+						$this->tabs[ $shortcode['tab'] ][] = $shortcode;
 					}
 				}
 
-				foreach($this->tabs as $key => $tab)
+				foreach( $this->tabs as $key => $tab )
 				{
-					if(empty($tab)) continue;
+					if( empty( $tab ) ) 
+					{
+						continue;
+					}
 					
-					usort($tab,array($this, 'sortByOrder'));
+					usort( $tab, array( $this, 'sortByOrder' ) );
 				
 					$i ++;
-					$title .= "<a href='#avia-tab-$i'>".$key."</a>";
+					$title .= "<a href='#avia-tab-{$i}'>{$key}</a>";
 					
-					$tabs_output .= "<div class='avia-tab avia-tab-$i'>";
+					$tabs_output .= "<div class='avia-tab avia-tab-{$i}'>";
 					
-					foreach ($tab as $shortcode)
+					$sort_order = 0;
+					foreach( $tab as $shortcode )
 					{
-						if(empty($shortcode['invisible']))
+						if( empty( $shortcode['invisible'] ) )
 						{
-							$tabs_output .= $this->create_shortcode_button($shortcode);
+							$sort_order ++;
+							$tabs_output .= $this->create_shortcode_button( $shortcode, $sort_order );
 						}
 					}
 					
-					$tabs_output .= "</div>";
+					$tabs_output .= '</div>';
 				}
 			}
 			
@@ -1945,23 +2122,64 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 			$active_builder  = $this->get_alb_builder_status( $post_ID );
 			
 			
-			$extra = AviaBuilder::$mode != true ? "" : "avia_mode_".AviaBuilder::$mode;
+			$extra = AviaBuilder::$mode != true ? '' : "avia_mode_".AviaBuilder::$mode;
 			$hotekey_info = htmlentities($element['desc'], ENT_QUOTES, get_bloginfo( 'charset' ));
 			
 			$output .= '<div class="shortcode_button_wrap avia-tab-container"><div class="avia-tab-title-container">'.$title.'</div>' . $tabs_output . '</div>';
 			$output .= '<input type="hidden" value="'.$active_builder.'" name="aviaLayoutBuilder_active" id="aviaLayoutBuilder_active" />';
 			
-			if($this->disable_drag_drop == false)
+			$params = array(
+							'args'	=> array( 'icon' =>  'ue86e' )
+						);
+			$icon = av_backend_icon( $params );
+			
+			$user_info = $this->get_backend_user_info( 'sc_sort_order' );
+			$init_sort = ( ! empty( $user_info ) ) ? $user_info : 'order';
+			
+			
+			$sorting_label = array(
+				'order' 	=> __( 'Default', 'avia_framework' ),
+				'name_asc' 	=> __( 'By name (ascending)', 'avia_framework' ),
+				'name_desc' => __( 'By name (descending)', 'avia_framework' ),
+				'usage' 	=> __( 'By usage', 'avia_framework' ),
+			);
+			
+				
+			$output .=	'<div id="avia-sort-list-dropdown" class="avia-sort-list-container" data-init_sort="' . $init_sort . '">';
+			$output .=		'<ul class="avia-sort-list-select">';
+			$output .=			'<li class="avia-sort-list-wrap">';
+			$output .=				'<strong>';
+			$output .=					'<span class="avia-font-entypo-fontello avia_icon_char">' . $icon['display_char'] . '</span> '. __( 'Sorting', 'avia_framework' ) . ': <span class="avia-sort-list-label">'. $sorting_label[$init_sort] .'</span>'; 
+			$output .=				'</strong>';
+			$output .=				'<ul class="avia-sort-list-main">';
+			$output .=					'<li class="avia-sort-list-element">';
+			$output .=						'<a href="#" class="sort_active" data-sorting="order" title="' . esc_attr( __( 'Sort shortcode buttons by theme default sorting', 'avia_framework' ) ) . '">' . __( 'Default', 'avia_framework' ) . '</a>';
+			$output .=					'</li>';
+			$output .=					'<li class="avia-sort-list-element">';
+			$output .=						'<a href="#" class="" data-sorting="name_asc" title="' . esc_attr( __( 'Sort shortcode buttons by name ascending', 'avia_framework' ) ) . '">' . __( 'By name (ascending)', 'avia_framework' ) . '</a>';
+			$output .=					'</li>';
+			$output .=					'<li class="avia-sort-list-element">';
+			$output .=						'<a href="#" class="" data-sorting="name_desc" title="' . esc_attr( __( 'Sort shortcode buttons by name descending', 'avia_framework' ) ) . '">' . __( 'By name (descending)', 'avia_framework' ) . '</a>';
+			$output .=					'</li>';
+			$output .=					'<li class="avia-sort-list-element">';
+			$output .=						'<a href="#" class="" data-sorting="usage" title="' . esc_attr( __( 'Sort shortcode buttons by usage', 'avia_framework' ) ) . '">' . __( 'By usage', 'avia_framework' ) . '</a>';
+			$output .=					'</li>';
+			$output .=				'</ul>';
+			$output .=			'</li>';
+			$output .=		'</ul>';
+			$output .=	'</div>';
+			
+			if( $this->disable_drag_drop == false )
 			{
-			$output .= '<a href="#info" class="avia-hotkey-info" data-avia-help-tooltip="'.$hotekey_info.'">'.__('Information', 'avia_framework' ).'</a>';
-			$output .= $this->builderTemplate->create_save_button();
+				$output .= '<a href="#info" class="avia-hotkey-info" data-avia-help-tooltip="' . $hotekey_info . '">' . __( 'Information', 'avia_framework' ) . '</a>';
+				$output .= $this->builderTemplate->create_save_button();
 			}
 			
 			$output .= "<div class='layout-builder-wrap {$extra}'>";
 			
-			if($this->disable_drag_drop == false)
+			if( $this->disable_drag_drop == false )
 			{
-				$output .= "	<div class='avia-controll-bar'></div>";
+				$output .=		"<div class='avia-controll-bar'></div>";
 			}
 			
 			$output .= "	<div id='aviaLayoutBuilder' class='avia-style avia_layout_builder avia_connect_sort preloading av_drop' data-dragdrop-level='0'>";
@@ -2028,42 +2246,62 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 			return $out;
 		}
 
-
-		/*create a shortcode button*/
-		protected function create_shortcode_button($shortcode)
+		/**
+		 * Create a shortcode button
+		 * 
+		 * @since < 4.0
+		 * @param array $shortcode
+		 * @param int $sort_order
+		 * @return string
+		 */
+		protected function create_shortcode_button( $shortcode, $sort_order )
 		{
-			$class  = "";
-			$shortcode = apply_filters('avf_shortcode_insert_button_backend', $shortcode);
+			if( empty( $this->shortcode_usage_blog ) )
+			{
+				$this->shortcode_usage_blog = Avia_Builder()->element_manager()->get_elements_count( 'blog' );
+			}
+				
+			$class = '';
+			$usage = isset( $this->shortcode_usage_blog[ $shortcode['shortcode'] ] ) ? $this->shortcode_usage_blog[ $shortcode['shortcode'] ] : 0;
+			
+			
+			/**
+			 * @used_by enfold\includes\helper-assets.php:: function av_disable_button_in_backend		10
+			 * 
+			 * @since 4.3
+			 * @param array
+			 * @return array
+			 */
+			$shortcode = apply_filters( 'avf_shortcode_insert_button_backend', $shortcode );
 			
 			//disable element based on post type
-			if(!empty($shortcode['posttype']) && $shortcode['posttype'][0] != AviaHelper::backend_post_type())
+			if( ! empty( $shortcode['posttype'] ) && $shortcode['posttype'][0] != AviaHelper::backend_post_type() )
 			{
 				$shortcode['tooltip'] = $shortcode['posttype'][1];
-				$class .= "av-shortcode-disabled ";
+				$class .= 'av-shortcode-disabled ';
 			}
 			
 			//disable element based on condition
-			if(!empty($shortcode['disabled']) && $shortcode['disabled']['condition'] === true)
+			if( ! empty( $shortcode['disabled'] ) && $shortcode['disabled']['condition'] === true )
 			{
 				$shortcode['tooltip'] = $shortcode['disabled']['text'];
-				$class .= "av-shortcode-disabled ";
+				$class .= 'av-shortcode-disabled ';
 			}
 			
-			
-			
-			
-			$icon   = isset($shortcode['icon']) ? '<img src="'.$shortcode['icon'].'" alt="'.$shortcode['name'].'" />' : "";
-			$data   = !empty($shortcode['tooltip']) ? " data-avia-tooltip='".$shortcode['tooltip']."' " : "";
-			$data  .= !empty($shortcode['drag-level']) ? " data-dragdrop-level='".$shortcode['drag-level']."' " : "";
-			$class .= isset($shortcode['class']) ? $shortcode['class'] : "";
-            $class .= !empty($shortcode['target']) ? " ".$shortcode['target'] : "";
 
+			$icon   = isset( $shortcode['icon'] ) ? '<img src="' . $shortcode['icon'] . '" alt="' . esc_attr( $shortcode['name'] ) . '" />' : '';
 			
+			$data   = ! empty( $shortcode['tooltip'] ) ? " data-avia-tooltip='{$shortcode['tooltip']}' " : '';
+			$data  .= ! empty( $shortcode['drag-level'] ) ? " data-dragdrop-level='{$shortcode['drag-level']}' " : '';
+			$data  .= " data-sort_order='{$sort_order}' ";
+			$data  .= ' data-sort_name="' . esc_attr( $shortcode['name'] ) . '" ';
+			$data  .= " data-sort_usage='{$usage}' ";
 			
+			$class .= isset( $shortcode['class'] ) ? $shortcode['class'] : '';
+            $class .= ! empty( $shortcode['target'] ) ? " {$shortcode['target']}" : '';
 			
-			
-			$link   = "";
-			$link  .= "<a {$data} href='#".$shortcode['php_class']."' class='shortcode_insert_button ".$class."' >".$icon.'<span>'.$shortcode['name']."</span></a>";
+			$link   = '';
+			$link  .= "<a {$data} href='#{$shortcode['php_class']}' class='shortcode_insert_button {$class}' >{$icon}<span>{$shortcode['name']}</span></a>";
 			
 			return $link;
 		}
@@ -2245,7 +2483,7 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 		 
 		public function tiny_mce_helper($mceInit)
 		{
-			$mceInit['extended_valid_elements'] = empty($mceInit['extended_valid_elements']) ? "" : $mceInit['extended_valid_elements'] .","; 
+			$mceInit['extended_valid_elements'] = empty($mceInit['extended_valid_elements']) ? '' : $mceInit['extended_valid_elements'] .","; 
 			$mceInit['extended_valid_elements'] = "span[!class]";
 			return $mceInit;
 		}
@@ -2501,7 +2739,7 @@ if ( !class_exists( 'AviaBuilder' ) ) {
 			// global fix for https://kriesi.at/support/topic/footer-disseapearing/#post-427764
 			if( in_array( $last_el['tag'], AviaBuilder::$full_el_no_section ) )
 			{
-				avia_sc_section::$close_overlay = "";
+				avia_sc_section::$close_overlay = '';
 			}
 
 			$out .= avia_sc_section::$close_overlay;

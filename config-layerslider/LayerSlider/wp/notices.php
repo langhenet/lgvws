@@ -5,25 +5,28 @@ function layerslider_check_notices() {
 
 	add_action('admin_notices', 'layerslider_important_notice');
 
-	if(strpos($_SERVER['REQUEST_URI'], '?page=layerslider') !== false) {
+	if( ! empty( $_GET['page'] ) && $_GET['page'] === 'layerslider' ) {
 		add_action('admin_notices', 'layerslider_update_notice');
 		add_action('admin_notices', 'layerslider_dependency_notice');
 
-		if( LS_Config::get('notices') && ! get_option('layerslider-authorized-site', null) ) {
-
-			// Make sure to set an initial timestamp for the notice.
-			if( ! $lastCheck = get_user_meta( get_current_user_id(), 'ls-show-support-notice-timestamp', true ) ) {
-				$lastCheck = time() - WEEK_IN_SECONDS * 3;
-				update_user_meta( get_current_user_id(), 'ls-show-support-notice-timestamp', $lastCheck );
-			}
-
-			if( time() - MONTH_IN_SECONDS > $lastCheck ) {
-				add_action('admin_notices', 'layerslider_premium_support');
-			}
-		}
-
 		if( get_option('ls-show-canceled_activation_notice', 0) ) {
 			add_action('admin_notices', 'layerslider_canceled_activation');
+			update_user_meta( get_current_user_id(), 'ls-show-support-notice-timestamp', time() - WEEK_IN_SECONDS * 3 );
+
+		} else {
+
+			if( LS_Config::get('notices') && ! LS_Config::isActivatedSite() ) {
+
+				// Make sure to set an initial timestamp for the notice.
+				if( ! $lastCheck = get_user_meta( get_current_user_id(), 'ls-show-support-notice-timestamp', true ) ) {
+					$lastCheck = time() - WEEK_IN_SECONDS * 3;
+					update_user_meta( get_current_user_id(), 'ls-show-support-notice-timestamp', $lastCheck );
+				}
+
+				if( time() - ( DAY_IN_SECONDS * 31 ) > $lastCheck ) {
+					add_action('admin_notices', 'layerslider_premium_support');
+				}
+			}
 		}
 	}
 
@@ -37,7 +40,7 @@ function layerslider_check_notices() {
 	}
 
 	// License notification under the plugin row on the Plugins screen
-	if(!get_option('layerslider-authorized-site', null)) {
+	if( ! LS_Config::isActivatedSite() ) {
 		add_action('after_plugin_row_'.LS_PLUGIN_BASE, 'layerslider_plugins_purchase_notice', 10, 3 );
 	}
 }
@@ -48,7 +51,6 @@ function layerslider_important_notice() {
 	// Get data
 	$storeData 	= get_option('ls-store-data', false);
 	$lastNotice = get_option('ls-last-important-notice', 0);
-
 
 	// Check if there's an important notice
 	if( $storeData && ! empty( $storeData['important_notice'] ) ) {
@@ -82,7 +84,7 @@ function layerslider_important_notice() {
 
 			// Check audience
 			if( ! empty( $notice['unactivated'] ) ) {
-				if( get_option('layerslider-authorized-site', false) ) {
+				if( LS_Config::isActivatedSite() ) {
 					return;
 				}
 			}
@@ -136,7 +138,7 @@ function layerslider_important_notice() {
 			<?php } else { ?>
 
 			<div class="layerslider_notice">
-				<img src="<?php echo ! empty($notice['image']) ? $notice['image'] : LS_ROOT_URL.'/static/admin/img/ls_80x80.png' ?>" class="ls-product-icon" alt="LayerSlider icon">
+				<img src="<?php echo ! empty($notice['image']) ? $notice['image'] : LS_ROOT_URL.'/static/admin/img/ls-logo.png' ?>" class="ls-product-icon" alt="LayerSlider icon">
 				<h1><?php echo $notice['title'] ?></h1>
 				<p>
 					<?php echo $notice['message'] ?>
@@ -152,7 +154,7 @@ function layerslider_important_notice() {
 
 function layerslider_update_notice() {
 
-	$activated 	= get_option( 'layerslider-authorized-site', false );
+	$activated 	= LS_Config::isActivatedSite();
 	$updates 	= get_plugin_updates();
 	$latest 	= get_option( 'ls-latest-version', false );
 
@@ -200,10 +202,9 @@ function layerslider_update_notice() {
 			$newVersion 	= $update->update->new_version;
 
 			if( version_compare( $newVersion, $currentVersion, '>' ) ) {
-			add_thickbox();
 			?>
 			<div class="layerslider_notice">
-				<img src="<?php echo LS_ROOT_URL.'/static/admin/img/ls_80x80.png' ?>" class="ls-product-icon" alt="LayerSlider icon">
+				<img src="<?php echo LS_ROOT_URL.'/static/admin/img/ls-logo.png' ?>" class="ls-product-icon" alt="LayerSlider icon">
 				<h1><?php _e('An update is available for LayerSlider WP!', 'LayerSlider') ?></h1>
 				<p>
 					<?php echo sprintf(__('You have version %1$s. Update to version %2$s.', 'LayerSlider'), $currentVersion, $newVersion); ?><br>
@@ -225,7 +226,7 @@ function layerslider_update_notice() {
 			if( version_compare( $last_notification, $latest, '<' ) ) {
 			?>
 			<div class="layerslider_notice">
-				<img src="<?php echo LS_ROOT_URL.'/static/admin/img/ls_80x80.png' ?>" class="ls-product-icon" alt="LayerSlider icon">
+				<img src="<?php echo LS_ROOT_URL.'/static/admin/img/ls-logo.png' ?>" class="ls-product-icon" alt="LayerSlider icon">
 				<h1><?php _e('An update is available for LayerSlider WP!', 'LayerSlider') ?></h1>
 				<p>
 					<?php echo sprintf(__('You have version %1$s. The latest version is %2$s.', 'LayerSlider'), LS_PLUGIN_VERSION, $latest); ?><br>
@@ -244,7 +245,7 @@ function layerslider_update_notice() {
 
 function layerslider_compatibility_notice() { ?>
 	<div class="layerslider_notice">
-		<img src="<?php echo LS_ROOT_URL.'/static/admin/img/ls_80x80.png' ?>" class="ls-product-icon" alt="LayerSlider icon">
+		<img src="<?php echo LS_ROOT_URL.'/static/admin/img/ls-logo.png' ?>" class="ls-product-icon" alt="LayerSlider icon">
 		<h1><?php _e('The new version of LayerSlider WP is almost ready!', 'LayerSlider') ?></h1>
 		<p>
 			<?php _e('For a faster and more reliable solution, LayerSlider WP needs to convert your data associated with the plugin. Your sliders and settings will remain still, and it only takes a click on this button.', 'LayerSlider') ?>
@@ -261,7 +262,7 @@ function layerslider_dependency_notice() {
 	if(version_compare(PHP_VERSION, '5.3.0', '<') || !class_exists('DOMDocument')) {
 	?>
 	<div class="layerslider_notice">
-		<img src="<?php echo LS_ROOT_URL.'/static/admin/img/ls_80x80.png' ?>" class="ls-product-icon" alt="LayerSlider icon">
+		<img src="<?php echo LS_ROOT_URL.'/static/admin/img/ls-logo.png' ?>" class="ls-product-icon" alt="LayerSlider icon">
 		<h1><?php _e('Server configuration issues detected!', 'LayerSlider') ?></h1>
 		<p>
 			<?php echo sprintf(__('LayerSlider and its external dependencies require PHP 5.3.0 or newer. Please contact with your web server hosting provider to resolve this issue, as it will likely prevent LayerSlider from functioning properly. %sThis issue could result a blank page in slider builder.%s Check %sSystem Status%s for more information and comprehensive test about your server environment.', 'LayerSlider'), '<strong>', '</strong>', '<a href="'.admin_url('admin.php?page=layerslider-options&section=system-status').'">', '</a>' ) ?>
@@ -274,7 +275,7 @@ function layerslider_dependency_notice() {
 
 function layerslider_premium_support() { ?>
 <div class="layerslider_notice">
-	<img src="<?php echo LS_ROOT_URL.'/static/admin/img/ls_80x80.png' ?>" class="ls-product-icon" alt="LayerSlider icon">
+	<img src="<?php echo LS_ROOT_URL.'/static/admin/img/ls-logo.png' ?>" class="ls-product-icon" alt="LayerSlider icon">
 		<h1><?php _e('Unlock the full potential of LayerSlider', 'LayerSlider') ?></h1>
 		<p>
 			<?php echo sprintf(
@@ -311,11 +312,15 @@ function layerslider_plugins_purchase_notice( $plugin_file, $plugin_data, $statu
 
 function layerslider_canceled_activation() { ?>
 	<div class="layerslider_notice">
-	<img src="<?php echo LS_ROOT_URL.'/static/admin/img/ls_80x80.png' ?>" class="ls-product-icon" alt="LayerSlider icon">
+	<img src="<?php echo LS_ROOT_URL.'/static/admin/img/ls-logo.png' ?>" class="ls-product-icon" alt="LayerSlider icon">
 	<h1><?php _e('LayerSlider product activation was canceled on this site', 'LayerSlider') ?></h1>
 	<p>
-		<?php _e('LayerSlider was previously activated on this site to receive plugin updates, use exclusive features and access to premium templates in the Template Store. However, your activation was canceled and you can no longer enjoy these benefits. There are a number of potential reasons why this could happen, the common ones include: you’ve remotely deactivated your site using our online tools or asked us to do the same on your behalf; you’re using a non-genuine copy of LayerSlider, your purchase have been refunded or the transaction disputed; Envato have revoked your purchase code with an undisclosed reason.', 'LayerSlider') ?>
-		<br><br> <?php echo sprintf(__('To review all the possible reasons and find out what to do next, please refer to the %sWhy was my activation canceled?%s section in our documentation.', 'LayerSlider'), '<a target="_blank" href="https://layerslider.kreaturamedia.com/documentation/#canceled-activation">', '</a>') ?>
+		<?php _e('LayerSlider was previously activated on this site to receive live plugin updates, exclusive features, and premium templates in the Template Store. However, it seems that your LayerSlider product activation is no longer valid and these benefits are unavailable until you re-activate your license.', 'LayerSlider') ?>
+
+		<br><br>
+		 <?php echo sprintf(__('There are a number of potential reasons why this could happen, the common ones include: you’ve remotely deactivated your site using our online tools or asked us to do the same on your behalf; you’re using a non-genuine copy of LayerSlider; your purchase has been refunded or the transaction disputed. To review all the possible reasons and find out what to do next, please refer to the %sWhy was my activation canceled?%s section in our documentation.', 'LayerSlider'), '<a target="_blank" href="https://layerslider.kreaturamedia.com/documentation/#canceled-activation">', '</a>') ?>
+
+
 		<a href="<?php echo wp_nonce_url('?page=layerslider&action=hide-canceled-activation-notice', 'hide-canceled-activation-notice') ?>" class="button button-primary button-hero"><?php _e('OK, I understand', 'LayerSlider') ?></a>
 	</p>
 	<div class="clear"></div>

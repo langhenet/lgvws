@@ -682,50 +682,144 @@ if(defined('ICL_SITEPRESS_VERSION') && defined('ICL_LANGUAGE_CODE'))
 	
 
 
-	if(!function_exists('avia_translate_ids_from_query'))
+	if( ! function_exists( 'avia_translate_ids_from_query' ) )
 	{
-		function avia_translate_ids_from_query($query, $params)
+		/**
+		 * Translate linkpicker id's
+		 * 
+		 * @param array $query
+		 * @param array $params
+		 * @return array
+		 */
+		function avia_translate_ids_from_query( $query, $params )
 		{
-			$res = array();
 			
-			if(!empty($query['tax_query'][0]['terms']) && !empty($query['tax_query'][0]['taxonomy']))
+			if( ! empty( $query['tax_query'][0]['terms'] ) && ! empty( $query['tax_query'][0]['taxonomy'] ) )
 			{
-				foreach ($query['tax_query'][0]['terms'] as $id)
-				{
-					//	icl_object_id deprecated since 3.2 - backward comp only
-					$xlat = function_exists( 'wpml_object_id_filter' ) ?  wpml_object_id_filter( $id, $query['tax_query'][0]['taxonomy'], true ) : icl_object_id( $id, $query['tax_query'][0]['taxonomy'], true );
-					if(!is_null($xlat)) $res[] = $xlat;
-				}
-			
-				if(!empty($res)) $query['tax_query'][0]['terms'] = $res;
+				$query['tax_query'][0]['terms'] = avia_translate_object_ids( $query['tax_query'][0]['terms'], $query['tax_query'][0]['taxonomy'] );
 			}
-			else if(!empty($query['post__in']) && !empty($query['post_type']))
+			else if( ! empty( $query['post__in'] ) && ! empty( $query['post_type'] ) )
 			{
-				foreach($query['post__in'] as $id)
-				{
-					//	icl_object_id deprecated since 3.2 - backward comp only
-					$xlat = function_exists( 'wpml_object_id_filter' ) ?  wpml_object_id_filter( $id, $query['post_type'], true ) : icl_object_id(  $id, $query['post_type'], true );
-					if(!is_null($xlat)) $res[] = $xlat;
-				}
-				
-				if(!empty($res)) $query['post__in'] = $res;
+				$query['post__in'] = avia_translate_object_ids( $query['post__in'], $query['post_type'] );
 			}
 		
 			return $query;
 		}
 		
-		add_filter('avia_masonry_entries_query', 'avia_translate_ids_from_query', 10, 2);
-		add_filter('avia_post_grid_query', 'avia_translate_ids_from_query', 10, 2);
-		add_filter('avia_post_slide_query', 'avia_translate_ids_from_query', 10, 2);
-		add_filter('avia_blog_post_query', 'avia_translate_ids_from_query', 10, 2);
+		add_filter( 'avia_masonry_entries_query', 'avia_translate_ids_from_query', 10, 2 );
+		add_filter( 'avia_post_grid_query', 'avia_translate_ids_from_query', 10, 2 );
+		add_filter( 'avia_post_slide_query', 'avia_translate_ids_from_query', 10, 2 );
+		add_filter( 'avia_blog_post_query', 'avia_translate_ids_from_query', 10, 2 );
 	}
 	
+	if( ! function_exists( 'avia_translate_alb_linkpicker' ) )
+	{
+		/**
+		 * Fix that WPML does not always translate the id's for objects in ALB elements with linkpickers.
+		 * In case translation returns null we keep the original value as fallback.
+		 * Some elements like masonry use filters above to translate.
+		 * Set eg. $this->config['linkpickers']	= array( 'link' ); to activate this hook. 
+		 * 
+		 * @since 4.6.4
+		 * @added_by Günter
+		 * @param string $link_string
+		 * @param string $link_id
+		 * @param array $atts
+		 * @param string $shortcode
+		 * @param aviaShortcodeTemplate $shortcode_class
+		 * @return string
+		 */
+		function avia_translate_alb_linkpicker( $link_string, $link_id = '', $atts = array(), $shortcode = '', $shortcode_class = null )
+		{
+			//	this is a fallback situation only
+			if( ( strpos( $link_string, 'http://' ) === 0 ) || ( strpos( $link_string, 'https://' ) === 0 ) )
+			{
+				$link_string = 'manually,' . $link_string;
+			}
+			
+			$link = explode( ',', $link_string, 2 );
+			
+			$taxonomy = isset( $link[0] ) ? $link[0] : '';
+			
+			switch( $taxonomy )
+			{
+				case '':
+				case 'lightbox':
+				case 'manually':
+					return $link_string;
+			}
+			
+			$terms = isset( $link[1] ) ? $link[1] : '';
+			
+			$translated = avia_translate_object_ids( $terms, $taxonomy );
+			
+			if( ! empty( $translated ) )
+			{
+				if( is_array( $translated ) )
+				{
+					$translated = implode( ',', $translated );
+				}
+				
+				$link_string = $taxonomy . ',' . $translated;
+			}
+			
+			return $link_string;
+			
+		}
+		
+		add_filter( 'avf_alb_linkpicker_value', 'avia_translate_alb_linkpicker', 10, 5 );
+	}
+	
+	if( ! function_exists( 'avia_translate_object_ids' ) )
+	{
+		/**
+		 * Wrapper to allow WPML to translate the id's for objects in ALB elements
+		 * In case translation returns null we keep the original value as fallback
+		 * 
+		 * @since 4.6.4
+		 * @added_by Günter
+		 * @param string|array $element_ids
+		 * @param string $element_type
+		 * @return string|array					returns same structure as rendered
+		 */
+		function avia_translate_object_ids( $element_ids, $element_type )
+		{
+			if( ! is_array( $element_ids ) )
+			{
+				$object = 'string';
+				$ids = explode( ',', $element_ids );
+			}
+			else
+			{
+				$object = 'array';
+				$ids = $element_ids;
+			}
+			
+			$translated = array();
+			
+			foreach( $ids as $id )
+			{
+				//	icl_object_id deprecated since 3.2 - backward comp only
+				$new = function_exists( 'wpml_object_id_filter' ) ?  wpml_object_id_filter( $id, $element_type, true ) : icl_object_id(  $id, $element_type, true );
+				$translated[] = ! is_null( $new ) ? $new : $id;
+			}
+			
+			if( ! empty( $translated ) )
+			{
+				$element_ids = ( 'string' == $object ) ? implode( ',', $translated ) : $translated;
+			}
+			
+			return $element_ids;
+		}
+		
+		add_filter( 'avf_alb_taxonomy_values', 'avia_translate_object_ids', 10, 2 );
+	}
 	
 	
 	if( ! function_exists( 'avia_translate_check_by_tag_values' ) )
 	{
 		/**
-		 * Translate tag values for attachments (av-helper-mayonry.php)
+		 * Translate tag values for attachments (av-helper-masonry.php)
 		 * 
 		 * @since < 4.0
 		 * @param array $value
@@ -918,31 +1012,54 @@ if( ! function_exists( 'avia_wpml_sync_avia_layout_builder_meta' ) )
 	 */
 	function avia_wpml_sync_avia_layout_builder_meta( $new_post_id, $fields, $job )
 	{
-		$post = get_post( $new_post_id );
+		global $post;
+		
+		$translation = get_post( $new_post_id );
 
-		if( ! $post instanceof WP_Post )
+		if( ! $translation instanceof WP_Post )
 		{
 			return;
 		}
 
 		$builder_status = Avia_Builder()->get_alb_builder_status( $new_post_id );
+		$loc = ( 'active' != $builder_status ) ? 'content' : 'clean_data';
 
-		if( 'active' != $builder_status )
-		{
-			$content =  $post->post_content;
-			$loc = 'content';
-		}
-		else
-		{
-			$content = get_post_meta( $new_post_id, '_aviaLayoutBuilderCleanData', true );
-			$loc = 'clean_data';
-		}
-
+		/**
+		 * WPML only updates the post_content field
+		 */
+		$content = trim( $translation->post_content );
+		
+		/**
+		 * Update our internal data
+		 */
 		Avia_Builder()->get_shortcode_parser()->set_builder_save_location( $loc );
 		$content = ShortcodeHelper::clean_up_shortcode( $content, 'balance_only' );
-
+		
+		/**
+		 * We do not update post content for the moment - currently id's are not used and as this is a translation id's should be set - but are not unique !!
+		 */
+		$id_content = Avia_Builder()->element_manager()->set_element_ids_in_content( $content, $new_post_id );
+		
+		if( 'active' == $builder_status )
+		{
+			Avia_Builder()->save_posts_alb_content( $new_post_id, $id_content );
+		}
+		
+		/**
+		 * Make sure we have the correct shortcode tree
+		 */
 		$tree = ShortcodeHelper::build_shortcode_tree( $content );
 		Avia_Builder()->save_shortcode_tree( $new_post_id, $tree );
+		
+		/**
+		 * Save an original post to allow logic of element manager (save post logic has $post set)
+		 */
+		$old_post = $post;
+		$post = $translation;
+		
+		Avia_Builder()->element_manager()->updated_post_content( $id_content, $new_post_id );
+		
+		$post = $old_post;
 	}
 }
 

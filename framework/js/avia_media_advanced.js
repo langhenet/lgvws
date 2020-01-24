@@ -306,19 +306,32 @@
 		
 		activate_tabs: function(scope)
 		{	
-			if(!scope || scope == 'undefined') scope = '.avia_sortable_gallery_container';
+			if( ! scope || scope == 'undefined') 
+			{
+				scope = '.avia_sortable_gallery_container';
+			}
+			
 			var container = $(scope);
+			var isOptionPage = container.parents( '#avia_options_page' ).length > 0;
 			
 			container.each(function()
 			{
 				var current_container = $(this),
-					sets = current_container.find('.avia_set'),
-					prepend_modified = false;
+					sets = [],
+					prepend_modified = isOptionPage ? true : false;
 					
-				if(!sets.length)  { sets = current_container.filter('.avia_set');  }
-				if(container.parents('#avia_options_page').length > 0)
+				//	Fix to allow nested visual groups inside tabs
+				if( isOptionPage && current_container.hasClass( 'avia_tab_container' ) )
 				{
-					prepend_modified = true;
+					sets = current_container.filter( '.avia_set' );
+				}
+				else
+				{
+					sets = current_container.find('.avia_set');
+					if( ! sets.length )  
+					{ 
+						sets = current_container.filter( '.avia_set' );  
+					}
 				}
 				
 				sets.each(function()
@@ -342,7 +355,7 @@
 						tabs.each(function(i){
 						
 							var current_tab = $(this),
-								title		= current_tab.data('group-name')
+								title		= current_tab.data('group-name'),
 								active 		= 'avia_active_tab_title';
 								
 							if(i != 0) { current_tab.css({display:'none'}); active = "";}

@@ -354,8 +354,12 @@ Avia Slideshow
 			}
 
 			if (this.options.carousel === 'yes'){
-                // recalculate carousel dimensions on viewport size change
-                win.on( 'debouncedresize',  $.proxy( this._buildCarousel, this) );
+				// recalculate carousel dimensions on viewport size change
+				// use on desktop only, debouncedresize fires on scroll on mobile
+				if (!this.isMobile)
+				{
+					win.on( 'debouncedresize',  $.proxy( this._buildCarousel, this) );
+				}
 			}
 			else{
                 win.on( 'debouncedresize.aviaSlider',  $.proxy( this._setSize, this) );

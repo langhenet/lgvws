@@ -36,7 +36,9 @@
 				{
 					send.formElements.each(function(i)
 					{
-						var currentElement = $(this), is_email = currentElement.hasClass('is_email');
+						var currentElement = $(this), 
+							is_email = currentElement.hasClass('is_email');
+							
 						if(is_email) currentElement.attr('type','email');
 					});
 				}
@@ -49,7 +51,7 @@
 				send.datastring = 'ajax=true';
 
 				//	Get in js added element (e.g. from reCAPTCHA)
-				send.formElements = form.find('textarea, select, input[type=text], input[type=checkbox], input[type=hidden]');
+				send.formElements = form.find('textarea, select, input[type=text], input[type=checkbox], input[type=hidden], input[type=email]');
 				
 				send.formElements.each(function(i)
 				{
@@ -68,7 +70,7 @@
 					 	send.dataObj[name] = encodeURIComponent(value);
 
 					 	if(classes && classes.match(/is_empty/))
-						{
+						{	
 							if(value == '' || value == null)
 							{
 								surroundingElement.removeClass("valid error ajax_alert").addClass("error");
@@ -83,7 +85,7 @@
 
 						if(classes && classes.match(/is_email/))
 						{
-							if(!value.match(/^[\w|\.|\-]+@\w[\w|\.|\-]*\.[a-zA-Z]{2,20}$/))
+							if( ! value.match(/^[\w|\.|\-]+@\w[\w|\.|\-]*\.[a-zA-Z]{2,20}$/))
 							{
 								surroundingElement.removeClass("valid error ajax_alert").addClass("error");
 								send.validationError = true;
@@ -112,7 +114,21 @@
 						
 						if(classes && classes.match(/is_phone/))
 						{
-							if(!value.match(/^(\d|\s|\-|\/|\(|\)|\[|\]|e|x|t|ension|\.|\+|\_|\,|\:|\;){3,}$/))
+							if( ! value.match(/^(\d|\s|\-|\/|\(|\)|\[|\]|e|x|t|ension|\.|\+|\_|\,|\:|\;){3,}$/))
+							{
+								surroundingElement.removeClass("valid error ajax_alert").addClass("error");
+								send.validationError = true;
+							}
+							else
+							{
+								surroundingElement.removeClass("valid error ajax_alert").addClass("valid");
+							}
+							nomatch = false;
+						}
+						
+						if(classes && classes.match(/is_number/))
+						{
+							if( ! value.match( /^-?\s*(0|[1-9]\d*)([\.,]\d+)?$/ ) )
 							{
 								surroundingElement.removeClass("valid error ajax_alert").addClass("error");
 								send.validationError = true;
@@ -124,9 +140,10 @@
 							nomatch = false;
 						}
 
-						if(classes && classes.match(/is_number/))
+
+						if(classes && classes.match(/is_positiv_number/))
 						{
-							if(!($.isNumeric(value)) || value == "")
+							if(!($.isNumeric(value)) || value == "" || value < 0 )
 							{
 								surroundingElement.removeClass("valid error ajax_alert").addClass("error");
 								send.validationError = true;

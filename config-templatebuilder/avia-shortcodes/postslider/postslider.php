@@ -18,11 +18,12 @@ if ( ! class_exists( 'avia_sc_postslider' ) )
 		 */
 		function shortcode_insert_button()
 		{
-			$this->config['self_closing']	=	'yes';
+			$this->config['version']		= '1.0';
+			$this->config['self_closing']	= 'yes';
 			
 			$this->config['name']		= __( 'Post Slider', 'avia_framework' );
 			$this->config['tab']		= __( 'Content Elements', 'avia_framework' );
-			$this->config['icon']		= AviaBuilder::$path['imagesURL']."sc-postslider.png";
+			$this->config['icon']		= AviaBuilder::$path['imagesURL'] . 'sc-postslider.png';
 			$this->config['order']		= 30;
 			$this->config['target']		= 'avia-target-insert';
 			$this->config['shortcode'] 	= 'av_postslider';
@@ -31,18 +32,18 @@ if ( ! class_exists( 'avia_sc_postslider' ) )
 			$this->config['disabling_allowed'] = true;
 			$this->config['id_name']	= 'id';
 			$this->config['id_show']	= 'yes';
+			$this->config['alb_desc_id']	= 'alb_description';
 		}
 		
 		
 		function extra_assets()
 		{
 			//load css
-			wp_enqueue_style( 'avia-module-slideshow' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/slideshow/slideshow.css' , array('avia-layout'), false );
-			wp_enqueue_style( 'avia-module-postslider' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/postslider/postslider.css' , array('avia-module-slideshow'), false );
+			wp_enqueue_style( 'avia-module-slideshow', AviaBuilder::$path['pluginUrlRoot'] . 'avia-shortcodes/slideshow/slideshow.css', array( 'avia-layout' ), false );
+			wp_enqueue_style( 'avia-module-postslider', AviaBuilder::$path['pluginUrlRoot'] . 'avia-shortcodes/postslider/postslider.css', array( 'avia-module-slideshow' ), false );
 			
 				//load js
-			wp_enqueue_script( 'avia-module-slideshow' , AviaBuilder::$path['pluginUrlRoot'].'avia-shortcodes/slideshow/slideshow.js' , array('avia-shortcodes'), false, true );
-
+			wp_enqueue_script( 'avia-module-slideshow', AviaBuilder::$path['pluginUrlRoot'] . 'avia-shortcodes/slideshow/slideshow.js', array( 'avia-shortcodes' ), false, true );
 		
 		}
 
@@ -57,164 +58,358 @@ if ( ! class_exists( 'avia_sc_postslider' ) )
 		function popup_elements()
 		{
 			$this->elements = array(
+				
 				array(
-						"type" 	=> "tab_container", 'nodescription' => true
-					),
-					
-				array(
-						"type" 	=> "tab",
-						"name"  => __("Content" , 'avia_framework'),
+						'type' 	=> 'tab_container', 
 						'nodescription' => true
 					),
+						
 				array(
-						"name" 	=> __("Which Entries?", 'avia_framework' ),
-						"desc" 	=> __("Select which entries should be displayed by selecting a taxonomy", 'avia_framework' ),
-						"id" 	=> "link",
-						"fetchTMPL"	=> true,
-						"type" 	=> "linkpicker",
-						"subtype"  => array( __('Display Entries from:',  'avia_framework' )=>'taxonomy'),
-						"multiple"	=> 6,
-						"std" 	=> "category"
-				),
-				
-				array(	
-						'type'			=> 'template',
-						'template_id' 	=> 'wc_options_non_products',
+						'type' 	=> 'tab',
+						'name'  => __( 'Content', 'avia_framework' ),
+						'nodescription' => true
 					),
 				
-				
-				array(	
-						'type'			=> 'template',
-						'template_id' 	=> 'date_query',
-					),
-
-				array(
-						"name" 	=> __("Columns", 'avia_framework' ),
-						"desc" 	=> __("How many columns should be displayed?", 'avia_framework' ),
-						"id" 	=> "columns",
-						"type" 	=> "select",
-						"std" 	=> "3",
-						"subtype" => array(	__('1 Columns', 'avia_framework' )=>'1',
-											__('2 Columns', 'avia_framework' )=>'2',
-											__('3 Columns', 'avia_framework' )=>'3',
-											__('4 Columns', 'avia_framework' )=>'4',
-											__('5 Columns', 'avia_framework' )=>'5',
-											)),
-				array(
-						"name" 	=> __("Entry Number", 'avia_framework' ),
-						"desc" 	=> __("How many items should be displayed?", 'avia_framework' ),
-						"id" 	=> "items",
-						"type" 	=> "select",
-						"std" 	=> "9",
-						"subtype" => AviaHtmlHelper::number_array(1,100,1, array('All'=>'-1'))),
-
-                array(
-                    "name" 	=> __("Offset Number", 'avia_framework' ),
-                    "desc" 	=> __("The offset determines where the query begins pulling posts. Useful if you want to remove a certain number of posts because you already query them with another post slider element.", 'avia_framework' ),
-                    "id" 	=> "offset",
-                    "type" 	=> "select",
-                    "std" 	=> "0",
-                    "subtype" => AviaHtmlHelper::number_array(1,100,1, array(__('Deactivate offset','avia_framework')=>'0', __('Do not allow duplicate posts on the entire page (set offset automatically)', 'avia_framework' ) =>'no_duplicates'))),
-
-				array(
-						"name" 	=> __("Title and Excerpt",'avia_framework' ),
-						"desc" 	=> __("Choose if you want to only display the post title or title and excerpt",'avia_framework' ),
-						"id" 	=> "contents",
-						"type" 	=> "select",
-						"std" 	=> "excerpt",
-						"subtype" => array(
-							__('Title and Excerpt',  'avia_framework' ) =>'excerpt',
-							__('Title and Excerpt + Read More Link',  'avia_framework' ) =>'excerpt_read_more',
-							__('Only Title',  'avia_framework' ) =>'title',
-							__('Only Title + Read More Link',  'avia_framework' ) =>'title_read_more',
-							__('Only excerpt',  'avia_framework' ) =>'only_excerpt',
-							__('Only excerpt + Read More Link',  'avia_framework' ) =>'only_excerpt_read_more',
-							__('No Title and no excerpt',  'avia_framework' ) =>'no')),
-
-				array(
-							"name" 	=> __("Preview Image Size", 'avia_framework' ),
-							"desc" 	=> __("Set the image size of the preview images", 'avia_framework' ),
-							"id" 	=> "preview_mode",
-							"type" 	=> "select",
-							"std" 	=> "auto",
-							"subtype" => array(__('Set the preview image size automatically based on column width','avia_framework' ) =>'auto',__('Choose the preview image size manually (select thumbnail size)','avia_framework' ) =>'custom')),
-
-				array(
-							"name" 	=> __("Select custom preview image size", 'avia_framework' ),
-							"desc" 	=> __("Choose image size for Preview Image", 'avia_framework' ),
-							"id" 	=> "image_size",
-							"type" 	=> "select",
-							"required" 	=> array('preview_mode','equals','custom'),
-							"std" 	=> "portfolio",
-							"subtype" =>  AviaHelper::get_registered_image_sizes(array('logo'))
-							),
-				
-				/*
-array(
-							"name" 	=> __("Post Slider Transition", 'avia_framework' ),
-							"desc" 	=> __("Choose the transition for your Post Slider.", 'avia_framework' ),
-							"id" 	=> "animation",
-							"type" 	=> "select",
-							"std" 	=> "fade",
-							"subtype" => array(__('Slide','avia_framework' ) =>'slide',__('Fade','avia_framework' ) =>'fade'),
-							),
-*/
-				
-				
-				array(
-						"name" 	=> __("Autorotation active?",'avia_framework' ),
-						"desc" 	=> __("Check if the slideshow should rotate by default",'avia_framework' ),
-						"id" 	=> "autoplay",
-						"type" 	=> "select",
-						"std" 	=> "no",
-						"subtype" => array(__('Yes','avia_framework' ) =>'yes',__('No','avia_framework' ) =>'no')),
-
-				array(
-					"name" 	=> __("Slideshow autorotation duration",'avia_framework' ),
-					"desc" 	=> __("Slideshow will rotate every X seconds",'avia_framework' ),
-					"id" 	=> "interval",
-					"type" 	=> "select",
-					"std" 	=> "5",
-					"required" 	=> array('autoplay','equals','yes'),
-					"subtype" =>
-					array('3'=>'3','4'=>'4','5'=>'5','6'=>'6','7'=>'7','8'=>'8','9'=>'9','10'=>'10','15'=>'15','20'=>'20','30'=>'30','40'=>'40','60'=>'60','100'=>'100')),
-					
-					
-				array(
-							"type" 	=> "close_div",
+					array(
+							'type'			=> 'template',
+							'template_id'	=> 'toggle_container',
+							'templates_include'	=> array( 
+													$this->popup_key( 'content_slides' ),
+													$this->popup_key( 'content_filter' ),
+													$this->popup_key( 'content_excerpt' ),
+												),
 							'nodescription' => true
 						),
 				
-				array(	
-						'type'			=> 'template',
-						'template_id'	=> 'screen_options_tab'
-					),
-						
-						
 				array(
-					"type" 	=> "close_div",
-					'nodescription' => true
-				)
-					
+						'type' 	=> 'tab_close',
+						'nodescription' => true
+					),
+				
+				array(
+						'type' 	=> 'tab',
+						'name'  => __( 'Styling', 'avia_framework' ),
+						'nodescription' => true
+					),
+				
+					array(
+							'type'			=> 'template',
+							'template_id'	=> 'toggle_container',
+							'templates_include'	=> array( 
+													$this->popup_key( 'styling_columns' ),
+													$this->popup_key( 'styling_image' )
+												),
+							'nodescription' => true
+						),
+				
+				array(
+						'type' 	=> 'tab_close',
+						'nodescription' => true
+					),
+				
+				array(
+						'type' 	=> 'tab',
+						'name'  => __( 'Advanced', 'avia_framework' ),
+						'nodescription' => true
+					),
+				
+					array(
+							'type' 	=> 'toggle_container',
+							'nodescription' => true
+						),
+				
+						array(
+								'type'			=> 'template',
+								'template_id'	=> $this->popup_key( 'advanced_animation' ),
+								'nodescription' => true
+							),
+				
+						array(	
+								'type'			=> 'template',
+								'template_id'	=> 'screen_options_toggle'
+							),
 
-			);
+						array(	
+								'type'			=> 'template',
+								'template_id'	=> 'developer_options_toggle',
+								'args'			=> array( 'sc' => $this )
+							),
+				
+					array(
+							'type' 	=> 'toggle_container_close',
+							'nodescription' => true
+						),
+				
+				array(
+						'type' 	=> 'tab_close',
+						'nodescription' => true
+					),
 
-
+				array(
+						'type' 	=> 'tab_container_close',
+						'nodescription' => true
+					)
+				
+				
+				
+				);
+			
+		}
+		
+		/**
+		 * Create and register templates for easier maintainance
+		 * 
+		 * @since 4.6.4
+		 */
+		protected function register_dynamic_templates()
+		{
+			
+			/**
+			 * Content Tab
+			 * ===========
+			 */
+			
+			$c = array(
+						array(
+							'name' 	=> __( 'Which Entries?', 'avia_framework' ),
+							'desc' 	=> __( 'Select which entries should be displayed by selecting a taxonomy', 'avia_framework' ),
+							'id' 	=> 'link',
+							'type' 	=> 'linkpicker',
+							'std' 	=> 'category',
+							'fetchTMPL'	=> true,
+							'subtype'	=> array( __( 'Display Entries from:', 'avia_framework' ) => 'taxonomy' ),
+							'multiple'	=> 6,
+							
+						)
+				
+				);
+			
 			if( current_theme_supports( 'add_avia_builder_post_type_option' ) )
 			{
-				$element = array(
-                        "name" 	=> __("Select Post Type", 'avia_framework' ),
-                        "desc" 	=> __("Select which post types should be used. Note that your taxonomy will be ignored if you do not select an assign post type.
-                                      If yo don't select post type all registered post types will be used", 'avia_framework' ),
-                        "id" 	=> "post_type",
-                        "type" 	=> "select",
-                        "multiple"	=> 6,
-                        "std" 	=> "",
-                        "subtype" => AviaHtmlHelper::get_registered_post_type_array()
-                    );
-
-				array_splice( $this->elements, 2, 0, array( $element ) );
+				$element = array(	
+								'type'			=> 'template',
+								'template_id'	=> 'avia_builder_post_type_option',
+							);
+						
+				array_unshift( $c, $element );
 			}
+			
+			$template = array(
+							array(	
+								'type'			=> 'template',
+								'template_id'	=> 'toggle',
+								'title'			=> __( 'Select Slide Content', 'avia_framework' ),
+								'content'		=> $c 
+							),
+					);
+				
+			AviaPopupTemplates()->register_dynamic_template( $this->popup_key( 'content_slides' ), $template );
+			
+			$c = array(
+						array(	
+							'type'			=> 'template',
+							'template_id' 	=> 'wc_options_non_products',
+						),
+				
+				
+						array(	
+							'type'			=> 'template',
+							'template_id' 	=> 'date_query',
+						),
+				
+						array(
+							'name' 	=> __( 'Entry Number', 'avia_framework' ),
+							'desc' 	=> __( 'How many items should be displayed?', 'avia_framework' ),
+							'id' 	=> 'items',
+							'type' 	=> 'select',
+							'std' 	=> '9',
+							'subtype' => AviaHtmlHelper::number_array( 1, 100, 1, array( 'All' => '-1' ) ) 
+						),
+
+						array(
+							'name' 	=> __( 'Offset Number', 'avia_framework' ),
+							'desc' 	=> __( 'The offset determines where the query begins pulling posts. Useful if you want to remove a certain number of posts because you already query them with another post slider element.', 'avia_framework' ),
+							'id' 	=> 'offset',
+							'type' 	=> 'select',
+							'std' 	=> '0',
+							'subtype' => AviaHtmlHelper::number_array( 1, 100, 1, array( __( 'Deactivate offset', 'avia_framework') => '0', __( 'Do not allow duplicate posts on the entire page (set offset automatically)', 'avia_framework' ) => 'no_duplicates' ) )
+						),
+
+				
+				);
+			
+			$template = array(
+							array(	
+								'type'			=> 'template',
+								'template_id'	=> 'toggle',
+								'title'			=> __( 'Filters', 'avia_framework' ),
+								'content'		=> $c 
+							),
+					);
+				
+			AviaPopupTemplates()->register_dynamic_template( $this->popup_key( 'content_filter' ), $template );
+			
+			$c = array(
+						array(
+							'name' 	=> __( 'Title and Excerpt', 'avia_framework' ),
+							'desc' 	=> __( 'Choose if you want to only display the post title or title and excerpt', 'avia_framework' ),
+							'id' 	=> 'contents',
+							'type' 	=> 'select',
+							'std' 	=> 'excerpt',
+							'subtype'	=> array(
+												__( 'Title and Excerpt', 'avia_framework' )						=> 'excerpt',
+												__( 'Title and Excerpt + Read More Link', 'avia_framework' )	=> 'excerpt_read_more',
+												__( 'Only Title', 'avia_framework' )							=> 'title',
+												__( 'Only Title + Read More Link', 'avia_framework' )			=> 'title_read_more',
+												__( 'Only excerpt', 'avia_framework' )							=> 'only_excerpt',
+												__( 'Only excerpt + Read More Link', 'avia_framework' )			=> 'only_excerpt_read_more',
+												__( 'No Title and no excerpt', 'avia_framework' )				=> 'no'
+											)
+						),
+				
+				);
+			
+			$template = array(
+							array(	
+								'type'			=> 'template',
+								'template_id'	=> 'toggle',
+								'title'			=> __( 'Excerpt', 'avia_framework' ),
+								'content'		=> $c 
+							),
+					);
+				
+			AviaPopupTemplates()->register_dynamic_template( $this->popup_key( 'content_excerpt' ), $template );
+			
+			
+			/**
+			 * Styling Tab
+			 * ===========
+			 */
+			
+			$c = array(
+						array(
+							'name' 	=> __( 'Columns', 'avia_framework' ),
+							'desc' 	=> __( 'How many columns should be displayed?', 'avia_framework' ),
+							'id' 	=> 'columns',
+							'type' 	=> 'select',
+							'std' 	=> '3',
+							'subtype'	=> array(	
+												__( '1 Columns', 'avia_framework' )	=> '1',
+												__( '2 Columns', 'avia_framework' )	=> '2',
+												__( '3 Columns', 'avia_framework' )	=> '3',
+												__( '4 Columns', 'avia_framework' )	=> '4',
+												__( '5 Columns', 'avia_framework' )	=> '5',
+											)
+						),
+				
+				);
+			
+			$template = array(
+							array(	
+								'type'			=> 'template',
+								'template_id'	=> 'toggle',
+								'title'			=> __( 'Columns', 'avia_framework' ),
+								'content'		=> $c 
+							),
+					);
+				
+			AviaPopupTemplates()->register_dynamic_template( $this->popup_key( 'styling_columns' ), $template );
+			
+			$c = array(
+						array(
+							'name' 	=> __( 'Preview Image Size', 'avia_framework' ),
+							'desc' 	=> __( 'Set the image size of the preview images', 'avia_framework' ),
+							'id' 	=> 'preview_mode',
+							'type' 	=> 'select',
+							'std' 	=> 'auto',
+							'subtype'	=> array(
+												__( 'Set the preview image size automatically based on column width', 'avia_framework' )	=> 'auto',
+												__( 'Choose the preview image size manually (select thumbnail size)', 'avia_framework' )	=> 'custom'
+											)
+						),
+
+						array(
+							'name' 	=> __( 'Select custom preview image size', 'avia_framework' ),
+							'desc' 	=> __( 'Choose image size for Preview Image', 'avia_framework' ),
+							'id' 	=> 'image_size',
+							'type' 	=> 'select',
+							'required' 	=> array( 'preview_mode', 'equals', 'custom' ),
+							'std' 	=> 'portfolio',
+							'subtype'	=>  AviaHelper::get_registered_image_sizes( array( 'logo' ) )
+						),
+				
+				
+				);
+			
+			$template = array(
+							array(	
+								'type'			=> 'template',
+								'template_id'	=> 'toggle',
+								'title'			=> __( 'Preview Image', 'avia_framework' ),
+								'content'		=> $c 
+							),
+					);
+				
+			AviaPopupTemplates()->register_dynamic_template( $this->popup_key( 'styling_image' ), $template );
+			
+			/**
+			 * Advanced Tab
+			 * ===========
+			 */
+			
+			$c = array(
+/*				
+						array(
+							'name' 	=> __( 'Post Slider Transition', 'avia_framework' ),
+							'desc' 	=> __( 'Choose the transition for your Post Slider.', 'avia_framework' ),
+							'id' 	=> 'animation',
+							'type' 	=> 'select',
+							'std' 	=> 'fade',
+							'subtype'	=> array(
+												__( 'Slide', 'avia_framework' )	=> 'slide',
+												__( 'Fade', 'avia_framework' )	=> 'fade'
+											),
+						),
+*/
+				
+				
+						array(
+							'name' 	=> __( 'Autorotation active?', 'avia_framework' ),
+							'desc' 	=> __( 'Check if the slideshow should rotate by default', 'avia_framework' ),
+							'id' 	=> 'autoplay',
+							'type' 	=> 'select',
+							'std' 	=> 'no',
+							'subtype'	=> array(
+												__( 'Yes', 'avia_framework' )	=> 'yes',
+												__( 'No', 'avia_framework' )	=> 'no'
+											)
+						),
+
+						array(
+							'name' 	=> __( 'Slideshow autorotation duration', 'avia_framework' ),
+							'desc' 	=> __( 'Slideshow will rotate every X seconds', 'avia_framework' ),
+							'id' 	=> 'interval',
+							'type' 	=> 'select',
+							'std' 	=> '5',
+							'required'	=> array( 'autoplay', 'equals', 'yes' ),
+							'subtype'	=> array( '3'=>'3', '4'=>'4', '5'=>'5', '6'=>'6', '7'=>'7', '8'=>'8', '9'=>'9', '10'=>'10', '15'=>'15', '20'=>'20', '30'=>'30', '40'=>'40', '60'=>'60', '100'=>'100' )
+						),
+					
+					
+				
+				);
+			
+			$template = array(
+							array(	
+								'type'			=> 'template',
+								'template_id'	=> 'toggle',
+								'title'			=> __( 'Animation', 'avia_framework' ),
+								'content'		=> $c 
+							),
+					);
+				
+			AviaPopupTemplates()->register_dynamic_template( $this->popup_key( 'advanced_animation' ), $template );
+			
 		}
 
 		/**
@@ -226,11 +421,10 @@ array(
 		 * @param array $params this array holds the default values for $content and $args.
 		 * @return $params the return array usually holds an innerHtml key that holds item specific markup.
 		 */
-		function editor_element($params)
+		function editor_element( $params )
 		{
-			$params['innerHtml'] = "<img src='".$this->config['icon']."' title='".$this->config['name']."' />";
-			$params['innerHtml'].= "<div class='avia-element-label'>".$this->config['name']."</div>";
-			$params['content'] 	 = null; //remove to allow content elements
+			$params = parent::editor_element( $params );
+			$params['content'] = null; //remove to allow content elements
 			return $params;
 		}
 
@@ -244,11 +438,11 @@ array(
 		 * @param string $shortcodename the shortcode found, when == callback name
 		 * @return string $output returns the modified html string
 		 */
-		function shortcode_handler( $atts, $content = "", $shortcodename = "", $meta = "" )
+		function shortcode_handler( $atts, $content = '', $shortcodename = '', $meta = '' )
 		{	
 			$screen_sizes = AviaHelper::av_mobile_sizes( $atts );
 			
-			if(isset($atts['link']))
+			if( isset( $atts['link'] ) )
 			{
 				$atts['link'] = explode(',', $atts['link'], 2 );
 				$atts['taxonomy'] = $atts['link'][0];
@@ -383,295 +577,300 @@ if ( ! class_exists( 'avia_post_slider' ) )
 			$grid 				= 'one_third';
 			$post_loop_count 	= 1;
 			$loop_counter		= 1;
-			$autoplay 			= $autoplay == "no" ? false : true;
-			$total				= $columns % 2 ? "odd" : "even";
+			$autoplay 			= $autoplay == 'no' ? false : true;
+			$total				= $columns % 2 ? 'odd' : 'even';
 			$blogstyle 			= function_exists('avia_get_option') ? avia_get_option( 'blog_global_style','' ) : '';
 			$excerpt_length 	= 60;
 			
 			
-			if($blogstyle !== "")
+			if( $blogstyle !== '' )
 			{
 				$excerpt_length = 240;
 			}
 			
-			switch($columns)
+			switch( $columns )
 			{
-				case "1": $grid = 'av_fullwidth';  if($preview_mode == 'auto') $image_size = 'large'; break;
-				case "2": $grid = 'av_one_half';   break;
-				case "3": $grid = 'av_one_third';  break;
-				case "4": $grid = 'av_one_fourth'; if($preview_mode == 'auto') $image_size = 'portfolio_small'; break;
-				case "5": $grid = 'av_one_fifth';  if($preview_mode == 'auto') $image_size = 'portfolio_small'; break;
+				case '1': $grid = 'av_fullwidth';  if($preview_mode == 'auto') $image_size = 'large'; break;
+				case '2': $grid = 'av_one_half';   break;
+				case '3': $grid = 'av_one_third';  break;
+				case '4': $grid = 'av_one_fourth'; if($preview_mode == 'auto') $image_size = 'portfolio_small'; break;
+				case '5': $grid = 'av_one_fifth';  if($preview_mode == 'auto') $image_size = 'portfolio_small'; break;
 			}
 
 
 			$data = AviaHelper::create_data_string(array('autoplay'=>$autoplay, 'interval'=>$interval, 'animation' => $animation, 'show_slide_delay'=>90));
 
-			$thumb_fallback = "";
+			$thumb_fallback = '';
             $markup = avia_markup_helper(array('context' => 'blog','echo'=>false, 'custom_markup'=>$custom_markup));
-			$output .= "<div {$el_id} {$data} class='avia-content-slider avia-content-{$type}-active avia-content-slider".avia_post_slider::$slide." avia-content-slider-{$total} {$class} {$av_display_classes}' $markup>";
+			$output .= "<div {$el_id} {$data} class='avia-content-slider avia-content-{$type}-active avia-content-slider" . avia_post_slider::$slide . " avia-content-slider-{$total} {$class} {$av_display_classes}' $markup>";
 			$output .= 		"<div class='avia-content-slider-inner'>";
 
-				foreach ($this->entries->posts as $index => $entry)
+			foreach( $this->entries->posts as $index => $entry )
+			{
+				$the_id 	= $entry->ID;
+				$parity		= $loop_counter % 2 ? 'odd' : 'even';
+				$last       = $this->entries->post_count == $post_loop_count ? ' post-entry-last ' : '';
+				$post_class = "post-entry post-entry-{$the_id} slide-entry-overview slide-loop-{$post_loop_count} slide-parity-{$parity} {$last}";
+				$link		= get_post_meta( $the_id ,'_portfolio_custom_link', true ) != '' ? get_post_meta( $the_id ,'_portfolio_custom_link_url', true ) : get_permalink( $the_id );
+				$excerpt	= '';
+				$title  	= '';
+				$show_meta  = !is_post_type_hierarchical($entry->post_type);
+				$commentCount = get_comments_number($the_id);
+				$thumbnail  = get_the_post_thumbnail( $the_id, $image_size );
+				$format 	= get_post_format( $the_id );
+
+				if( empty( $format ) ) 
 				{
-					$the_id 	= $entry->ID;
-					$parity		= $loop_counter % 2 ? 'odd' : 'even';
-					$last       = $this->entries->post_count == $post_loop_count ? " post-entry-last " : "";
-					$post_class = "post-entry post-entry-{$the_id} slide-entry-overview slide-loop-{$post_loop_count} slide-parity-{$parity} {$last}";
-					$link		= get_post_meta( $the_id ,'_portfolio_custom_link', true ) != "" ? get_post_meta( $the_id ,'_portfolio_custom_link_url', true ) : get_permalink( $the_id );
-					$excerpt	= "";
-					$title  	= '';
-					$show_meta  = !is_post_type_hierarchical($entry->post_type);
-					$commentCount = get_comments_number($the_id);
-					$thumbnail  = get_the_post_thumbnail( $the_id, $image_size );
-					$format 	= get_post_format( $the_id );
-					if(empty($format)) $format = "standard";
-
-					if($thumbnail)
-					{
-						$thumb_fallback = $thumbnail;
-						$thumb_class	= "real-thumbnail";
-					}
-					else
-					{
-						$thumbnail = "<span class=' fallback-post-type-icon' ".av_icon_string($format)."></span><span class='slider-fallback-image'>{{thumbnail}}</span>";
-						$thumb_class	= "fake-thumbnail";
-					}
-
-
-					$permalink = '<div class="read-more-link"><a href="'.get_permalink($the_id).'" class="more-link">'.__('Read more','avia_framework').'<span class="more-link-arrow"></span></a></div>';
-					$prepare_excerpt = !empty($entry->post_excerpt) ? $entry->post_excerpt : avia_backend_truncate($entry->post_content, apply_filters( 'avf_postgrid_excerpt_length' , $excerpt_length) , apply_filters( 'avf_postgrid_excerpt_delimiter' , " "), "…", true, '');
-
-		                  	if($format == 'link')
-		                   	{
-			                        $current_post = array();
-			                        $current_post['content'] = $entry->post_content;
-			                        $current_post['title'] =  $entry->post_title;
-			                        
-			                        if(function_exists('avia_link_content_filter'))
-			                        {
-			                            $current_post = avia_link_content_filter($current_post);
-			                        }
-			
-			                        $link = $current_post['url'];
-		                    	}
-		                    
-                    
-					switch($contents)
-					{
-						case "excerpt":
-								$excerpt = $prepare_excerpt;
-								$title = $entry->post_title;
-								break;
-						case "excerpt_read_more":
-								$excerpt = $prepare_excerpt;
-								$excerpt .= $permalink;
-								$title = $entry->post_title;
-								break;
-						case "title":
-								$excerpt = '';
-								$title = $entry->post_title;
-								break;
-						case "title_read_more":
-								$excerpt = $permalink;
-								$title = $entry->post_title;
-								break;
-						case "only_excerpt":
-								$excerpt = $prepare_excerpt;
-								$title = '';
-								break;
-						case "only_excerpt_read_more":
-								$excerpt = $prepare_excerpt;
-								$excerpt .= $permalink;
-								$title = '';
-								break;
-						case "no":
-								$excerpt = '';
-								$title = '';
-								break;
-					}
-					
-					$title = apply_filters( 'avf_postslider_title', $title, $entry );
-					
-					if($loop_counter == 1) $output .= "<div class='slide-entry-wrap'>";
-					
-					$post_format = get_post_format($the_id) ? get_post_format($the_id) : 'standard';
-					
-                    $markup = avia_markup_helper(array('context' => 'entry','echo'=>false, 'id'=>$the_id, 'custom_markup'=>$custom_markup));
-					$output .= "<article class='slide-entry flex_column {$style} {$post_class} {$grid} {$extraClass} {$thumb_class}' $markup>";
-					$output .= $thumbnail ? "<a href='{$link}' data-rel='slide-".avia_post_slider::$slide."' class='slide-image' title=''>{$thumbnail}</a>" : "";
-					
-					if($post_format == "audio")
-					{	
-						$current_post = array();
-			            $current_post['content'] = $entry->post_content;
-			            $current_post['title'] =  $entry->post_title;
-				    $current_post['id'] = $entry->ID;
-						
-						$current_post = apply_filters( 'post-format-'.$post_format, $current_post, $entry );
-						
-						if(!empty( $current_post['before_content'] )) $output .= '<div class="big-preview single-big audio-preview">'.$current_post['before_content'].'</div>';
-					}
-					
-					$output .= "<div class='slide-content'>";
-
-                    $markup = avia_markup_helper(array('context' => 'entry_title','echo'=>false, 'id'=>$the_id, 'custom_markup'=>$custom_markup));
-                    $output .= '<header class="entry-content-header">';
-                    $meta_out = "";
-                    
-                    if( ! empty( $title ) || in_array( $show_meta_data, array( 'always', 'on_empty_title' ) ) )
-                    {
-	                    if($show_meta)
-	                    {
-		                    $taxonomies  = get_object_taxonomies(get_post_type($the_id));
-			                $cats = '';
-			                $excluded_taxonomies = array_merge( get_taxonomies( array( 'public' => false ) ), array('post_tag','post_format') );
-							$excluded_taxonomies = apply_filters('avf_exclude_taxonomies', $excluded_taxonomies, get_post_type($the_id), $the_id);
-			
-			                if(!empty($taxonomies))
-			                {
-			                    foreach($taxonomies as $taxonomy)
-			                    {
-			                        if(!in_array($taxonomy, $excluded_taxonomies))
-			                        {
-			                            $cats .= get_the_term_list($the_id, $taxonomy, '', ', ','').' ';
-			                        }
-			                    }
-			                }
-			                
-			                if(!empty($cats))
-		                    {
-		                        $meta_out .= '<span class="blog-categories minor-meta">';
-		                        $meta_out .= $cats;
-		                        $meta_out .= '</span>';
-		                    }
-	                    }
-						
-						/**
-						 * Allow to change default output of categories - by default supressed for setting Default(Business) blog style
-						 * 
-						 * @since 4.0.6
-						 * @param string $blogstyle						'' | 'elegant-blog' | 'elegant-blog modern-blog'
-						 * @param avia_post_slider $this
-						 * @return string								'show_elegant' | 'show_business' | 'use_theme_default' | 'no_show_cats' 
-						 */
-						$show_cats = apply_filters( 'avf_postslider_show_catergories', 'use_theme_default', $blogstyle, $this );
-	                    
-						switch( $show_cats )
-						{
-							case 'no_show_cats':
-								$new_blogstyle = '';
-								break;
-							case 'show_elegant':
-								$new_blogstyle = 'elegant-blog';
-								break;
-							case 'show_business':
-								$new_blogstyle = 'elegant-blog modern-blog';
-								break;
-							case 'use_theme_default':
-							default:
-								$new_blogstyle = $blogstyle;
-								break;
-						}
-						
-							//	elegant style
-	                    if( ( strpos( $new_blogstyle, 'modern-blog' ) === false ) && ( $new_blogstyle != "" ) )
-						{
-							$output .= $meta_out;
-						}
-						
-						$default_heading = 'h3';
-						$args = array(
-									'heading'		=> $default_heading,
-									'extra_class'	=> ''
-								);
-						
-						$extra_args = array( $this, $index, $entry );
-
-						/**
-						 * @since 4.5.5
-						 * @return array
-						 */
-						$args = apply_filters( 'avf_customize_heading_settings', $args, __CLASS__, $extra_args );
-
-						$heading = ! empty( $args['heading'] ) ? $args['heading'] : $default_heading;
-						$css = ! empty( $args['extra_class'] ) ? $args['extra_class'] : '';
-						
-						
-                    	$output .=  "<{$heading} class='slide-entry-title entry-title {$css}' $markup><a href='{$link}' title='".esc_attr(strip_tags($title))."'>".$title."</a></{$heading}>";
-                    	
-							//	modern business style
-                    	if( ( strpos( $new_blogstyle, 'modern-blog' ) !== false ) && ( $new_blogstyle != "" ) ) 
-						{
-							$output .= $meta_out;
-						}
-						
-                    	$output .= '<span class="av-vertical-delimiter"></span>';
-                    }
-                    
-                    $output .= '</header>';
-
-                    if( ( $show_meta && ! empty( $excerpt ) ) || in_array( $show_meta_data, array( 'always', 'on_empty_content' ) ) )
-					{
-						$meta  = "<div class='slide-meta'>";
-						if ( $commentCount != "0" || comments_open($the_id) && $entry->post_type != 'portfolio')
-						{
-							$link_add = $commentCount === "0" ? "#respond" : "#comments";
-							$text_add = $commentCount === "1" ? __('Comment', 'avia_framework' ) : __('Comments', 'avia_framework' );
-
-							$meta .= "<div class='slide-meta-comments'><a href='{$link}{$link_add}'>{$commentCount} {$text_add}</a></div><div class='slide-meta-del'>/</div>";
-						}
-                        $markup = avia_markup_helper(array('context' => 'entry_time','echo'=>false, 'id'=>$the_id, 'custom_markup'=>$custom_markup));
-						$meta .= "<time class='slide-meta-time updated' $markup>" .get_the_time(get_option('date_format'), $the_id)."</time>";
-						$meta .= "</div>";
-						
-						if( strpos($blogstyle, 'elegant-blog') === false )
-						{
-							$output .= $meta;
-							$meta = "";
-						}
-					}
-                    $markup = avia_markup_helper(array('context' => 'entry_content','echo'=>false, 'id'=>$the_id, 'custom_markup'=>$custom_markup));
-					$excerpt = apply_filters( 'avf_post_slider_entry_excerpt', $excerpt, $prepare_excerpt, $permalink, $entry );
-					$output .= !empty($excerpt) ? "<div class='slide-entry-excerpt entry-content' $markup>".$excerpt."</div>" : "";
-
-                    $output .= "</div>";
-                    $output .= '<footer class="entry-footer">';
-                    if( !empty($meta) ) $output .= $meta;
-                    $output .= '</footer>';
-                    
-                    $output .= av_blog_entry_markup_helper( $the_id );
-                    
-					$output .= "</article>";
-
-					$loop_counter ++;
-					$post_loop_count ++;
-					$extraClass = "";
-
-					if($loop_counter > $columns)
-					{
-						$loop_counter = 1;
-						$extraClass = 'first';
-					}
-
-					if($loop_counter == 1 || !empty($last))
-					{
-						$output .="</div>";
-					}
+					$format = 'standard';
 				}
 
-			$output .= 		"</div>";
+				if( $thumbnail )
+				{
+					$thumb_fallback = $thumbnail;
+					$thumb_class	= 'real-thumbnail';
+				}
+				else
+				{
+					$thumbnail = "<span class=' fallback-post-type-icon' " . av_icon_string($format).  "></span><span class='slider-fallback-image'>{{thumbnail}}</span>";
+					$thumb_class = 'fake-thumbnail';
+				}
 
-			if($post_loop_count -1 > $columns && $type == 'slider')
+
+				$permalink = '<div class="read-more-link"><a href="' . get_permalink( $the_id ) . '" class="more-link">' . __( 'Read more', 'avia_framework' ) . '<span class="more-link-arrow"></span></a></div>';
+				$prepare_excerpt = !empty($entry->post_excerpt) ? $entry->post_excerpt : avia_backend_truncate( $entry->post_content, apply_filters( 'avf_postgrid_excerpt_length' , $excerpt_length) , apply_filters( 'avf_postgrid_excerpt_delimiter' , ' ' ), '…', true, '');
+
+				if( $format == 'link' )
+				{
+					$current_post = array();
+					$current_post['content'] = $entry->post_content;
+					$current_post['title'] =  $entry->post_title;
+
+					if(function_exists('avia_link_content_filter'))
+					{
+						$current_post = avia_link_content_filter( $current_post );
+					}
+
+					$link = $current_post['url'];
+				}
+
+                    
+				switch( $contents )
+				{
+					case 'excerpt':
+							$excerpt = $prepare_excerpt;
+							$title = $entry->post_title;
+							break;
+					case 'excerpt_read_more':
+							$excerpt = $prepare_excerpt;
+							$excerpt .= $permalink;
+							$title = $entry->post_title;
+							break;
+					case 'title':
+							$excerpt = '';
+							$title = $entry->post_title;
+							break;
+					case 'title_read_more':
+							$excerpt = $permalink;
+							$title = $entry->post_title;
+							break;
+					case 'only_excerpt':
+							$excerpt = $prepare_excerpt;
+							$title = '';
+							break;
+					case 'only_excerpt_read_more':
+							$excerpt = $prepare_excerpt;
+							$excerpt .= $permalink;
+							$title = '';
+							break;
+					case 'no':
+							$excerpt = '';
+							$title = '';
+							break;
+				}
+
+				$title = apply_filters( 'avf_postslider_title', $title, $entry );
+
+				if($loop_counter == 1) $output .= "<div class='slide-entry-wrap'>";
+
+				$post_format = get_post_format( $the_id ) ? get_post_format( $the_id ) : 'standard';
+
+				$markup = avia_markup_helper(array('context' => 'entry','echo'=>false, 'id'=>$the_id, 'custom_markup'=>$custom_markup));
+				$output .= "<article class='slide-entry flex_column {$style} {$post_class} {$grid} {$extraClass} {$thumb_class}' $markup>";
+				$output .= $thumbnail ? "<a href='{$link}' data-rel='slide-".avia_post_slider::$slide."' class='slide-image' title=''>{$thumbnail}</a>" : '';
+					
+				if( $post_format == 'audio' )
+				{	
+					$current_post = array();
+					$current_post['content'] = $entry->post_content;
+					$current_post['title'] =  $entry->post_title;
+					$current_post['id'] = $entry->ID;
+
+					$current_post = apply_filters( 'post-format-'.$post_format, $current_post, $entry );
+
+					if(!empty( $current_post['before_content'] )) $output .= '<div class="big-preview single-big audio-preview">'.$current_post['before_content'].'</div>';
+				}
+					
+				$output .= "<div class='slide-content'>";
+
+				$markup = avia_markup_helper(array('context' => 'entry_title','echo'=>false, 'id'=>$the_id, 'custom_markup'=>$custom_markup));
+				$output .= '<header class="entry-content-header">';
+				$meta_out = '';
+
+				if( ! empty( $title ) || in_array( $show_meta_data, array( 'always', 'on_empty_title' ) ) )
+				{
+					if($show_meta)
+					{
+						$taxonomies  = get_object_taxonomies(get_post_type($the_id));
+						$cats = '';
+						$excluded_taxonomies = array_merge( get_taxonomies( array( 'public' => false ) ), array('post_tag','post_format') );
+						$excluded_taxonomies = apply_filters('avf_exclude_taxonomies', $excluded_taxonomies, get_post_type($the_id), $the_id);
+
+						if(!empty($taxonomies))
+						{
+							foreach($taxonomies as $taxonomy)
+							{
+								if(!in_array($taxonomy, $excluded_taxonomies))
+								{
+									$cats .= get_the_term_list($the_id, $taxonomy, '', ', ','').' ';
+								}
+							}
+						}
+
+						if(!empty($cats))
+						{
+							$meta_out .= '<span class="blog-categories minor-meta">';
+							$meta_out .= $cats;
+							$meta_out .= '</span>';
+						}
+					}
+						
+					/**
+					 * Allow to change default output of categories - by default supressed for setting Default(Business) blog style
+					 * 
+					 * @since 4.0.6
+					 * @param string $blogstyle						'' | 'elegant-blog' | 'elegant-blog modern-blog'
+					 * @param avia_post_slider $this
+					 * @return string								'show_elegant' | 'show_business' | 'use_theme_default' | 'no_show_cats' 
+					 */
+					$show_cats = apply_filters( 'avf_postslider_show_catergories', 'use_theme_default', $blogstyle, $this );
+
+					switch( $show_cats )
+					{
+						case 'no_show_cats':
+							$new_blogstyle = '';
+							break;
+						case 'show_elegant':
+							$new_blogstyle = 'elegant-blog';
+							break;
+						case 'show_business':
+							$new_blogstyle = 'elegant-blog modern-blog';
+							break;
+						case 'use_theme_default':
+						default:
+							$new_blogstyle = $blogstyle;
+							break;
+					}
+						
+						//	elegant style
+					if( ( strpos( $new_blogstyle, 'modern-blog' ) === false ) && ( $new_blogstyle != '' ) )
+					{
+						$output .= $meta_out;
+					}
+
+					$default_heading = 'h3';
+					$args = array(
+								'heading'		=> $default_heading,
+								'extra_class'	=> ''
+							);
+
+					$extra_args = array( $this, $index, $entry );
+
+					/**
+					 * @since 4.5.5
+					 * @return array
+					 */
+					$args = apply_filters( 'avf_customize_heading_settings', $args, __CLASS__, $extra_args );
+
+					$heading = ! empty( $args['heading'] ) ? $args['heading'] : $default_heading;
+					$css = ! empty( $args['extra_class'] ) ? $args['extra_class'] : '';
+
+
+					$output .=  "<{$heading} class='slide-entry-title entry-title {$css}' $markup><a href='{$link}' title='".esc_attr(strip_tags($title))."'>".$title."</a></{$heading}>";
+
+						//	modern business style
+					if( ( strpos( $new_blogstyle, 'modern-blog' ) !== false ) && ( $new_blogstyle != '' ) ) 
+					{
+						$output .= $meta_out;
+					}
+
+					$output .= '<span class="av-vertical-delimiter"></span>';
+				}
+                    
+				$output .= '</header>';
+
+				if( ( $show_meta && ! empty( $excerpt ) ) || in_array( $show_meta_data, array( 'always', 'on_empty_content' ) ) )
+				{
+					$meta  = "<div class='slide-meta'>";
+					if ( $commentCount != '0' || comments_open($the_id) && $entry->post_type != 'portfolio')
+					{
+						$link_add = $commentCount === '0' ? '#respond' : '#comments';
+						$text_add = $commentCount === '1' ? __( 'Comment', 'avia_framework' ) : __( 'Comments', 'avia_framework' );
+
+						$meta .= "<div class='slide-meta-comments'><a href='{$link}{$link_add}'>{$commentCount} {$text_add}</a></div><div class='slide-meta-del'>/</div>";
+					}
+					$markup = avia_markup_helper(array('context' => 'entry_time','echo'=>false, 'id'=>$the_id, 'custom_markup'=>$custom_markup));
+					$meta .= "<time class='slide-meta-time updated' $markup>" . get_the_time( get_option( 'date_format' ), $the_id ) . '</time>';
+					$meta .= '</div>';
+
+					if( strpos($blogstyle, 'elegant-blog') === false )
+					{
+						$output .= $meta;
+						$meta = '';
+					}
+				}
+				
+				$markup = avia_markup_helper(array('context' => 'entry_content','echo'=>false, 'id'=>$the_id, 'custom_markup'=>$custom_markup));
+				$excerpt = apply_filters( 'avf_post_slider_entry_excerpt', $excerpt, $prepare_excerpt, $permalink, $entry );
+				$output .= ! empty( $excerpt ) ? "<div class='slide-entry-excerpt entry-content' $markup>{$excerpt}</div>" : '';
+
+				$output .= '</div>';
+				$output .= '<footer class="entry-footer">';
+				if( !empty($meta) ) $output .= $meta;
+				$output .= '</footer>';
+
+				$output .= av_blog_entry_markup_helper( $the_id );
+
+				$output .= '</article>';
+
+				$loop_counter ++;
+				$post_loop_count ++;
+				$extraClass = '';
+
+				if( $loop_counter > $columns )
+				{
+					$loop_counter = 1;
+					$extraClass = 'first';
+				}
+
+				if( $loop_counter == 1 || ! empty( $last ) )
+				{
+					$output .= '</div>';
+				}
+			}
+
+			$output .= 		'</div>';
+
+			if( $post_loop_count -1 > $columns && $type == 'slider' )
 			{
 				$output .= $this->slide_navigation_arrows();
 			}
 			
 			global $wp_query;
-            if($use_main_query_pagination == 'yes' && $paginate == "yes")
+            if($use_main_query_pagination == 'yes' && $paginate == 'yes')
             {
                 $avia_pagination = avia_pagination( $wp_query->max_num_pages, 'nav' );
             }
-            else if($paginate == "yes")
+            else if($paginate == 'yes')
             {
                 $avia_pagination = avia_pagination( $this->entries, 'nav' );
             }
@@ -682,7 +881,7 @@ if ( ! class_exists( 'avia_post_slider' ) )
 			}
 
 
-            $output .= "</div>";
+            $output .= '</div>';
 
 			$output = str_replace( '{{thumbnail}}', $thumb_fallback, $output );
 
@@ -696,11 +895,11 @@ if ( ! class_exists( 'avia_post_slider' ) )
 		 */
 		protected function slide_navigation_arrows()
 		{
-			$html  = "";
+			$html  = '';
 			$html .= "<div class='avia-slideshow-arrows avia-slideshow-controls'>";
-			$html .= 	"<a href='#prev' class='prev-slide' ".av_icon_string('prev_big').">".__('Previous','avia_framework' )."</a>";
-			$html .= 	"<a href='#next' class='next-slide' ".av_icon_string('next_big').">".__('Next','avia_framework' )."</a>";
-			$html .= "</div>";
+			$html .= 	"<a href='#prev' class='prev-slide' " . av_icon_string( 'prev_big' ) .'>' . __( 'Previous', 'avia_framework' ) . '</a>';
+			$html .= 	"<a href='#next' class='next-slide' " . av_icon_string( 'next_big' ) . '>' . __( 'Next', 'avia_framework' ) . '</a>';
+			$html .= '</div>';
 
 			return $html;
 		}
@@ -715,26 +914,29 @@ if ( ! class_exists( 'avia_post_slider' ) )
 		{	
 			global $avia_config;
 
-			if(empty($params)) $params = $this->atts;
+			if( empty( $params ) ) 
+			{
+				$params = $this->atts;
+			}
 
-			if(empty($params['custom_query']))
+			if( empty( $params['custom_query'] ) )
             {
 				$query = array();
 
-				if(!empty($params['categories']))
+				if( ! empty( $params['categories'] ) )
 				{
 					//get the portfolio categories
-					$terms 	= explode(',', $params['categories']);
+					$terms 	= explode( ',', $params['categories'] );
 				}
 
 				$page = get_query_var( 'paged' ) ? get_query_var( 'paged' ) : get_query_var( 'page' );
-				if( ! $page || $params['paginate'] == 'no') 
+				if( ! $page || $params['paginate'] == 'no' ) 
 				{
 					$page = 1;
 				}
 
 				//if we find no terms for the taxonomy fetch all taxonomy terms
-				if(empty($terms[0]) || is_null($terms[0]) || $terms[0] === "null")
+				if( empty( $terms[0] ) || is_null( $terms[0] ) || $terms[0] === 'null' )
 				{
 					
 					$term_args = array( 
@@ -745,7 +947,7 @@ if ( ! class_exists( 'avia_post_slider' ) )
 					 * To display private posts you need to set 'hide_empty' to false, 
 					 * otherwise a category with ONLY private posts will not be returned !!
 					 * 
-					 * You also need to add post_status "private" to the query params with filter avia_post_slide_query.
+					 * You also need to add post_status 'private' to the query params with filter avia_post_slide_query.
 					 * 
 					 * @since 4.4.2
 					 * @added_by Günter
@@ -765,7 +967,7 @@ if ( ! class_exists( 'avia_post_slider' ) )
 
 				}
 
-				if($params['offset'] == 'no_duplicates')
+				if( $params['offset'] == 'no_duplicates' )
                 {
                     $params['offset'] = false;
                     $no_duplicates = true;
@@ -780,12 +982,19 @@ if ( ! class_exists( 'avia_post_slider' ) )
 				else
 				{	
 					//if the offset is set the paged param is ignored. therefore we need to factor in the page number
-					$params['offset'] = $params['offset'] + ( ($page -1 ) * $params['items']);
+					$params['offset'] = $params['offset'] + ( ( $page - 1 ) * $params['items'] );
 				}
 				
 				
-                if(empty($params['post_type'])) $params['post_type'] = get_post_types();
-                if(is_string($params['post_type'])) $params['post_type'] = explode(',', $params['post_type']);
+                if( empty( $params['post_type'] ) ) 
+				{
+					$params['post_type'] = get_post_types();
+				}
+				
+                if( is_string($params['post_type'] ) ) 
+				{
+					$params['post_type'] = explode( ',', $params['post_type'] );
+				}
 
 				$orderby = 'date';
 				$order = 'DESC';
@@ -867,12 +1076,11 @@ if ( ! class_exists( 'avia_post_slider' ) )
 			@$this->entries = new WP_Query( $query ); //@ is used to prevent errors caused by wpml
 
 		    // store the queried post ids in
-            if( $this->entries->have_posts() )
+            if( $this->entries->post_count > 0 )
             {
-                while( $this->entries->have_posts() )
+				foreach( $this->entries->posts as $entry )
                 {
-                    $this->entries->the_post();
-                    $avia_config['posts_on_current_page'][] = get_the_ID();
+                    $avia_config['posts_on_current_page'][] = $entry->ID;
                 }
             }
 			

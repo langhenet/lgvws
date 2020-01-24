@@ -18,33 +18,33 @@ if ( ! defined( 'AVIA_FW' ) ) {	exit( 'No direct script access allowed' );	}
 /**
  * Check which post type we currently see
  */
-if(!class_exists('avia_backend_get_post_type'))
+if( ! function_exists( 'avia_backend_get_post_type' ) )
 {
 	function avia_backend_get_post_type()
 	{
 		global $post, $typenow, $current_screen;
 		
-		$posttype = "";
+		$posttype = '';
 		
 		//we have a post so we can just get the post type from that
-		if ($post && $post->post_type)
+		if( $post && $post->post_type )
 		{
 			$posttype = $post->post_type;
 		}
 		//check the global $typenow - set in admin.php
-		elseif($typenow)
+		else if( $typenow )
 		{
 			$posttype = $typenow;
 		}
 		//check the global $current_screen object - set in sceen.php
-		elseif($current_screen && $current_screen->post_type)
+		else if( $current_screen && $current_screen->post_type )
 		{
 			$posttype = $current_screen->post_type;
 		}
 		//lastly check the post_type querystring
-		elseif(isset($_REQUEST['post_type']))
+		else if( isset( $_REQUEST['post_type'] ) )
 		{
-			$posttype = sanitize_key($_REQUEST['post_type']);
+			$posttype = sanitize_key( $_REQUEST['post_type'] );
 		}
 		
 		return $posttype;
@@ -57,7 +57,7 @@ if(!class_exists('avia_backend_get_post_type'))
  *
  * @param array $scripts_to_load the array to pass
  */
-if(!class_exists('avia_update_helper'))
+if( ! class_exists( 'avia_update_helper' ) )
 {
 	class avia_update_helper
 	{	
@@ -65,7 +65,7 @@ if(!class_exists('avia_update_helper'))
 		var $theme_version;
 		var $option_key;
 		
-		function __construct()
+		public function __construct()
 		{
 			$theme = wp_get_theme();
 			if(is_child_theme()) $theme = wp_get_theme( $theme->get('Template') );
@@ -77,7 +77,7 @@ if(!class_exists('avia_update_helper'))
 		}
 		
 		//provide a hook for update functions and update the version number
-		function update_version()
+		public function update_version()
 		{
 			//if we are on a new installation do not do any updates to the db
 			if($this->db_version == "0")
